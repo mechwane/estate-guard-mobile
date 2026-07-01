@@ -9,38 +9,274 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthSignUpRouteImport } from './routes/auth.sign-up'
+import { Route as AuthSignInRouteImport } from './routes/auth.sign-in'
+import { Route as AppSuperIndexRouteImport } from './routes/app.super.index'
+import { Route as AppResidentIndexRouteImport } from './routes/app.resident.index'
+import { Route as AppGuardIndexRouteImport } from './routes/app.guard.index'
+import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
+import { Route as AppSuperAuditRouteImport } from './routes/app.super.audit'
+import { Route as AppResidentIssuesRouteImport } from './routes/app.resident.issues'
+import { Route as AppResidentInviteRouteImport } from './routes/app.resident.invite'
+import { Route as AppResidentGuestsRouteImport } from './routes/app.resident.guests'
+import { Route as AppResidentBillsRouteImport } from './routes/app.resident.bills'
+import { Route as AppGuardHistoryRouteImport } from './routes/app.guard.history'
+import { Route as AppAdminResidentsRouteImport } from './routes/app.admin.residents'
+import { Route as AppAdminIssuesRouteImport } from './routes/app.admin.issues'
+import { Route as AppAdminGuestsRouteImport } from './routes/app.admin.guests'
+import { Route as AppAdminBillsRouteImport } from './routes/app.admin.bills'
 
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthSignUpRoute = AuthSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthSignInRoute = AuthSignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AppSuperIndexRoute = AppSuperIndexRouteImport.update({
+  id: '/super/',
+  path: '/super/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentIndexRoute = AppResidentIndexRouteImport.update({
+  id: '/resident/',
+  path: '/resident/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardIndexRoute = AppGuardIndexRouteImport.update({
+  id: '/guard/',
+  path: '/guard/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperAuditRoute = AppSuperAuditRouteImport.update({
+  id: '/super/audit',
+  path: '/super/audit',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentIssuesRoute = AppResidentIssuesRouteImport.update({
+  id: '/resident/issues',
+  path: '/resident/issues',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentInviteRoute = AppResidentInviteRouteImport.update({
+  id: '/resident/invite',
+  path: '/resident/invite',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentGuestsRoute = AppResidentGuestsRouteImport.update({
+  id: '/resident/guests',
+  path: '/resident/guests',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentBillsRoute = AppResidentBillsRouteImport.update({
+  id: '/resident/bills',
+  path: '/resident/bills',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardHistoryRoute = AppGuardHistoryRouteImport.update({
+  id: '/guard/history',
+  path: '/guard/history',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminResidentsRoute = AppAdminResidentsRouteImport.update({
+  id: '/admin/residents',
+  path: '/admin/residents',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminIssuesRoute = AppAdminIssuesRouteImport.update({
+  id: '/admin/issues',
+  path: '/admin/issues',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminGuestsRoute = AppAdminGuestsRouteImport.update({
+  id: '/admin/guests',
+  path: '/admin/guests',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminBillsRoute = AppAdminBillsRouteImport.update({
+  id: '/admin/bills',
+  path: '/admin/bills',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/auth': typeof AuthRouteWithChildren
+  '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
+  '/app/admin/bills': typeof AppAdminBillsRoute
+  '/app/admin/guests': typeof AppAdminGuestsRoute
+  '/app/admin/issues': typeof AppAdminIssuesRoute
+  '/app/admin/residents': typeof AppAdminResidentsRoute
+  '/app/guard/history': typeof AppGuardHistoryRoute
+  '/app/resident/bills': typeof AppResidentBillsRoute
+  '/app/resident/guests': typeof AppResidentGuestsRoute
+  '/app/resident/invite': typeof AppResidentInviteRoute
+  '/app/resident/issues': typeof AppResidentIssuesRoute
+  '/app/super/audit': typeof AppSuperAuditRoute
+  '/app/admin/': typeof AppAdminIndexRoute
+  '/app/guard/': typeof AppGuardIndexRoute
+  '/app/resident/': typeof AppResidentIndexRoute
+  '/app/super/': typeof AppSuperIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/auth': typeof AuthRouteWithChildren
+  '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
+  '/app/admin/bills': typeof AppAdminBillsRoute
+  '/app/admin/guests': typeof AppAdminGuestsRoute
+  '/app/admin/issues': typeof AppAdminIssuesRoute
+  '/app/admin/residents': typeof AppAdminResidentsRoute
+  '/app/guard/history': typeof AppGuardHistoryRoute
+  '/app/resident/bills': typeof AppResidentBillsRoute
+  '/app/resident/guests': typeof AppResidentGuestsRoute
+  '/app/resident/invite': typeof AppResidentInviteRoute
+  '/app/resident/issues': typeof AppResidentIssuesRoute
+  '/app/super/audit': typeof AppSuperAuditRoute
+  '/app/admin': typeof AppAdminIndexRoute
+  '/app/guard': typeof AppGuardIndexRoute
+  '/app/resident': typeof AppResidentIndexRoute
+  '/app/super': typeof AppSuperIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/auth': typeof AuthRouteWithChildren
+  '/auth/sign-in': typeof AuthSignInRoute
+  '/auth/sign-up': typeof AuthSignUpRoute
+  '/app/admin/bills': typeof AppAdminBillsRoute
+  '/app/admin/guests': typeof AppAdminGuestsRoute
+  '/app/admin/issues': typeof AppAdminIssuesRoute
+  '/app/admin/residents': typeof AppAdminResidentsRoute
+  '/app/guard/history': typeof AppGuardHistoryRoute
+  '/app/resident/bills': typeof AppResidentBillsRoute
+  '/app/resident/guests': typeof AppResidentGuestsRoute
+  '/app/resident/invite': typeof AppResidentInviteRoute
+  '/app/resident/issues': typeof AppResidentIssuesRoute
+  '/app/super/audit': typeof AppSuperAuditRoute
+  '/app/admin/': typeof AppAdminIndexRoute
+  '/app/guard/': typeof AppGuardIndexRoute
+  '/app/resident/': typeof AppResidentIndexRoute
+  '/app/super/': typeof AppSuperIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/auth'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
+    | '/app/admin/bills'
+    | '/app/admin/guests'
+    | '/app/admin/issues'
+    | '/app/admin/residents'
+    | '/app/guard/history'
+    | '/app/resident/bills'
+    | '/app/resident/guests'
+    | '/app/resident/invite'
+    | '/app/resident/issues'
+    | '/app/super/audit'
+    | '/app/admin/'
+    | '/app/guard/'
+    | '/app/resident/'
+    | '/app/super/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/app'
+    | '/auth'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
+    | '/app/admin/bills'
+    | '/app/admin/guests'
+    | '/app/admin/issues'
+    | '/app/admin/residents'
+    | '/app/guard/history'
+    | '/app/resident/bills'
+    | '/app/resident/guests'
+    | '/app/resident/invite'
+    | '/app/resident/issues'
+    | '/app/super/audit'
+    | '/app/admin'
+    | '/app/guard'
+    | '/app/resident'
+    | '/app/super'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/auth'
+    | '/auth/sign-in'
+    | '/auth/sign-up'
+    | '/app/admin/bills'
+    | '/app/admin/guests'
+    | '/app/admin/issues'
+    | '/app/admin/residents'
+    | '/app/guard/history'
+    | '/app/resident/bills'
+    | '/app/resident/guests'
+    | '/app/resident/invite'
+    | '/app/resident/issues'
+    | '/app/super/audit'
+    | '/app/admin/'
+    | '/app/guard/'
+    | '/app/resident/'
+    | '/app/super/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  AuthRoute: typeof AuthRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +284,174 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/sign-up': {
+      id: '/auth/sign-up'
+      path: '/sign-up'
+      fullPath: '/auth/sign-up'
+      preLoaderRoute: typeof AuthSignUpRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/auth/sign-in': {
+      id: '/auth/sign-in'
+      path: '/sign-in'
+      fullPath: '/auth/sign-in'
+      preLoaderRoute: typeof AuthSignInRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/app/super/': {
+      id: '/app/super/'
+      path: '/super'
+      fullPath: '/app/super/'
+      preLoaderRoute: typeof AppSuperIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/': {
+      id: '/app/resident/'
+      path: '/resident'
+      fullPath: '/app/resident/'
+      preLoaderRoute: typeof AppResidentIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/': {
+      id: '/app/guard/'
+      path: '/guard'
+      fullPath: '/app/guard/'
+      preLoaderRoute: typeof AppGuardIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/': {
+      id: '/app/admin/'
+      path: '/admin'
+      fullPath: '/app/admin/'
+      preLoaderRoute: typeof AppAdminIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/audit': {
+      id: '/app/super/audit'
+      path: '/super/audit'
+      fullPath: '/app/super/audit'
+      preLoaderRoute: typeof AppSuperAuditRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/issues': {
+      id: '/app/resident/issues'
+      path: '/resident/issues'
+      fullPath: '/app/resident/issues'
+      preLoaderRoute: typeof AppResidentIssuesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/invite': {
+      id: '/app/resident/invite'
+      path: '/resident/invite'
+      fullPath: '/app/resident/invite'
+      preLoaderRoute: typeof AppResidentInviteRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/guests': {
+      id: '/app/resident/guests'
+      path: '/resident/guests'
+      fullPath: '/app/resident/guests'
+      preLoaderRoute: typeof AppResidentGuestsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/bills': {
+      id: '/app/resident/bills'
+      path: '/resident/bills'
+      fullPath: '/app/resident/bills'
+      preLoaderRoute: typeof AppResidentBillsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/history': {
+      id: '/app/guard/history'
+      path: '/guard/history'
+      fullPath: '/app/guard/history'
+      preLoaderRoute: typeof AppGuardHistoryRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/residents': {
+      id: '/app/admin/residents'
+      path: '/admin/residents'
+      fullPath: '/app/admin/residents'
+      preLoaderRoute: typeof AppAdminResidentsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/issues': {
+      id: '/app/admin/issues'
+      path: '/admin/issues'
+      fullPath: '/app/admin/issues'
+      preLoaderRoute: typeof AppAdminIssuesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/guests': {
+      id: '/app/admin/guests'
+      path: '/admin/guests'
+      fullPath: '/app/admin/guests'
+      preLoaderRoute: typeof AppAdminGuestsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/bills': {
+      id: '/app/admin/bills'
+      path: '/admin/bills'
+      fullPath: '/app/admin/bills'
+      preLoaderRoute: typeof AppAdminBillsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppAdminBillsRoute: typeof AppAdminBillsRoute
+  AppAdminGuestsRoute: typeof AppAdminGuestsRoute
+  AppAdminIssuesRoute: typeof AppAdminIssuesRoute
+  AppAdminResidentsRoute: typeof AppAdminResidentsRoute
+  AppGuardHistoryRoute: typeof AppGuardHistoryRoute
+  AppResidentBillsRoute: typeof AppResidentBillsRoute
+  AppResidentGuestsRoute: typeof AppResidentGuestsRoute
+  AppResidentInviteRoute: typeof AppResidentInviteRoute
+  AppResidentIssuesRoute: typeof AppResidentIssuesRoute
+  AppSuperAuditRoute: typeof AppSuperAuditRoute
+  AppAdminIndexRoute: typeof AppAdminIndexRoute
+  AppGuardIndexRoute: typeof AppGuardIndexRoute
+  AppResidentIndexRoute: typeof AppResidentIndexRoute
+  AppSuperIndexRoute: typeof AppSuperIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppAdminBillsRoute: AppAdminBillsRoute,
+  AppAdminGuestsRoute: AppAdminGuestsRoute,
+  AppAdminIssuesRoute: AppAdminIssuesRoute,
+  AppAdminResidentsRoute: AppAdminResidentsRoute,
+  AppGuardHistoryRoute: AppGuardHistoryRoute,
+  AppResidentBillsRoute: AppResidentBillsRoute,
+  AppResidentGuestsRoute: AppResidentGuestsRoute,
+  AppResidentInviteRoute: AppResidentInviteRoute,
+  AppResidentIssuesRoute: AppResidentIssuesRoute,
+  AppSuperAuditRoute: AppSuperAuditRoute,
+  AppAdminIndexRoute: AppAdminIndexRoute,
+  AppGuardIndexRoute: AppGuardIndexRoute,
+  AppResidentIndexRoute: AppResidentIndexRoute,
+  AppSuperIndexRoute: AppSuperIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
+interface AuthRouteChildren {
+  AuthSignInRoute: typeof AuthSignInRoute
+  AuthSignUpRoute: typeof AuthSignUpRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthSignInRoute: AuthSignInRoute,
+  AuthSignUpRoute: AuthSignUpRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  AuthRoute: AuthRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
