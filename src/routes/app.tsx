@@ -65,9 +65,11 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
     "/app/admin/residents": { title: "Residents" },
     "/app/admin/bills": { title: "Bills" },
     "/app/admin/issues": { title: "Issues" },
+    "/app/admin/guests": { title: "Guest logs" },
+    "/app/admin/staff": { title: "Staff" },
     "/app/super": { title: "Platform overview" },
-    "/app/super/estates": { title: "Estates" },
     "/app/super/audit": { title: "Audit logs" },
   };
+
   return map[path] ?? { title: "Estate Guard" };
 }
