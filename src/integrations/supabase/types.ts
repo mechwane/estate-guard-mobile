@@ -142,6 +142,7 @@ export type Database = {
           expires_at: string
           guest_name: string
           id: string
+          num_guests: number
           phone: string | null
           purpose: string | null
           resident_id: string
@@ -159,6 +160,7 @@ export type Database = {
           expires_at: string
           guest_name: string
           id?: string
+          num_guests?: number
           phone?: string | null
           purpose?: string | null
           resident_id: string
@@ -176,6 +178,7 @@ export type Database = {
           expires_at?: string
           guest_name?: string
           id?: string
+          num_guests?: number
           phone?: string | null
           purpose?: string | null
           resident_id?: string
