@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthSignUpRouteImport } from './routes/auth.sign-up'
 import { Route as AuthSignInRouteImport } from './routes/auth.sign-in'
 import { Route as AppResidentIndexRouteImport } from './routes/app.resident.index'
+import { Route as AppResidentInviteRouteImport } from './routes/app.resident.invite'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -46,6 +47,11 @@ const AppResidentIndexRoute = AppResidentIndexRouteImport.update({
   path: '/resident/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppResidentInviteRoute = AppResidentInviteRouteImport.update({
+  id: '/resident/invite',
+  path: '/resident/invite',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRouteWithChildren
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/': typeof AppResidentIndexRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRouteWithChildren
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident': typeof AppResidentIndexRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRouteWithChildren
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/': typeof AppResidentIndexRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/app/resident/invite'
     | '/app/resident/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/app/resident/invite'
     | '/app/resident'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/app/resident/invite'
     | '/app/resident/'
   fileRoutesById: FileRoutesById
 }
@@ -149,14 +161,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppResidentIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/resident/invite': {
+      id: '/app/resident/invite'
+      path: '/resident/invite'
+      fullPath: '/app/resident/invite'
+      preLoaderRoute: typeof AppResidentInviteRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppResidentInviteRoute: typeof AppResidentInviteRoute
   AppResidentIndexRoute: typeof AppResidentIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppResidentInviteRoute: AppResidentInviteRoute,
   AppResidentIndexRoute: AppResidentIndexRoute,
 }
 
