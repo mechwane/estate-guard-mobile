@@ -25,9 +25,9 @@ function Residents() {
     },
   });
 
-  const setStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { error } = await supabase.from("profiles").update({ status }).eq("id", id);
+  const setApproved = useMutation({
+    mutationFn: async ({ id, approved }: { id: string; approved: boolean }) => {
+      const { error } = await supabase.from("profiles").update({ approved }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Updated"); qc.invalidateQueries({ queryKey: ["admin-residents"] }); },
@@ -45,14 +45,13 @@ function Residents() {
               <div className="truncate text-sm font-medium text-foreground">{r.full_name}</div>
               <div className="mt-0.5 text-xs text-muted-foreground">{r.unit ? `Unit ${r.unit}` : "—"} · {r.phone ?? "no phone"}</div>
             </div>
-            <StatusBadge tone={r.status === "active" ? "success" : r.status === "pending" ? "warning" : "neutral"}>{r.status}</StatusBadge>
+            <StatusBadge tone={r.approved ? "success" : "warning"}>{r.approved ? "approved" : "pending"}</StatusBadge>
           </div>
           <div className="mt-3 flex gap-2">
-            {r.status !== "active" && (
-              <button onClick={() => setStatus.mutate({ id: r.id, status: "active" })} className="flex-1 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary-dark">Approve</button>
-            )}
-            {r.status !== "suspended" && (
-              <button onClick={() => setStatus.mutate({ id: r.id, status: "suspended" })} className="flex-1 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted">Suspend</button>
+            {!r.approved ? (
+              <button onClick={() => setApproved.mutate({ id: r.id, approved: true })} className="flex-1 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary-dark">Approve</button>
+            ) : (
+              <button onClick={() => setApproved.mutate({ id: r.id, approved: false })} className="flex-1 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted">Revoke</button>
             )}
           </div>
         </Card>

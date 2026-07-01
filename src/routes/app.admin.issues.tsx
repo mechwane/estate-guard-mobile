@@ -46,7 +46,7 @@ function IssueRow({ issue, onDone }: { issue: any; onDone: () => void }) {
   const save = async () => {
     if (!session?.userId || !session.estate?.id) return;
     setSaving(true);
-    const { error } = await supabase.from("issues").update({ response: reply, status, responded_by: session.userId, responded_at: new Date().toISOString() }).eq("id", issue.id);
+    const { error } = await supabase.from("issues").update({ response: reply, status: status as any, responded_by: session.userId, responded_at: new Date().toISOString() } as any).eq("id", issue.id);
     setSaving(false);
     if (error) { toast.error(error.message); return; }
     await supabase.from("audit_logs").insert({ estate_id: session.estate.id, actor_id: session.userId, action: "issue.updated", entity: "issues", entity_id: issue.id, metadata: { status } });
