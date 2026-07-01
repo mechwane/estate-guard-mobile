@@ -10,9 +10,19 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import { reportClientError } from "../lib/client-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
+
+const configuredSiteUrl =
+  import.meta.env.VITE_SITE_URL ||
+  (typeof process !== "undefined" && process.env?.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "") ||
+  (typeof process !== "undefined" && process.env?.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+
+const siteUrl = configuredSiteUrl.replace(/\/$/, "");
+const assetUrl = (path: string) => (siteUrl ? `${siteUrl}${path}` : path);
 
 function NotFoundComponent() {
   return (
@@ -36,7 +46,7 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    reportClientError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -67,11 +77,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "Estate Guard" },
       { property: "og:description", content: "Estate operations, simplified." },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: assetUrl("/estate-guard-og.png") },
+      { property: "og:image:secure_url", content: assetUrl("/estate-guard-og.png") },
+      { property: "og:image:type", content: "image/png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "Estate Guard estate management app" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Estate Guard" },
+      { name: "twitter:description", content: "Estate operations, simplified." },
+      { name: "twitter:image", content: assetUrl("/estate-guard-og.png") },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "icon", href: "/favicon.ico", sizes: "any" },
+      { rel: "icon", href: "/favicon.png", type: "image/png", sizes: "512x512" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
+      { rel: "shortcut icon", href: "/favicon.ico" },
+      { rel: "manifest", href: "/site.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" },
