@@ -20,6 +20,7 @@ import { Route as AppResidentIssuesRouteImport } from './routes/app.resident.iss
 import { Route as AppResidentInviteRouteImport } from './routes/app.resident.invite'
 import { Route as AppResidentGuestsRouteImport } from './routes/app.resident.guests'
 import { Route as AppResidentBillsRouteImport } from './routes/app.resident.bills'
+import { Route as AppGuardHistoryRouteImport } from './routes/app.guard.history'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -76,6 +77,11 @@ const AppResidentBillsRoute = AppResidentBillsRouteImport.update({
   path: '/resident/bills',
   getParentRoute: () => AppRoute,
 } as any)
+const AppGuardHistoryRoute = AppGuardHistoryRouteImport.update({
+  id: '/guard/history',
+  path: '/guard/history',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRouteWithChildren
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/app/guard/history': typeof AppGuardHistoryRoute
   '/app/resident/bills': typeof AppResidentBillsRoute
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRouteWithChildren
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/app/guard/history': typeof AppGuardHistoryRoute
   '/app/resident/bills': typeof AppResidentBillsRoute
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRouteWithChildren
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/app/guard/history': typeof AppGuardHistoryRoute
   '/app/resident/bills': typeof AppResidentBillsRoute
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/app/guard/history'
     | '/app/resident/bills'
     | '/app/resident/guests'
     | '/app/resident/invite'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/app/guard/history'
     | '/app/resident/bills'
     | '/app/resident/guests'
     | '/app/resident/invite'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/app/guard/history'
     | '/app/resident/bills'
     | '/app/resident/guests'
     | '/app/resident/invite'
@@ -244,10 +256,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppResidentBillsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/guard/history': {
+      id: '/app/guard/history'
+      path: '/guard/history'
+      fullPath: '/app/guard/history'
+      preLoaderRoute: typeof AppGuardHistoryRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppGuardHistoryRoute: typeof AppGuardHistoryRoute
   AppResidentBillsRoute: typeof AppResidentBillsRoute
   AppResidentGuestsRoute: typeof AppResidentGuestsRoute
   AppResidentInviteRoute: typeof AppResidentInviteRoute
@@ -257,6 +277,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppGuardHistoryRoute: AppGuardHistoryRoute,
   AppResidentBillsRoute: AppResidentBillsRoute,
   AppResidentGuestsRoute: AppResidentGuestsRoute,
   AppResidentInviteRoute: AppResidentInviteRoute,
