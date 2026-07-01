@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthSignUpRouteImport } from './routes/auth.sign-up'
 import { Route as AuthSignInRouteImport } from './routes/auth.sign-in'
 import { Route as AppResidentIndexRouteImport } from './routes/app.resident.index'
+import { Route as AppResidentIssuesRouteImport } from './routes/app.resident.issues'
 import { Route as AppResidentInviteRouteImport } from './routes/app.resident.invite'
 import { Route as AppResidentGuestsRouteImport } from './routes/app.resident.guests'
 import { Route as AppResidentBillsRouteImport } from './routes/app.resident.bills'
@@ -49,6 +50,11 @@ const AppResidentIndexRoute = AppResidentIndexRouteImport.update({
   path: '/resident/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppResidentIssuesRoute = AppResidentIssuesRouteImport.update({
+  id: '/resident/issues',
+  path: '/resident/issues',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppResidentInviteRoute = AppResidentInviteRouteImport.update({
   id: '/resident/invite',
   path: '/resident/invite',
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/app/resident/bills': typeof AppResidentBillsRoute
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
+  '/app/resident/issues': typeof AppResidentIssuesRoute
   '/app/resident/': typeof AppResidentIndexRoute
 }
 export interface FileRoutesByTo {
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/app/resident/bills': typeof AppResidentBillsRoute
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
+  '/app/resident/issues': typeof AppResidentIssuesRoute
   '/app/resident': typeof AppResidentIndexRoute
 }
 export interface FileRoutesById {
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/app/resident/bills': typeof AppResidentBillsRoute
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
+  '/app/resident/issues': typeof AppResidentIssuesRoute
   '/app/resident/': typeof AppResidentIndexRoute
 }
 export interface FileRouteTypes {
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/app/resident/bills'
     | '/app/resident/guests'
     | '/app/resident/invite'
+    | '/app/resident/issues'
     | '/app/resident/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/app/resident/bills'
     | '/app/resident/guests'
     | '/app/resident/invite'
+    | '/app/resident/issues'
     | '/app/resident'
   id:
     | '__root__'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/app/resident/bills'
     | '/app/resident/guests'
     | '/app/resident/invite'
+    | '/app/resident/issues'
     | '/app/resident/'
   fileRoutesById: FileRoutesById
 }
@@ -185,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppResidentIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/resident/issues': {
+      id: '/app/resident/issues'
+      path: '/resident/issues'
+      fullPath: '/app/resident/issues'
+      preLoaderRoute: typeof AppResidentIssuesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/resident/invite': {
       id: '/app/resident/invite'
       path: '/resident/invite'
@@ -213,6 +232,7 @@ interface AppRouteChildren {
   AppResidentBillsRoute: typeof AppResidentBillsRoute
   AppResidentGuestsRoute: typeof AppResidentGuestsRoute
   AppResidentInviteRoute: typeof AppResidentInviteRoute
+  AppResidentIssuesRoute: typeof AppResidentIssuesRoute
   AppResidentIndexRoute: typeof AppResidentIndexRoute
 }
 
@@ -220,6 +240,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppResidentBillsRoute: AppResidentBillsRoute,
   AppResidentGuestsRoute: AppResidentGuestsRoute,
   AppResidentInviteRoute: AppResidentInviteRoute,
+  AppResidentIssuesRoute: AppResidentIssuesRoute,
   AppResidentIndexRoute: AppResidentIndexRoute,
 }
 
