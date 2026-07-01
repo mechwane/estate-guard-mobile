@@ -14,9 +14,11 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthSignUpRouteImport } from './routes/auth.sign-up'
 import { Route as AuthSignInRouteImport } from './routes/auth.sign-in'
+import { Route as AppSuperIndexRouteImport } from './routes/app.super.index'
 import { Route as AppResidentIndexRouteImport } from './routes/app.resident.index'
 import { Route as AppGuardIndexRouteImport } from './routes/app.guard.index'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
+import { Route as AppSuperAuditRouteImport } from './routes/app.super.audit'
 import { Route as AppResidentIssuesRouteImport } from './routes/app.resident.issues'
 import { Route as AppResidentInviteRouteImport } from './routes/app.resident.invite'
 import { Route as AppResidentGuestsRouteImport } from './routes/app.resident.guests'
@@ -48,6 +50,11 @@ const AuthSignInRoute = AuthSignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => AuthRoute,
 } as any)
+const AppSuperIndexRoute = AppSuperIndexRouteImport.update({
+  id: '/super/',
+  path: '/super/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppResidentIndexRoute = AppResidentIndexRouteImport.update({
   id: '/resident/',
   path: '/resident/',
@@ -61,6 +68,11 @@ const AppGuardIndexRoute = AppGuardIndexRouteImport.update({
 const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperAuditRoute = AppSuperAuditRouteImport.update({
+  id: '/super/audit',
+  path: '/super/audit',
   getParentRoute: () => AppRoute,
 } as any)
 const AppResidentIssuesRoute = AppResidentIssuesRouteImport.update({
@@ -100,9 +112,11 @@ export interface FileRoutesByFullPath {
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
+  '/app/super/audit': typeof AppSuperAuditRoute
   '/app/admin/': typeof AppAdminIndexRoute
   '/app/guard/': typeof AppGuardIndexRoute
   '/app/resident/': typeof AppResidentIndexRoute
+  '/app/super/': typeof AppSuperIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -115,9 +129,11 @@ export interface FileRoutesByTo {
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
+  '/app/super/audit': typeof AppSuperAuditRoute
   '/app/admin': typeof AppAdminIndexRoute
   '/app/guard': typeof AppGuardIndexRoute
   '/app/resident': typeof AppResidentIndexRoute
+  '/app/super': typeof AppSuperIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -131,9 +147,11 @@ export interface FileRoutesById {
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
+  '/app/super/audit': typeof AppSuperAuditRoute
   '/app/admin/': typeof AppAdminIndexRoute
   '/app/guard/': typeof AppGuardIndexRoute
   '/app/resident/': typeof AppResidentIndexRoute
+  '/app/super/': typeof AppSuperIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -148,9 +166,11 @@ export interface FileRouteTypes {
     | '/app/resident/guests'
     | '/app/resident/invite'
     | '/app/resident/issues'
+    | '/app/super/audit'
     | '/app/admin/'
     | '/app/guard/'
     | '/app/resident/'
+    | '/app/super/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -163,9 +183,11 @@ export interface FileRouteTypes {
     | '/app/resident/guests'
     | '/app/resident/invite'
     | '/app/resident/issues'
+    | '/app/super/audit'
     | '/app/admin'
     | '/app/guard'
     | '/app/resident'
+    | '/app/super'
   id:
     | '__root__'
     | '/'
@@ -178,9 +200,11 @@ export interface FileRouteTypes {
     | '/app/resident/guests'
     | '/app/resident/invite'
     | '/app/resident/issues'
+    | '/app/super/audit'
     | '/app/admin/'
     | '/app/guard/'
     | '/app/resident/'
+    | '/app/super/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -226,6 +250,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/app/super/': {
+      id: '/app/super/'
+      path: '/super'
+      fullPath: '/app/super/'
+      preLoaderRoute: typeof AppSuperIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/resident/': {
       id: '/app/resident/'
       path: '/resident'
@@ -245,6 +276,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/app/admin/'
       preLoaderRoute: typeof AppAdminIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/audit': {
+      id: '/app/super/audit'
+      path: '/super/audit'
+      fullPath: '/app/super/audit'
+      preLoaderRoute: typeof AppSuperAuditRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/resident/issues': {
@@ -291,9 +329,11 @@ interface AppRouteChildren {
   AppResidentGuestsRoute: typeof AppResidentGuestsRoute
   AppResidentInviteRoute: typeof AppResidentInviteRoute
   AppResidentIssuesRoute: typeof AppResidentIssuesRoute
+  AppSuperAuditRoute: typeof AppSuperAuditRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
   AppGuardIndexRoute: typeof AppGuardIndexRoute
   AppResidentIndexRoute: typeof AppResidentIndexRoute
+  AppSuperIndexRoute: typeof AppSuperIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -302,9 +342,11 @@ const AppRouteChildren: AppRouteChildren = {
   AppResidentGuestsRoute: AppResidentGuestsRoute,
   AppResidentInviteRoute: AppResidentInviteRoute,
   AppResidentIssuesRoute: AppResidentIssuesRoute,
+  AppSuperAuditRoute: AppSuperAuditRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
   AppGuardIndexRoute: AppGuardIndexRoute,
   AppResidentIndexRoute: AppResidentIndexRoute,
+  AppSuperIndexRoute: AppSuperIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
