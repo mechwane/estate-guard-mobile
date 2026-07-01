@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { Card, StatCard, StatusBadge } from "@/components/ui-kit";
-import { Users, Receipt, MessageSquare, ShieldCheck } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 export const Route = createFileRoute("/app/admin/")({
