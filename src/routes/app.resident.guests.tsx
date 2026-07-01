@@ -5,7 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { Card, EmptyState, StatusBadge } from "@/components/ui-kit";
 import { format } from "date-fns";
-import { Users, UserPlus } from "lucide-react";
+import { Users, UserPlus, Copy, MessageCircle } from "lucide-react";
+import { toast } from "sonner";
+
 
 export const Route = createFileRoute("/app/resident/guests")({
   component: MyGuests,
