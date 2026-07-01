@@ -47,10 +47,10 @@ function AdminDashboard() {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
-        <StatCard label="Residents" value={stats?.residents ?? "—"} icon={<Users className="h-4 w-4" />} />
-        <StatCard label="Invites (7d)" value={stats?.weekInvites ?? "—"} icon={<ShieldCheck className="h-4 w-4" />} />
-        <StatCard label="Outstanding" value={stats ? `₦${stats.outstanding.toLocaleString()}` : "—"} icon={<Receipt className="h-4 w-4" />} />
-        <StatCard label="Open issues" value={stats?.openIssues ?? "—"} icon={<MessageSquare className="h-4 w-4" />} />
+        <StatCard label="Residents" value={stats?.residents ?? "—"} />
+        <StatCard label="Invites (7d)" value={stats?.weekInvites ?? "—"} />
+        <StatCard label="Outstanding" value={stats ? `₦${stats.outstanding.toLocaleString()}` : "—"} tone="warning" />
+        <StatCard label="Open issues" value={stats?.openIssues ?? "—"} tone={stats?.openIssues ? "error" : "default"} />
       </div>
 
       <div className="grid grid-cols-2 gap-2">
