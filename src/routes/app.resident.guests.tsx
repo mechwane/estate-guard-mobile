@@ -92,7 +92,21 @@ function MyGuests() {
                 {i.checked_in_at && ` · Checked in ${format(new Date(i.checked_in_at), "p")}`}
                 {i.checked_out_at && ` · Out ${format(new Date(i.checked_out_at), "p")}`}
               </div>
+              {i.status === "active" && (
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <button
+                    onClick={async () => { await navigator.clipboard.writeText(i.code); toast.success("Code copied"); }}
+                    className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted"
+                  ><Copy className="h-3.5 w-3.5" /> Copy code</button>
+                  <a
+                    href={`https://wa.me/${(i.phone ?? "").replace(/\D/g, "")}?text=${encodeURIComponent(`Your access code: ${i.code} — valid until ${format(new Date(i.expires_at), "MMM d, p")}`)}`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary-dark"
+                  ><MessageCircle className="h-3.5 w-3.5" /> WhatsApp</a>
+                </div>
+              )}
             </Card>
+
           ))}
         </div>
       )}
