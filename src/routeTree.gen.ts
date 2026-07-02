@@ -32,6 +32,7 @@ import { Route as AppAdminResidentsRouteImport } from './routes/app.admin.reside
 import { Route as AppAdminIssuesRouteImport } from './routes/app.admin.issues'
 import { Route as AppAdminGuestsRouteImport } from './routes/app.admin.guests'
 import { Route as AppAdminBillsRouteImport } from './routes/app.admin.bills'
+import { Route as AppResidentVtuHistoryRouteImport } from './routes/app.resident.vtu.history'
 import { Route as AppResidentVtuServiceRouteImport } from './routes/app.resident.vtu.$service'
 
 const AuthRoute = AuthRouteImport.update({
@@ -149,6 +150,11 @@ const AppAdminBillsRoute = AppAdminBillsRouteImport.update({
   path: '/admin/bills',
   getParentRoute: () => AppRoute,
 } as any)
+const AppResidentVtuHistoryRoute = AppResidentVtuHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => AppResidentVtuRoute,
+} as any)
 const AppResidentVtuServiceRoute = AppResidentVtuServiceRouteImport.update({
   id: '/$service',
   path: '/$service',
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/app/resident/': typeof AppResidentIndexRoute
   '/app/super/': typeof AppSuperIndexRoute
   '/app/resident/vtu/$service': typeof AppResidentVtuServiceRoute
+  '/app/resident/vtu/history': typeof AppResidentVtuHistoryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByTo {
   '/app/resident': typeof AppResidentIndexRoute
   '/app/super': typeof AppSuperIndexRoute
   '/app/resident/vtu/$service': typeof AppResidentVtuServiceRoute
+  '/app/resident/vtu/history': typeof AppResidentVtuHistoryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -233,6 +241,7 @@ export interface FileRoutesById {
   '/app/resident/': typeof AppResidentIndexRoute
   '/app/super/': typeof AppSuperIndexRoute
   '/app/resident/vtu/$service': typeof AppResidentVtuServiceRoute
+  '/app/resident/vtu/history': typeof AppResidentVtuHistoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -261,6 +270,7 @@ export interface FileRouteTypes {
     | '/app/resident/'
     | '/app/super/'
     | '/app/resident/vtu/$service'
+    | '/app/resident/vtu/history'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -287,6 +297,7 @@ export interface FileRouteTypes {
     | '/app/resident'
     | '/app/super'
     | '/app/resident/vtu/$service'
+    | '/app/resident/vtu/history'
   id:
     | '__root__'
     | '/'
@@ -313,6 +324,7 @@ export interface FileRouteTypes {
     | '/app/resident/'
     | '/app/super/'
     | '/app/resident/vtu/$service'
+    | '/app/resident/vtu/history'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -484,6 +496,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminBillsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/resident/vtu/history': {
+      id: '/app/resident/vtu/history'
+      path: '/history'
+      fullPath: '/app/resident/vtu/history'
+      preLoaderRoute: typeof AppResidentVtuHistoryRouteImport
+      parentRoute: typeof AppResidentVtuRoute
+    }
     '/app/resident/vtu/$service': {
       id: '/app/resident/vtu/$service'
       path: '/$service'
@@ -496,10 +515,12 @@ declare module '@tanstack/react-router' {
 
 interface AppResidentVtuRouteChildren {
   AppResidentVtuServiceRoute: typeof AppResidentVtuServiceRoute
+  AppResidentVtuHistoryRoute: typeof AppResidentVtuHistoryRoute
 }
 
 const AppResidentVtuRouteChildren: AppResidentVtuRouteChildren = {
   AppResidentVtuServiceRoute: AppResidentVtuServiceRoute,
+  AppResidentVtuHistoryRoute: AppResidentVtuHistoryRoute,
 }
 
 const AppResidentVtuRouteWithChildren = AppResidentVtuRoute._addFileChildren(
