@@ -59,6 +59,11 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
     "/app/resident/guests": { title: "My guests" },
     "/app/resident/bills": { title: "Bills" },
     "/app/resident/issues": { title: "Issues" },
+    "/app/resident/vtu": { title: "Bills & top-ups", subtitle: "Airtime, data, electricity, cable" },
+    "/app/resident/vtu/history": { title: "VTU history" },
+    "/app/resident/events": { title: "Events", subtitle: "Estate and public happenings" },
+    "/app/resident/events/mine": { title: "My events" },
+    "/app/resident/events/new": { title: "Create event" },
     "/app/guard": { title: "Guest validation" },
     "/app/guard/history": { title: "Validation history" },
     "/app/admin": { title: "Overview" },
@@ -67,9 +72,16 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
     "/app/admin/issues": { title: "Issues" },
     "/app/admin/guests": { title: "Guest logs" },
     "/app/admin/staff": { title: "Staff" },
+    "/app/admin/events": { title: "Events moderation" },
     "/app/super": { title: "Platform overview" },
     "/app/super/audit": { title: "Audit logs" },
   };
 
+  if (path.startsWith("/app/resident/vtu/") && path !== "/app/resident/vtu/history") {
+    return { title: "Purchase" };
+  }
+  if (path.startsWith("/app/resident/events/") && !map[path]) {
+    return { title: "Event" };
+  }
   return map[path] ?? { title: "Estate Guard" };
 }
