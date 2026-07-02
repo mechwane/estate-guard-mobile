@@ -32,6 +32,7 @@ import { Route as AppAdminStaffRouteImport } from './routes/app.admin.staff'
 import { Route as AppAdminResidentsRouteImport } from './routes/app.admin.residents'
 import { Route as AppAdminIssuesRouteImport } from './routes/app.admin.issues'
 import { Route as AppAdminGuestsRouteImport } from './routes/app.admin.guests'
+import { Route as AppAdminEventsRouteImport } from './routes/app.admin.events'
 import { Route as AppAdminBillsRouteImport } from './routes/app.admin.bills'
 import { Route as AppResidentVtuHistoryRouteImport } from './routes/app.resident.vtu.history'
 import { Route as AppResidentVtuServiceRouteImport } from './routes/app.resident.vtu.$service'
@@ -154,6 +155,11 @@ const AppAdminGuestsRoute = AppAdminGuestsRouteImport.update({
   path: '/admin/guests',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminEventsRoute = AppAdminEventsRouteImport.update({
+  id: '/admin/events',
+  path: '/admin/events',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminBillsRoute = AppAdminBillsRouteImport.update({
   id: '/admin/bills',
   path: '/admin/bills',
@@ -194,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/app/admin/bills': typeof AppAdminBillsRoute
+  '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
   '/app/admin/residents': typeof AppAdminResidentsRoute
@@ -225,6 +232,7 @@ export interface FileRoutesByTo {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/app/admin/bills': typeof AppAdminBillsRoute
+  '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
   '/app/admin/residents': typeof AppAdminResidentsRoute
@@ -257,6 +265,7 @@ export interface FileRoutesById {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/app/admin/bills': typeof AppAdminBillsRoute
+  '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
   '/app/admin/residents': typeof AppAdminResidentsRoute
@@ -290,6 +299,7 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/app/admin/bills'
+    | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/issues'
     | '/app/admin/residents'
@@ -321,6 +331,7 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/app/admin/bills'
+    | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/issues'
     | '/app/admin/residents'
@@ -352,6 +363,7 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/app/admin/bills'
+    | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/issues'
     | '/app/admin/residents'
@@ -544,6 +556,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminGuestsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/events': {
+      id: '/app/admin/events'
+      path: '/admin/events'
+      fullPath: '/app/admin/events'
+      preLoaderRoute: typeof AppAdminEventsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/bills': {
       id: '/app/admin/bills'
       path: '/admin/bills'
@@ -620,6 +639,7 @@ const AppResidentVtuRouteWithChildren = AppResidentVtuRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAdminBillsRoute: typeof AppAdminBillsRoute
+  AppAdminEventsRoute: typeof AppAdminEventsRoute
   AppAdminGuestsRoute: typeof AppAdminGuestsRoute
   AppAdminIssuesRoute: typeof AppAdminIssuesRoute
   AppAdminResidentsRoute: typeof AppAdminResidentsRoute
@@ -640,6 +660,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAdminBillsRoute: AppAdminBillsRoute,
+  AppAdminEventsRoute: AppAdminEventsRoute,
   AppAdminGuestsRoute: AppAdminGuestsRoute,
   AppAdminIssuesRoute: AppAdminIssuesRoute,
   AppAdminResidentsRoute: AppAdminResidentsRoute,
