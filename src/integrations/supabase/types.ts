@@ -353,8 +353,14 @@ export type Database = {
           description: string
           estate_id: string
           id: string
-          resident_id: string
+          location: string | null
+          reporter_id: string | null
+          reporter_role: Database["public"]["Enums"]["app_role"] | null
+          resident_id: string | null
+          responded_at: string | null
+          responded_by: string | null
           response: string | null
+          severity: Database["public"]["Enums"]["issue_severity"]
           status: Database["public"]["Enums"]["issue_status"]
           title: string
           updated_at: string
@@ -365,8 +371,14 @@ export type Database = {
           description: string
           estate_id: string
           id?: string
-          resident_id: string
+          location?: string | null
+          reporter_id?: string | null
+          reporter_role?: Database["public"]["Enums"]["app_role"] | null
+          resident_id?: string | null
+          responded_at?: string | null
+          responded_by?: string | null
           response?: string | null
+          severity?: Database["public"]["Enums"]["issue_severity"]
           status?: Database["public"]["Enums"]["issue_status"]
           title: string
           updated_at?: string
@@ -377,8 +389,14 @@ export type Database = {
           description?: string
           estate_id?: string
           id?: string
-          resident_id?: string
+          location?: string | null
+          reporter_id?: string | null
+          reporter_role?: Database["public"]["Enums"]["app_role"] | null
+          resident_id?: string | null
+          responded_at?: string | null
+          responded_by?: string | null
           response?: string | null
+          severity?: Database["public"]["Enums"]["issue_severity"]
           status?: Database["public"]["Enums"]["issue_status"]
           title?: string
           updated_at?: string
@@ -716,6 +734,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      activate_estate: { Args: { _estate_id: string }; Returns: undefined }
       assign_estate_admin: {
         Args: { _estate_id: string; _user_id: string }
         Returns: undefined
@@ -734,6 +753,10 @@ export type Database = {
         Returns: boolean
       }
       is_super_admin: { Args: never; Returns: boolean }
+      reassign_estate_admin: {
+        Args: { _estate_id: string; _new_admin_user_id: string }
+        Returns: undefined
+      }
       review_verification: {
         Args: { _approve: boolean; _notes: string; _user_id: string }
         Returns: undefined
@@ -754,6 +777,22 @@ export type Database = {
         }
         Returns: undefined
       }
+      suspend_estate: {
+        Args: { _estate_id: string; _reason?: string }
+        Returns: undefined
+      }
+      update_estate: {
+        Args: {
+          _address: string
+          _city: string
+          _contact_email: string
+          _contact_phone: string
+          _estate_id: string
+          _name: string
+          _state: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role:
@@ -765,6 +804,7 @@ export type Database = {
       bill_status: "unpaid" | "paid" | "overdue"
       estate_status: "active" | "suspended"
       invite_status: "active" | "used" | "expired" | "revoked"
+      issue_severity: "low" | "medium" | "high" | "critical"
       issue_status: "open" | "in_progress" | "resolved"
       occupant_type: "resident" | "commercial"
       verification_status:
@@ -910,6 +950,7 @@ export const Constants = {
       bill_status: ["unpaid", "paid", "overdue"],
       estate_status: ["active", "suspended"],
       invite_status: ["active", "used", "expired", "revoked"],
+      issue_severity: ["low", "medium", "high", "critical"],
       issue_status: ["open", "in_progress", "resolved"],
       occupant_type: ["resident", "commercial"],
       verification_status: [

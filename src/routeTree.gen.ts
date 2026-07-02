@@ -29,7 +29,11 @@ import { Route as AppResidentIssuesRouteImport } from './routes/app.resident.iss
 import { Route as AppResidentInviteRouteImport } from './routes/app.resident.invite'
 import { Route as AppResidentGuestsRouteImport } from './routes/app.resident.guests'
 import { Route as AppResidentBillsRouteImport } from './routes/app.resident.bills'
+import { Route as AppGuardValidateRouteImport } from './routes/app.guard.validate'
+import { Route as AppGuardMoreRouteImport } from './routes/app.guard.more'
+import { Route as AppGuardIncidentsRouteImport } from './routes/app.guard.incidents'
 import { Route as AppGuardHistoryRouteImport } from './routes/app.guard.history'
+import { Route as AppGuardActiveRouteImport } from './routes/app.guard.active'
 import { Route as AppAdminVerificationsRouteImport } from './routes/app.admin.verifications'
 import { Route as AppAdminStaffRouteImport } from './routes/app.admin.staff'
 import { Route as AppAdminResidentsRouteImport } from './routes/app.admin.residents'
@@ -145,9 +149,29 @@ const AppResidentBillsRoute = AppResidentBillsRouteImport.update({
   path: '/resident/bills',
   getParentRoute: () => AppRoute,
 } as any)
+const AppGuardValidateRoute = AppGuardValidateRouteImport.update({
+  id: '/guard/validate',
+  path: '/guard/validate',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardMoreRoute = AppGuardMoreRouteImport.update({
+  id: '/guard/more',
+  path: '/guard/more',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardIncidentsRoute = AppGuardIncidentsRouteImport.update({
+  id: '/guard/incidents',
+  path: '/guard/incidents',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppGuardHistoryRoute = AppGuardHistoryRouteImport.update({
   id: '/guard/history',
   path: '/guard/history',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardActiveRoute = AppGuardActiveRouteImport.update({
+  id: '/guard/active',
+  path: '/guard/active',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminVerificationsRoute = AppAdminVerificationsRouteImport.update({
@@ -237,7 +261,11 @@ export interface FileRoutesByFullPath {
   '/app/admin/residents': typeof AppAdminResidentsRoute
   '/app/admin/staff': typeof AppAdminStaffRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
+  '/app/guard/active': typeof AppGuardActiveRoute
   '/app/guard/history': typeof AppGuardHistoryRoute
+  '/app/guard/incidents': typeof AppGuardIncidentsRoute
+  '/app/guard/more': typeof AppGuardMoreRoute
+  '/app/guard/validate': typeof AppGuardValidateRoute
   '/app/resident/bills': typeof AppResidentBillsRoute
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
@@ -274,7 +302,11 @@ export interface FileRoutesByTo {
   '/app/admin/residents': typeof AppAdminResidentsRoute
   '/app/admin/staff': typeof AppAdminStaffRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
+  '/app/guard/active': typeof AppGuardActiveRoute
   '/app/guard/history': typeof AppGuardHistoryRoute
+  '/app/guard/incidents': typeof AppGuardIncidentsRoute
+  '/app/guard/more': typeof AppGuardMoreRoute
+  '/app/guard/validate': typeof AppGuardValidateRoute
   '/app/resident/bills': typeof AppResidentBillsRoute
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
@@ -312,7 +344,11 @@ export interface FileRoutesById {
   '/app/admin/residents': typeof AppAdminResidentsRoute
   '/app/admin/staff': typeof AppAdminStaffRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
+  '/app/guard/active': typeof AppGuardActiveRoute
   '/app/guard/history': typeof AppGuardHistoryRoute
+  '/app/guard/incidents': typeof AppGuardIncidentsRoute
+  '/app/guard/more': typeof AppGuardMoreRoute
+  '/app/guard/validate': typeof AppGuardValidateRoute
   '/app/resident/bills': typeof AppResidentBillsRoute
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
@@ -351,7 +387,11 @@ export interface FileRouteTypes {
     | '/app/admin/residents'
     | '/app/admin/staff'
     | '/app/admin/verifications'
+    | '/app/guard/active'
     | '/app/guard/history'
+    | '/app/guard/incidents'
+    | '/app/guard/more'
+    | '/app/guard/validate'
     | '/app/resident/bills'
     | '/app/resident/guests'
     | '/app/resident/invite'
@@ -388,7 +428,11 @@ export interface FileRouteTypes {
     | '/app/admin/residents'
     | '/app/admin/staff'
     | '/app/admin/verifications'
+    | '/app/guard/active'
     | '/app/guard/history'
+    | '/app/guard/incidents'
+    | '/app/guard/more'
+    | '/app/guard/validate'
     | '/app/resident/bills'
     | '/app/resident/guests'
     | '/app/resident/invite'
@@ -425,7 +469,11 @@ export interface FileRouteTypes {
     | '/app/admin/residents'
     | '/app/admin/staff'
     | '/app/admin/verifications'
+    | '/app/guard/active'
     | '/app/guard/history'
+    | '/app/guard/incidents'
+    | '/app/guard/more'
+    | '/app/guard/validate'
     | '/app/resident/bills'
     | '/app/resident/guests'
     | '/app/resident/invite'
@@ -595,11 +643,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppResidentBillsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/guard/validate': {
+      id: '/app/guard/validate'
+      path: '/guard/validate'
+      fullPath: '/app/guard/validate'
+      preLoaderRoute: typeof AppGuardValidateRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/more': {
+      id: '/app/guard/more'
+      path: '/guard/more'
+      fullPath: '/app/guard/more'
+      preLoaderRoute: typeof AppGuardMoreRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/incidents': {
+      id: '/app/guard/incidents'
+      path: '/guard/incidents'
+      fullPath: '/app/guard/incidents'
+      preLoaderRoute: typeof AppGuardIncidentsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/guard/history': {
       id: '/app/guard/history'
       path: '/guard/history'
       fullPath: '/app/guard/history'
       preLoaderRoute: typeof AppGuardHistoryRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/active': {
+      id: '/app/guard/active'
+      path: '/guard/active'
+      fullPath: '/app/guard/active'
+      preLoaderRoute: typeof AppGuardActiveRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/admin/verifications': {
@@ -712,7 +788,11 @@ interface AppRouteChildren {
   AppAdminResidentsRoute: typeof AppAdminResidentsRoute
   AppAdminStaffRoute: typeof AppAdminStaffRoute
   AppAdminVerificationsRoute: typeof AppAdminVerificationsRoute
+  AppGuardActiveRoute: typeof AppGuardActiveRoute
   AppGuardHistoryRoute: typeof AppGuardHistoryRoute
+  AppGuardIncidentsRoute: typeof AppGuardIncidentsRoute
+  AppGuardMoreRoute: typeof AppGuardMoreRoute
+  AppGuardValidateRoute: typeof AppGuardValidateRoute
   AppResidentBillsRoute: typeof AppResidentBillsRoute
   AppResidentGuestsRoute: typeof AppResidentGuestsRoute
   AppResidentInviteRoute: typeof AppResidentInviteRoute
@@ -743,7 +823,11 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminResidentsRoute: AppAdminResidentsRoute,
   AppAdminStaffRoute: AppAdminStaffRoute,
   AppAdminVerificationsRoute: AppAdminVerificationsRoute,
+  AppGuardActiveRoute: AppGuardActiveRoute,
   AppGuardHistoryRoute: AppGuardHistoryRoute,
+  AppGuardIncidentsRoute: AppGuardIncidentsRoute,
+  AppGuardMoreRoute: AppGuardMoreRoute,
+  AppGuardValidateRoute: AppGuardValidateRoute,
   AppResidentBillsRoute: AppResidentBillsRoute,
   AppResidentGuestsRoute: AppResidentGuestsRoute,
   AppResidentInviteRoute: AppResidentInviteRoute,
