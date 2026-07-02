@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/app/denied")({
-  ssr: false,
   component: Denied,
 });
 
@@ -23,15 +22,15 @@ function Denied() {
   };
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center gap-4 px-6 text-center">
+    <div className="flex flex-col items-center gap-4 py-8 text-center">
       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-destructive/10 text-destructive">
         <ShieldAlert className="h-6 w-6" />
       </div>
-      <h1 className="text-lg font-semibold">Access denied</h1>
-      <p className="text-sm text-muted-foreground">
-        Your account doesn't have permission to view this page. If you think this is a mistake, contact your estate admin.
+      <h2 className="text-base font-semibold">You don't have permission to view this</h2>
+      <p className="max-w-sm text-sm text-muted-foreground">
+        This area is restricted to a different role. If you believe this is a mistake, contact your estate admin.
       </p>
-      <div className="mt-2 flex w-full flex-col gap-2">
+      <div className="mt-2 flex w-full max-w-xs flex-col gap-2">
         <Link to={home} className="btn-primary w-full text-center">Back to my dashboard</Link>
         <button onClick={signOut} className="w-full rounded-xl border border-border bg-card px-4 py-2.5 text-sm font-medium hover:bg-muted">Sign out</button>
       </div>
