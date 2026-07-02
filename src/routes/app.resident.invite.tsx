@@ -33,10 +33,18 @@ function InviteGuest() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!session?.userId || !session.estate?.id) return;
-    setLoading(true);
-    const visit = new Date(f.visit_time);
-    const expires = new Date(visit.getTime() + f.hours * 60 * 60 * 1000);
 
+    const guestName = f.guest_name.trim();
+    const phone = f.phone.trim();
+    if (guestName.length < 2) return toast.error("Enter the guest's name");
+    if (phone && !/^[+\d][\d\s\-()]{5,}$/.test(phone)) return toast.error("Enter a valid phone number");
+
+    const visit = new Date(f.visit_time);
+    if (isNaN(visit.getTime())) return toast.error("Choose a valid visit time");
+    const expires = new Date(visit.getTime() + f.hours * 60 * 60 * 1000);
+    if (expires.getTime() < Date.now()) return toast.error("Expiry must be in the future");
+
+    setLoading(true);
     let lastErr: unknown = null;
     for (let attempt = 0; attempt < 5; attempt++) {
       const code = generateCode();
@@ -45,9 +53,9 @@ function InviteGuest() {
         .insert({
           estate_id: session.estate.id,
           resident_id: session.userId,
-          guest_name: f.guest_name,
-          phone: f.phone || null,
-          purpose: f.purpose || null,
+          guest_name: guestName,
+          phone: phone || null,
+          purpose: f.purpose.trim() || null,
           visit_time: visit.toISOString(),
           expires_at: expires.toISOString(),
           num_guests: f.num_guests,
