@@ -21,6 +21,7 @@ import { Route as AppResidentIndexRouteImport } from './routes/app.resident.inde
 import { Route as AppGuardIndexRouteImport } from './routes/app.guard.index'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 import { Route as AppSuperAuditRouteImport } from './routes/app.super.audit'
+import { Route as AppResidentVtuRouteImport } from './routes/app.resident.vtu'
 import { Route as AppResidentIssuesRouteImport } from './routes/app.resident.issues'
 import { Route as AppResidentInviteRouteImport } from './routes/app.resident.invite'
 import { Route as AppResidentGuestsRouteImport } from './routes/app.resident.guests'
@@ -92,6 +93,11 @@ const AppSuperAuditRoute = AppSuperAuditRouteImport.update({
   path: '/super/audit',
   getParentRoute: () => AppRoute,
 } as any)
+const AppResidentVtuRoute = AppResidentVtuRouteImport.update({
+  id: '/resident/vtu',
+  path: '/resident/vtu',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppResidentIssuesRoute = AppResidentIssuesRouteImport.update({
   id: '/resident/issues',
   path: '/resident/issues',
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
+  '/app/resident/vtu': typeof AppResidentVtuRoute
   '/app/super/audit': typeof AppSuperAuditRoute
   '/app/admin/': typeof AppAdminIndexRoute
   '/app/guard/': typeof AppGuardIndexRoute
@@ -185,6 +192,7 @@ export interface FileRoutesByTo {
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
+  '/app/resident/vtu': typeof AppResidentVtuRoute
   '/app/super/audit': typeof AppSuperAuditRoute
   '/app/admin': typeof AppAdminIndexRoute
   '/app/guard': typeof AppGuardIndexRoute
@@ -210,6 +218,7 @@ export interface FileRoutesById {
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
+  '/app/resident/vtu': typeof AppResidentVtuRoute
   '/app/super/audit': typeof AppSuperAuditRoute
   '/app/admin/': typeof AppAdminIndexRoute
   '/app/guard/': typeof AppGuardIndexRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/app/resident/guests'
     | '/app/resident/invite'
     | '/app/resident/issues'
+    | '/app/resident/vtu'
     | '/app/super/audit'
     | '/app/admin/'
     | '/app/guard/'
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/app/resident/guests'
     | '/app/resident/invite'
     | '/app/resident/issues'
+    | '/app/resident/vtu'
     | '/app/super/audit'
     | '/app/admin'
     | '/app/guard'
@@ -284,6 +295,7 @@ export interface FileRouteTypes {
     | '/app/resident/guests'
     | '/app/resident/invite'
     | '/app/resident/issues'
+    | '/app/resident/vtu'
     | '/app/super/audit'
     | '/app/admin/'
     | '/app/guard/'
@@ -383,6 +395,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSuperAuditRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/resident/vtu': {
+      id: '/app/resident/vtu'
+      path: '/resident/vtu'
+      fullPath: '/app/resident/vtu'
+      preLoaderRoute: typeof AppResidentVtuRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/resident/issues': {
       id: '/app/resident/issues'
       path: '/resident/issues'
@@ -467,6 +486,7 @@ interface AppRouteChildren {
   AppResidentGuestsRoute: typeof AppResidentGuestsRoute
   AppResidentInviteRoute: typeof AppResidentInviteRoute
   AppResidentIssuesRoute: typeof AppResidentIssuesRoute
+  AppResidentVtuRoute: typeof AppResidentVtuRoute
   AppSuperAuditRoute: typeof AppSuperAuditRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
   AppGuardIndexRoute: typeof AppGuardIndexRoute
@@ -485,6 +505,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppResidentGuestsRoute: AppResidentGuestsRoute,
   AppResidentInviteRoute: AppResidentInviteRoute,
   AppResidentIssuesRoute: AppResidentIssuesRoute,
+  AppResidentVtuRoute: AppResidentVtuRoute,
   AppSuperAuditRoute: AppSuperAuditRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
   AppGuardIndexRoute: AppGuardIndexRoute,
