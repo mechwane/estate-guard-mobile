@@ -21,10 +21,14 @@ function AppLayout() {
       navigate({ to: "/auth/sign-in", replace: true });
       return;
     }
-    // enforce role prefix
+    if (location.pathname === "/app/denied") return;
+    if (location.pathname === "/app" || location.pathname === "/app/") {
+      navigate({ to: roleHome(session.role), replace: true });
+      return;
+    }
     const prefix = roleHome(session.role);
     if (!location.pathname.startsWith(prefix)) {
-      navigate({ to: prefix, replace: true });
+      navigate({ to: "/app/denied", replace: true });
     }
   }, [session, isLoading, navigate, location.pathname]);
 
@@ -64,9 +68,13 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
     "/app/resident/events": { title: "Events", subtitle: "Estate and public happenings" },
     "/app/resident/events/mine": { title: "My events" },
     "/app/resident/events/new": { title: "Create event" },
+    "/app/resident/more": { title: "More" },
+    "/app/resident/profile": { title: "Profile & account" },
+    "/app/resident/verification": { title: "Estate verification", subtitle: "Verify your residency" },
     "/app/guard": { title: "Guest validation" },
     "/app/guard/history": { title: "Validation history" },
     "/app/admin": { title: "Overview" },
+    "/app/admin/verifications": { title: "Verification queue" },
     "/app/admin/residents": { title: "Residents" },
     "/app/admin/bills": { title: "Bills" },
     "/app/admin/issues": { title: "Issues" },
@@ -75,6 +83,7 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
     "/app/admin/events": { title: "Events moderation" },
     "/app/super": { title: "Platform overview" },
     "/app/super/audit": { title: "Audit logs" },
+    "/app/denied": { title: "Access denied" },
   };
 
   if (path.startsWith("/app/resident/vtu/") && path !== "/app/resident/vtu/history") {
