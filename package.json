@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "build:dev": "NITRO_PRESET=cloudflare_module vite build --mode development",
+    "build:dev": "NITRO_PRESET=cloudflare_module vite build --mode development && rm -rf dist && cp -r .output/public dist",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write ."
