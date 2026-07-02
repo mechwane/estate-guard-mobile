@@ -21,10 +21,14 @@ function AppLayout() {
       navigate({ to: "/auth/sign-in", replace: true });
       return;
     }
-    // enforce role prefix
+    if (location.pathname === "/app/denied") return;
+    if (location.pathname === "/app" || location.pathname === "/app/") {
+      navigate({ to: roleHome(session.role), replace: true });
+      return;
+    }
     const prefix = roleHome(session.role);
     if (!location.pathname.startsWith(prefix)) {
-      navigate({ to: prefix, replace: true });
+      navigate({ to: "/app/denied", replace: true });
     }
   }, [session, isLoading, navigate, location.pathname]);
 
