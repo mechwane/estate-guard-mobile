@@ -32,6 +32,7 @@ import { Route as AppAdminResidentsRouteImport } from './routes/app.admin.reside
 import { Route as AppAdminIssuesRouteImport } from './routes/app.admin.issues'
 import { Route as AppAdminGuestsRouteImport } from './routes/app.admin.guests'
 import { Route as AppAdminBillsRouteImport } from './routes/app.admin.bills'
+import { Route as AppResidentVtuServiceRouteImport } from './routes/app.resident.vtu.$service'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -148,6 +149,11 @@ const AppAdminBillsRoute = AppAdminBillsRouteImport.update({
   path: '/admin/bills',
   getParentRoute: () => AppRoute,
 } as any)
+const AppResidentVtuServiceRoute = AppResidentVtuServiceRouteImport.update({
+  id: '/$service',
+  path: '/$service',
+  getParentRoute: () => AppResidentVtuRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -167,12 +173,13 @@ export interface FileRoutesByFullPath {
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
-  '/app/resident/vtu': typeof AppResidentVtuRoute
+  '/app/resident/vtu': typeof AppResidentVtuRouteWithChildren
   '/app/super/audit': typeof AppSuperAuditRoute
   '/app/admin/': typeof AppAdminIndexRoute
   '/app/guard/': typeof AppGuardIndexRoute
   '/app/resident/': typeof AppResidentIndexRoute
   '/app/super/': typeof AppSuperIndexRoute
+  '/app/resident/vtu/$service': typeof AppResidentVtuServiceRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -192,12 +199,13 @@ export interface FileRoutesByTo {
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
-  '/app/resident/vtu': typeof AppResidentVtuRoute
+  '/app/resident/vtu': typeof AppResidentVtuRouteWithChildren
   '/app/super/audit': typeof AppSuperAuditRoute
   '/app/admin': typeof AppAdminIndexRoute
   '/app/guard': typeof AppGuardIndexRoute
   '/app/resident': typeof AppResidentIndexRoute
   '/app/super': typeof AppSuperIndexRoute
+  '/app/resident/vtu/$service': typeof AppResidentVtuServiceRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -218,12 +226,13 @@ export interface FileRoutesById {
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
-  '/app/resident/vtu': typeof AppResidentVtuRoute
+  '/app/resident/vtu': typeof AppResidentVtuRouteWithChildren
   '/app/super/audit': typeof AppSuperAuditRoute
   '/app/admin/': typeof AppAdminIndexRoute
   '/app/guard/': typeof AppGuardIndexRoute
   '/app/resident/': typeof AppResidentIndexRoute
   '/app/super/': typeof AppSuperIndexRoute
+  '/app/resident/vtu/$service': typeof AppResidentVtuServiceRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -251,6 +260,7 @@ export interface FileRouteTypes {
     | '/app/guard/'
     | '/app/resident/'
     | '/app/super/'
+    | '/app/resident/vtu/$service'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -276,6 +286,7 @@ export interface FileRouteTypes {
     | '/app/guard'
     | '/app/resident'
     | '/app/super'
+    | '/app/resident/vtu/$service'
   id:
     | '__root__'
     | '/'
@@ -301,6 +312,7 @@ export interface FileRouteTypes {
     | '/app/guard/'
     | '/app/resident/'
     | '/app/super/'
+    | '/app/resident/vtu/$service'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -472,8 +484,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminBillsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/resident/vtu/$service': {
+      id: '/app/resident/vtu/$service'
+      path: '/$service'
+      fullPath: '/app/resident/vtu/$service'
+      preLoaderRoute: typeof AppResidentVtuServiceRouteImport
+      parentRoute: typeof AppResidentVtuRoute
+    }
   }
 }
+
+interface AppResidentVtuRouteChildren {
+  AppResidentVtuServiceRoute: typeof AppResidentVtuServiceRoute
+}
+
+const AppResidentVtuRouteChildren: AppResidentVtuRouteChildren = {
+  AppResidentVtuServiceRoute: AppResidentVtuServiceRoute,
+}
+
+const AppResidentVtuRouteWithChildren = AppResidentVtuRoute._addFileChildren(
+  AppResidentVtuRouteChildren,
+)
 
 interface AppRouteChildren {
   AppAdminBillsRoute: typeof AppAdminBillsRoute
@@ -486,7 +517,7 @@ interface AppRouteChildren {
   AppResidentGuestsRoute: typeof AppResidentGuestsRoute
   AppResidentInviteRoute: typeof AppResidentInviteRoute
   AppResidentIssuesRoute: typeof AppResidentIssuesRoute
-  AppResidentVtuRoute: typeof AppResidentVtuRoute
+  AppResidentVtuRoute: typeof AppResidentVtuRouteWithChildren
   AppSuperAuditRoute: typeof AppSuperAuditRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
   AppGuardIndexRoute: typeof AppGuardIndexRoute
@@ -505,7 +536,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppResidentGuestsRoute: AppResidentGuestsRoute,
   AppResidentInviteRoute: AppResidentInviteRoute,
   AppResidentIssuesRoute: AppResidentIssuesRoute,
-  AppResidentVtuRoute: AppResidentVtuRoute,
+  AppResidentVtuRoute: AppResidentVtuRouteWithChildren,
   AppSuperAuditRoute: AppSuperAuditRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
   AppGuardIndexRoute: AppGuardIndexRoute,
