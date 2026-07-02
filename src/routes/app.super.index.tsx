@@ -39,17 +39,23 @@ function SuperDashboard() {
 
   const create = useMutation({
     mutationFn: async () => {
-      const code = form.code.trim().toUpperCase();
-      if (!form.name.trim() || !code) throw new Error("Name and code required");
+      if (!form.name.trim()) throw new Error("Name required");
+      let code = form.code.trim().toUpperCase();
+      if (!code) {
+        const { data, error } = await supabase.rpc("generate_unique_estate_code");
+        if (error) throw error;
+        code = data as string;
+      }
       const { data, error } = await supabase.from("estates").insert({
         name: form.name.trim(), code, address: form.address.trim() || null, status: "active",
-      }).select("id").single();
+      }).select("id,code").single();
       if (error) throw error;
       await supabase.from("audit_logs").insert({
-        estate_id: data.id, action: "estate.created", entity: "estates", entity_id: data.id, metadata: { code },
+        estate_id: data.id, action: "estate.created", entity: "estates", entity_id: data.id, metadata: { code: data.code },
       });
+      return data;
     },
-    onSuccess: () => { toast.success("Estate created"); setOpen(false); setForm({ name: "", code: "", address: "" }); qc.invalidateQueries({ queryKey: ["all-estates"] }); },
+    onSuccess: (data) => { toast.success(`Estate created · code ${data.code}`); setOpen(false); setForm({ name: "", code: "", address: "" }); qc.invalidateQueries({ queryKey: ["all-estates"] }); qc.invalidateQueries({ queryKey: ["platform-stats"] }); },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -86,7 +92,7 @@ function SuperDashboard() {
       {open && (
         <Card className="space-y-3">
           <Field label="Estate name"><Input value={form.name} onChange={(v) => setForm({ ...form, name: v })} /></Field>
-          <Field label="Estate code (unique)"><Input value={form.code} onChange={(v) => setForm({ ...form, code: v.toUpperCase() })} /></Field>
+          <Field label="Estate code (leave blank to auto-generate)"><Input value={form.code} onChange={(v) => setForm({ ...form, code: v.toUpperCase() })} /></Field>
           <Field label="Address"><Input value={form.address} onChange={(v) => setForm({ ...form, address: v })} /></Field>
           <button onClick={() => create.mutate()} disabled={create.isPending} className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60">
             {create.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Create estate
