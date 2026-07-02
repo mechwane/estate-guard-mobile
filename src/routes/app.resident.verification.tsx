@@ -35,7 +35,7 @@ function Verification() {
   const [houseNumber, setHouseNumber] = useState("");
   const [block, setBlock] = useState("");
   const [street, setStreet] = useState("");
-  const [occupantType, setOccupantType] = useState<OccupantType>("owner");
+  const [occupantType, setOccupantType] = useState<OccupantType>("resident");
   const [docPath, setDocPath] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -46,7 +46,7 @@ function Verification() {
     setHouseNumber(p.house_number ?? "");
     setBlock(p.block ?? "");
     setStreet(p.street ?? "");
-    setOccupantType((p.occupant_type as OccupantType) ?? "owner");
+    setOccupantType((p.occupant_type as OccupantType) ?? "resident");
     setDocPath(p.verification_doc_path ?? null);
   }, [p?.id]);
 
@@ -69,12 +69,12 @@ function Verification() {
     mutationFn: async () => {
       const { error } = await supabase.rpc("submit_verification", {
         _full_name: fullName,
-        _phone: phone || null,
+        _phone: phone || "",
         _house_number: houseNumber,
-        _block: block || null,
+        _block: block || "",
         _street: street,
         _occupant_type: occupantType,
-        _doc_path: docPath,
+        _doc_path: docPath ?? "",
       });
       if (error) throw error;
     },
