@@ -70,3 +70,44 @@ export function EmptyState({ title, description, icon, action }: {
     </div>
   );
 }
+
+export function ListSkeleton({ rows = 4 }: { rows?: number }) {
+  return (
+    <div className="space-y-2">
+      {Array.from({ length: rows }).map((_, i) => (
+        <div key={i} className="card-surface p-4">
+          <div className="h-3 w-1/3 animate-pulse rounded bg-muted" />
+          <div className="mt-2 h-3 w-2/3 animate-pulse rounded bg-muted/70" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function ErrorState({ message, onRetry }: { message?: string; onRetry?: () => void }) {
+  return (
+    <div className="card-surface p-6 text-center">
+      <h3 className="text-sm font-semibold text-foreground">Couldn't load this</h3>
+      <p className="mt-1 text-sm text-muted-foreground">{message ?? "Please check your connection and try again."}</p>
+      {onRetry && (
+        <button
+          onClick={onRetry}
+          className="mt-4 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground hover:bg-primary-dark"
+        >
+          Try again
+        </button>
+      )}
+    </div>
+  );
+}
+
+export function SearchInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
+  return (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder ?? "Search"}
+      className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+    />
+  );
+}

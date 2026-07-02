@@ -26,13 +26,25 @@ function SignUp() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const fullName = form.fullName.trim();
+    const email = form.email.trim().toLowerCase();
+    const phone = form.phone.trim();
+    const unit = form.unit.trim();
+    const estateCode = form.estateCode.trim().toUpperCase();
+
+    if (fullName.length < 2) return toast.error("Enter your full name");
+    if (!/^\S+@\S+\.\S+$/.test(email)) return toast.error("Enter a valid email");
+    if (form.password.length < 8) return toast.error("Password must be at least 8 characters");
+    if (phone && !/^[+\d][\d\s\-()]{5,}$/.test(phone)) return toast.error("Enter a valid phone number");
+    if (!estateCode) return toast.error("Estate code is required");
+
     setLoading(true);
 
-    // Verify estate code exists (RLS allows anon SELECT on estates)
     const { data: estate, error: estErr } = await supabase
       .from("estates")
       .select("id,code,status")
-      .eq("code", form.estateCode.trim().toUpperCase())
+      .eq("code", estateCode)
       .maybeSingle();
 
     if (estErr || !estate) {
@@ -48,16 +60,16 @@ function SignUp() {
 
     const redirectUrl = `${window.location.origin}/`;
     const { error } = await supabase.auth.signUp({
-      email: form.email,
+      email,
       password: form.password,
       options: {
         emailRedirectTo: redirectUrl,
         data: {
-          full_name: form.fullName,
-          phone: form.phone,
+          full_name: fullName,
+          phone: phone || null,
           role: form.role,
           estate_code: estate.code,
-          unit: form.unit,
+          unit: unit || null,
         },
       },
     });
