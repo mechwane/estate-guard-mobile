@@ -108,26 +108,41 @@ export type Database = {
       estates: {
         Row: {
           address: string | null
+          admin_user_id: string | null
+          city: string | null
           code: string
+          contact_email: string | null
+          contact_phone: string | null
           created_at: string
           id: string
           name: string
+          state: string | null
           status: Database["public"]["Enums"]["estate_status"]
         }
         Insert: {
           address?: string | null
+          admin_user_id?: string | null
+          city?: string | null
           code: string
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
           id?: string
           name: string
+          state?: string | null
           status?: Database["public"]["Enums"]["estate_status"]
         }
         Update: {
           address?: string | null
+          admin_user_id?: string | null
+          city?: string | null
           code?: string
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
           id?: string
           name?: string
+          state?: string | null
           status?: Database["public"]["Enums"]["estate_status"]
         }
         Relationships: []
@@ -426,33 +441,69 @@ export type Database = {
       profiles: {
         Row: {
           approved: boolean
+          avatar_url: string | null
+          block: string | null
           created_at: string
+          email: string | null
           estate_id: string | null
           full_name: string
+          house_number: string | null
           id: string
+          occupant_type: Database["public"]["Enums"]["occupant_type"] | null
           phone: string | null
+          street: string | null
           unit: string | null
           updated_at: string
+          verification_doc_path: string | null
+          verification_notes: string | null
+          verification_reviewed_at: string | null
+          verification_reviewed_by: string | null
+          verification_status: Database["public"]["Enums"]["verification_status"]
+          verification_submitted_at: string | null
         }
         Insert: {
           approved?: boolean
+          avatar_url?: string | null
+          block?: string | null
           created_at?: string
+          email?: string | null
           estate_id?: string | null
           full_name?: string
+          house_number?: string | null
           id: string
+          occupant_type?: Database["public"]["Enums"]["occupant_type"] | null
           phone?: string | null
+          street?: string | null
           unit?: string | null
           updated_at?: string
+          verification_doc_path?: string | null
+          verification_notes?: string | null
+          verification_reviewed_at?: string | null
+          verification_reviewed_by?: string | null
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+          verification_submitted_at?: string | null
         }
         Update: {
           approved?: boolean
+          avatar_url?: string | null
+          block?: string | null
           created_at?: string
+          email?: string | null
           estate_id?: string | null
           full_name?: string
+          house_number?: string | null
           id?: string
+          occupant_type?: Database["public"]["Enums"]["occupant_type"] | null
           phone?: string | null
+          street?: string | null
           unit?: string | null
           updated_at?: string
+          verification_doc_path?: string | null
+          verification_notes?: string | null
+          verification_reviewed_at?: string | null
+          verification_reviewed_by?: string | null
+          verification_status?: Database["public"]["Enums"]["verification_status"]
+          verification_submitted_at?: string | null
         }
         Relationships: [
           {
@@ -665,11 +716,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      assign_estate_admin: {
+        Args: { _estate_id: string; _user_id: string }
+        Returns: undefined
+      }
       current_estate_id: { Args: never; Returns: string }
       current_role_is: {
         Args: { _role: Database["public"]["Enums"]["app_role"] }
         Returns: boolean
       }
+      generate_unique_estate_code: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -678,6 +734,26 @@ export type Database = {
         Returns: boolean
       }
       is_super_admin: { Args: never; Returns: boolean }
+      review_verification: {
+        Args: { _approve: boolean; _notes: string; _user_id: string }
+        Returns: undefined
+      }
+      set_estate_access: {
+        Args: { _approved: boolean; _user_id: string }
+        Returns: undefined
+      }
+      submit_verification: {
+        Args: {
+          _block: string
+          _doc_path: string
+          _full_name: string
+          _house_number: string
+          _occupant_type: Database["public"]["Enums"]["occupant_type"]
+          _phone: string
+          _street: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role:
@@ -690,6 +766,13 @@ export type Database = {
       estate_status: "active" | "suspended"
       invite_status: "active" | "used" | "expired" | "revoked"
       issue_status: "open" | "in_progress" | "resolved"
+      occupant_type: "resident" | "commercial"
+      verification_status:
+        | "not_submitted"
+        | "incomplete"
+        | "pending"
+        | "approved"
+        | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -828,6 +911,14 @@ export const Constants = {
       estate_status: ["active", "suspended"],
       invite_status: ["active", "used", "expired", "revoked"],
       issue_status: ["open", "in_progress", "resolved"],
+      occupant_type: ["resident", "commercial"],
+      verification_status: [
+        "not_submitted",
+        "incomplete",
+        "pending",
+        "approved",
+        "rejected",
+      ],
     },
   },
 } as const
