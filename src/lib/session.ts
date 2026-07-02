@@ -14,6 +14,14 @@ export interface SessionInfo {
     estate_id: string | null;
     unit: string | null;
     approved: boolean;
+    avatar_url?: string | null;
+    verification_status?: "not_submitted" | "incomplete" | "pending" | "approved" | "rejected";
+    verification_notes?: string | null;
+    house_number?: string | null;
+    block?: string | null;
+    street?: string | null;
+    occupant_type?: "resident" | "commercial" | null;
+    verification_doc_path?: string | null;
   } | null;
   estate: { id: string; name: string; code: string; status: string } | null;
 }
