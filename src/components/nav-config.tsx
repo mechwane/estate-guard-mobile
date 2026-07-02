@@ -1,4 +1,4 @@
-import { Home, Users, Receipt, MessageSquare, Shield, ScrollText, Building2, Smartphone, CalendarDays, MoreHorizontal, ShieldCheck } from "lucide-react";
+import { Home, Users, Receipt, MessageSquare, Shield, ScrollText, Building2, Smartphone, CalendarDays, MoreHorizontal, ShieldCheck, AlertTriangle } from "lucide-react";
 import type { AppRole } from "@/lib/session";
 import type { ReactNode } from "react";
 
@@ -11,8 +11,11 @@ export const navByRole: Record<AppRole, { to: string; label: string; icon: React
     { to: "/app/resident/more", label: "More", icon: <MoreHorizontal /> },
   ],
   guard: [
-    { to: "/app/guard", label: "Validate", icon: <Shield /> },
-    { to: "/app/guard/history", label: "History", icon: <ScrollText /> },
+    { to: "/app/guard", label: "Home", icon: <Home /> },
+    { to: "/app/guard/validate", label: "Validate", icon: <Shield /> },
+    { to: "/app/guard/active", label: "Inside", icon: <Users /> },
+    { to: "/app/guard/incidents", label: "Incidents", icon: <AlertTriangle /> },
+    { to: "/app/guard/more", label: "More", icon: <MoreHorizontal /> },
   ],
   estate_admin: [
     { to: "/app/admin", label: "Overview", icon: <Home /> },
@@ -26,4 +29,3 @@ export const navByRole: Record<AppRole, { to: string; label: string; icon: React
     { to: "/app/super/audit", label: "Audit", icon: <ScrollText /> },
   ],
 };
-
