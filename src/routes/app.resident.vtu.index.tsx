@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Smartphone, Wifi, Zap, Tv, ScrollText, ArrowRight } from "lucide-react";
 import { Card, SectionTitle } from "@/components/ui-kit";
 
-export const Route = createFileRoute("/app/resident/vtu")({
+export const Route = createFileRoute("/app/resident/vtu/")({
   component: VtuHub,
 });
 
