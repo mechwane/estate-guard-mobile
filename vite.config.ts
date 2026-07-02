@@ -10,7 +10,7 @@ export default defineConfig({
     tanstackStart({
       server: { entry: "server" },
     }),
-    nitro({ config: { preset: "cloudflare_module" } }),
+    nitro({ preset: "cloudflare_module" }),
     viteReact(),
     tailwindcss(),
     tsConfigPaths(),
