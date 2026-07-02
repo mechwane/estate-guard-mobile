@@ -16,11 +16,15 @@ import { Route as AuthSignUpRouteImport } from './routes/auth.sign-up'
 import { Route as AuthSignInRouteImport } from './routes/auth.sign-in'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
+import { Route as AppDeniedRouteImport } from './routes/app.denied'
 import { Route as AppSuperIndexRouteImport } from './routes/app.super.index'
 import { Route as AppResidentIndexRouteImport } from './routes/app.resident.index'
 import { Route as AppGuardIndexRouteImport } from './routes/app.guard.index'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 import { Route as AppSuperAuditRouteImport } from './routes/app.super.audit'
+import { Route as AppResidentVerificationRouteImport } from './routes/app.resident.verification'
+import { Route as AppResidentProfileRouteImport } from './routes/app.resident.profile'
+import { Route as AppResidentMoreRouteImport } from './routes/app.resident.more'
 import { Route as AppResidentIssuesRouteImport } from './routes/app.resident.issues'
 import { Route as AppResidentInviteRouteImport } from './routes/app.resident.invite'
 import { Route as AppResidentGuestsRouteImport } from './routes/app.resident.guests'
@@ -75,6 +79,11 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
   path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AppDeniedRoute = AppDeniedRouteImport.update({
+  id: '/denied',
+  path: '/denied',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSuperIndexRoute = AppSuperIndexRouteImport.update({
   id: '/super/',
   path: '/super/',
@@ -98,6 +107,21 @@ const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
 const AppSuperAuditRoute = AppSuperAuditRouteImport.update({
   id: '/super/audit',
   path: '/super/audit',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentVerificationRoute = AppResidentVerificationRouteImport.update({
+  id: '/resident/verification',
+  path: '/resident/verification',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentProfileRoute = AppResidentProfileRouteImport.update({
+  id: '/resident/profile',
+  path: '/resident/profile',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentMoreRoute = AppResidentMoreRouteImport.update({
+  id: '/resident/more',
+  path: '/resident/more',
   getParentRoute: () => AppRoute,
 } as any)
 const AppResidentIssuesRoute = AppResidentIssuesRouteImport.update({
@@ -195,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
+  '/app/denied': typeof AppDeniedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/sign-in': typeof AuthSignInRoute
@@ -210,6 +235,9 @@ export interface FileRoutesByFullPath {
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
+  '/app/resident/more': typeof AppResidentMoreRoute
+  '/app/resident/profile': typeof AppResidentProfileRoute
+  '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
   '/app/admin/': typeof AppAdminIndexRoute
   '/app/guard/': typeof AppGuardIndexRoute
@@ -227,6 +255,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
+  '/app/denied': typeof AppDeniedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/sign-in': typeof AuthSignInRoute
@@ -242,6 +271,9 @@ export interface FileRoutesByTo {
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
+  '/app/resident/more': typeof AppResidentMoreRoute
+  '/app/resident/profile': typeof AppResidentProfileRoute
+  '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
   '/app/admin': typeof AppAdminIndexRoute
   '/app/guard': typeof AppGuardIndexRoute
@@ -260,6 +292,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
+  '/app/denied': typeof AppDeniedRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/sign-in': typeof AuthSignInRoute
@@ -275,6 +308,9 @@ export interface FileRoutesById {
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
+  '/app/resident/more': typeof AppResidentMoreRoute
+  '/app/resident/profile': typeof AppResidentProfileRoute
+  '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
   '/app/admin/': typeof AppAdminIndexRoute
   '/app/guard/': typeof AppGuardIndexRoute
@@ -294,6 +330,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/app/denied'
     | '/auth/forgot-password'
     | '/auth/reset-password'
     | '/auth/sign-in'
@@ -309,6 +346,9 @@ export interface FileRouteTypes {
     | '/app/resident/guests'
     | '/app/resident/invite'
     | '/app/resident/issues'
+    | '/app/resident/more'
+    | '/app/resident/profile'
+    | '/app/resident/verification'
     | '/app/super/audit'
     | '/app/admin/'
     | '/app/guard/'
@@ -326,6 +366,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/app/denied'
     | '/auth/forgot-password'
     | '/auth/reset-password'
     | '/auth/sign-in'
@@ -341,6 +382,9 @@ export interface FileRouteTypes {
     | '/app/resident/guests'
     | '/app/resident/invite'
     | '/app/resident/issues'
+    | '/app/resident/more'
+    | '/app/resident/profile'
+    | '/app/resident/verification'
     | '/app/super/audit'
     | '/app/admin'
     | '/app/guard'
@@ -358,6 +402,7 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/auth'
+    | '/app/denied'
     | '/auth/forgot-password'
     | '/auth/reset-password'
     | '/auth/sign-in'
@@ -373,6 +418,9 @@ export interface FileRouteTypes {
     | '/app/resident/guests'
     | '/app/resident/invite'
     | '/app/resident/issues'
+    | '/app/resident/more'
+    | '/app/resident/profile'
+    | '/app/resident/verification'
     | '/app/super/audit'
     | '/app/admin/'
     | '/app/guard/'
@@ -444,6 +492,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/app/denied': {
+      id: '/app/denied'
+      path: '/denied'
+      fullPath: '/app/denied'
+      preLoaderRoute: typeof AppDeniedRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/super/': {
       id: '/app/super/'
       path: '/super'
@@ -477,6 +532,27 @@ declare module '@tanstack/react-router' {
       path: '/super/audit'
       fullPath: '/app/super/audit'
       preLoaderRoute: typeof AppSuperAuditRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/verification': {
+      id: '/app/resident/verification'
+      path: '/resident/verification'
+      fullPath: '/app/resident/verification'
+      preLoaderRoute: typeof AppResidentVerificationRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/profile': {
+      id: '/app/resident/profile'
+      path: '/resident/profile'
+      fullPath: '/app/resident/profile'
+      preLoaderRoute: typeof AppResidentProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/more': {
+      id: '/app/resident/more'
+      path: '/resident/more'
+      fullPath: '/app/resident/more'
+      preLoaderRoute: typeof AppResidentMoreRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/resident/issues': {
@@ -609,6 +685,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppDeniedRoute: typeof AppDeniedRoute
   AppAdminBillsRoute: typeof AppAdminBillsRoute
   AppAdminEventsRoute: typeof AppAdminEventsRoute
   AppAdminGuestsRoute: typeof AppAdminGuestsRoute
@@ -620,6 +697,9 @@ interface AppRouteChildren {
   AppResidentGuestsRoute: typeof AppResidentGuestsRoute
   AppResidentInviteRoute: typeof AppResidentInviteRoute
   AppResidentIssuesRoute: typeof AppResidentIssuesRoute
+  AppResidentMoreRoute: typeof AppResidentMoreRoute
+  AppResidentProfileRoute: typeof AppResidentProfileRoute
+  AppResidentVerificationRoute: typeof AppResidentVerificationRoute
   AppSuperAuditRoute: typeof AppSuperAuditRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
   AppGuardIndexRoute: typeof AppGuardIndexRoute
@@ -635,6 +715,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppDeniedRoute: AppDeniedRoute,
   AppAdminBillsRoute: AppAdminBillsRoute,
   AppAdminEventsRoute: AppAdminEventsRoute,
   AppAdminGuestsRoute: AppAdminGuestsRoute,
@@ -646,6 +727,9 @@ const AppRouteChildren: AppRouteChildren = {
   AppResidentGuestsRoute: AppResidentGuestsRoute,
   AppResidentInviteRoute: AppResidentInviteRoute,
   AppResidentIssuesRoute: AppResidentIssuesRoute,
+  AppResidentMoreRoute: AppResidentMoreRoute,
+  AppResidentProfileRoute: AppResidentProfileRoute,
+  AppResidentVerificationRoute: AppResidentVerificationRoute,
   AppSuperAuditRoute: AppSuperAuditRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
   AppGuardIndexRoute: AppGuardIndexRoute,
