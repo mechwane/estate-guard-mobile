@@ -55,6 +55,8 @@ function ResidentHome() {
       <SectionTitle>Quick actions</SectionTitle>
       <div className="grid grid-cols-1 gap-2">
         <ActionLink to="/app/resident/invite" icon={<UserPlus className="h-5 w-5" />} title="Invite a guest" desc="Generate a one-time entry code" />
+        <ActionLink to="/app/resident/vtu" icon={<Smartphone className="h-5 w-5" />} title="Airtime, data & bills" desc="Top up in seconds" />
+        <ActionLink to="/app/resident/events" icon={<CalendarDays className="h-5 w-5" />} title="Discover events" desc="Estate and public happenings" />
         <ActionLink to="/app/resident/issues" icon={<MessageSquarePlus className="h-5 w-5" />} title="Report an issue" desc="Send it to estate admin" />
         <ActionLink to="/app/resident/bills" icon={<Receipt className="h-5 w-5" />} title="View bills" desc="See what's due" />
       </div>
