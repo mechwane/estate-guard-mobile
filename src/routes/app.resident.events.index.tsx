@@ -8,7 +8,7 @@ import { ngn } from "@/lib/format";
 import { format } from "date-fns";
 import { CalendarDays, MapPin, Plus, Ticket } from "lucide-react";
 
-export const Route = createFileRoute("/app/resident/events")({
+export const Route = createFileRoute("/app/resident/events/")({
   component: EventsList,
 });
 
