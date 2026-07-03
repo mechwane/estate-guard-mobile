@@ -1,9 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { Card } from "@/components/ui-kit";
-import { LogOut, ShieldCheck, Building2, Mail, Phone } from "lucide-react";
+import { LogOut, ShieldCheck, Building2, Mail, Phone, History, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/app/guard/more")({
   component: GuardMore,
