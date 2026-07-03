@@ -288,6 +288,7 @@ export type Database = {
           code: string
           created_at: string
           estate_id: string
+          exited_by: string | null
           expires_at: string
           guest_name: string
           id: string
@@ -298,6 +299,7 @@ export type Database = {
           status: Database["public"]["Enums"]["invite_status"]
           updated_at: string
           validated_by: string | null
+          vehicle_number: string | null
           visit_time: string
         }
         Insert: {
@@ -306,6 +308,7 @@ export type Database = {
           code: string
           created_at?: string
           estate_id: string
+          exited_by?: string | null
           expires_at: string
           guest_name: string
           id?: string
@@ -316,6 +319,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["invite_status"]
           updated_at?: string
           validated_by?: string | null
+          vehicle_number?: string | null
           visit_time: string
         }
         Update: {
@@ -324,6 +328,7 @@ export type Database = {
           code?: string
           created_at?: string
           estate_id?: string
+          exited_by?: string | null
           expires_at?: string
           guest_name?: string
           id?: string
@@ -334,6 +339,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["invite_status"]
           updated_at?: string
           validated_by?: string | null
+          vehicle_number?: string | null
           visit_time?: string
         }
         Relationships: [
@@ -745,6 +751,11 @@ export type Database = {
         Returns: boolean
       }
       generate_unique_estate_code: { Args: never; Returns: string }
+      guard_check_in: {
+        Args: { _invite_id: string; _vehicle_number?: string }
+        Returns: Json
+      }
+      guard_check_out: { Args: { _invite_id: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -793,6 +804,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      validate_guest_code: { Args: { _code: string }; Returns: Json }
     }
     Enums: {
       app_role:
