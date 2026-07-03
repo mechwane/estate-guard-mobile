@@ -23,6 +23,7 @@ function SuperDashboard() {
   const [q, setQ] = useState("");
   const [editing, setEditing] = useState<Estate | null>(null);
   const [assigning, setAssigning] = useState<Estate | null>(null);
+  const [toggling, setToggling] = useState<Estate | null>(null);
 
   const estatesQ = useQuery({
     queryKey: ["all-estates"],
