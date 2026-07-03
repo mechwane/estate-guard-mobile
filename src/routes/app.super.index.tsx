@@ -112,11 +112,11 @@ function SuperDashboard() {
          {filtered.map((e) => (
            <Card key={e.id} className="p-4">
              <div className="flex items-start justify-between gap-3">
-               <div className="min-w-0">
-                 <div className="truncate text-sm font-medium text-foreground">{e.name}</div>
+               <Link to="/app/super/estates/$estateId" params={{ estateId: e.id }} className="min-w-0 flex-1 text-left">
+                 <div className="truncate text-sm font-medium text-foreground hover:text-primary">{e.name}</div>
                  <div className="mt-0.5 text-xs text-muted-foreground">Code {e.code} · {format(new Date(e.created_at), "MMM d, yyyy")}</div>
                  {(e.city || e.state) && <div className="mt-0.5 text-xs text-muted-foreground">{[e.city, e.state].filter(Boolean).join(", ")}</div>}
-               </div>
+               </Link>
                <StatusBadge tone={e.status === "active" ? "success" : "warning"}>{e.status}</StatusBadge>
              </div>
              <div className="mt-3 grid grid-cols-3 gap-2">
