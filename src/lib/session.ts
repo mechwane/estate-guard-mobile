@@ -44,7 +44,8 @@ export async function fetchSessionInfo(): Promise<SessionInfo> {
   ]);
 
   const role: AppRole | null =
-    (roles ?? []).map((r) => r.role as AppRole).sort((a, b) => roleRank[b] - roleRank[a])[0] ?? null;
+    (roles ?? []).map((r) => r.role as AppRole).sort((a, b) => roleRank[b] - roleRank[a])[0] ??
+    null;
 
   let estate: SessionInfo["estate"] = null;
   if (profile?.estate_id) {
@@ -75,10 +76,15 @@ export function useSession() {
 
 export function roleHome(role: AppRole | null): string {
   switch (role) {
-    case "super_admin": return "/app/super";
-    case "estate_admin": return "/app/admin";
-    case "guard": return "/app/guard";
-    case "resident": return "/app/resident";
-    default: return "/auth/sign-in";
+    case "super_admin":
+      return "/app/super";
+    case "estate_admin":
+      return "/app/admin";
+    case "guard":
+      return "/app/guard";
+    case "resident":
+      return "/app/resident";
+    default:
+      return "/auth/sign-in";
   }
 }

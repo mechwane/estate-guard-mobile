@@ -1,4 +1,17 @@
-import { Home, Users, Receipt, MessageSquare, Shield, ScrollText, Building2, Smartphone, CalendarDays, MoreHorizontal, ShieldCheck, AlertTriangle } from "lucide-react";
+import {
+  Home,
+  Users,
+  Receipt,
+  MessageSquare,
+  Shield,
+  ScrollText,
+  Building2,
+  Smartphone,
+  CalendarDays,
+  MoreHorizontal,
+  ShieldCheck,
+  AlertTriangle,
+} from "lucide-react";
 import type { AppRole } from "@/lib/session";
 import type { ReactNode } from "react";
 

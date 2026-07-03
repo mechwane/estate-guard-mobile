@@ -37,20 +37,27 @@ function SignIn() {
       <form onSubmit={onSubmit} className="mt-8 space-y-4">
         <Field label="Email">
           <input
-            type="email" required autoComplete="email"
-            value={email} onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            required
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </Field>
         <Field label="Password">
           <input
-            type="password" required autoComplete="current-password"
-            value={password} onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            required
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </Field>
         <button
-          type="submit" disabled={loading}
+          type="submit"
+          disabled={loading}
           className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-dark disabled:opacity-60"
         >
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -59,14 +66,19 @@ function SignIn() {
       </form>
 
       <div className="mt-4 text-center">
-        <Link to="/auth/forgot-password" className="text-xs font-medium text-muted-foreground hover:text-foreground">
+        <Link
+          to="/auth/forgot-password"
+          className="text-xs font-medium text-muted-foreground hover:text-foreground"
+        >
           Forgot password?
         </Link>
       </div>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Don't have an account?{" "}
-        <Link to="/auth/sign-up" className="font-medium text-primary hover:text-primary-dark">Create one</Link>
+        <Link to="/auth/sign-up" className="font-medium text-primary hover:text-primary-dark">
+          Create one
+        </Link>
       </p>
     </div>
   );

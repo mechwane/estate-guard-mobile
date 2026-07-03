@@ -1,7 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSession } from "@/lib/session";
 import { Card, StatusBadge } from "@/components/ui-kit";
-import { ChevronRight, User, ShieldCheck, LogOut, Receipt, Smartphone, CalendarDays } from "lucide-react";
+import {
+  ChevronRight,
+  User,
+  ShieldCheck,
+  LogOut,
+  Receipt,
+  Smartphone,
+  CalendarDays,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -12,10 +20,14 @@ export const Route = createFileRoute("/app/resident/more")({
 
 function verificationTone(status: string | null | undefined) {
   switch (status) {
-    case "approved": return { tone: "success" as const, label: "Verified" };
-    case "pending": return { tone: "warning" as const, label: "Pending review" };
-    case "rejected": return { tone: "error" as const, label: "Rejected" };
-    default: return { tone: "neutral" as const, label: "Not submitted" };
+    case "approved":
+      return { tone: "success" as const, label: "Verified" };
+    case "pending":
+      return { tone: "warning" as const, label: "Pending review" };
+    case "rejected":
+      return { tone: "error" as const, label: "Rejected" };
+    default:
+      return { tone: "neutral" as const, label: "Not submitted" };
   }
 }
 
@@ -40,7 +52,9 @@ function More() {
             {(session?.profile?.full_name ?? "U").slice(0, 1).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-sm font-medium text-foreground">{session?.profile?.full_name || "Unnamed"}</div>
+            <div className="truncate text-sm font-medium text-foreground">
+              {session?.profile?.full_name || "Unnamed"}
+            </div>
             <div className="truncate text-xs text-muted-foreground">{session?.email}</div>
           </div>
           <StatusBadge tone={v.tone}>{v.label}</StatusBadge>
@@ -48,10 +62,23 @@ function More() {
       </Card>
 
       <div className="space-y-1.5">
-        <Row to="/app/resident/profile" icon={<User className="h-4 w-4" />} label="Profile & account" />
-        <Row to="/app/resident/verification" icon={<ShieldCheck className="h-4 w-4" />} label="Estate verification" hint={v.label} />
+        <Row
+          to="/app/resident/profile"
+          icon={<User className="h-4 w-4" />}
+          label="Profile & account"
+        />
+        <Row
+          to="/app/resident/verification"
+          icon={<ShieldCheck className="h-4 w-4" />}
+          label="Estate verification"
+          hint={v.label}
+        />
         <Row to="/app/resident/bills" icon={<Receipt className="h-4 w-4" />} label="Bills" />
-        <Row to="/app/resident/vtu" icon={<Smartphone className="h-4 w-4" />} label="Airtime, data & bills" />
+        <Row
+          to="/app/resident/vtu"
+          icon={<Smartphone className="h-4 w-4" />}
+          label="Airtime, data & bills"
+        />
         <Row to="/app/resident/events" icon={<CalendarDays className="h-4 w-4" />} label="Events" />
       </div>
 
@@ -65,7 +92,17 @@ function More() {
   );
 }
 
-function Row({ to, icon, label, hint }: { to: string; icon: React.ReactNode; label: string; hint?: string }) {
+function Row({
+  to,
+  icon,
+  label,
+  hint,
+}: {
+  to: string;
+  icon: React.ReactNode;
+  label: string;
+  hint?: string;
+}) {
   return (
     <Link to={to} className="card-surface flex items-center gap-3 px-4 py-3 hover:bg-muted/40">
       <span className="text-muted-foreground">{icon}</span>

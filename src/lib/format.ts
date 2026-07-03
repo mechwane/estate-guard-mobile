@@ -1,6 +1,10 @@
 export function ngn(n: number | string | null | undefined) {
   const v = Number(n ?? 0);
-  return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(v);
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    maximumFractionDigits: 0,
+  }).format(v);
 }
 
 export function genRef(prefix = "EG") {

@@ -24,7 +24,9 @@ function Splash() {
       navigate({ to: roleHome(info.role), replace: true });
     };
     void go();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [navigate]);
 
   return (

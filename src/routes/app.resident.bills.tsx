@@ -55,7 +55,10 @@ function Bills() {
         metadata: { amount: bill.amount },
       });
     },
-    onSuccess: () => { toast.success("Marked paid"); qc.invalidateQueries({ queryKey: ["bills"] }); },
+    onSuccess: () => {
+      toast.success("Marked paid");
+      qc.invalidateQueries({ queryKey: ["bills"] });
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -79,7 +82,9 @@ function Bills() {
             key={t}
             onClick={() => setTab(t)}
             className={`flex-1 rounded-lg px-3 py-1.5 text-xs font-medium capitalize transition-colors ${
-              tab === t ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+              tab === t
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             {t} ({grouped[t].length})
@@ -98,12 +103,20 @@ function Bills() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="truncate text-sm font-medium text-foreground">{b.title}</div>
-                    {b.description && <div className="mt-0.5 text-xs text-muted-foreground">{b.description}</div>}
-                    <div className="mt-1 text-xs text-muted-foreground">Due {format(new Date(b.due_date), "MMM d, yyyy")}</div>
+                    {b.description && (
+                      <div className="mt-0.5 text-xs text-muted-foreground">{b.description}</div>
+                    )}
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      Due {format(new Date(b.due_date), "MMM d, yyyy")}
+                    </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-base font-semibold tabular-nums text-foreground">₦{Number(b.amount).toLocaleString()}</div>
-                    <StatusBadge tone={b.status === "paid" ? "success" : overdue ? "error" : "warning"}>
+                    <div className="text-base font-semibold tabular-nums text-foreground">
+                      ₦{Number(b.amount).toLocaleString()}
+                    </div>
+                    <StatusBadge
+                      tone={b.status === "paid" ? "success" : overdue ? "error" : "warning"}
+                    >
                       {overdue ? "overdue" : b.status}
                     </StatusBadge>
                   </div>

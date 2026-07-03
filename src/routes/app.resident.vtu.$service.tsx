@@ -67,7 +67,16 @@ function PurchasePage() {
   const [amount, setAmount] = useState<string>("");
   const [packageLabel, setPackageLabel] = useState<string>("");
   const [step, setStep] = useState<Step>("form");
-  const [tx, setTx] = useState<{ id: string; reference: string; amount: number; provider_name: string; recipient: string; package_label: string | null; status: string; created_at: string } | null>(null);
+  const [tx, setTx] = useState<{
+    id: string;
+    reference: string;
+    amount: number;
+    provider_name: string;
+    recipient: string;
+    package_label: string | null;
+    status: string;
+    created_at: string;
+  } | null>(null);
   const [err, setErr] = useState<string>("");
 
   useEffect(() => {
@@ -81,9 +90,18 @@ function PurchasePage() {
 
   if (!valid) {
     return (
-      <EmptyState title="Unknown service" description="Return to VTU services." action={
-        <Link to="/app/resident/vtu" className="rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground">Back</Link>
-      } />
+      <EmptyState
+        title="Unknown service"
+        description="Return to VTU services."
+        action={
+          <Link
+            to="/app/resident/vtu"
+            className="rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground"
+          >
+            Back
+          </Link>
+        }
+      />
     );
   }
 
@@ -91,7 +109,8 @@ function PurchasePage() {
 
   const validate = () => {
     if (!providerCode) return "Choose a provider";
-    if (recipient.trim().length < 5) return `Enter a valid ${RECIPIENT_LABEL[service].toLowerCase()}`;
+    if (recipient.trim().length < 5)
+      return `Enter a valid ${RECIPIENT_LABEL[service].toLowerCase()}`;
     const amt = Number(amount);
     if (!amt || amt < 50) return "Enter a valid amount";
     if (amt > 500000) return "Amount too large";
@@ -148,33 +167,60 @@ function PurchasePage() {
 
   return (
     <div className="space-y-4">
-      <button onClick={() => (step === "form" ? navigate({ to: "/app/resident/vtu" }) : setStep("form"))} className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+      <button
+        onClick={() => (step === "form" ? navigate({ to: "/app/resident/vtu" }) : setStep("form"))}
+        className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="h-3.5 w-3.5" /> Back
       </button>
 
       <div className="flex items-center justify-between">
         <h2 className="text-base font-semibold">{SERVICE_LABEL[service]}</h2>
-        <Link to="/app/resident/vtu/history" className="text-xs font-medium text-primary">History</Link>
+        <Link to="/app/resident/vtu/history" className="text-xs font-medium text-primary">
+          History
+        </Link>
       </div>
 
       {step === "form" && (
         <div className="space-y-4">
-          {isLoading ? <ListSkeleton rows={2} /> : (
+          {isLoading ? (
+            <ListSkeleton rows={2} />
+          ) : (
             <>
               <Field label="Provider">
-                <select value={providerCode} onChange={(e) => setProviderCode(e.target.value)} className="input">
-                  {(providers ?? []).map((p) => <option key={p.code} value={p.code}>{p.name}</option>)}
+                <select
+                  value={providerCode}
+                  onChange={(e) => setProviderCode(e.target.value)}
+                  className="input"
+                >
+                  {(providers ?? []).map((p) => (
+                    <option key={p.code} value={p.code}>
+                      {p.name}
+                    </option>
+                  ))}
                 </select>
               </Field>
               <Field label={RECIPIENT_LABEL[service]}>
-                <input value={recipient} onChange={(e) => setRecipient(e.target.value)} inputMode={service === "airtime" || service === "data" ? "tel" : "text"} className="input" />
+                <input
+                  value={recipient}
+                  onChange={(e) => setRecipient(e.target.value)}
+                  inputMode={service === "airtime" || service === "data" ? "tel" : "text"}
+                  className="input"
+                />
               </Field>
 
               {packages ? (
                 <Field label="Package">
                   <div className="grid grid-cols-2 gap-2">
                     {packages.map((p) => (
-                      <button key={p.label} onClick={() => { setPackageLabel(p.label); setAmount(String(p.amount)); }} className={`card-surface p-3 text-left text-xs ${packageLabel === p.label ? "border-primary ring-1 ring-primary/30" : ""}`}>
+                      <button
+                        key={p.label}
+                        onClick={() => {
+                          setPackageLabel(p.label);
+                          setAmount(String(p.amount));
+                        }}
+                        className={`card-surface p-3 text-left text-xs ${packageLabel === p.label ? "border-primary ring-1 ring-primary/30" : ""}`}
+                      >
                         <div className="font-medium text-foreground">{p.label}</div>
                         <div className="mt-0.5 text-primary">{ngn(p.amount)}</div>
                       </button>
@@ -183,16 +229,31 @@ function PurchasePage() {
                 </Field>
               ) : (
                 <Field label="Amount (NGN)">
-                  <input value={amount} onChange={(e) => setAmount(e.target.value.replace(/[^\d]/g, ""))} inputMode="numeric" className="input" placeholder="e.g. 1000" />
+                  <input
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value.replace(/[^\d]/g, ""))}
+                    inputMode="numeric"
+                    className="input"
+                    placeholder="e.g. 1000"
+                  />
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {[500, 1000, 2000, 5000].map((v) => (
-                      <button key={v} type="button" onClick={() => setAmount(String(v))} className="rounded-md border border-border bg-card px-2.5 py-1 text-xs text-foreground hover:bg-muted">{ngn(v)}</button>
+                      <button
+                        key={v}
+                        type="button"
+                        onClick={() => setAmount(String(v))}
+                        className="rounded-md border border-border bg-card px-2.5 py-1 text-xs text-foreground hover:bg-muted"
+                      >
+                        {ngn(v)}
+                      </button>
                     ))}
                   </div>
                 </Field>
               )}
 
-              <button onClick={onReview} className="btn-primary w-full">Review</button>
+              <button onClick={onReview} className="btn-primary w-full">
+                Review
+              </button>
             </>
           )}
         </div>
@@ -206,11 +267,21 @@ function PurchasePage() {
             <Row k="Provider" v={providerName} />
             <Row k={RECIPIENT_LABEL[service]} v={recipient} />
             {packageLabel && <Row k="Package" v={packageLabel} />}
-            <Row k="Amount" v={<span className="font-semibold text-foreground">{ngn(amount)}</span>} />
+            <Row
+              k="Amount"
+              v={<span className="font-semibold text-foreground">{ngn(amount)}</span>}
+            />
           </dl>
           <div className="mt-4 flex gap-2">
-            <button onClick={() => setStep("form")} className="flex-1 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted">Edit</button>
-            <button onClick={onPay} className="btn-primary flex-1">Pay {ngn(amount)}</button>
+            <button
+              onClick={() => setStep("form")}
+              className="flex-1 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+            >
+              Edit
+            </button>
+            <button onClick={onPay} className="btn-primary flex-1">
+              Pay {ngn(amount)}
+            </button>
           </div>
         </Card>
       )}
@@ -224,16 +295,30 @@ function PurchasePage() {
         </Card>
       )}
 
-      {step === "success" && tx && <Receipt_ tx={tx} onNew={() => resetAll(setStep, setRecipient, setAmount, setPackageLabel)} />}
+      {step === "success" && tx && (
+        <Receipt_
+          tx={tx}
+          onNew={() => resetAll(setStep, setRecipient, setAmount, setPackageLabel)}
+        />
+      )}
       {step === "failed" && (
         <Card>
           <div className="flex flex-col items-center gap-2 py-4 text-center">
             <XCircle className="h-8 w-8 text-destructive" />
             <h3 className="text-sm font-semibold">Transaction failed</h3>
-            <p className="text-xs text-muted-foreground">{err || "The provider declined this transaction. No amount was charged."}</p>
+            <p className="text-xs text-muted-foreground">
+              {err || "The provider declined this transaction. No amount was charged."}
+            </p>
             <div className="mt-3 flex w-full gap-2">
-              <button onClick={() => setStep("form")} className="flex-1 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium">Try again</button>
-              <Link to="/app/resident/vtu/history" className="btn-primary flex-1 text-center">View history</Link>
+              <button
+                onClick={() => setStep("form")}
+                className="flex-1 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium"
+              >
+                Try again
+              </button>
+              <Link to="/app/resident/vtu/history" className="btn-primary flex-1 text-center">
+                View history
+              </Link>
             </div>
           </div>
         </Card>
@@ -247,35 +332,79 @@ function resetAll(setStep: (s: Step) => void, ...resets: Array<(v: string) => vo
   setStep("form");
 }
 
-function Receipt_({ tx, onNew }: { tx: NonNullable<ReturnType<typeof useState<any>>[0]> extends infer T ? any : never; onNew: () => void }) {
-  const copy = async () => { await navigator.clipboard.writeText(tx.reference); toast.success("Reference copied"); };
+function Receipt_({
+  tx,
+  onNew,
+}: {
+  tx: NonNullable<ReturnType<typeof useState<any>>[0]> extends infer T ? any : never;
+  onNew: () => void;
+}) {
+  const copy = async () => {
+    await navigator.clipboard.writeText(tx.reference);
+    toast.success("Reference copied");
+  };
   return (
     <div className="space-y-3 animate-fade-in">
       <Card className="bg-gradient-to-br from-[color:var(--color-primary-dark)] to-[color:var(--color-primary)] text-primary-foreground">
-        <div className="flex items-center gap-2 text-primary-foreground/80"><CheckCircle2 className="h-4 w-4" /><span className="text-xs font-medium uppercase tracking-wider">Payment successful</span></div>
+        <div className="flex items-center gap-2 text-primary-foreground/80">
+          <CheckCircle2 className="h-4 w-4" />
+          <span className="text-xs font-medium uppercase tracking-wider">Payment successful</span>
+        </div>
         <div className="mt-2 text-3xl font-semibold">{ngn(tx.amount)}</div>
-        <div className="mt-1 text-sm text-primary-foreground/85">{tx.provider_name} · {tx.recipient}</div>
+        <div className="mt-1 text-sm text-primary-foreground/85">
+          {tx.provider_name} · {tx.recipient}
+        </div>
       </Card>
       <Card>
-        <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-muted-foreground"><Receipt className="h-3.5 w-3.5" /> Receipt</div>
+        <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          <Receipt className="h-3.5 w-3.5" /> Receipt
+        </div>
         <dl className="mt-3 space-y-2 text-sm">
-          <Row k="Reference" v={<button onClick={copy} className="inline-flex items-center gap-1 font-mono text-xs text-primary"><Copy className="h-3 w-3" />{tx.reference}</button>} />
+          <Row
+            k="Reference"
+            v={
+              <button
+                onClick={copy}
+                className="inline-flex items-center gap-1 font-mono text-xs text-primary"
+              >
+                <Copy className="h-3 w-3" />
+                {tx.reference}
+              </button>
+            }
+          />
           {tx.package_label && <Row k="Package" v={tx.package_label} />}
           <Row k="Status" v={<span className="text-[color:var(--color-success)]">Success</span>} />
           <Row k="Date" v={new Date(tx.created_at).toLocaleString()} />
         </dl>
       </Card>
       <div className="flex gap-2">
-        <button onClick={onNew} className="flex-1 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium">New purchase</button>
-        <Link to="/app/resident/vtu/history" className="btn-primary flex-1 text-center">History</Link>
+        <button
+          onClick={onNew}
+          className="flex-1 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium"
+        >
+          New purchase
+        </button>
+        <Link to="/app/resident/vtu/history" className="btn-primary flex-1 text-center">
+          History
+        </Link>
       </div>
     </div>
   );
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <label className="block"><span className="mb-1.5 block text-xs font-medium text-muted-foreground">{label}</span>{children}</label>;
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-medium text-muted-foreground">{label}</span>
+      {children}
+    </label>
+  );
 }
 function Row({ k, v }: { k: string; v: React.ReactNode }) {
-  return <div className="flex items-center justify-between"><dt className="text-xs text-muted-foreground">{k}</dt><dd className="text-sm text-foreground">{v}</dd></div>;
+  return (
+    <div className="flex items-center justify-between">
+      <dt className="text-xs text-muted-foreground">{k}</dt>
+      <dd className="text-sm text-foreground">{v}</dd>
+    </div>
+  );
 }

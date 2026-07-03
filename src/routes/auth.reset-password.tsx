@@ -43,30 +43,45 @@ function ResetPassword() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight text-foreground">Choose a new password</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+        Choose a new password
+      </h1>
       <p className="mt-1 text-sm text-muted-foreground">
         {ready ? "Enter your new password below." : "Verifying reset link…"}
       </p>
 
       <form onSubmit={onSubmit} className="mt-8 space-y-4">
         <label className="block">
-          <span className="mb-1.5 block text-xs font-medium text-muted-foreground">New password</span>
+          <span className="mb-1.5 block text-xs font-medium text-muted-foreground">
+            New password
+          </span>
           <input
-            type="password" required autoComplete="new-password" minLength={8}
-            value={password} onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            required
+            autoComplete="new-password"
+            minLength={8}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </label>
         <label className="block">
-          <span className="mb-1.5 block text-xs font-medium text-muted-foreground">Confirm password</span>
+          <span className="mb-1.5 block text-xs font-medium text-muted-foreground">
+            Confirm password
+          </span>
           <input
-            type="password" required autoComplete="new-password" minLength={8}
-            value={confirm} onChange={(e) => setConfirm(e.target.value)}
+            type="password"
+            required
+            autoComplete="new-password"
+            minLength={8}
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
             className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </label>
         <button
-          type="submit" disabled={loading || !ready}
+          type="submit"
+          disabled={loading || !ready}
           className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
         >
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}

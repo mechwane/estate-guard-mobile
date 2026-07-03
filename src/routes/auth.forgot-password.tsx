@@ -40,9 +40,13 @@ function ForgotPassword() {
       {sent ? (
         <div className="mt-8 space-y-4">
           <div className="card-surface p-5 text-sm text-foreground">
-            If an account exists for <span className="font-medium">{email}</span>, a reset link is on its way. Check your inbox and spam folder.
+            If an account exists for <span className="font-medium">{email}</span>, a reset link is
+            on its way. Check your inbox and spam folder.
           </div>
-          <Link to="/auth/sign-in" className="inline-flex w-full items-center justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark">
+          <Link
+            to="/auth/sign-in"
+            className="inline-flex w-full items-center justify-center rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark"
+          >
             Back to sign in
           </Link>
         </div>
@@ -51,13 +55,17 @@ function ForgotPassword() {
           <label className="block">
             <span className="mb-1.5 block text-xs font-medium text-muted-foreground">Email</span>
             <input
-              type="email" required autoComplete="email"
-              value={email} onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              required
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
           </label>
           <button
-            type="submit" disabled={loading}
+            type="submit"
+            disabled={loading}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
           >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -65,7 +73,9 @@ function ForgotPassword() {
           </button>
           <p className="text-center text-sm text-muted-foreground">
             Remembered it?{" "}
-            <Link to="/auth/sign-in" className="font-medium text-primary hover:text-primary-dark">Sign in</Link>
+            <Link to="/auth/sign-in" className="font-medium text-primary hover:text-primary-dark">
+              Sign in
+            </Link>
           </p>
         </form>
       )}

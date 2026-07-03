@@ -15,7 +15,9 @@ function AuthLayout() {
           </div>
           <span className="text-base font-semibold text-foreground">Estate Guard</span>
         </div>
-        <div className="fade-in"><Outlet /></div>
+        <div className="fade-in">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

@@ -19,7 +19,9 @@ const configuredSiteUrl =
   (typeof process !== "undefined" && process.env?.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : "") ||
-  (typeof process !== "undefined" && process.env?.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+  (typeof process !== "undefined" && process.env?.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "");
 
 const siteUrl = configuredSiteUrl.replace(/\/$/, "");
 const assetUrl = (path: string) => (siteUrl ? `${siteUrl}${path}` : path);
@@ -55,7 +57,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <p className="mt-2 text-sm text-muted-foreground">Please try again in a moment.</p>
         <div className="mt-6">
           <button
-            onClick={() => { router.invalidate(); reset(); }}
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
             className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-dark transition-colors"
           >
             Try again
@@ -73,7 +78,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#2C6E63" },
       { title: "Estate Guard — Estate operations, simplified" },
-      { name: "description", content: "Estate Guard is a premium estate management app for residents, guards, and administrators." },
+      {
+        name: "description",
+        content:
+          "Estate Guard is a premium estate management app for residents, guards, and administrators.",
+      },
       { property: "og:title", content: "Estate Guard" },
       { property: "og:description", content: "Estate operations, simplified." },
       { property: "og:type", content: "website" },
@@ -97,7 +106,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "manifest", href: "/site.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -109,8 +121,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <head><HeadContent /></head>
-      <body>{children}<Scripts /></body>
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        {children}
+        <Scripts />
+      </body>
     </html>
   );
 }

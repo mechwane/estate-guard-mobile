@@ -6,7 +6,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { LogOut } from "lucide-react";
 import type { AppRole } from "@/lib/session";
 
-interface NavItem { to: string; label: string; icon: ReactNode }
+interface NavItem {
+  to: string;
+  label: string;
+  icon: ReactNode;
+}
 
 export function AppShell({
   title,
@@ -52,7 +56,9 @@ export function AppShell({
               {estateName && <span className="text-muted-foreground/70">· {estateName}</span>}
             </div>
             <h1 className="mt-0.5 truncate text-lg font-semibold text-foreground">{title}</h1>
-            {subtitle && <p className="mt-0.5 truncate text-sm text-muted-foreground">{subtitle}</p>}
+            {subtitle && (
+              <p className="mt-0.5 truncate text-sm text-muted-foreground">{subtitle}</p>
+            )}
           </div>
           <button
             onClick={signOut}
@@ -70,8 +76,7 @@ export function AppShell({
         <div className="mx-auto flex max-w-2xl items-stretch justify-between px-2 py-1.5">
           {navItems.map((it) => {
             const active =
-              location.pathname === it.to ||
-              (it.to !== "/" && location.pathname.startsWith(it.to));
+              location.pathname === it.to || (it.to !== "/" && location.pathname.startsWith(it.to));
             return (
               <Link
                 key={it.to}
