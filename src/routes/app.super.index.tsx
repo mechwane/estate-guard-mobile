@@ -271,7 +271,7 @@ function AssignAdminModal({ estate, onClose, onDone }: { estate: Estate; onClose
           ))}
           {q.length >= 2 && (search.data ?? []).length === 0 && <div className="p-3 text-xs text-muted-foreground">No matches</div>}
         </div>
-        <button onClick={() => { if (confirm("Assign this user as estate admin?")) assign.mutate(); }} disabled={assign.isPending || !userId} className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60">
+        <button onClick={() => assign.mutate()} disabled={assign.isPending || !userId} className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60">
           {assign.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Confirm
         </button>
       </div>
