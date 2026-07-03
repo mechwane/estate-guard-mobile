@@ -96,5 +96,8 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
   if (path.startsWith("/app/resident/events/") && !map[path]) {
     return { title: "Event" };
   }
+  if (path.startsWith("/app/super/estates/")) {
+    return { title: "Estate detail" };
+  }
   return map[path] ?? { title: "Estate Guard" };
 }
