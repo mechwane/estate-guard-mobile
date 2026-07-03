@@ -788,6 +788,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      super_estate_overview: { Args: { _estate_id: string }; Returns: Json }
       suspend_estate: {
         Args: { _estate_id: string; _reason?: string }
         Returns: undefined
