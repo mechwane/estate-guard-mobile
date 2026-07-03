@@ -45,17 +45,24 @@ function AdminDashboard() {
     enabled: !!estateId,
     queryFn: async () => {
       const base = () =>
-        supabase.from("profiles").select("id", { count: "exact", head: true }).eq("estate_id", estateId!);
-      const [total, approved, revoked, pendingVerify, rejectedVerify, newResidents] = await Promise.all([
-        base(),
-        base().eq("approved", true),
-        base().eq("approved", false),
-        base().eq("verification_status", "pending"),
-        base().eq("verification_status", "rejected"),
-        sinceIso
-          ? base().gte("created_at", sinceIso)
-          : Promise.resolve({ count: null, error: null } as { count: number | null; error: unknown }),
-      ]);
+        supabase
+          .from("profiles")
+          .select("id", { count: "exact", head: true })
+          .eq("estate_id", estateId!);
+      const [total, approved, revoked, pendingVerify, rejectedVerify, newResidents] =
+        await Promise.all([
+          base(),
+          base().eq("approved", true),
+          base().eq("approved", false),
+          base().eq("verification_status", "pending"),
+          base().eq("verification_status", "rejected"),
+          sinceIso
+            ? base().gte("created_at", sinceIso)
+            : Promise.resolve({ count: null, error: null } as {
+                count: number | null;
+                error: unknown;
+              }),
+        ]);
       return {
         total: total.count ?? 0,
         approved: approved.count ?? 0,
@@ -105,7 +112,10 @@ function AdminDashboard() {
     enabled: !!estateId,
     queryFn: async () => {
       const base = () =>
-        supabase.from("issues").select("id", { count: "exact", head: true }).eq("estate_id", estateId!);
+        supabase
+          .from("issues")
+          .select("id", { count: "exact", head: true })
+          .eq("estate_id", estateId!);
       const scoped = () => (sinceIso ? base().gte("created_at", sinceIso) : base());
       const [open, inProgress, resolved] = await Promise.all([
         scoped().eq("status", "open"),
@@ -237,15 +247,27 @@ function AdminDashboard() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           <StatCard label="Total residents" value={residentStats.data!.total} />
           <StatCard label="Approved" value={residentStats.data!.approved} tone="success" />
-          <StatCard label="Revoked / inactive" value={residentStats.data!.revoked} tone={residentStats.data!.revoked ? "warning" : "default"} />
+          <StatCard
+            label="Revoked / inactive"
+            value={residentStats.data!.revoked}
+            tone={residentStats.data!.revoked ? "warning" : "default"}
+          />
           <StatCard
             label="Pending verification"
             value={residentStats.data!.pendingVerify}
             tone={residentStats.data!.pendingVerify ? "warning" : "default"}
             hint={residentStats.data!.pendingVerify ? "Review queue" : undefined}
           />
-          <StatCard label="Rejected verification" value={residentStats.data!.rejectedVerify} tone="error" />
-          <StatCard label={`New (${RANGE_LABEL[range].toLowerCase()})`} value={residentStats.data!.newResidents} tone="primary" />
+          <StatCard
+            label="Rejected verification"
+            value={residentStats.data!.rejectedVerify}
+            tone="error"
+          />
+          <StatCard
+            label={`New (${RANGE_LABEL[range].toLowerCase()})`}
+            value={residentStats.data!.newResidents}
+            tone="primary"
+          />
         </div>
       )}
 
@@ -257,7 +279,11 @@ function AdminDashboard() {
         <ErrorState onRetry={() => issueStats.refetch()} />
       ) : (
         <div className="grid grid-cols-3 gap-3">
-          <StatCard label="Open" value={issueStats.data!.open} tone={issueStats.data!.open ? "error" : "default"} />
+          <StatCard
+            label="Open"
+            value={issueStats.data!.open}
+            tone={issueStats.data!.open ? "error" : "default"}
+          />
           <StatCard label="In progress" value={issueStats.data!.inProgress} tone="warning" />
           <StatCard label="Resolved" value={issueStats.data!.resolved} tone="success" />
         </div>
@@ -289,9 +315,21 @@ function AdminDashboard() {
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <StatCard label="Billed" value={`₦${billingStats.data!.billed.toLocaleString()}`} />
-          <StatCard label="Collected" value={`₦${billingStats.data!.collected.toLocaleString()}`} tone="success" />
-          <StatCard label="Outstanding" value={`₦${billingStats.data!.outstanding.toLocaleString()}`} tone="warning" />
-          <StatCard label="Overdue bills" value={billingStats.data!.overdueCount} tone={billingStats.data!.overdueCount ? "error" : "default"} />
+          <StatCard
+            label="Collected"
+            value={`₦${billingStats.data!.collected.toLocaleString()}`}
+            tone="success"
+          />
+          <StatCard
+            label="Outstanding"
+            value={`₦${billingStats.data!.outstanding.toLocaleString()}`}
+            tone="warning"
+          />
+          <StatCard
+            label="Overdue bills"
+            value={billingStats.data!.overdueCount}
+            tone={billingStats.data!.overdueCount ? "error" : "default"}
+          />
         </div>
       )}
 
@@ -315,7 +353,10 @@ function AdminDashboard() {
           ) : recentValidations.error ? (
             <ErrorState onRetry={() => recentValidations.refetch()} />
           ) : recentValidations.data!.length === 0 ? (
-            <EmptyState title="No validations yet" description="Guest check-ins will appear here." />
+            <EmptyState
+              title="No validations yet"
+              description="Guest check-ins will appear here."
+            />
           ) : (
             <div className="space-y-2">
               {recentValidations.data!.map((v) => (
@@ -331,7 +372,15 @@ function AdminDashboard() {
                         })}
                       </div>
                     </div>
-                    <StatusBadge tone={v.status === "used" ? "success" : v.status === "active" ? "primary" : "neutral"}>
+                    <StatusBadge
+                      tone={
+                        v.status === "used"
+                          ? "success"
+                          : v.status === "active"
+                            ? "primary"
+                            : "neutral"
+                      }
+                    >
                       {v.status}
                     </StatusBadge>
                   </div>
@@ -366,10 +415,10 @@ function AdminDashboard() {
                         r.verification_status === "approved"
                           ? "success"
                           : r.verification_status === "pending"
-                          ? "warning"
-                          : r.verification_status === "rejected"
-                          ? "error"
-                          : "neutral"
+                            ? "warning"
+                            : r.verification_status === "rejected"
+                              ? "error"
+                              : "neutral"
                       }
                     >
                       {r.verification_status.replace("_", " ")}
@@ -394,7 +443,10 @@ function AdminDashboard() {
           <Card className="p-0">
             <ul className="divide-y divide-border">
               {recentActivity.data!.map((a) => (
-                <li key={a.id} className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm">
+                <li
+                  key={a.id}
+                  className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm"
+                >
                   <div className="min-w-0">
                     <span className="font-medium">{a.action}</span>
                     {a.entity && <span className="ml-1 text-muted-foreground">· {a.entity}</span>}

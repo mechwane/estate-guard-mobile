@@ -18,12 +18,16 @@ function VtuHub() {
     <div className="space-y-4">
       <Card>
         <p className="text-sm text-muted-foreground">
-          Pay bills and top up services securely. Every transaction has a receipt and appears in your history.
+          Pay bills and top up services securely. Every transaction has a receipt and appears in
+          your history.
         </p>
       </Card>
       <SectionTitle
         action={
-          <Link to="/app/resident/vtu/history" className="inline-flex items-center gap-1 text-xs font-medium text-primary">
+          <Link
+            to="/app/resident/vtu/history"
+            className="inline-flex items-center gap-1 text-xs font-medium text-primary"
+          >
             <ScrollText className="h-3.5 w-3.5" /> History
           </Link>
         }

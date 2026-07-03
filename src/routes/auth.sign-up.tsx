@@ -22,7 +22,8 @@ function SignUp() {
   });
   const [loading, setLoading] = useState(false);
 
-  const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) => setForm((s) => ({ ...s, [k]: v }));
+  const set = <K extends keyof typeof form>(k: K, v: (typeof form)[K]) =>
+    setForm((s) => ({ ...s, [k]: v }));
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +37,8 @@ function SignUp() {
     if (fullName.length < 2) return toast.error("Enter your full name");
     if (!/^\S+@\S+\.\S+$/.test(email)) return toast.error("Enter a valid email");
     if (form.password.length < 8) return toast.error("Password must be at least 8 characters");
-    if (phone && !/^[+\d][\d\s\-()]{5,}$/.test(phone)) return toast.error("Enter a valid phone number");
+    if (phone && !/^[+\d][\d\s\-()]{5,}$/.test(phone))
+      return toast.error("Enter a valid phone number");
     if (!estateCode) return toast.error("Estate code is required");
 
     setLoading(true);
@@ -93,25 +95,50 @@ function SignUp() {
   return (
     <div>
       <h1 className="text-2xl font-semibold tracking-tight text-foreground">Create account</h1>
-      <p className="mt-1 text-sm text-muted-foreground">Join your estate in a moment. Try code <span className="font-medium text-foreground">DEMO01</span>.</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Join your estate in a moment. Try code{" "}
+        <span className="font-medium text-foreground">DEMO01</span>.
+      </p>
 
       <form onSubmit={onSubmit} className="mt-8 space-y-4">
         <Field label="Full name">
-          <Input value={form.fullName} onChange={(v) => set("fullName", v)} required autoComplete="name" />
+          <Input
+            value={form.fullName}
+            onChange={(v) => set("fullName", v)}
+            required
+            autoComplete="name"
+          />
         </Field>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Phone">
-            <Input value={form.phone} onChange={(v) => set("phone", v)} type="tel" autoComplete="tel" />
+            <Input
+              value={form.phone}
+              onChange={(v) => set("phone", v)}
+              type="tel"
+              autoComplete="tel"
+            />
           </Field>
           <Field label="Unit / Apt">
             <Input value={form.unit} onChange={(v) => set("unit", v)} placeholder="A12" />
           </Field>
         </div>
         <Field label="Email">
-          <Input value={form.email} onChange={(v) => set("email", v)} type="email" required autoComplete="email" />
+          <Input
+            value={form.email}
+            onChange={(v) => set("email", v)}
+            type="email"
+            required
+            autoComplete="email"
+          />
         </Field>
         <Field label="Password">
-          <Input value={form.password} onChange={(v) => set("password", v)} type="password" required autoComplete="new-password" />
+          <Input
+            value={form.password}
+            onChange={(v) => set("password", v)}
+            type="password"
+            required
+            autoComplete="new-password"
+          />
         </Field>
 
         <div className="grid grid-cols-2 gap-3">
@@ -126,12 +153,18 @@ function SignUp() {
             </select>
           </Field>
           <Field label="Estate code">
-            <Input value={form.estateCode} onChange={(v) => set("estateCode", v.toUpperCase())} required placeholder="DEMO01" />
+            <Input
+              value={form.estateCode}
+              onChange={(v) => set("estateCode", v.toUpperCase())}
+              required
+              placeholder="DEMO01"
+            />
           </Field>
         </div>
 
         <button
-          type="submit" disabled={loading}
+          type="submit"
+          disabled={loading}
           className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-dark disabled:opacity-60"
         >
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -141,7 +174,9 @@ function SignUp() {
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <Link to="/auth/sign-in" className="font-medium text-primary hover:text-primary-dark">Sign in</Link>
+        <Link to="/auth/sign-in" className="font-medium text-primary hover:text-primary-dark">
+          Sign in
+        </Link>
       </p>
     </div>
   );
@@ -155,7 +190,12 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </label>
   );
 }
-function Input(props: { value: string; onChange: (v: string) => void } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value">) {
+function Input(
+  props: { value: string; onChange: (v: string) => void } & Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    "onChange" | "value"
+  >,
+) {
   const { value, onChange, ...rest } = props;
   return (
     <input

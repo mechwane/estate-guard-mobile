@@ -15,7 +15,14 @@ function generateCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-type Created = { id: string; code: string; guest_name: string; visit_time: string; expires_at: string; num_guests: number };
+type Created = {
+  id: string;
+  code: string;
+  guest_name: string;
+  visit_time: string;
+  expires_at: string;
+  num_guests: number;
+};
 
 function InviteGuest() {
   const { data: session } = useSession();
@@ -37,7 +44,8 @@ function InviteGuest() {
     const guestName = f.guest_name.trim();
     const phone = f.phone.trim();
     if (guestName.length < 2) return toast.error("Enter the guest's name");
-    if (phone && !/^[+\d][\d\s\-()]{5,}$/.test(phone)) return toast.error("Enter a valid phone number");
+    if (phone && !/^[+\d][\d\s\-()]{5,}$/.test(phone))
+      return toast.error("Enter a valid phone number");
 
     const visit = new Date(f.visit_time);
     if (isNaN(visit.getTime())) return toast.error("Choose a valid visit time");
@@ -84,13 +92,24 @@ function InviteGuest() {
     setLoading(false);
   };
 
-  if (created) return <InviteSuccess invite={created} estateName={session?.estate?.name ?? ""} onNew={() => { setCreated(null); setF({ ...f, guest_name: "", phone: "" }); }} />;
+  if (created)
+    return (
+      <InviteSuccess
+        invite={created}
+        estateName={session?.estate?.name ?? ""}
+        onNew={() => {
+          setCreated(null);
+          setF({ ...f, guest_name: "", phone: "" });
+        }}
+      />
+    );
 
   return (
     <form onSubmit={submit} className="space-y-4">
       <Card>
         <p className="text-sm text-muted-foreground">
-          A 6-digit code will be generated. Share it with your guest — security will verify it at the gate.
+          A 6-digit code will be generated. Share it with your guest — security will verify it at
+          the gate.
         </p>
       </Card>
 
@@ -106,10 +125,23 @@ function InviteGuest() {
         </Field>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Visit time">
-            <Input value={f.visit_time} onChange={(v) => setF({ ...f, visit_time: v })} type="datetime-local" required />
+            <Input
+              value={f.visit_time}
+              onChange={(v) => setF({ ...f, visit_time: v })}
+              type="datetime-local"
+              required
+            />
           </Field>
           <Field label="Guests">
-            <Input value={String(f.num_guests)} onChange={(v) => setF({ ...f, num_guests: Math.max(1, Math.min(20, Number(v) || 1)) })} type="number" min={1} max={20} />
+            <Input
+              value={String(f.num_guests)}
+              onChange={(v) =>
+                setF({ ...f, num_guests: Math.max(1, Math.min(20, Number(v) || 1)) })
+              }
+              type="number"
+              min={1}
+              max={20}
+            />
           </Field>
         </div>
         <Field label="Code valid for (hours)">
@@ -118,13 +150,18 @@ function InviteGuest() {
             onChange={(e) => setF({ ...f, hours: Number(e.target.value) })}
             className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
           >
-            {[2, 6, 12, 24, 48].map((h) => <option key={h} value={h}>{h} hours</option>)}
+            {[2, 6, 12, 24, 48].map((h) => (
+              <option key={h} value={h}>
+                {h} hours
+              </option>
+            ))}
           </select>
         </Field>
       </div>
 
       <button
-        type="submit" disabled={loading}
+        type="submit"
+        disabled={loading}
         className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-dark disabled:opacity-60"
       >
         {loading && <Loader2 className="h-4 w-4 animate-spin" />}
@@ -134,32 +171,83 @@ function InviteGuest() {
   );
 }
 
-function InviteSuccess({ invite, estateName, onNew }: { invite: Created; estateName: string; onNew: () => void }) {
+function InviteSuccess({
+  invite,
+  estateName,
+  onNew,
+}: {
+  invite: Created;
+  estateName: string;
+  onNew: () => void;
+}) {
   const message =
     `${estateName} — Guest access code\n` +
     `Code: ${invite.code}\n` +
     `Guest: ${invite.guest_name}${invite.num_guests > 1 ? ` (+${invite.num_guests - 1})` : ""}\n` +
     `Visit: ${format(new Date(invite.visit_time), "MMM d, p")}\n` +
     `Valid until: ${format(new Date(invite.expires_at), "MMM d, p")}`;
-  const copy = async () => { await navigator.clipboard.writeText(invite.code); toast.success("Code copied"); };
-  const copyMsg = async () => { await navigator.clipboard.writeText(message); toast.success("Message copied"); };
+  const copy = async () => {
+    await navigator.clipboard.writeText(invite.code);
+    toast.success("Code copied");
+  };
+  const copyMsg = async () => {
+    await navigator.clipboard.writeText(message);
+    toast.success("Message copied");
+  };
   const wa = `https://wa.me/?text=${encodeURIComponent(message)}`;
   return (
     <div className="space-y-4 animate-fade-in">
       <Card className="bg-gradient-to-br from-[color:var(--color-primary-dark)] to-[color:var(--color-primary)] text-primary-foreground">
-        <div className="flex items-center gap-2 text-primary-foreground/80"><CheckCircle2 className="h-4 w-4" /><span className="text-xs font-medium uppercase tracking-wider">Invite ready</span></div>
+        <div className="flex items-center gap-2 text-primary-foreground/80">
+          <CheckCircle2 className="h-4 w-4" />
+          <span className="text-xs font-medium uppercase tracking-wider">Invite ready</span>
+        </div>
         <div className="mt-3 font-mono text-4xl font-semibold tracking-[0.35em]">{invite.code}</div>
-        <div className="mt-2 text-sm text-primary-foreground/80">{invite.guest_name} · {format(new Date(invite.visit_time), "MMM d, p")}</div>
-        <div className="mt-0.5 text-xs text-primary-foreground/70">Valid until {format(new Date(invite.expires_at), "MMM d, p")}</div>
+        <div className="mt-2 text-sm text-primary-foreground/80">
+          {invite.guest_name} · {format(new Date(invite.visit_time), "MMM d, p")}
+        </div>
+        <div className="mt-0.5 text-xs text-primary-foreground/70">
+          Valid until {format(new Date(invite.expires_at), "MMM d, p")}
+        </div>
       </Card>
       <div className="grid grid-cols-3 gap-2">
-        <button onClick={copy} className="card-surface flex flex-col items-center gap-1 p-3 text-xs font-medium text-foreground hover:bg-muted/40"><Copy className="h-4 w-4 text-primary" />Copy code</button>
-        <button onClick={copyMsg} className="card-surface flex flex-col items-center gap-1 p-3 text-xs font-medium text-foreground hover:bg-muted/40"><Copy className="h-4 w-4 text-primary" />Copy note</button>
-        <a href={wa} target="_blank" rel="noopener noreferrer" className="card-surface flex flex-col items-center gap-1 p-3 text-xs font-medium text-foreground hover:bg-muted/40"><MessageCircle className="h-4 w-4 text-primary" />WhatsApp</a>
+        <button
+          onClick={copy}
+          className="card-surface flex flex-col items-center gap-1 p-3 text-xs font-medium text-foreground hover:bg-muted/40"
+        >
+          <Copy className="h-4 w-4 text-primary" />
+          Copy code
+        </button>
+        <button
+          onClick={copyMsg}
+          className="card-surface flex flex-col items-center gap-1 p-3 text-xs font-medium text-foreground hover:bg-muted/40"
+        >
+          <Copy className="h-4 w-4 text-primary" />
+          Copy note
+        </button>
+        <a
+          href={wa}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="card-surface flex flex-col items-center gap-1 p-3 text-xs font-medium text-foreground hover:bg-muted/40"
+        >
+          <MessageCircle className="h-4 w-4 text-primary" />
+          WhatsApp
+        </a>
       </div>
       <div className="flex gap-2">
-        <button onClick={onNew} className="flex-1 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted">New invite</button>
-        <Link to="/app/resident/guests" className="flex-1 rounded-lg bg-primary px-4 py-2.5 text-center text-sm font-medium text-primary-foreground hover:bg-primary-dark">View guests</Link>
+        <button
+          onClick={onNew}
+          className="flex-1 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted"
+        >
+          New invite
+        </button>
+        <Link
+          to="/app/resident/guests"
+          className="flex-1 rounded-lg bg-primary px-4 py-2.5 text-center text-sm font-medium text-primary-foreground hover:bg-primary-dark"
+        >
+          View guests
+        </Link>
       </div>
     </div>
   );
@@ -173,7 +261,12 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </label>
   );
 }
-function Input(props: { value: string; onChange: (v: string) => void } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value">) {
+function Input(
+  props: { value: string; onChange: (v: string) => void } & Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    "onChange" | "value"
+  >,
+) {
   const { value, onChange, ...rest } = props;
   return (
     <input

@@ -8,13 +8,20 @@ export function Card({ className, children }: { className?: string; children: Re
 export function SectionTitle({ children, action }: { children: ReactNode; action?: ReactNode }) {
   return (
     <div className="mb-3 mt-6 flex items-center justify-between first:mt-0">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">{children}</h2>
+      <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+        {children}
+      </h2>
       {action}
     </div>
   );
 }
 
-export function StatCard({ label, value, hint, tone = "default" }: {
+export function StatCard({
+  label,
+  value,
+  hint,
+  tone = "default",
+}: {
   label: string;
   value: ReactNode;
   hint?: string;
@@ -29,7 +36,9 @@ export function StatCard({ label, value, hint, tone = "default" }: {
   }[tone];
   return (
     <div className="card-surface p-4">
-      <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+        {label}
+      </div>
       <div className={cn("mt-1 text-2xl font-semibold tabular-nums", toneClass)}>{value}</div>
       {hint && <div className="mt-1 text-xs text-muted-foreground">{hint}</div>}
     </div>
@@ -37,7 +46,13 @@ export function StatCard({ label, value, hint, tone = "default" }: {
 }
 
 type BadgeTone = "neutral" | "primary" | "success" | "warning" | "error" | "accent";
-export function StatusBadge({ tone = "neutral", children }: { tone?: BadgeTone; children: ReactNode }) {
+export function StatusBadge({
+  tone = "neutral",
+  children,
+}: {
+  tone?: BadgeTone;
+  children: ReactNode;
+}) {
   const map: Record<BadgeTone, string> = {
     neutral: "bg-muted text-muted-foreground",
     primary: "bg-primary/10 text-primary",
@@ -47,13 +62,23 @@ export function StatusBadge({ tone = "neutral", children }: { tone?: BadgeTone; 
     accent: "bg-accent/15 text-accent-foreground",
   };
   return (
-    <span className={cn("inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium", map[tone])}>
+    <span
+      className={cn(
+        "inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium",
+        map[tone],
+      )}
+    >
       {children}
     </span>
   );
 }
 
-export function EmptyState({ title, description, icon, action }: {
+export function EmptyState({
+  title,
+  description,
+  icon,
+  action,
+}: {
   title: string;
   description?: string;
   icon?: ReactNode;
@@ -88,7 +113,9 @@ export function ErrorState({ message, onRetry }: { message?: string; onRetry?: (
   return (
     <div className="card-surface p-6 text-center">
       <h3 className="text-sm font-semibold text-foreground">Couldn't load this</h3>
-      <p className="mt-1 text-sm text-muted-foreground">{message ?? "Please check your connection and try again."}</p>
+      <p className="mt-1 text-sm text-muted-foreground">
+        {message ?? "Please check your connection and try again."}
+      </p>
       {onRetry && (
         <button
           onClick={onRetry}
@@ -101,7 +128,15 @@ export function ErrorState({ message, onRetry }: { message?: string; onRetry?: (
   );
 }
 
-export function SearchInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
+export function SearchInput({
+  value,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+}) {
   return (
     <input
       value={value}
@@ -113,8 +148,15 @@ export function SearchInput({ value, onChange, placeholder }: { value: string; o
 }
 
 export function ConfirmActionDialog({
-  open, title, description, confirmLabel = "Confirm", cancelLabel = "Cancel",
-  tone = "default", busy, onConfirm, onCancel,
+  open,
+  title,
+  description,
+  confirmLabel = "Confirm",
+  cancelLabel = "Cancel",
+  tone = "default",
+  busy,
+  onConfirm,
+  onCancel,
 }: {
   open: boolean;
   title: string;
@@ -127,17 +169,36 @@ export function ConfirmActionDialog({
   onCancel: () => void;
 }) {
   if (!open) return null;
-  const btn = tone === "destructive"
-    ? "bg-destructive text-destructive-foreground hover:opacity-90"
-    : "bg-primary text-primary-foreground hover:bg-primary-dark";
+  const btn =
+    tone === "destructive"
+      ? "bg-destructive text-destructive-foreground hover:opacity-90"
+      : "bg-primary text-primary-foreground hover:bg-primary-dark";
   return (
-    <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4" onClick={busy ? undefined : onCancel}>
-      <div className="w-full max-w-sm rounded-t-2xl bg-background p-5 shadow-xl sm:rounded-2xl" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4"
+      onClick={busy ? undefined : onCancel}
+    >
+      <div
+        className="w-full max-w-sm rounded-t-2xl bg-background p-5 shadow-xl sm:rounded-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         <h3 className="text-sm font-semibold text-foreground">{title}</h3>
         {description && <div className="mt-2 text-sm text-muted-foreground">{description}</div>}
         <div className="mt-5 grid grid-cols-2 gap-2">
-          <button onClick={onCancel} disabled={busy} className="rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-60">{cancelLabel}</button>
-          <button onClick={onConfirm} disabled={busy} className={cn("rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-60", btn)}>{busy ? "Working…" : confirmLabel}</button>
+          <button
+            onClick={onCancel}
+            disabled={busy}
+            className="rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-60"
+          >
+            {cancelLabel}
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={busy}
+            className={cn("rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-60", btn)}
+          >
+            {busy ? "Working…" : confirmLabel}
+          </button>
         </div>
       </div>
     </div>
