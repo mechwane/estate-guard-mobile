@@ -37,16 +37,10 @@ function ActiveVisitors() {
 
   const checkOut = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("guest_invites")
-        .update({ checked_out_at: new Date().toISOString() })
-        .eq("id", id).eq("estate_id", estateId!);
+      const { error } = await supabase.rpc("guard_check_out" as any, { _invite_id: id } as any);
       if (error) throw error;
-      await supabase.from("audit_logs").insert({
-        estate_id: estateId!, actor_id: session!.userId!, action: "guest.check_out",
-        entity: "guest_invites", entity_id: id,
-      });
     },
-    onSuccess: () => { toast.success("Checked out"); qc.invalidateQueries({ queryKey: ["guard-active"] }); },
+    onSuccess: () => { toast.success("Exit recorded"); qc.invalidateQueries({ queryKey: ["guard-active"] }); },
     onError: (e: Error) => toast.error(e.message),
   });
 
