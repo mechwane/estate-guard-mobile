@@ -122,10 +122,7 @@ function SuperDashboard() {
              <div className="mt-3 grid grid-cols-3 gap-2">
                <ActionBtn onClick={() => setEditing(e)} icon={<Pencil className="h-3.5 w-3.5" />} label="Edit" />
                <ActionBtn onClick={() => setAssigning(e)} icon={<UserCog className="h-3.5 w-3.5" />} label={e.admin_user_id ? "Reassign" : "Assign"} />
-               <ActionBtn onClick={() => {
-                 const verb = e.status === "active" ? "suspend" : "activate";
-                 if (confirm(`Are you sure you want to ${verb} "${e.name}"? This affects all its residents and guards.`)) toggle.mutate(e);
-               }} icon={e.status === "active" ? <PowerOff className="h-3.5 w-3.5" /> : <Power className="h-3.5 w-3.5" />} label={e.status === "active" ? "Suspend" : "Activate"} />
+                <ActionBtn onClick={() => setToggling(e)} icon={e.status === "active" ? <PowerOff className="h-3.5 w-3.5" /> : <Power className="h-3.5 w-3.5" />} label={e.status === "active" ? "Suspend" : "Activate"} />
              </div>
            </Card>
          ))}
