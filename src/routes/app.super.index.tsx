@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, StatCard, StatusBadge, SearchInput, ListSkeleton, EmptyState, ErrorState } from "@/components/ui-kit";
+import { Card, StatCard, StatusBadge, SearchInput, ListSkeleton, EmptyState, ErrorState, ConfirmActionDialog } from "@/components/ui-kit";
 import { format } from "date-fns";
 import { Loader2, Plus, Pencil, UserCog, Power, PowerOff, Building2 } from "lucide-react";
 import { toast } from "sonner";
@@ -23,6 +23,7 @@ function SuperDashboard() {
   const [q, setQ] = useState("");
   const [editing, setEditing] = useState<Estate | null>(null);
   const [assigning, setAssigning] = useState<Estate | null>(null);
+  const [toggling, setToggling] = useState<Estate | null>(null);
 
   const estatesQ = useQuery({
     queryKey: ["all-estates"],
@@ -121,14 +122,25 @@ function SuperDashboard() {
              <div className="mt-3 grid grid-cols-3 gap-2">
                <ActionBtn onClick={() => setEditing(e)} icon={<Pencil className="h-3.5 w-3.5" />} label="Edit" />
                <ActionBtn onClick={() => setAssigning(e)} icon={<UserCog className="h-3.5 w-3.5" />} label={e.admin_user_id ? "Reassign" : "Assign"} />
-               <ActionBtn onClick={() => {
-                 const verb = e.status === "active" ? "suspend" : "activate";
-                 if (confirm(`Are you sure you want to ${verb} "${e.name}"? This affects all its residents and guards.`)) toggle.mutate(e);
-               }} icon={e.status === "active" ? <PowerOff className="h-3.5 w-3.5" /> : <Power className="h-3.5 w-3.5" />} label={e.status === "active" ? "Suspend" : "Activate"} />
+                <ActionBtn onClick={() => setToggling(e)} icon={e.status === "active" ? <PowerOff className="h-3.5 w-3.5" /> : <Power className="h-3.5 w-3.5" />} label={e.status === "active" ? "Suspend" : "Activate"} />
              </div>
            </Card>
          ))}
-       </div>}
+        </div>}
+
+      <ConfirmActionDialog
+        open={!!toggling}
+        title={toggling?.status === "active" ? `Suspend ${toggling?.name}?` : `Activate ${toggling?.name}?`}
+        description={toggling?.status === "active"
+          ? "Residents and guards in this estate will lose access until it is reactivated."
+          : "Residents and guards will regain access to this estate immediately."}
+        confirmLabel={toggling?.status === "active" ? "Suspend estate" : "Activate estate"}
+        tone={toggling?.status === "active" ? "destructive" : "default"}
+        busy={toggle.isPending}
+        onCancel={() => setToggling(null)}
+        onConfirm={() => { if (toggling) toggle.mutate(toggling, { onSettled: () => setToggling(null) }); }}
+      />
+
 
       {editing && <EditEstateModal estate={editing} onClose={() => setEditing(null)} onDone={() => { setEditing(null); qc.invalidateQueries({ queryKey: ["all-estates"] }); }} />}
       {assigning && <AssignAdminModal estate={assigning} onClose={() => setAssigning(null)} onDone={() => { setAssigning(null); qc.invalidateQueries({ queryKey: ["all-estates"] }); qc.invalidateQueries({ queryKey: ["platform-stats"] }); }} />}
@@ -259,7 +271,7 @@ function AssignAdminModal({ estate, onClose, onDone }: { estate: Estate; onClose
           ))}
           {q.length >= 2 && (search.data ?? []).length === 0 && <div className="p-3 text-xs text-muted-foreground">No matches</div>}
         </div>
-        <button onClick={() => { if (confirm("Assign this user as estate admin?")) assign.mutate(); }} disabled={assign.isPending || !userId} className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60">
+        <button onClick={() => assign.mutate()} disabled={assign.isPending || !userId} className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60">
           {assign.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Confirm
         </button>
       </div>

@@ -75,7 +75,7 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
     "/app/guard/validate": { title: "Guest validation" },
     "/app/guard/active": { title: "Visitors inside" },
     "/app/guard/incidents": { title: "Incidents" },
-    "/app/guard/history": { title: "Validation history" },
+    "/app/guard/history": { title: "Entry & exit history" },
     "/app/guard/more": { title: "More" },
     "/app/admin": { title: "Overview" },
     "/app/admin/verifications": { title: "Verification queue" },

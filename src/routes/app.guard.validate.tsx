@@ -15,51 +15,49 @@ type Invite = {
   id: string; guest_name: string; phone: string | null; purpose: string | null;
   visit_time: string; expires_at: string; code: string; status: string;
   checked_in_at: string | null; checked_out_at: string | null; resident_id: string;
+  vehicle_number: string | null; num_guests: number;
 };
 
 function GuardValidate() {
   const { data: session } = useSession();
   const [code, setCode] = useState("");
+  const [vehicle, setVehicle] = useState("");
   const [busy, setBusy] = useState(false);
+  const [acting, setActing] = useState(false);
   const [result, setResult] = useState<Invite | null>(null);
-  const [residentName, setResidentName] = useState<string | null>(null);
+  const [host, setHost] = useState<{ full_name: string; unit: string | null } | null>(null);
 
   const validate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!session?.estate?.id) return;
-    setBusy(true); setResult(null); setResidentName(null);
-    const { data, error } = await supabase
-      .from("guest_invites")
-      .select("*")
-      .eq("estate_id", session.estate.id)
-      .eq("code", code.trim())
-      .maybeSingle();
+    setBusy(true); setResult(null); setHost(null);
+    const { data, error } = await supabase.rpc("validate_guest_code" as any, { _code: code.trim() } as any);
     setBusy(false);
-    if (error || !data) { toast.error("Code not found"); return; }
-    if (new Date(data.expires_at).getTime() < Date.now()) { toast.error("Code expired"); setResult(data as Invite); return; }
-    if (data.status === "revoked") { toast.error("Code revoked"); setResult(data as Invite); return; }
-    setResult(data as Invite);
-    const { data: p } = await supabase.from("profiles").select("full_name,unit").eq("id", data.resident_id).maybeSingle();
-    if (p) setResidentName(`${p.full_name}${p.unit ? " · Unit " + p.unit : ""}`);
-    toast.success("Guest verified");
+    if (error) { toast.error(error.message); return; }
+    const r = data as any;
+    if (!r?.ok) { toast.error("Code not found"); return; }
+    setResult(r.invite as Invite);
+    setHost(r.host);
+    if (r.expired) toast.error("Code expired");
+    else if (r.revoked) toast.error("Code revoked");
+    else if (r.already_checked_out) toast.info("Visit completed");
+    else if (r.already_checked_in) toast.info("Already inside");
+    else toast.success("Guest verified");
   };
 
   const act = async (kind: "in" | "out") => {
-    if (!result || !session?.userId) return;
-    const patch = kind === "in"
-      ? { checked_in_at: new Date().toISOString(), status: "used" as const, validated_by: session.userId }
-      : { checked_out_at: new Date().toISOString() };
-    const { error, data } = await supabase.from("guest_invites").update(patch).eq("id", result.id).select("*").single();
+    if (!result) return;
+    setActing(true);
+    const fn = kind === "in" ? "guard_check_in" : "guard_check_out";
+    const args = kind === "in"
+      ? { _invite_id: result.id, _vehicle_number: vehicle.trim() || null }
+      : { _invite_id: result.id };
+    const { data, error } = await supabase.rpc(fn as any, args as any);
+    setActing(false);
     if (error) { toast.error(error.message); return; }
-    setResult(data as Invite);
-    await supabase.from("audit_logs").insert({
-      estate_id: session.estate!.id,
-      actor_id: session.userId,
-      action: kind === "in" ? "guest.check_in" : "guest.check_out",
-      entity: "guest_invites",
-      entity_id: result.id,
-    });
-    toast.success(kind === "in" ? "Checked in" : "Checked out");
+    const r = data as any;
+    setResult(r.invite as Invite);
+    toast.success(kind === "in" ? "Entry recorded" : "Exit recorded");
   };
 
   return (
@@ -92,18 +90,26 @@ function GuardValidate() {
               <div className="mt-0.5 text-base font-semibold text-foreground">{result.guest_name}</div>
               {result.phone && <div className="mt-0.5 text-sm text-muted-foreground">{result.phone}</div>}
               <div className="mt-1 text-xs text-muted-foreground">
-                {result.purpose || "Visit"} · Visit {format(new Date(result.visit_time), "MMM d, p")}
+                {result.purpose || "Visit"}{result.num_guests > 1 ? ` · ${result.num_guests} guests` : ""} · {format(new Date(result.visit_time), "MMM d, p")}
               </div>
-              {residentName && <div className="mt-2 text-xs text-muted-foreground">Host: <span className="text-foreground">{residentName}</span></div>}
+              {host && <div className="mt-2 text-xs text-muted-foreground">Host: <span className="text-foreground">{host.full_name}{host.unit ? ` · Unit ${host.unit}` : ""}</span></div>}
             </div>
             <StatusBadge tone={result.status === "active" ? "primary" : result.status === "used" ? "success" : "neutral"}>{result.status}</StatusBadge>
           </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <button onClick={() => act("in")} disabled={!!result.checked_in_at} className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-50">
+          {!result.checked_in_at && (
+            <input
+              value={vehicle} onChange={(e) => setVehicle(e.target.value.toUpperCase())}
+              placeholder="Vehicle number (optional)"
+              className="mt-3 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+            />
+          )}
+
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <button onClick={() => act("in")} disabled={acting || !!result.checked_in_at} className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-50">
               <LogIn className="h-4 w-4" /> Check in
             </button>
-            <button onClick={() => act("out")} disabled={!result.checked_in_at || !!result.checked_out_at} className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-50">
+            <button onClick={() => act("out")} disabled={acting || !result.checked_in_at || !!result.checked_out_at} className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2.5 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-50">
               <LogOut className="h-4 w-4" /> Check out
             </button>
           </div>
@@ -112,6 +118,7 @@ function GuardValidate() {
             <div className="mt-3 text-xs text-muted-foreground">
               {result.checked_in_at && <>In {format(new Date(result.checked_in_at), "p")} </>}
               {result.checked_out_at && <>· Out {format(new Date(result.checked_out_at), "p")}</>}
+              {result.vehicle_number && <> · Vehicle {result.vehicle_number}</>}
             </div>
           )}
         </Card>

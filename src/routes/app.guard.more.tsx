@@ -1,9 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { Card } from "@/components/ui-kit";
-import { LogOut, ShieldCheck, Building2, Mail, Phone } from "lucide-react";
+import { LogOut, ShieldCheck, Building2, Mail, Phone, History, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/app/guard/more")({
   component: GuardMore,
@@ -40,6 +40,15 @@ function GuardMore() {
           {session?.estate && <Row icon={<Building2 className="h-4 w-4" />} label={`${session.estate.name} · ${session.estate.code}`} />}
         </div>
       </Card>
+
+      <Link to="/app/guard/history" className="card-surface flex items-center justify-between px-4 py-3 hover:bg-muted/40">
+        <span className="flex items-center gap-3 text-sm font-medium text-foreground">
+          <History className="h-4 w-4 text-primary" /> Entry & exit history
+        </span>
+        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+      </Link>
+
+
 
       <button onClick={signOut} className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/5">
         <LogOut className="h-4 w-4" /> Sign out
