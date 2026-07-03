@@ -126,7 +126,21 @@ function SuperDashboard() {
              </div>
            </Card>
          ))}
-       </div>}
+        </div>}
+
+      <ConfirmActionDialog
+        open={!!toggling}
+        title={toggling?.status === "active" ? `Suspend ${toggling?.name}?` : `Activate ${toggling?.name}?`}
+        description={toggling?.status === "active"
+          ? "Residents and guards in this estate will lose access until it is reactivated."
+          : "Residents and guards will regain access to this estate immediately."}
+        confirmLabel={toggling?.status === "active" ? "Suspend estate" : "Activate estate"}
+        tone={toggling?.status === "active" ? "destructive" : "default"}
+        busy={toggle.isPending}
+        onCancel={() => setToggling(null)}
+        onConfirm={() => { if (toggling) toggle.mutate(toggling, { onSettled: () => setToggling(null) }); }}
+      />
+
 
       {editing && <EditEstateModal estate={editing} onClose={() => setEditing(null)} onDone={() => { setEditing(null); qc.invalidateQueries({ queryKey: ["all-estates"] }); }} />}
       {assigning && <AssignAdminModal estate={assigning} onClose={() => setAssigning(null)} onDone={() => { setAssigning(null); qc.invalidateQueries({ queryKey: ["all-estates"] }); qc.invalidateQueries({ queryKey: ["platform-stats"] }); }} />}
