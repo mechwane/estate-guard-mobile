@@ -243,12 +243,6 @@ function EstateDetail() {
         </div>
       </Section>
 
-      <Section title="VTU (NGN)">
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          <StatCard label="Volume" value={money(d.billing.vtu_total)} tone="primary" />
-          <StatCard label="Transactions" value={d.billing.vtu_count} />
-        </div>
-      </Section>
 
       <Section title="Recent activity">
         {d.recent_activity.length === 0 ? (
