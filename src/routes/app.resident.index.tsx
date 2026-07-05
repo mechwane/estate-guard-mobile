@@ -89,12 +89,6 @@ function ResidentHome() {
           desc="Generate a one-time entry code"
         />
         <ActionLink
-          to="/app/resident/vtu"
-          icon={<Smartphone className="h-5 w-5" />}
-          title="Airtime, data & bills"
-          desc="Top up in seconds"
-        />
-        <ActionLink
           to="/app/resident/events"
           icon={<CalendarDays className="h-5 w-5" />}
           title="Discover events"
