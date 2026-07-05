@@ -63,11 +63,6 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
     "/app/resident/guests": { title: "My guests" },
     "/app/resident/bills": { title: "Bills" },
     "/app/resident/issues": { title: "Issues" },
-    "/app/resident/vtu": {
-      title: "Bills & top-ups",
-      subtitle: "Airtime, data, electricity, cable",
-    },
-    "/app/resident/vtu/history": { title: "VTU history" },
     "/app/resident/events": { title: "Events", subtitle: "Estate and public happenings" },
     "/app/resident/events/mine": { title: "My events" },
     "/app/resident/events/new": { title: "Create event" },
