@@ -105,6 +105,123 @@ export type Database = {
           },
         ]
       }
+      community_posts: {
+        Row: {
+          author_id: string | null
+          body: string
+          created_at: string
+          estate_id: string
+          id: string
+          post_type: string
+          title: string
+        }
+        Insert: {
+          author_id?: string | null
+          body: string
+          created_at?: string
+          estate_id: string
+          id?: string
+          post_type?: string
+          title: string
+        }
+        Update: {
+          author_id?: string | null
+          body?: string
+          created_at?: string
+          estate_id?: string
+          id?: string
+          post_type?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_posts_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dependents: {
+        Row: {
+          age: number | null
+          created_at: string
+          estate_id: string
+          full_name: string
+          id: string
+          phone: string | null
+          relationship: string | null
+          resident_id: string
+        }
+        Insert: {
+          age?: number | null
+          created_at?: string
+          estate_id: string
+          full_name: string
+          id?: string
+          phone?: string | null
+          relationship?: string | null
+          resident_id: string
+        }
+        Update: {
+          age?: number | null
+          created_at?: string
+          estate_id?: string
+          full_name?: string
+          id?: string
+          phone?: string | null
+          relationship?: string | null
+          resident_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dependents_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      estate_contacts: {
+        Row: {
+          created_at: string
+          email: string | null
+          estate_id: string
+          id: string
+          label: string
+          phone: string | null
+          role: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          estate_id: string
+          id?: string
+          label: string
+          phone?: string | null
+          role?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          estate_id?: string
+          id?: string
+          label?: string
+          phone?: string | null
+          role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estate_contacts_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       estates: {
         Row: {
           address: string | null
@@ -417,6 +534,47 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          estate_id: string | null
+          id: string
+          link_to: string | null
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          estate_id?: string | null
+          id?: string
+          link_to?: string | null
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          estate_id?: string | null
+          id?: string
+          link_to?: string | null
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -462,8 +620,134 @@ export type Database = {
           },
         ]
       }
+      poll_votes: {
+        Row: {
+          created_at: string
+          option_key: string
+          poll_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          option_key: string
+          poll_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          option_key?: string
+          poll_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poll_votes_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      polls: {
+        Row: {
+          closes_at: string | null
+          created_at: string
+          description: string | null
+          estate_id: string
+          id: string
+          options: Json
+          title: string
+        }
+        Insert: {
+          closes_at?: string | null
+          created_at?: string
+          description?: string | null
+          estate_id: string
+          id?: string
+          options?: Json
+          title: string
+        }
+        Update: {
+          closes_at?: string | null
+          created_at?: string
+          description?: string | null
+          estate_id?: string
+          id?: string
+          options?: Json
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "polls_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_comments: {
+        Row: {
+          author_id: string
+          body: string
+          created_at: string
+          id: string
+          post_id: string
+        }
+        Insert: {
+          author_id: string
+          body: string
+          created_at?: string
+          id?: string
+          post_id: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_likes: {
+        Row: {
+          created_at: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
+          address_code: string | null
           approved: boolean
           avatar_url: string | null
           block: string | null
@@ -475,6 +759,8 @@ export type Database = {
           id: string
           occupant_type: Database["public"]["Enums"]["occupant_type"] | null
           phone: string | null
+          premium_expires_at: string | null
+          premium_plan: string | null
           street: string | null
           unit: string | null
           updated_at: string
@@ -486,6 +772,7 @@ export type Database = {
           verification_submitted_at: string | null
         }
         Insert: {
+          address_code?: string | null
           approved?: boolean
           avatar_url?: string | null
           block?: string | null
@@ -497,6 +784,8 @@ export type Database = {
           id: string
           occupant_type?: Database["public"]["Enums"]["occupant_type"] | null
           phone?: string | null
+          premium_expires_at?: string | null
+          premium_plan?: string | null
           street?: string | null
           unit?: string | null
           updated_at?: string
@@ -508,6 +797,7 @@ export type Database = {
           verification_submitted_at?: string | null
         }
         Update: {
+          address_code?: string | null
           approved?: boolean
           avatar_url?: string | null
           block?: string | null
@@ -519,6 +809,8 @@ export type Database = {
           id?: string
           occupant_type?: Database["public"]["Enums"]["occupant_type"] | null
           phone?: string | null
+          premium_expires_at?: string | null
+          premium_plan?: string | null
           street?: string | null
           unit?: string | null
           updated_at?: string
@@ -589,6 +881,222 @@ export type Database = {
             columns: ["ticket_id"]
             isOneToOne: false
             referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resident_ids: {
+        Row: {
+          created_at: string
+          doc_path: string | null
+          id: string
+          id_number: string
+          id_type: string
+          resident_id: string
+          verified: boolean
+        }
+        Insert: {
+          created_at?: string
+          doc_path?: string | null
+          id?: string
+          id_number: string
+          id_type: string
+          resident_id: string
+          verified?: boolean
+        }
+        Update: {
+          created_at?: string
+          doc_path?: string | null
+          id?: string
+          id_number?: string
+          id_type?: string
+          resident_id?: string
+          verified?: boolean
+        }
+        Relationships: []
+      }
+      resident_requests: {
+        Row: {
+          admin_notes: string | null
+          category: string
+          created_at: string
+          details: string | null
+          estate_id: string
+          id: string
+          resident_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          category: string
+          created_at?: string
+          details?: string | null
+          estate_id: string
+          id?: string
+          resident_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          category?: string
+          created_at?: string
+          details?: string | null
+          estate_id?: string
+          id?: string
+          resident_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resident_requests_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shop_items: {
+        Row: {
+          active: boolean
+          category: string
+          created_at: string
+          description: string | null
+          estate_id: string
+          id: string
+          image_url: string | null
+          name: string
+          price_ngn: number
+        }
+        Insert: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          description?: string | null
+          estate_id: string
+          id?: string
+          image_url?: string | null
+          name: string
+          price_ngn?: number
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          created_at?: string
+          description?: string | null
+          estate_id?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          price_ngn?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_items_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shop_orders: {
+        Row: {
+          amount_ngn: number
+          created_at: string
+          estate_id: string
+          id: string
+          item_id: string | null
+          item_name: string
+          notes: string | null
+          quantity: number
+          resident_id: string
+          status: string
+        }
+        Insert: {
+          amount_ngn?: number
+          created_at?: string
+          estate_id: string
+          id?: string
+          item_id?: string | null
+          item_name: string
+          notes?: string | null
+          quantity?: number
+          resident_id: string
+          status?: string
+        }
+        Update: {
+          amount_ngn?: number
+          created_at?: string
+          estate_id?: string
+          id?: string
+          item_id?: string | null
+          item_name?: string
+          notes?: string | null
+          quantity?: number
+          resident_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_orders_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shop_orders_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "shop_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          body: string
+          created_at: string
+          estate_id: string
+          id: string
+          resident_id: string
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          estate_id: string
+          id?: string
+          resident_id: string
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          estate_id?: string
+          id?: string
+          resident_id?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
             referencedColumns: ["id"]
           },
         ]
