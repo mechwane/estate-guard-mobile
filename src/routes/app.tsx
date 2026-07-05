@@ -91,9 +91,6 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
     "/app/denied": { title: "Access denied" },
   };
 
-  if (path.startsWith("/app/resident/vtu/") && path !== "/app/resident/vtu/history") {
-    return { title: "Purchase" };
-  }
   if (path.startsWith("/app/resident/events/") && !map[path]) {
     return { title: "Event" };
   }
