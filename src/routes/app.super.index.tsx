@@ -129,15 +129,10 @@ function SuperDashboard() {
         />
         <StatCard label="Users" value={stats.data?.users ?? "—"} />
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-3 gap-3">
         <StatCard label="Admins" value={stats.data?.admins ?? "—"} />
         <StatCard label="Guards" value={stats.data?.guards ?? "—"} />
         <StatCard label="Residents" value={stats.data?.residents ?? "—"} />
-        <StatCard
-          label="VTU volume"
-          value={stats.data ? `₦${stats.data.vtuSum.toLocaleString()}` : "—"}
-          tone="primary"
-        />
       </div>
 
       <Link
