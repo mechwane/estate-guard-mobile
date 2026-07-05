@@ -34,6 +34,7 @@ import { Route as AppResidentInboxRouteImport } from './routes/app.resident.inbo
 import { Route as AppResidentIdsRouteImport } from './routes/app.resident.ids'
 import { Route as AppResidentGuestsRouteImport } from './routes/app.resident.guests'
 import { Route as AppResidentDependentsRouteImport } from './routes/app.resident.dependents'
+import { Route as AppResidentContactsRouteImport } from './routes/app.resident.contacts'
 import { Route as AppResidentCommunityRouteImport } from './routes/app.resident.community'
 import { Route as AppResidentBillsRouteImport } from './routes/app.resident.bills'
 import { Route as AppGuardValidateRouteImport } from './routes/app.guard.validate'
@@ -179,6 +180,11 @@ const AppResidentDependentsRoute = AppResidentDependentsRouteImport.update({
   path: '/resident/dependents',
   getParentRoute: () => AppRoute,
 } as any)
+const AppResidentContactsRoute = AppResidentContactsRouteImport.update({
+  id: '/resident/contacts',
+  path: '/resident/contacts',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppResidentCommunityRoute = AppResidentCommunityRouteImport.update({
   id: '/resident/community',
   path: '/resident/community',
@@ -298,6 +304,7 @@ export interface FileRoutesByFullPath {
   '/app/guard/validate': typeof AppGuardValidateRoute
   '/app/resident/bills': typeof AppResidentBillsRoute
   '/app/resident/community': typeof AppResidentCommunityRoute
+  '/app/resident/contacts': typeof AppResidentContactsRoute
   '/app/resident/dependents': typeof AppResidentDependentsRoute
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/ids': typeof AppResidentIdsRoute
@@ -344,6 +351,7 @@ export interface FileRoutesByTo {
   '/app/guard/validate': typeof AppGuardValidateRoute
   '/app/resident/bills': typeof AppResidentBillsRoute
   '/app/resident/community': typeof AppResidentCommunityRoute
+  '/app/resident/contacts': typeof AppResidentContactsRoute
   '/app/resident/dependents': typeof AppResidentDependentsRoute
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/ids': typeof AppResidentIdsRoute
@@ -391,6 +399,7 @@ export interface FileRoutesById {
   '/app/guard/validate': typeof AppGuardValidateRoute
   '/app/resident/bills': typeof AppResidentBillsRoute
   '/app/resident/community': typeof AppResidentCommunityRoute
+  '/app/resident/contacts': typeof AppResidentContactsRoute
   '/app/resident/dependents': typeof AppResidentDependentsRoute
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/ids': typeof AppResidentIdsRoute
@@ -439,6 +448,7 @@ export interface FileRouteTypes {
     | '/app/guard/validate'
     | '/app/resident/bills'
     | '/app/resident/community'
+    | '/app/resident/contacts'
     | '/app/resident/dependents'
     | '/app/resident/guests'
     | '/app/resident/ids'
@@ -485,6 +495,7 @@ export interface FileRouteTypes {
     | '/app/guard/validate'
     | '/app/resident/bills'
     | '/app/resident/community'
+    | '/app/resident/contacts'
     | '/app/resident/dependents'
     | '/app/resident/guests'
     | '/app/resident/ids'
@@ -531,6 +542,7 @@ export interface FileRouteTypes {
     | '/app/guard/validate'
     | '/app/resident/bills'
     | '/app/resident/community'
+    | '/app/resident/contacts'
     | '/app/resident/dependents'
     | '/app/resident/guests'
     | '/app/resident/ids'
@@ -738,6 +750,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppResidentDependentsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/resident/contacts': {
+      id: '/app/resident/contacts'
+      path: '/resident/contacts'
+      fullPath: '/app/resident/contacts'
+      preLoaderRoute: typeof AppResidentContactsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/resident/community': {
       id: '/app/resident/community'
       path: '/resident/community'
@@ -890,6 +909,7 @@ interface AppRouteChildren {
   AppGuardValidateRoute: typeof AppGuardValidateRoute
   AppResidentBillsRoute: typeof AppResidentBillsRoute
   AppResidentCommunityRoute: typeof AppResidentCommunityRoute
+  AppResidentContactsRoute: typeof AppResidentContactsRoute
   AppResidentDependentsRoute: typeof AppResidentDependentsRoute
   AppResidentGuestsRoute: typeof AppResidentGuestsRoute
   AppResidentIdsRoute: typeof AppResidentIdsRoute
@@ -930,6 +950,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppGuardValidateRoute: AppGuardValidateRoute,
   AppResidentBillsRoute: AppResidentBillsRoute,
   AppResidentCommunityRoute: AppResidentCommunityRoute,
+  AppResidentContactsRoute: AppResidentContactsRoute,
   AppResidentDependentsRoute: AppResidentDependentsRoute,
   AppResidentGuestsRoute: AppResidentGuestsRoute,
   AppResidentIdsRoute: AppResidentIdsRoute,
