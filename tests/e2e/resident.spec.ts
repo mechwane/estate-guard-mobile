@@ -11,7 +11,7 @@ test.describe("Resident role flow", () => {
 
   test("resident navigation is visible", async ({ page }) => {
     await signIn(page, "RESIDENT");
-    for (const label of ["Home", "Guests", "VTU", "Events", "More"]) {
+    for (const label of ["Home", "Guests", "Bills", "Events", "More"]) {
       await expect(
         page.getByRole("link", { name: new RegExp(`^${label}$`, "i") }).first(),
       ).toBeVisible();
