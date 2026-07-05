@@ -26,9 +26,9 @@ test.describe("Resident role flow", () => {
     await expect(page).toHaveURL(/verification/);
   });
 
-  test("guest, events, vtu screens accessible", async ({ page }) => {
+  test("guest, events, bills screens accessible", async ({ page }) => {
     await signIn(page, "RESIDENT");
-    for (const path of ["/app/resident/guests", "/app/resident/events", "/app/resident/vtu"]) {
+    for (const path of ["/app/resident/guests", "/app/resident/events", "/app/resident/bills"]) {
       await page.goto(path);
       await expect(page).toHaveURL(new RegExp(path));
     }
