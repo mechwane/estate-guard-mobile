@@ -9,7 +9,7 @@ import {
   Receipt,
   ChevronRight,
   Users,
-  Smartphone,
+  
   CalendarDays,
 } from "lucide-react";
 import { format } from "date-fns";
