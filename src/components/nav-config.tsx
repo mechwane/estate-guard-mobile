@@ -6,7 +6,6 @@ import {
   Shield,
   ScrollText,
   Building2,
-  Smartphone,
   CalendarDays,
   MoreHorizontal,
   ShieldCheck,
