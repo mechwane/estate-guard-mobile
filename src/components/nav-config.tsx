@@ -6,7 +6,7 @@ import {
   Shield,
   ScrollText,
   Building2,
-  CalendarDays,
+  Inbox,
   MoreHorizontal,
   ShieldCheck,
   AlertTriangle,
@@ -17,9 +17,9 @@ import type { ReactNode } from "react";
 export const navByRole: Record<AppRole, { to: string; label: string; icon: ReactNode }[]> = {
   resident: [
     { to: "/app/resident", label: "Home", icon: <Home /> },
-    { to: "/app/resident/guests", label: "Guests", icon: <Users /> },
     { to: "/app/resident/bills", label: "Bills", icon: <Receipt /> },
-    { to: "/app/resident/events", label: "Events", icon: <CalendarDays /> },
+    { to: "/app/resident/community", label: "Community", icon: <Users /> },
+    { to: "/app/resident/inbox", label: "Inbox", icon: <Inbox /> },
     { to: "/app/resident/more", label: "More", icon: <MoreHorizontal /> },
   ],
   guard: [
@@ -41,3 +41,4 @@ export const navByRole: Record<AppRole, { to: string; label: string; icon: React
     { to: "/app/super/audit", label: "Audit", icon: <ScrollText /> },
   ],
 };
+
