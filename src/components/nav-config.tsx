@@ -18,7 +18,7 @@ export const navByRole: Record<AppRole, { to: string; label: string; icon: React
   resident: [
     { to: "/app/resident", label: "Home", icon: <Home /> },
     { to: "/app/resident/guests", label: "Guests", icon: <Users /> },
-    { to: "/app/resident/vtu", label: "VTU", icon: <Smartphone /> },
+    { to: "/app/resident/bills", label: "Bills", icon: <Receipt /> },
     { to: "/app/resident/events", label: "Events", icon: <CalendarDays /> },
     { to: "/app/resident/more", label: "More", icon: <MoreHorizontal /> },
   ],
