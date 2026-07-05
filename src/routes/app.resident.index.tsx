@@ -9,7 +9,7 @@ import {
   Receipt,
   ChevronRight,
   Users,
-  Smartphone,
+  
   CalendarDays,
 } from "lucide-react";
 import { format } from "date-fns";
@@ -87,12 +87,6 @@ function ResidentHome() {
           icon={<UserPlus className="h-5 w-5" />}
           title="Invite a guest"
           desc="Generate a one-time entry code"
-        />
-        <ActionLink
-          to="/app/resident/vtu"
-          icon={<Smartphone className="h-5 w-5" />}
-          title="Airtime, data & bills"
-          desc="Top up in seconds"
         />
         <ActionLink
           to="/app/resident/events"

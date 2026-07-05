@@ -57,7 +57,7 @@ function SuperDashboard() {
   const stats = useQuery({
     queryKey: ["platform-stats"],
     queryFn: async () => {
-      const [users, estatesTotal, active, suspended, admins, guards, residents, txTotals] =
+      const [users, estatesTotal, active, suspended, admins, guards, residents] =
         await Promise.all([
           supabase.from("profiles").select("id", { count: "exact", head: true }),
           supabase.from("estates").select("id", { count: "exact", head: true }),
@@ -81,9 +81,7 @@ function SuperDashboard() {
             .from("user_roles")
             .select("user_id", { count: "exact", head: true })
             .eq("role", "resident"),
-          supabase.from("vtu_transactions").select("amount").eq("status", "success"),
         ]);
-      const vtuSum = (txTotals.data ?? []).reduce((s, r: any) => s + Number(r.amount ?? 0), 0);
       return {
         users: users.count ?? 0,
         estatesTotal: estatesTotal.count ?? 0,
@@ -92,7 +90,6 @@ function SuperDashboard() {
         admins: admins.count ?? 0,
         guards: guards.count ?? 0,
         residents: residents.count ?? 0,
-        vtuSum,
       };
     },
   });
@@ -132,15 +129,10 @@ function SuperDashboard() {
         />
         <StatCard label="Users" value={stats.data?.users ?? "—"} />
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-3 gap-3">
         <StatCard label="Admins" value={stats.data?.admins ?? "—"} />
         <StatCard label="Guards" value={stats.data?.guards ?? "—"} />
         <StatCard label="Residents" value={stats.data?.residents ?? "—"} />
-        <StatCard
-          label="VTU volume"
-          value={stats.data ? `₦${stats.data.vtuSum.toLocaleString()}` : "—"}
-          tone="primary"
-        />
       </div>
 
       <Link

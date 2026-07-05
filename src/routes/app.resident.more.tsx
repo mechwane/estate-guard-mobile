@@ -7,7 +7,7 @@ import {
   ShieldCheck,
   LogOut,
   Receipt,
-  Smartphone,
+  
   CalendarDays,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -74,11 +74,6 @@ function More() {
           hint={v.label}
         />
         <Row to="/app/resident/bills" icon={<Receipt className="h-4 w-4" />} label="Bills" />
-        <Row
-          to="/app/resident/vtu"
-          icon={<Smartphone className="h-4 w-4" />}
-          label="Airtime, data & bills"
-        />
         <Row to="/app/resident/events" icon={<CalendarDays className="h-4 w-4" />} label="Events" />
       </div>
 
