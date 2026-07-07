@@ -50,6 +50,7 @@ import { Route as AppAdminRequestsRouteImport } from './routes/app.admin.request
 import { Route as AppAdminIssuesRouteImport } from './routes/app.admin.issues'
 import { Route as AppAdminGuestsRouteImport } from './routes/app.admin.guests'
 import { Route as AppAdminEventsRouteImport } from './routes/app.admin.events'
+import { Route as AppAdminCommunityRouteImport } from './routes/app.admin.community'
 import { Route as AppAdminBillsRouteImport } from './routes/app.admin.bills'
 import { Route as AppResidentEventsIndexRouteImport } from './routes/app.resident.events.index'
 import { Route as AppSuperEstatesEstateIdRouteImport } from './routes/app.super.estates.$estateId'
@@ -262,6 +263,11 @@ const AppAdminEventsRoute = AppAdminEventsRouteImport.update({
   path: '/admin/events',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminCommunityRoute = AppAdminCommunityRouteImport.update({
+  id: '/admin/community',
+  path: '/admin/community',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminBillsRoute = AppAdminBillsRouteImport.update({
   id: '/admin/bills',
   path: '/admin/bills',
@@ -303,6 +309,7 @@ export interface FileRoutesByFullPath {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/app/admin/bills': typeof AppAdminBillsRoute
+  '/app/admin/community': typeof AppAdminCommunityRoute
   '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
@@ -352,6 +359,7 @@ export interface FileRoutesByTo {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/app/admin/bills': typeof AppAdminBillsRoute
+  '/app/admin/community': typeof AppAdminCommunityRoute
   '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
@@ -402,6 +410,7 @@ export interface FileRoutesById {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/app/admin/bills': typeof AppAdminBillsRoute
+  '/app/admin/community': typeof AppAdminCommunityRoute
   '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
@@ -453,6 +462,7 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/app/admin/bills'
+    | '/app/admin/community'
     | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/issues'
@@ -502,6 +512,7 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/app/admin/bills'
+    | '/app/admin/community'
     | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/issues'
@@ -551,6 +562,7 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/app/admin/bills'
+    | '/app/admin/community'
     | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/issues'
@@ -886,6 +898,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminEventsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/community': {
+      id: '/app/admin/community'
+      path: '/admin/community'
+      fullPath: '/app/admin/community'
+      preLoaderRoute: typeof AppAdminCommunityRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/bills': {
       id: '/app/admin/bills'
       path: '/admin/bills'
@@ -934,6 +953,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppDeniedRoute: typeof AppDeniedRoute
   AppAdminBillsRoute: typeof AppAdminBillsRoute
+  AppAdminCommunityRoute: typeof AppAdminCommunityRoute
   AppAdminEventsRoute: typeof AppAdminEventsRoute
   AppAdminGuestsRoute: typeof AppAdminGuestsRoute
   AppAdminIssuesRoute: typeof AppAdminIssuesRoute
@@ -977,6 +997,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppDeniedRoute: AppDeniedRoute,
   AppAdminBillsRoute: AppAdminBillsRoute,
+  AppAdminCommunityRoute: AppAdminCommunityRoute,
   AppAdminEventsRoute: AppAdminEventsRoute,
   AppAdminGuestsRoute: AppAdminGuestsRoute,
   AppAdminIssuesRoute: AppAdminIssuesRoute,
