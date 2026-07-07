@@ -55,7 +55,7 @@ function AdminRequests() {
       status?: string;
       admin_notes?: string;
     }) => {
-      const patch: Record<string, unknown> = {};
+      const patch: { status?: string; admin_notes?: string } = {};
       if (status !== undefined) patch.status = status;
       if (admin_notes !== undefined) patch.admin_notes = admin_notes;
       const { error } = await supabase.from("resident_requests").update(patch).eq("id", id);
