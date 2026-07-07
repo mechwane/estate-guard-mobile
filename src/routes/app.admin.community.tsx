@@ -112,6 +112,17 @@ function AdminCommunity() {
                 className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
             </label>
+            <label className="block">
+              <span className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                Cover image URL (optional)
+              </span>
+              <input
+                value={editing.cover_url}
+                onChange={(e) => setEditing({ ...editing, cover_url: e.target.value })}
+                placeholder="https://…"
+                className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              />
+            </label>
             <div className="flex gap-2">
               <button
                 onClick={() => setEditing(null)}
