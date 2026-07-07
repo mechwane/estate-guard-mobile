@@ -157,6 +157,7 @@ function AdminCommunity() {
                           post_type: p.post_type,
                           title: p.title,
                           body: p.body,
+                          cover_url: (p as any).cover_url ?? "",
                         })
                       }
                       className="rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
