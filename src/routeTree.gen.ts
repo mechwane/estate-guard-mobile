@@ -23,16 +23,21 @@ import { Route as AppGuardIndexRouteImport } from './routes/app.guard.index'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 import { Route as AppSuperAuditRouteImport } from './routes/app.super.audit'
 import { Route as AppResidentVerificationRouteImport } from './routes/app.resident.verification'
+import { Route as AppResidentTermsRouteImport } from './routes/app.resident.terms'
 import { Route as AppResidentSupportRouteImport } from './routes/app.resident.support'
 import { Route as AppResidentShopRouteImport } from './routes/app.resident.shop'
+import { Route as AppResidentSettingsRouteImport } from './routes/app.resident.settings'
 import { Route as AppResidentRequestsRouteImport } from './routes/app.resident.requests'
 import { Route as AppResidentProfileRouteImport } from './routes/app.resident.profile'
+import { Route as AppResidentPrivacyRouteImport } from './routes/app.resident.privacy'
 import { Route as AppResidentMoreRouteImport } from './routes/app.resident.more'
 import { Route as AppResidentIssuesRouteImport } from './routes/app.resident.issues'
 import { Route as AppResidentInviteRouteImport } from './routes/app.resident.invite'
 import { Route as AppResidentInboxRouteImport } from './routes/app.resident.inbox'
 import { Route as AppResidentIdsRouteImport } from './routes/app.resident.ids'
 import { Route as AppResidentGuestsRouteImport } from './routes/app.resident.guests'
+import { Route as AppResidentFeedbackRouteImport } from './routes/app.resident.feedback'
+import { Route as AppResidentFaqsRouteImport } from './routes/app.resident.faqs'
 import { Route as AppResidentDependentsRouteImport } from './routes/app.resident.dependents'
 import { Route as AppResidentContactsRouteImport } from './routes/app.resident.contacts'
 import { Route as AppResidentCommunityRouteImport } from './routes/app.resident.community'
@@ -128,6 +133,11 @@ const AppResidentVerificationRoute = AppResidentVerificationRouteImport.update({
   path: '/resident/verification',
   getParentRoute: () => AppRoute,
 } as any)
+const AppResidentTermsRoute = AppResidentTermsRouteImport.update({
+  id: '/resident/terms',
+  path: '/resident/terms',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppResidentSupportRoute = AppResidentSupportRouteImport.update({
   id: '/resident/support',
   path: '/resident/support',
@@ -138,6 +148,11 @@ const AppResidentShopRoute = AppResidentShopRouteImport.update({
   path: '/resident/shop',
   getParentRoute: () => AppRoute,
 } as any)
+const AppResidentSettingsRoute = AppResidentSettingsRouteImport.update({
+  id: '/resident/settings',
+  path: '/resident/settings',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppResidentRequestsRoute = AppResidentRequestsRouteImport.update({
   id: '/resident/requests',
   path: '/resident/requests',
@@ -146,6 +161,11 @@ const AppResidentRequestsRoute = AppResidentRequestsRouteImport.update({
 const AppResidentProfileRoute = AppResidentProfileRouteImport.update({
   id: '/resident/profile',
   path: '/resident/profile',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentPrivacyRoute = AppResidentPrivacyRouteImport.update({
+  id: '/resident/privacy',
+  path: '/resident/privacy',
   getParentRoute: () => AppRoute,
 } as any)
 const AppResidentMoreRoute = AppResidentMoreRouteImport.update({
@@ -176,6 +196,16 @@ const AppResidentIdsRoute = AppResidentIdsRouteImport.update({
 const AppResidentGuestsRoute = AppResidentGuestsRouteImport.update({
   id: '/resident/guests',
   path: '/resident/guests',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentFeedbackRoute = AppResidentFeedbackRouteImport.update({
+  id: '/resident/feedback',
+  path: '/resident/feedback',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentFaqsRoute = AppResidentFaqsRouteImport.update({
+  id: '/resident/faqs',
+  path: '/resident/faqs',
   getParentRoute: () => AppRoute,
 } as any)
 const AppResidentDependentsRoute = AppResidentDependentsRouteImport.update({
@@ -327,16 +357,21 @@ export interface FileRoutesByFullPath {
   '/app/resident/community': typeof AppResidentCommunityRoute
   '/app/resident/contacts': typeof AppResidentContactsRoute
   '/app/resident/dependents': typeof AppResidentDependentsRoute
+  '/app/resident/faqs': typeof AppResidentFaqsRoute
+  '/app/resident/feedback': typeof AppResidentFeedbackRoute
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/ids': typeof AppResidentIdsRoute
   '/app/resident/inbox': typeof AppResidentInboxRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
   '/app/resident/more': typeof AppResidentMoreRoute
+  '/app/resident/privacy': typeof AppResidentPrivacyRoute
   '/app/resident/profile': typeof AppResidentProfileRoute
   '/app/resident/requests': typeof AppResidentRequestsRoute
+  '/app/resident/settings': typeof AppResidentSettingsRoute
   '/app/resident/shop': typeof AppResidentShopRoute
   '/app/resident/support': typeof AppResidentSupportRoute
+  '/app/resident/terms': typeof AppResidentTermsRoute
   '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -377,16 +412,21 @@ export interface FileRoutesByTo {
   '/app/resident/community': typeof AppResidentCommunityRoute
   '/app/resident/contacts': typeof AppResidentContactsRoute
   '/app/resident/dependents': typeof AppResidentDependentsRoute
+  '/app/resident/faqs': typeof AppResidentFaqsRoute
+  '/app/resident/feedback': typeof AppResidentFeedbackRoute
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/ids': typeof AppResidentIdsRoute
   '/app/resident/inbox': typeof AppResidentInboxRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
   '/app/resident/more': typeof AppResidentMoreRoute
+  '/app/resident/privacy': typeof AppResidentPrivacyRoute
   '/app/resident/profile': typeof AppResidentProfileRoute
   '/app/resident/requests': typeof AppResidentRequestsRoute
+  '/app/resident/settings': typeof AppResidentSettingsRoute
   '/app/resident/shop': typeof AppResidentShopRoute
   '/app/resident/support': typeof AppResidentSupportRoute
+  '/app/resident/terms': typeof AppResidentTermsRoute
   '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
   '/app/admin': typeof AppAdminIndexRoute
@@ -428,16 +468,21 @@ export interface FileRoutesById {
   '/app/resident/community': typeof AppResidentCommunityRoute
   '/app/resident/contacts': typeof AppResidentContactsRoute
   '/app/resident/dependents': typeof AppResidentDependentsRoute
+  '/app/resident/faqs': typeof AppResidentFaqsRoute
+  '/app/resident/feedback': typeof AppResidentFeedbackRoute
   '/app/resident/guests': typeof AppResidentGuestsRoute
   '/app/resident/ids': typeof AppResidentIdsRoute
   '/app/resident/inbox': typeof AppResidentInboxRoute
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
   '/app/resident/more': typeof AppResidentMoreRoute
+  '/app/resident/privacy': typeof AppResidentPrivacyRoute
   '/app/resident/profile': typeof AppResidentProfileRoute
   '/app/resident/requests': typeof AppResidentRequestsRoute
+  '/app/resident/settings': typeof AppResidentSettingsRoute
   '/app/resident/shop': typeof AppResidentShopRoute
   '/app/resident/support': typeof AppResidentSupportRoute
+  '/app/resident/terms': typeof AppResidentTermsRoute
   '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -480,16 +525,21 @@ export interface FileRouteTypes {
     | '/app/resident/community'
     | '/app/resident/contacts'
     | '/app/resident/dependents'
+    | '/app/resident/faqs'
+    | '/app/resident/feedback'
     | '/app/resident/guests'
     | '/app/resident/ids'
     | '/app/resident/inbox'
     | '/app/resident/invite'
     | '/app/resident/issues'
     | '/app/resident/more'
+    | '/app/resident/privacy'
     | '/app/resident/profile'
     | '/app/resident/requests'
+    | '/app/resident/settings'
     | '/app/resident/shop'
     | '/app/resident/support'
+    | '/app/resident/terms'
     | '/app/resident/verification'
     | '/app/super/audit'
     | '/app/admin/'
@@ -530,16 +580,21 @@ export interface FileRouteTypes {
     | '/app/resident/community'
     | '/app/resident/contacts'
     | '/app/resident/dependents'
+    | '/app/resident/faqs'
+    | '/app/resident/feedback'
     | '/app/resident/guests'
     | '/app/resident/ids'
     | '/app/resident/inbox'
     | '/app/resident/invite'
     | '/app/resident/issues'
     | '/app/resident/more'
+    | '/app/resident/privacy'
     | '/app/resident/profile'
     | '/app/resident/requests'
+    | '/app/resident/settings'
     | '/app/resident/shop'
     | '/app/resident/support'
+    | '/app/resident/terms'
     | '/app/resident/verification'
     | '/app/super/audit'
     | '/app/admin'
@@ -580,16 +635,21 @@ export interface FileRouteTypes {
     | '/app/resident/community'
     | '/app/resident/contacts'
     | '/app/resident/dependents'
+    | '/app/resident/faqs'
+    | '/app/resident/feedback'
     | '/app/resident/guests'
     | '/app/resident/ids'
     | '/app/resident/inbox'
     | '/app/resident/invite'
     | '/app/resident/issues'
     | '/app/resident/more'
+    | '/app/resident/privacy'
     | '/app/resident/profile'
     | '/app/resident/requests'
+    | '/app/resident/settings'
     | '/app/resident/shop'
     | '/app/resident/support'
+    | '/app/resident/terms'
     | '/app/resident/verification'
     | '/app/super/audit'
     | '/app/admin/'
@@ -709,6 +769,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppResidentVerificationRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/resident/terms': {
+      id: '/app/resident/terms'
+      path: '/resident/terms'
+      fullPath: '/app/resident/terms'
+      preLoaderRoute: typeof AppResidentTermsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/resident/support': {
       id: '/app/resident/support'
       path: '/resident/support'
@@ -723,6 +790,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppResidentShopRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/resident/settings': {
+      id: '/app/resident/settings'
+      path: '/resident/settings'
+      fullPath: '/app/resident/settings'
+      preLoaderRoute: typeof AppResidentSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/resident/requests': {
       id: '/app/resident/requests'
       path: '/resident/requests'
@@ -735,6 +809,13 @@ declare module '@tanstack/react-router' {
       path: '/resident/profile'
       fullPath: '/app/resident/profile'
       preLoaderRoute: typeof AppResidentProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/privacy': {
+      id: '/app/resident/privacy'
+      path: '/resident/privacy'
+      fullPath: '/app/resident/privacy'
+      preLoaderRoute: typeof AppResidentPrivacyRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/resident/more': {
@@ -777,6 +858,20 @@ declare module '@tanstack/react-router' {
       path: '/resident/guests'
       fullPath: '/app/resident/guests'
       preLoaderRoute: typeof AppResidentGuestsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/feedback': {
+      id: '/app/resident/feedback'
+      path: '/resident/feedback'
+      fullPath: '/app/resident/feedback'
+      preLoaderRoute: typeof AppResidentFeedbackRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/faqs': {
+      id: '/app/resident/faqs'
+      path: '/resident/faqs'
+      fullPath: '/app/resident/faqs'
+      preLoaderRoute: typeof AppResidentFaqsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/resident/dependents': {
@@ -971,16 +1066,21 @@ interface AppRouteChildren {
   AppResidentCommunityRoute: typeof AppResidentCommunityRoute
   AppResidentContactsRoute: typeof AppResidentContactsRoute
   AppResidentDependentsRoute: typeof AppResidentDependentsRoute
+  AppResidentFaqsRoute: typeof AppResidentFaqsRoute
+  AppResidentFeedbackRoute: typeof AppResidentFeedbackRoute
   AppResidentGuestsRoute: typeof AppResidentGuestsRoute
   AppResidentIdsRoute: typeof AppResidentIdsRoute
   AppResidentInboxRoute: typeof AppResidentInboxRoute
   AppResidentInviteRoute: typeof AppResidentInviteRoute
   AppResidentIssuesRoute: typeof AppResidentIssuesRoute
   AppResidentMoreRoute: typeof AppResidentMoreRoute
+  AppResidentPrivacyRoute: typeof AppResidentPrivacyRoute
   AppResidentProfileRoute: typeof AppResidentProfileRoute
   AppResidentRequestsRoute: typeof AppResidentRequestsRoute
+  AppResidentSettingsRoute: typeof AppResidentSettingsRoute
   AppResidentShopRoute: typeof AppResidentShopRoute
   AppResidentSupportRoute: typeof AppResidentSupportRoute
+  AppResidentTermsRoute: typeof AppResidentTermsRoute
   AppResidentVerificationRoute: typeof AppResidentVerificationRoute
   AppSuperAuditRoute: typeof AppSuperAuditRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
@@ -1015,16 +1115,21 @@ const AppRouteChildren: AppRouteChildren = {
   AppResidentCommunityRoute: AppResidentCommunityRoute,
   AppResidentContactsRoute: AppResidentContactsRoute,
   AppResidentDependentsRoute: AppResidentDependentsRoute,
+  AppResidentFaqsRoute: AppResidentFaqsRoute,
+  AppResidentFeedbackRoute: AppResidentFeedbackRoute,
   AppResidentGuestsRoute: AppResidentGuestsRoute,
   AppResidentIdsRoute: AppResidentIdsRoute,
   AppResidentInboxRoute: AppResidentInboxRoute,
   AppResidentInviteRoute: AppResidentInviteRoute,
   AppResidentIssuesRoute: AppResidentIssuesRoute,
   AppResidentMoreRoute: AppResidentMoreRoute,
+  AppResidentPrivacyRoute: AppResidentPrivacyRoute,
   AppResidentProfileRoute: AppResidentProfileRoute,
   AppResidentRequestsRoute: AppResidentRequestsRoute,
+  AppResidentSettingsRoute: AppResidentSettingsRoute,
   AppResidentShopRoute: AppResidentShopRoute,
   AppResidentSupportRoute: AppResidentSupportRoute,
+  AppResidentTermsRoute: AppResidentTermsRoute,
   AppResidentVerificationRoute: AppResidentVerificationRoute,
   AppSuperAuditRoute: AppSuperAuditRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
