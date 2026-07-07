@@ -295,6 +295,32 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
+function ActionRow({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-muted/40"
+    >
+      <div className="flex items-center gap-3 text-sm text-foreground">
+        <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary transition-transform group-hover:scale-110">
+          {icon}
+        </span>
+        {label}
+      </div>
+      <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+    </button>
+  );
+}
+
 function Row({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
   return (
     <Link
