@@ -34,9 +34,9 @@ export const navByRole: Record<AppRole, { to: string; label: string; icon: React
   estate_admin: [
     { to: "/app/admin", label: "Overview", icon: <Home /> },
     { to: "/app/admin/verifications", label: "Verify", icon: <ShieldCheck /> },
-    { to: "/app/admin/residents", label: "Residents", icon: <Users /> },
-    { to: "/app/admin/bills", label: "Bills", icon: <Receipt /> },
-    { to: "/app/admin/issues", label: "Issues", icon: <MessageSquare /> },
+    { to: "/app/admin/requests", label: "Requests", icon: <Inbox /> },
+    { to: "/app/admin/shop", label: "Shop", icon: <Store /> },
+    { to: "/app/admin/community", label: "Community", icon: <Megaphone /> },
   ],
   super_admin: [
     { to: "/app/super", label: "Estates", icon: <Building2 /> },
