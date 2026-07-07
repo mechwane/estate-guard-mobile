@@ -111,9 +111,10 @@ function More() {
 
       {/* Premium banner */}
       <FadeIn delay={0.1}>
-        <Card
-          onClick={() => (isPremium ? null : setShowUpgrade(true))}
-          className={`relative cursor-pointer overflow-hidden border-0 p-4 text-white transition-transform hover:scale-[1.01] active:scale-[0.99] ${
+        <button
+          type="button"
+          onClick={() => setShowUpgrade(true)}
+          className={`relative w-full cursor-pointer overflow-hidden rounded-xl border-0 p-4 text-left text-white shadow-sm transition-transform hover:scale-[1.01] active:scale-[0.99] ${
             isPremium
               ? "bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500"
               : "bg-gradient-to-r from-primary via-primary-dark to-amber-600"
