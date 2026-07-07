@@ -1,12 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { Card, EmptyState } from "@/components/ui-kit";
+import { EmptyState } from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
-import { Heart, MessageCircle, Megaphone, Vote, Newspaper } from "lucide-react";
-import { format } from "date-fns";
+import {
+  Heart,
+  MessageCircle,
+  Megaphone,
+  Vote,
+  Newspaper,
+  Loader2,
+  Send,
+  X,
+} from "lucide-react";
+import { formatDistanceToNowStrict } from "date-fns";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/resident/community")({
@@ -20,30 +30,47 @@ function Community() {
   const { data: session } = useSession();
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-4">
       <FadeIn>
-        <div className="card-surface flex items-center p-1">
+        <div className="relative flex items-center justify-around border-b border-border">
           {(["blog", "polls", "announcement"] as Tab[]).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`flex-1 rounded-lg px-3 py-2 text-xs font-medium capitalize transition-colors ${
-                tab === t
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+              className={`relative flex-1 px-3 py-2.5 text-sm font-medium capitalize transition-colors ${
+                tab === t ? "text-foreground" : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {t === "polls" ? "Polls & Election" : t}
+              {tab === t && (
+                <motion.span
+                  layoutId="communityTab"
+                  className="absolute inset-x-4 -bottom-px h-0.5 rounded-full bg-primary"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
             </button>
           ))}
         </div>
       </FadeIn>
 
-      {tab === "blog" && <PostsList estateId={session?.estate?.id} type="blog" />}
-      {tab === "announcement" && (
-        <PostsList estateId={session?.estate?.id} type="announcement" />
-      )}
-      {tab === "polls" && <PollsList estateId={session?.estate?.id} userId={session?.userId} />}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={tab}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {tab === "blog" && <PostsList estateId={session?.estate?.id} type="blog" />}
+          {tab === "announcement" && (
+            <PostsList estateId={session?.estate?.id} type="announcement" />
+          )}
+          {tab === "polls" && (
+            <PollsList estateId={session?.estate?.id} userId={session?.userId} />
+          )}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
@@ -51,6 +78,8 @@ function Community() {
 function PostsList({ estateId, type }: { estateId?: string; type: "blog" | "announcement" }) {
   const { data: session } = useSession();
   const qc = useQueryClient();
+  const [openComments, setOpenComments] = useState<string | null>(null);
+
   const q = useQuery({
     queryKey: ["posts", estateId, type],
     enabled: !!estateId,
@@ -63,34 +92,48 @@ function PostsList({ estateId, type }: { estateId?: string; type: "blog" | "anno
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
-      return data;
+      return data as any[];
     },
   });
 
-  const likes = useQuery({
-    queryKey: ["post-likes", session?.userId, estateId, type],
+  const stats = useQuery({
+    queryKey: ["post-stats", session?.userId, estateId, type],
     enabled: !!q.data && !!session?.userId,
     queryFn: async () => {
       const ids = (q.data ?? []).map((p) => p.id);
-      if (ids.length === 0) return { counts: {}, mine: new Set<string>() };
-      const [{ data: all }, { data: mine }] = await Promise.all([
+      if (ids.length === 0)
+        return {
+          likes: {} as Record<string, number>,
+          mine: new Set<string>(),
+          comments: {} as Record<string, number>,
+        };
+      const [{ data: allLikes }, { data: myLikes }, { data: allComments }] = await Promise.all([
         supabase.from("post_likes").select("post_id").in("post_id", ids),
         supabase
           .from("post_likes")
           .select("post_id")
           .in("post_id", ids)
           .eq("user_id", session!.userId!),
+        supabase.from("post_comments").select("post_id").in("post_id", ids),
       ]);
-      const counts: Record<string, number> = {};
-      (all ?? []).forEach((r: any) => (counts[r.post_id] = (counts[r.post_id] ?? 0) + 1));
-      return { counts, mine: new Set((mine ?? []).map((r: any) => r.post_id)) };
+      const likes: Record<string, number> = {};
+      (allLikes ?? []).forEach((r: any) => (likes[r.post_id] = (likes[r.post_id] ?? 0) + 1));
+      const comments: Record<string, number> = {};
+      (allComments ?? []).forEach(
+        (r: any) => (comments[r.post_id] = (comments[r.post_id] ?? 0) + 1),
+      );
+      return {
+        likes,
+        comments,
+        mine: new Set((myLikes ?? []).map((r: any) => r.post_id)),
+      };
     },
   });
 
   const toggleLike = useMutation({
     mutationFn: async (postId: string) => {
       if (!session?.userId) throw new Error("Sign in");
-      const isLiked = likes.data?.mine.has(postId);
+      const isLiked = stats.data?.mine.has(postId);
       if (isLiked) {
         const { error } = await supabase
           .from("post_likes")
@@ -105,49 +148,301 @@ function PostsList({ estateId, type }: { estateId?: string; type: "blog" | "anno
         if (error) throw error;
       }
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["post-likes"] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["post-stats"] }),
   });
+
+  if (q.isLoading) {
+    return (
+      <div className="flex justify-center py-10">
+        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   if (!q.data || q.data.length === 0) {
     return (
       <EmptyState
         title={type === "blog" ? "No posts yet" : "No announcements"}
-        icon={type === "blog" ? <Newspaper className="h-6 w-6" /> : <Megaphone className="h-6 w-6" />}
+        icon={
+          type === "blog" ? (
+            <Newspaper className="h-6 w-6" />
+          ) : (
+            <Megaphone className="h-6 w-6" />
+          )
+        }
       />
     );
   }
 
   return (
-    <Stagger className="space-y-2.5">
-      {q.data.map((p) => {
-        const liked = likes.data?.mine.has(p.id);
-        const count = likes.data?.counts[p.id] ?? 0;
-        return (
+    <>
+      <Stagger className="space-y-3">
+        {q.data.map((p) => (
           <StaggerItem key={p.id}>
-            <Card className="space-y-2 p-4">
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="font-semibold text-foreground">Estate Manager</span>
-                <span>·</span>
-                <span>{format(new Date(p.created_at), "MMM d, yyyy")}</span>
-              </div>
-              <div className="text-sm font-semibold text-foreground">{p.title}</div>
-              <p className="whitespace-pre-line text-sm text-muted-foreground">{p.body}</p>
-              <div className="flex items-center gap-4 pt-1 text-xs text-muted-foreground">
-                <button
-                  onClick={() => toggleLike.mutate(p.id)}
-                  className={`inline-flex items-center gap-1 transition-colors ${liked ? "text-primary" : "hover:text-foreground"}`}
-                >
-                  <Heart className={`h-3.5 w-3.5 ${liked ? "fill-current" : ""}`} /> {count}
-                </button>
-                <span className="inline-flex items-center gap-1">
-                  <MessageCircle className="h-3.5 w-3.5" /> Comment
-                </span>
-              </div>
-            </Card>
+            <PostCard
+              post={p}
+              liked={!!stats.data?.mine.has(p.id)}
+              likeCount={stats.data?.likes[p.id] ?? 0}
+              commentCount={stats.data?.comments[p.id] ?? 0}
+              onLike={() => toggleLike.mutate(p.id)}
+              onOpenComments={() => setOpenComments(p.id)}
+            />
           </StaggerItem>
-        );
-      })}
-    </Stagger>
+        ))}
+      </Stagger>
+
+      <CommentsSheet
+        postId={openComments}
+        onClose={() => setOpenComments(null)}
+      />
+    </>
+  );
+}
+
+function PostCard({
+  post,
+  liked,
+  likeCount,
+  commentCount,
+  onLike,
+  onOpenComments,
+}: {
+  post: any;
+  liked: boolean;
+  likeCount: number;
+  commentCount: number;
+  onLike: () => void;
+  onOpenComments: () => void;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const body = post.body ?? "";
+  const long = body.length > 220;
+  const shown = !long || expanded ? body : body.slice(0, 220).trimEnd() + "…";
+  const when = formatDistanceToNowStrict(new Date(post.created_at), { addSuffix: false })
+    .replace(" years", "y")
+    .replace(" year", "y")
+    .replace(" months", "mo")
+    .replace(" month", "mo")
+    .replace(" days", "d")
+    .replace(" day", "d")
+    .replace(" hours", "h")
+    .replace(" hour", "h")
+    .replace(" minutes", "m")
+    .replace(" minute", "m")
+    .replace(" seconds", "s")
+    .replace(" second", "s");
+
+  return (
+    <motion.article
+      whileHover={{ y: -2 }}
+      transition={{ type: "spring", stiffness: 400, damping: 24 }}
+      className="card-surface overflow-hidden"
+    >
+      <div className="flex items-center gap-2.5 px-4 pt-4">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/12 text-xs font-semibold uppercase text-primary ring-1 ring-primary/25">
+          EM
+        </div>
+        <div className="min-w-0">
+          <div className="text-sm font-semibold text-foreground">Estate Manager</div>
+          <div className="text-[11px] text-muted-foreground">{when} ago</div>
+        </div>
+      </div>
+
+      <div className="space-y-2 px-4 pt-3">
+        {post.title && (
+          <h3 className="text-sm font-semibold text-foreground">{post.title}</h3>
+        )}
+        <p className="whitespace-pre-line text-sm text-muted-foreground">
+          {shown}
+          {long && (
+            <button
+              onClick={() => setExpanded((v) => !v)}
+              className="ml-1 font-medium text-primary hover:underline"
+            >
+              {expanded ? "less" : "more"}
+            </button>
+          )}
+        </p>
+      </div>
+
+      {post.cover_url && (
+        <div className="mt-3 aspect-[16/9] w-full overflow-hidden bg-muted">
+          <img
+            src={post.cover_url}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-cover"
+          />
+        </div>
+      )}
+
+      <div className="flex items-center gap-5 border-t border-border/60 px-4 py-2.5 text-xs">
+        <motion.button
+          whileTap={{ scale: 0.85 }}
+          onClick={onLike}
+          className={`inline-flex items-center gap-1.5 transition-colors ${
+            liked ? "text-primary" : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <motion.span
+            key={liked ? "on" : "off"}
+            initial={{ scale: 0.6 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 500, damping: 18 }}
+          >
+            <Heart className={`h-4 w-4 ${liked ? "fill-current" : ""}`} />
+          </motion.span>
+          <span className="tabular-nums">{likeCount}</span>
+        </motion.button>
+        <button
+          onClick={onOpenComments}
+          className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <MessageCircle className="h-4 w-4" />
+          <span className="tabular-nums">{commentCount}</span>
+        </button>
+      </div>
+    </motion.article>
+  );
+}
+
+function CommentsSheet({
+  postId,
+  onClose,
+}: {
+  postId: string | null;
+  onClose: () => void;
+}) {
+  const { data: session } = useSession();
+  const qc = useQueryClient();
+  const [text, setText] = useState("");
+
+  const comments = useQuery({
+    queryKey: ["comments", postId],
+    enabled: !!postId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("post_comments")
+        .select("id, body, author_id, created_at, profiles:author_id(full_name)")
+        .eq("post_id", postId!)
+        .order("created_at", { ascending: true });
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+
+  const add = useMutation({
+    mutationFn: async () => {
+      if (!session?.userId || !postId || !text.trim()) return;
+      const { error } = await supabase.from("post_comments").insert({
+        post_id: postId,
+        author_id: session.userId,
+        body: text.trim(),
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setText("");
+      qc.invalidateQueries({ queryKey: ["comments", postId] });
+      qc.invalidateQueries({ queryKey: ["post-stats"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  return (
+    <AnimatePresence>
+      {postId && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/50"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", stiffness: 320, damping: 32 }}
+            onClick={(e) => e.stopPropagation()}
+            className="flex max-h-[80vh] w-full max-w-md flex-col rounded-t-2xl bg-card shadow-2xl ring-1 ring-border"
+          >
+            <div className="flex items-center justify-between border-b border-border px-4 py-3">
+              <h4 className="text-sm font-semibold text-foreground">Comments</h4>
+              <button
+                onClick={onClose}
+                className="rounded-full p-1 text-muted-foreground hover:bg-muted"
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
+              {comments.isLoading ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                </div>
+              ) : !comments.data || comments.data.length === 0 ? (
+                <p className="py-8 text-center text-xs text-muted-foreground">
+                  Be the first to comment.
+                </p>
+              ) : (
+                comments.data.map((c: any) => (
+                  <div key={c.id} className="flex items-start gap-2.5">
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-[10px] font-semibold uppercase text-muted-foreground">
+                      {(c.profiles?.full_name ?? "?").slice(0, 2)}
+                    </div>
+                    <div className="min-w-0 flex-1 rounded-2xl bg-muted/50 px-3 py-2">
+                      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                        <span className="font-medium text-foreground">
+                          {c.profiles?.full_name ?? "Resident"}
+                        </span>
+                        <span>·</span>
+                        <span>
+                          {formatDistanceToNowStrict(new Date(c.created_at), {
+                            addSuffix: true,
+                          })}
+                        </span>
+                      </div>
+                      <p className="mt-0.5 whitespace-pre-line text-sm text-foreground">
+                        {c.body}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                add.mutate();
+              }}
+              className="flex items-center gap-2 border-t border-border px-3 py-2"
+            >
+              <input
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Write a comment…"
+                className="flex-1 rounded-full border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              />
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                disabled={add.isPending || !text.trim()}
+                type="submit"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary-dark disabled:opacity-50"
+                aria-label="Send"
+              >
+                {add.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </motion.button>
+            </form>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 
@@ -206,6 +501,14 @@ function PollsList({ estateId, userId }: { estateId?: string; userId?: string | 
     onError: (e: Error) => toast.error(e.message),
   });
 
+  if (polls.isLoading) {
+    return (
+      <div className="flex justify-center py-10">
+        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
   if (!polls.data || polls.data.length === 0) {
     return <EmptyState title="No polls yet" icon={<Vote className="h-6 w-6" />} />;
   }
@@ -216,10 +519,13 @@ function PollsList({ estateId, userId }: { estateId?: string; userId?: string | 
         const options = ((p.options as any[]) ?? []) as { key: string; label: string }[];
         const totals = votes.data?.totals[p.id] ?? {};
         const my = votes.data?.mine[p.id];
-        const totalVotes = Object.values(totals).reduce((s: number, n: any) => s + Number(n), 0);
+        const totalVotes = Object.values(totals).reduce(
+          (s: number, n: any) => s + Number(n),
+          0,
+        );
         return (
           <StaggerItem key={p.id}>
-            <Card className="space-y-3 p-4">
+            <div className="card-surface space-y-3 p-4">
               <div>
                 <div className="text-sm font-semibold text-foreground">{p.title}</div>
                 {p.description && (
@@ -232,7 +538,8 @@ function PollsList({ estateId, userId }: { estateId?: string; userId?: string | 
                   const pct = totalVotes ? Math.round((c / totalVotes) * 100) : 0;
                   const isMine = my === o.key;
                   return (
-                    <button
+                    <motion.button
+                      whileTap={{ scale: 0.98 }}
                       key={o.key}
                       onClick={() => cast.mutate({ poll_id: p.id, option_key: o.key })}
                       className={`relative w-full overflow-hidden rounded-lg border px-3 py-2.5 text-left text-sm transition-colors ${
@@ -241,22 +548,24 @@ function PollsList({ estateId, userId }: { estateId?: string; userId?: string | 
                           : "border-border hover:bg-muted"
                       }`}
                     >
-                      <div
-                        className="absolute inset-y-0 left-0 bg-primary/10 transition-all"
-                        style={{ width: `${pct}%` }}
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${pct}%` }}
+                        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                        className="absolute inset-y-0 left-0 bg-primary/10"
                       />
                       <div className="relative flex items-center justify-between">
                         <span>{o.label}</span>
                         <span className="text-xs text-muted-foreground">{pct}%</span>
                       </div>
-                    </button>
+                    </motion.button>
                   );
                 })}
               </div>
               <div className="text-[11px] text-muted-foreground">
                 {totalVotes} vote{totalVotes === 1 ? "" : "s"}
               </div>
-            </Card>
+            </div>
           </StaggerItem>
         );
       })}
