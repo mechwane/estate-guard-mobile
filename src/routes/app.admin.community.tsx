@@ -46,6 +46,7 @@ function AdminCommunity() {
         post_type: f.post_type,
         title: f.title.trim(),
         body: f.body.trim(),
+        cover_url: f.cover_url.trim() || null,
       };
       const q = f.id
         ? supabase.from("community_posts").update(payload).eq("id", f.id)
