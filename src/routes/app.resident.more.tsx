@@ -174,14 +174,42 @@ function More() {
 
         <Section title="App Support">
           <Row
-            to="/app/resident/profile"
+            to="/app/resident/settings"
             icon={<Settings className="h-4 w-4" />}
             label="App Settings"
           />
           <Row
-            to="/app/resident/support"
+            to="/app/resident/faqs"
             icon={<HelpCircle className="h-4 w-4" />}
-            label="FAQs & Help"
+            label="FAQs"
+          />
+          <Row
+            to="/app/resident/feedback"
+            icon={<MessageSquareHeart className="h-4 w-4" />}
+            label="Feedback & Suggestions"
+          />
+        </Section>
+
+        <Section title="App Usage">
+          <ActionRow
+            icon={<Star className="h-4 w-4" />}
+            label="Rate app"
+            onClick={rateApp}
+          />
+          <ActionRow
+            icon={<Share2 className="h-4 w-4" />}
+            label="Share app"
+            onClick={shareApp}
+          />
+          <Row
+            to="/app/resident/privacy"
+            icon={<Shield className="h-4 w-4" />}
+            label="Privacy Policy"
+          />
+          <Row
+            to="/app/resident/terms"
+            icon={<FileText className="h-4 w-4" />}
+            label="Terms & Conditions"
           />
         </Section>
       </Stagger>
