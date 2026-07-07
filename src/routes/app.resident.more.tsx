@@ -68,6 +68,33 @@ function More() {
     navigate({ to: "/auth", replace: true });
   }
 
+  async function shareApp() {
+    const url = typeof window !== "undefined" ? window.location.origin : "https://estateguard.app";
+    const shareData = {
+      title: "Estate Guard",
+      text: "Manage your estate, invites, bills and more with Estate Guard.",
+      url,
+    };
+    try {
+      if (typeof navigator !== "undefined" && (navigator as any).share) {
+        await (navigator as any).share(shareData);
+      } else if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        toast.success("Link copied to clipboard");
+      } else {
+        toast.info(url);
+      }
+    } catch {
+      /* user cancelled share */
+    }
+  }
+
+  function rateApp() {
+    toast.success("Thanks! Opening the app store rating…", {
+      description: "In-app rating opens once the app is published to the store.",
+    });
+  }
+
   return (
     <div className="space-y-4">
       <FadeIn>
