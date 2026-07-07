@@ -18,6 +18,11 @@ import {
   Check,
   X,
   Loader2,
+  MessageSquareHeart,
+  Star,
+  Share2,
+  Shield,
+  FileText,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
