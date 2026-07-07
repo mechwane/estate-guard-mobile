@@ -75,7 +75,12 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
     "/app/resident/support": { title: "Support tickets" },
     "/app/resident/contacts": { title: "Estate contacts" },
     "/app/resident/more": { title: "More" },
-    "/app/resident/profile": { title: "Complete your profile" },
+    "/app/resident/profile": { title: "Edit profile" },
+    "/app/resident/settings": { title: "App settings" },
+    "/app/resident/faqs": { title: "FAQs" },
+    "/app/resident/privacy": { title: "Privacy policy" },
+    "/app/resident/terms": { title: "Terms & conditions" },
+    "/app/resident/feedback": { title: "Feedback" },
     "/app/resident/verification": {
       title: "Estate verification",
       subtitle: "Verify your residency",
