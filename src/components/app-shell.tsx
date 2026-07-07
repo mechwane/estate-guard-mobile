@@ -47,30 +47,24 @@ export function AppShell({
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur">
-        <div className="mx-auto flex max-w-2xl items-center justify-between px-5 py-4">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
-              {roleLabel}
-              {estateName && <span className="text-muted-foreground/70">· {estateName}</span>}
-            </div>
-            <h1 className="mt-0.5 truncate text-lg font-semibold text-foreground">{title}</h1>
-            {subtitle && (
-              <p className="mt-0.5 truncate text-sm text-muted-foreground">{subtitle}</p>
-            )}
+      <header className="sticky top-0 z-30 border-b border-border/60 bg-background/85 backdrop-blur">
+        <div className="mx-auto flex max-w-2xl items-center justify-between px-5 py-2.5">
+          <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground min-w-0">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="truncate">{roleLabel}{estateName && <span className="text-muted-foreground/70"> · {estateName}</span>}</span>
           </div>
           <button
             onClick={signOut}
             aria-label="Sign out"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            title="Sign out"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >
             <LogOut className="h-4 w-4" />
           </button>
         </div>
       </header>
 
-      <main className="mx-auto max-w-2xl px-5 pb-28 pt-5 fade-in">{children}</main>
+      <main className="mx-auto max-w-2xl px-5 pb-28 pt-4 fade-in">{children}</main>
 
       <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur">
         <div className="mx-auto flex max-w-2xl items-stretch justify-between px-2 py-1.5">

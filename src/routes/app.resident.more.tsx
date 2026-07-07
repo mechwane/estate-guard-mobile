@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { useSession } from "@/lib/session";
 import { Card } from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
@@ -13,9 +14,14 @@ import {
   Settings,
   HelpCircle,
   Sparkles,
+  Pencil,
+  Check,
+  X,
+  Loader2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/resident/more")({
   component: More,
@@ -25,16 +31,30 @@ function More() {
   const { data: session } = useSession();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const [showUpgrade, setShowUpgrade] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   const name = session?.profile?.full_name || session?.email || "Resident";
-  const avatar = session?.profile?.avatar_url;
+  const profile = session?.profile as any;
+  const avatarPath = profile?.avatar_url;
   const initials = name
     .split(" ")
     .map((n) => n[0])
     .slice(0, 2)
     .join("")
     .toUpperCase();
-  const isPremium = (session?.profile as any)?.premium_plan === "premium";
+  const plan = profile?.premium_plan ?? "free";
+  const isPremium = plan === "premium";
+  const expires: string | null = profile?.expires_at ?? null;
+  const verification = profile?.verification_status ?? "not_submitted";
+
+  useEffect(() => {
+    if (!avatarPath) return setAvatarUrl(null);
+    supabase.storage
+      .from("avatars")
+      .createSignedUrl(avatarPath, 60 * 60)
+      .then(({ data }) => setAvatarUrl(data?.signedUrl ?? null));
+  }, [avatarPath]);
 
   async function signOut() {
     await qc.cancelQueries();
@@ -45,61 +65,83 @@ function More() {
 
   return (
     <div className="space-y-4">
-      {/* Profile card */}
       <FadeIn>
-        <Card className="flex items-center gap-3 p-4">
-          <div className="h-14 w-14 overflow-hidden rounded-full bg-gradient-to-br from-primary/80 to-primary">
-            {avatar ? (
-              <img src={avatar} alt={name} className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-lg font-semibold text-primary-foreground">
-                {initials}
-              </div>
-            )}
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="truncate text-base font-semibold text-foreground">{name}</div>
-            <div className="truncate text-xs text-muted-foreground">
-              {session?.estate?.name ?? "No estate"}
+        <div>
+          <h1 className="text-xl font-semibold text-foreground">More</h1>
+          <p className="text-xs text-muted-foreground">Your profile, support & settings</p>
+        </div>
+      </FadeIn>
+
+      {/* Profile card */}
+      <FadeIn delay={0.05}>
+        <Card className="p-4">
+          <div className="flex items-center gap-4">
+            <div className="relative h-16 w-16 overflow-hidden rounded-full bg-gradient-to-br from-primary/70 to-primary ring-2 ring-primary/20">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt={name} className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-xl font-semibold text-primary-foreground">
+                  {initials}
+                </div>
+              )}
+              {isPremium && (
+                <span className="absolute -bottom-0.5 -right-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 text-[10px] text-white shadow ring-2 ring-card">
+                  ★
+                </span>
+              )}
             </div>
-            <Link
-              to="/app/resident/profile"
-              className="mt-2 inline-block rounded-lg bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
-            >
-              Edit Profile
-            </Link>
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-base font-semibold text-foreground">{name}</div>
+              <div className="truncate text-xs text-muted-foreground">
+                {session?.estate?.name ?? "No estate"}
+              </div>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                <VerifBadge status={verification} />
+                <Link
+                  to="/app/resident/profile"
+                  className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary transition-transform hover:scale-105"
+                >
+                  <Pencil className="h-3 w-3" /> Edit
+                </Link>
+              </div>
+            </div>
           </div>
         </Card>
       </FadeIn>
 
       {/* Premium banner */}
-      <FadeIn delay={0.05}>
-        <Card
-          className={`relative overflow-hidden p-4 ${
+      <FadeIn delay={0.1}>
+        <button
+          type="button"
+          onClick={() => setShowUpgrade(true)}
+          className={`relative w-full cursor-pointer overflow-hidden rounded-xl border-0 p-4 text-left text-white shadow-sm transition-transform hover:scale-[1.01] active:scale-[0.99] ${
             isPremium
-              ? "bg-gradient-to-r from-emerald-600 to-emerald-500"
-              : "bg-gradient-to-r from-rose-600 to-red-500"
-          } border-0 text-white`}
+              ? "bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500"
+              : "bg-gradient-to-r from-primary via-primary-dark to-amber-600"
+          }`}
         >
-          <div className="relative z-10 flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 text-sm font-semibold">
+          <div className="relative z-10 flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 text-sm font-semibold">
                 <Sparkles className="h-4 w-4" /> Estate Premium
               </div>
               <div className="mt-1 text-xs opacity-90">
                 {isPremium
-                  ? "You're on Premium. Enjoy priority support."
-                  : "Unlock priority requests & premium perks."}
+                  ? expires
+                    ? `Active · renews ${new Date(expires).toLocaleDateString()}`
+                    : "You're on Premium. Priority support enabled."
+                  : "Unlock priority requests, faster support & premium perks."}
               </div>
             </div>
-            {!isPremium && (
-              <button className="rounded-lg bg-white/20 px-3 py-1.5 text-xs font-medium backdrop-blur-sm hover:bg-white/30">
-                Upgrade
-              </button>
-            )}
+            <span
+              className="shrink-0 rounded-lg bg-white/25 px-3 py-1.5 text-xs font-medium backdrop-blur-sm"
+            >
+              {isPremium ? "Manage" : "Upgrade"}
+            </span>
           </div>
-          <div className="pointer-events-none absolute -right-6 -top-6 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
-        </Card>
+          <div className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+          <div className="pointer-events-none absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-white/5 blur-3xl" />
+        </button>
       </FadeIn>
 
       <Stagger className="space-y-3">
@@ -139,20 +181,44 @@ function More() {
           <Row
             to="/app/resident/support"
             icon={<HelpCircle className="h-4 w-4" />}
-            label="FAQs"
+            label="FAQs & Help"
           />
         </Section>
       </Stagger>
 
-      <FadeIn delay={0.2}>
+      <FadeIn delay={0.25}>
         <button
           onClick={signOut}
-          className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-medium text-foreground hover:bg-muted"
+          className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-3 text-sm font-medium text-destructive hover:bg-destructive/5"
         >
           <LogOut className="h-4 w-4" /> Sign out
         </button>
       </FadeIn>
+
+      {showUpgrade && (
+        <UpgradeModal
+          onClose={() => setShowUpgrade(false)}
+          userId={session?.userId!}
+          currentPlan={plan}
+        />
+      )}
     </div>
+  );
+}
+
+function VerifBadge({ status }: { status: string }) {
+  const map: Record<string, { label: string; className: string }> = {
+    approved: { label: "Verified", className: "bg-emerald-500/15 text-emerald-500" },
+    pending: { label: "Pending review", className: "bg-amber-500/15 text-amber-500" },
+    rejected: { label: "Rejected", className: "bg-destructive/15 text-destructive" },
+    incomplete: { label: "Incomplete", className: "bg-muted text-muted-foreground" },
+    not_submitted: { label: "Not verified", className: "bg-muted text-muted-foreground" },
+  };
+  const s = map[status] ?? map.not_submitted;
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium ${s.className}`}>
+      <ShieldCheck className="h-3 w-3" /> {s.label}
+    </span>
   );
 }
 
@@ -169,25 +235,180 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-function Row({
-  to,
-  icon,
-  label,
-}: {
-  to: string;
-  icon: React.ReactNode;
-  label: string;
-}) {
+function Row({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
   return (
     <Link
       to={to}
-      className="flex items-center justify-between px-4 py-3 transition-colors hover:bg-muted/40"
+      className="group flex items-center justify-between px-4 py-3 transition-colors hover:bg-muted/40"
     >
       <div className="flex items-center gap-3 text-sm text-foreground">
-        <span className="text-primary">{icon}</span>
+        <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary transition-transform group-hover:scale-110">
+          {icon}
+        </span>
         {label}
       </div>
-      <ChevronRight className="h-4 w-4 text-muted-foreground" />
+      <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
     </Link>
+  );
+}
+
+const PLANS = [
+  {
+    id: "monthly",
+    label: "Monthly",
+    price: "₦2,500",
+    per: "/month",
+    days: 30,
+    highlight: false,
+  },
+  {
+    id: "yearly",
+    label: "Yearly",
+    price: "₦24,000",
+    per: "/year",
+    days: 365,
+    highlight: true,
+    tag: "Save 20%",
+  },
+];
+
+function UpgradeModal({
+  onClose,
+  userId,
+  currentPlan,
+}: {
+  onClose: () => void;
+  userId: string;
+  currentPlan: string;
+}) {
+  const qc = useQueryClient();
+  const [selected, setSelected] = useState("yearly");
+
+  const upgrade = useMutation({
+    mutationFn: async () => {
+      const plan = PLANS.find((p) => p.id === selected)!;
+      const expires = new Date();
+      expires.setDate(expires.getDate() + plan.days);
+      const { error } = await supabase
+        .from("profiles")
+        .update({ premium_plan: "premium", expires_at: expires.toISOString() } as any)
+        .eq("id", userId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Welcome to Premium ✨");
+      qc.invalidateQueries({ queryKey: ["session"] });
+      onClose();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const cancel = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ premium_plan: "free", expires_at: null } as any)
+        .eq("id", userId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Premium cancelled");
+      qc.invalidateQueries({ queryKey: ["session"] });
+      onClose();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const perks = [
+    "Priority handling on service requests",
+    "Faster support responses",
+    "Unlimited dependents & IDs",
+    "Premium community badge",
+  ];
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-md animate-[scale-in_0.2s_ease-out] overflow-hidden rounded-t-2xl bg-card shadow-2xl sm:rounded-2xl"
+      >
+        <div className="relative bg-gradient-to-br from-primary via-primary-dark to-amber-600 p-5 text-white">
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 hover:bg-white/30"
+          >
+            <X className="h-4 w-4" />
+          </button>
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <Sparkles className="h-4 w-4" /> Estate Premium
+          </div>
+          <div className="mt-1 text-xs opacity-90">Get more from your estate</div>
+        </div>
+
+        <div className="space-y-4 p-5">
+          <ul className="space-y-2">
+            {perks.map((p) => (
+              <li key={p} className="flex items-start gap-2 text-sm text-foreground">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> {p}
+              </li>
+            ))}
+          </ul>
+
+          <div className="grid grid-cols-2 gap-2">
+            {PLANS.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => setSelected(p.id)}
+                className={`relative rounded-xl border-2 p-3 text-left transition-all ${
+                  selected === p.id
+                    ? "border-primary bg-primary/5"
+                    : "border-border hover:border-primary/40"
+                }`}
+              >
+                {p.tag && (
+                  <span className="absolute -top-2 right-2 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-medium text-white">
+                    {p.tag}
+                  </span>
+                )}
+                <div className="text-xs font-medium text-muted-foreground">{p.label}</div>
+                <div className="mt-1 text-base font-semibold text-foreground">
+                  {p.price}
+                  <span className="text-xs font-normal text-muted-foreground">{p.per}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={() => upgrade.mutate()}
+            disabled={upgrade.isPending}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
+          >
+            {upgrade.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+            {currentPlan === "premium" ? "Switch plan" : "Upgrade now"}
+          </button>
+
+          {currentPlan === "premium" && (
+            <button
+              onClick={() => cancel.mutate()}
+              disabled={cancel.isPending}
+              className="w-full text-center text-xs text-muted-foreground underline hover:text-destructive"
+            >
+              Cancel Premium
+            </button>
+          )}
+
+          <p className="text-center text-[10px] text-muted-foreground">
+            Payment integration coming soon. This is a preview of the flow.
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
