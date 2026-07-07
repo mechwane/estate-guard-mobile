@@ -15,8 +15,8 @@ export const Route = createFileRoute("/app/admin/community")({
 
 const TYPES = ["blog", "announcement"];
 
-type Form = { id?: string; post_type: string; title: string; body: string };
-const EMPTY: Form = { post_type: "announcement", title: "", body: "" };
+type Form = { id?: string; post_type: string; title: string; body: string; cover_url: string };
+const EMPTY: Form = { post_type: "announcement", title: "", body: "", cover_url: "" };
 
 function AdminCommunity() {
   const { data: session } = useSession();
