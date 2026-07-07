@@ -133,16 +133,15 @@ function More() {
                   : "Unlock priority requests, faster support & premium perks."}
               </div>
             </div>
-            <button
-              type="button"
-              className="shrink-0 rounded-lg bg-white/25 px-3 py-1.5 text-xs font-medium backdrop-blur-sm hover:bg-white/35"
+            <span
+              className="shrink-0 rounded-lg bg-white/25 px-3 py-1.5 text-xs font-medium backdrop-blur-sm"
             >
               {isPremium ? "Manage" : "Upgrade"}
-            </button>
+            </span>
           </div>
           <div className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
           <div className="pointer-events-none absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-white/5 blur-3xl" />
-        </Card>
+        </button>
       </FadeIn>
 
       <Stagger className="space-y-3">
