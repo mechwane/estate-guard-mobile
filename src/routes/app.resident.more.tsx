@@ -18,6 +18,11 @@ import {
   Check,
   X,
   Loader2,
+  MessageSquareHeart,
+  Star,
+  Share2,
+  Shield,
+  FileText,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -61,6 +66,33 @@ function More() {
     qc.clear();
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
+  }
+
+  async function shareApp() {
+    const url = typeof window !== "undefined" ? window.location.origin : "https://estateguard.app";
+    const shareData = {
+      title: "Estate Guard",
+      text: "Manage your estate, invites, bills and more with Estate Guard.",
+      url,
+    };
+    try {
+      if (typeof navigator !== "undefined" && (navigator as any).share) {
+        await (navigator as any).share(shareData);
+      } else if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        toast.success("Link copied to clipboard");
+      } else {
+        toast.info(url);
+      }
+    } catch {
+      /* user cancelled share */
+    }
+  }
+
+  function rateApp() {
+    toast.success("Thanks! Opening the app store rating…", {
+      description: "In-app rating opens once the app is published to the store.",
+    });
   }
 
   return (
@@ -174,14 +206,42 @@ function More() {
 
         <Section title="App Support">
           <Row
-            to="/app/resident/profile"
+            to="/app/resident/settings"
             icon={<Settings className="h-4 w-4" />}
             label="App Settings"
           />
           <Row
-            to="/app/resident/support"
+            to="/app/resident/faqs"
             icon={<HelpCircle className="h-4 w-4" />}
-            label="FAQs & Help"
+            label="FAQs"
+          />
+          <Row
+            to="/app/resident/feedback"
+            icon={<MessageSquareHeart className="h-4 w-4" />}
+            label="Feedback & Suggestions"
+          />
+        </Section>
+
+        <Section title="App Usage">
+          <ActionRow
+            icon={<Star className="h-4 w-4" />}
+            label="Rate app"
+            onClick={rateApp}
+          />
+          <ActionRow
+            icon={<Share2 className="h-4 w-4" />}
+            label="Share app"
+            onClick={shareApp}
+          />
+          <Row
+            to="/app/resident/privacy"
+            icon={<Shield className="h-4 w-4" />}
+            label="Privacy Policy"
+          />
+          <Row
+            to="/app/resident/terms"
+            icon={<FileText className="h-4 w-4" />}
+            label="Terms & Conditions"
           />
         </Section>
       </Stagger>
@@ -232,6 +292,32 @@ function Section({ title, children }: { title: string; children: React.ReactNode
         <div className="card-surface divide-y divide-border overflow-hidden">{children}</div>
       </div>
     </StaggerItem>
+  );
+}
+
+function ActionRow({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group flex w-full items-center justify-between px-4 py-3 text-left transition-colors hover:bg-muted/40"
+    >
+      <div className="flex items-center gap-3 text-sm text-foreground">
+        <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary transition-transform group-hover:scale-110">
+          {icon}
+        </span>
+        {label}
+      </div>
+      <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+    </button>
   );
 }
 
