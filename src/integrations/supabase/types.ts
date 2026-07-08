@@ -537,6 +537,53 @@ export type Database = {
           },
         ]
       }
+      meetings: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          estate_id: string
+          id: string
+          join_url: string | null
+          location: string | null
+          starts_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          estate_id: string
+          id?: string
+          join_url?: string | null
+          location?: string | null
+          starts_at: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          estate_id?: string
+          id?: string
+          join_url?: string | null
+          location?: string | null
+          starts_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meetings_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null
@@ -1255,6 +1302,16 @@ export type Database = {
       assign_estate_admin: {
         Args: { _estate_id: string; _user_id: string }
         Returns: undefined
+      }
+      create_meeting_and_notify: {
+        Args: {
+          _description: string
+          _join_url: string
+          _location: string
+          _starts_at: string
+          _title: string
+        }
+        Returns: string
       }
       current_estate_id: { Args: never; Returns: string }
       current_role_is: {
