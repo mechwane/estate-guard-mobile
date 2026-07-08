@@ -7,7 +7,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "postbuild": "rm -rf dist && mkdir -p dist && cp -r .output/public/. dist/",
-    "build:dev": "vite build --mode development",
+    "build:dev": "vite build --mode development && rm -rf dist && mkdir -p dist && cp -r .output/public/. dist/",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
