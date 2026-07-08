@@ -1380,6 +1380,15 @@ export type Database = {
         Returns: boolean
       }
       is_super_admin: { Args: never; Returns: boolean }
+      lookup_estate_by_code: {
+        Args: { _code: string }
+        Returns: {
+          code: string
+          id: string
+          name: string
+          status: Database["public"]["Enums"]["estate_status"]
+        }[]
+      }
       reassign_estate_admin: {
         Args: { _estate_id: string; _new_admin_user_id: string }
         Returns: undefined
