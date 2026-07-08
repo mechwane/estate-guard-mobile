@@ -187,6 +187,50 @@ export type Database = {
           },
         ]
       }
+      estate_admin_invites: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          created_at: string
+          created_by: string | null
+          email: string
+          estate_id: string
+          expires_at: string
+          id: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          email: string
+          estate_id: string
+          expires_at?: string
+          id?: string
+          token: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          estate_id?: string
+          expires_at?: string
+          id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estate_admin_invites_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       estate_contacts: {
         Row: {
           created_at: string
@@ -1303,6 +1347,10 @@ export type Database = {
         Args: { _estate_id: string; _user_id: string }
         Returns: undefined
       }
+      create_estate_admin_invite: {
+        Args: { _email: string; _estate_id: string }
+        Returns: string
+      }
       create_meeting_and_notify: {
         Args: {
           _description: string
@@ -1336,6 +1384,8 @@ export type Database = {
         Args: { _estate_id: string; _new_admin_user_id: string }
         Returns: undefined
       }
+      redeem_estate_admin_invite: { Args: { _token: string }; Returns: string }
+      remove_estate_admin: { Args: { _estate_id: string }; Returns: undefined }
       review_verification: {
         Args: { _approve: boolean; _notes: string; _user_id: string }
         Returns: undefined
