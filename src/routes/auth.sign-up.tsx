@@ -73,7 +73,7 @@ function SignUp() {
         setLoading(false);
         return;
       }
-      estateCodeToSend = estate.code;
+      estateCodeToSend = estate.code ?? estateCode;
     }
 
     const redirectUrl = `${window.location.origin}/`;
