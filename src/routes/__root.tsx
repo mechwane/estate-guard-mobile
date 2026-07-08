@@ -96,8 +96,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:title", content: "Estate Guard — Estate operations, simplified" },
       { name: "twitter:description", content: "Estate Guard is a premium estate management app for residents, guards, and administrators." },
       { name: "twitter:image", content: assetUrl("/estate-guard-og.png") },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8574bb86-c492-4b47-9055-bdbbfed0107f/id-preview-cb9f8659--eb368bb0-0926-4a53-8c23-64b52d141426.lovable.app-1783515487316.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8574bb86-c492-4b47-9055-bdbbfed0107f/id-preview-cb9f8659--eb368bb0-0926-4a53-8c23-64b52d141426.lovable.app-1783515487316.png" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6a3cc84a-0c38-4df2-aaa0-0d14cc7c974c/id-preview-1c814dfd--eb368bb0-0926-4a53-8c23-64b52d141426.lovable.app-1783522694514.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6a3cc84a-0c38-4df2-aaa0-0d14cc7c974c/id-preview-1c814dfd--eb368bb0-0926-4a53-8c23-64b52d141426.lovable.app-1783522694514.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
