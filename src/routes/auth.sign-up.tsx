@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchSessionInfo, roleHome } from "@/lib/session";
+import { roleHome, waitForSessionInfo } from "@/lib/session";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/auth/sign-up")({
 
 function SignUp() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { admin_invite: inviteToken } = useSearch({ from: "/auth/sign-up" });
   const isInviteFlow = !!inviteToken;
 
@@ -109,7 +111,7 @@ function SignUp() {
       return;
     }
 
-    const info = await fetchSessionInfo();
+    const info = await waitForSessionInfo({ requireRole: false });
     if (!info.userId) {
       // Email confirmation is required.
       toast.success("Check your email to confirm your account, then sign in.");
@@ -136,11 +138,13 @@ function SignUp() {
         return;
       }
       toast.success("Estate admin access granted");
+      queryClient.setQueryData(["session"], { ...info, role: "estate_admin" });
       navigate({ to: roleHome("estate_admin"), replace: true });
       return;
     }
 
     toast.success("Account created");
+    queryClient.setQueryData(["session"], info);
     navigate({ to: roleHome(info.role), replace: true });
   };
 
