@@ -7,6 +7,16 @@ import { ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: Splash,
+  head: () => ({
+    meta: [
+      { title: "Estate Guard — Estate operations, elevated." },
+      { name: "description", content: "Estate Guard streamlines resident, guard, and administrator workflows across gated estates." },
+      { property: "og:title", content: "Estate Guard — Estate operations, elevated." },
+      { property: "og:description", content: "Estate Guard streamlines resident, guard, and administrator workflows across gated estates." },
+      { property: "og:url", content: "https://guard-estate-flow.lovable.app/" },
+    ],
+    links: [{ rel: "canonical", href: "https://guard-estate-flow.lovable.app/" }],
+  }),
 });
 
 function Splash() {
