@@ -57,11 +57,11 @@ function SignUp() {
     setLoading(true);
 
     if (!isInviteFlow && estateCode) {
-      const { data: estate, error: estErr } = await supabase
-        .from("estates")
-        .select("id,code,status")
-        .eq("code", estateCode)
-        .maybeSingle();
+      const { data: estateRows, error: estErr } = await supabase.rpc(
+        "lookup_estate_by_code" as never,
+        { _code: estateCode } as never,
+      );
+      const estate = Array.isArray(estateRows) ? (estateRows[0] as { code?: string; status?: string } | undefined) : undefined;
 
       if (estErr || !estate) {
         toast.error("Estate code not recognized");
@@ -73,7 +73,7 @@ function SignUp() {
         setLoading(false);
         return;
       }
-      estateCodeToSend = estate.code;
+      estateCodeToSend = estate.code ?? estateCode;
     }
 
     const redirectUrl = `${window.location.origin}/`;
