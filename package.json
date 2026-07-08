@@ -9,7 +9,14 @@
     "build:dev": "NITRO_PRESET=cloudflare_module vite build --mode development && rm -rf dist && cp -r .output/public dist",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "postinstall": "node -e \"const fs=require('fs');const p='node_modules/nf3/dist/node_modules/@vercel/nft';if(fs.existsSync(p)){fs.rmSync(p,{recursive:true,force:true});}\""
+  },
+  "overrides": {
+    "@vercel/nft": "1.10.2"
+  },
+  "resolutions": {
+    "@vercel/nft": "1.10.2"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -73,6 +80,7 @@
     "@types/node": "^22.16.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "@vercel/nft": "^1.10.2",
     "@vitejs/plugin-react": "^5.2.0",
     "dotenv": "^17.4.2",
     "eslint": "^9.32.0",
