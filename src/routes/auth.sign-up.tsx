@@ -61,7 +61,7 @@ function SignUp() {
         "lookup_estate_by_code" as never,
         { _code: estateCode } as never,
       );
-      const estate = Array.isArray(estateRows) ? (estateRows[0] as { status?: string } | undefined) : undefined;
+      const estate = Array.isArray(estateRows) ? (estateRows[0] as { code?: string; status?: string } | undefined) : undefined;
 
       if (estErr || !estate) {
         toast.error("Estate code not recognized");
