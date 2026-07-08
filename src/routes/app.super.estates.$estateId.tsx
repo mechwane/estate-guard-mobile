@@ -48,6 +48,8 @@ function EstateDetail() {
   const [suspendReason, setSuspendReason] = useState("");
   const [editing, setEditing] = useState(false);
   const [assigning, setAssigning] = useState(false);
+  const [inviting, setInviting] = useState(false);
+  const [removing, setRemoving] = useState(false);
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["super-estate-overview", estateId] });
@@ -76,6 +78,18 @@ function EstateDetail() {
     },
     onSuccess: () => {
       toast.success("Estate updated");
+      invalidate();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const removeAdmin = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.rpc("remove_estate_admin" as never, { _estate_id: estateId } as never);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Estate admin removed");
       invalidate();
     },
     onError: (e: Error) => toast.error(e.message),
