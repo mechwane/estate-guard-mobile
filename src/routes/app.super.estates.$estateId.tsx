@@ -678,3 +678,82 @@ function AssignAdminSheet({
     </Sheet>
   );
 }
+
+function InviteAdminSheet({
+  estate,
+  onClose,
+}: {
+  estate: any;
+  onClose: () => void;
+}) {
+  const [email, setEmail] = useState("");
+  const [link, setLink] = useState<string | null>(null);
+
+  const invite = useMutation({
+    mutationFn: async () => {
+      const trimmed = email.trim().toLowerCase();
+      if (!/^\S+@\S+\.\S+$/.test(trimmed)) throw new Error("Enter a valid email");
+      const { data, error } = await supabase.rpc(
+        "create_estate_admin_invite" as never,
+        { _estate_id: estate.id, _email: trimmed } as never,
+      );
+      if (error) throw error;
+      const token = data as unknown as string;
+      const origin =
+        typeof window !== "undefined" ? window.location.origin : "https://estateguard.app";
+      return `${origin}/auth/sign-up?admin_invite=${token}`;
+    },
+    onSuccess: (url) => {
+      setLink(url);
+      toast.success("Invitation link created");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const copy = async () => {
+    if (!link) return;
+    try {
+      await navigator.clipboard.writeText(link);
+      toast.success("Link copied");
+    } catch {
+      toast.info(link);
+    }
+  };
+
+  return (
+    <Sheet title={`Invite estate admin — ${estate.name}`} onClose={onClose}>
+      <div className="space-y-3">
+        <p className="text-xs text-muted-foreground">
+          The invitee signs up with this email at the link below. They are automatically
+          promoted to Estate Admin for this estate on first sign-in.
+        </p>
+        <Field label="Invitee email">
+          <TextInput type="email" value={email} onChange={setEmail} />
+        </Field>
+        <button
+          onClick={() => invite.mutate()}
+          disabled={invite.isPending || !email.trim()}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
+        >
+          {invite.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Generate invite link
+        </button>
+        {link && (
+          <div className="space-y-2 rounded-lg border border-border bg-muted/40 p-3">
+            <div className="text-[11px] font-medium text-muted-foreground">
+              Share this link with the invitee (expires in 14 days):
+            </div>
+            <code className="block break-all rounded bg-card p-2 text-[11px] text-foreground">
+              {link}
+            </code>
+            <button
+              onClick={copy}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
+            >
+              Copy link
+            </button>
+          </div>
+        )}
+      </div>
+    </Sheet>
+  );
+}
