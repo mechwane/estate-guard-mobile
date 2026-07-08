@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchSessionInfo, roleHome } from "@/lib/session";
+import { roleHome, waitForSessionInfo } from "@/lib/session";
 import { toast } from "sonner";
 import { Loader2, Eye, EyeOff, Mail, Lock } from "lucide-react";
 
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/auth/sign-in")({
 
 function SignIn() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { admin_invite: inviteToken } = useSearch({ from: "/auth/sign-in" });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,7 +43,7 @@ function SignIn() {
       setLoading(false);
       return;
     }
-    let info = await fetchSessionInfo();
+    let info = await waitForSessionInfo();
     if (inviteToken) {
       const { error: rErr } = await supabase.rpc(
         "redeem_estate_admin_invite" as never,
@@ -51,11 +53,12 @@ function SignIn() {
         toast.error(`Signed in, but couldn't accept the admin invite: ${rErr.message}`);
       } else {
         toast.success("Estate admin access granted");
-        info = await fetchSessionInfo();
+        info = await waitForSessionInfo();
       }
     } else {
       toast.success("Welcome back");
     }
+    queryClient.setQueryData(["session"], info);
     navigate({ to: roleHome(info.role), replace: true });
   };
 
