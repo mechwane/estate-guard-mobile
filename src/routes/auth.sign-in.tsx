@@ -1,16 +1,22 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchSessionInfo, roleHome } from "@/lib/session";
 import { toast } from "sonner";
 import { Loader2, Eye, EyeOff, Mail, Lock } from "lucide-react";
 
+type Search = { admin_invite?: string };
+
 export const Route = createFileRoute("/auth/sign-in")({
   component: SignIn,
+  validateSearch: (s: Record<string, unknown>): Search => ({
+    admin_invite: typeof s.admin_invite === "string" ? s.admin_invite : undefined,
+  }),
 });
 
 function SignIn() {
   const navigate = useNavigate();
+  const { admin_invite: inviteToken } = useSearch({ from: "/auth/sign-in" });
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
@@ -25,8 +31,21 @@ function SignIn() {
       setLoading(false);
       return;
     }
-    const info = await fetchSessionInfo();
-    toast.success("Welcome back");
+    let info = await fetchSessionInfo();
+    if (inviteToken) {
+      const { error: rErr } = await supabase.rpc(
+        "redeem_estate_admin_invite" as never,
+        { _token: inviteToken } as never,
+      );
+      if (rErr) {
+        toast.error(`Signed in, but couldn't accept the admin invite: ${rErr.message}`);
+      } else {
+        toast.success("Estate admin access granted");
+        info = await fetchSessionInfo();
+      }
+    } else {
+      toast.success("Welcome back");
+    }
     navigate({ to: roleHome(info.role), replace: true });
   };
 
