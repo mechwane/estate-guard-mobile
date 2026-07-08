@@ -17,7 +17,6 @@ import {
   Pencil,
   Check,
   X,
-  Loader2,
   MessageSquareHeart,
   Star,
   Share2,
@@ -25,7 +24,7 @@ import {
   FileText,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/resident/more")({
@@ -258,7 +257,6 @@ function More() {
       {showUpgrade && (
         <UpgradeModal
           onClose={() => setShowUpgrade(false)}
-          userId={session?.userId!}
           currentPlan={plan}
         />
       )}
@@ -360,11 +358,9 @@ const PLANS = [
 
 function UpgradeModal({
   onClose,
-  userId,
   currentPlan,
 }: {
   onClose: () => void;
-  userId: string;
   currentPlan: string;
 }) {
   const [selected, setSelected] = useState("yearly");
@@ -453,6 +449,4 @@ function UpgradeModal({
       </div>
     </div>
   );
-  // parameters intentionally referenced to satisfy linter for future integration
-  void userId;
 }
