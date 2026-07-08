@@ -12,6 +12,16 @@ export const Route = createFileRoute("/auth/sign-up")({
   validateSearch: (s: Record<string, unknown>): Search => ({
     admin_invite: typeof s.admin_invite === "string" ? s.admin_invite : undefined,
   }),
+  head: () => ({
+    meta: [
+      { title: "Create Account — Estate Guard" },
+      { name: "description", content: "Create an Estate Guard account to join your estate as a resident or guard." },
+      { property: "og:title", content: "Create Account — Estate Guard" },
+      { property: "og:description", content: "Create an Estate Guard account and join your estate." },
+      { property: "og:url", content: "https://guard-estate-flow.lovable.app/auth/sign-up" },
+    ],
+    links: [{ rel: "canonical", href: "https://guard-estate-flow.lovable.app/auth/sign-up" }],
+  }),
 });
 
 function SignUp() {
