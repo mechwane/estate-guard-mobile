@@ -13,7 +13,7 @@ export default defineConfig({
         enabled: true,
         maskPath: "/",
         prerender: {
-          outputPath: "/",
+          outputPath: "/index",
         },
       },
     }),
