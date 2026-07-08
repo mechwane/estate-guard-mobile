@@ -162,6 +162,21 @@ function EstateDetail() {
             {active ? "Suspend" : "Activate"}
           </button>
         </div>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          <button
+            onClick={() => setInviting(true)}
+            className="inline-flex items-center justify-center gap-1 rounded-lg border border-border bg-card px-2 py-2 text-xs font-medium text-foreground hover:bg-muted"
+          >
+            <UserCog className="h-3.5 w-3.5" /> Invite admin by email
+          </button>
+          <button
+            disabled={!e.admin_user_id || removeAdmin.isPending}
+            onClick={() => setRemoving(true)}
+            className="inline-flex items-center justify-center gap-1 rounded-lg border border-destructive/30 bg-destructive/5 px-2 py-2 text-xs font-medium text-destructive hover:bg-destructive/10 disabled:opacity-40"
+          >
+            <PowerOff className="h-3.5 w-3.5" /> Remove admin
+          </button>
+        </div>
       </Card>
 
       <Section title="People">
