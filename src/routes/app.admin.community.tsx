@@ -5,7 +5,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { Card, EmptyState } from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
-import { Plus, Loader2, Pencil, Trash2, Megaphone } from "lucide-react";
+import {
+  Plus,
+  Loader2,
+  Pencil,
+  Trash2,
+  Megaphone,
+  CalendarDays,
+  Send,
+} from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -13,12 +21,35 @@ export const Route = createFileRoute("/app/admin/community")({
   component: AdminCommunity,
 });
 
+type SubTab = "posts" | "meetings";
 const TYPES = ["blog", "announcement"];
 
 type Form = { id?: string; post_type: string; title: string; body: string; cover_url: string };
 const EMPTY: Form = { post_type: "announcement", title: "", body: "", cover_url: "" };
 
 function AdminCommunity() {
+  const [tab, setTab] = useState<SubTab>("posts");
+  return (
+    <div className="space-y-4">
+      <div className="flex gap-2 rounded-xl bg-muted p-1">
+        {(["posts", "meetings"] as SubTab[]).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={`flex-1 rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
+              tab === t ? "bg-card text-foreground shadow" : "text-muted-foreground"
+            }`}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+      {tab === "posts" ? <PostsPanel /> : <MeetingsPanel />}
+    </div>
+  );
+}
+
+function PostsPanel() {
   const { data: session } = useSession();
   const qc = useQueryClient();
   const [editing, setEditing] = useState<Form | null>(null);
