@@ -6,6 +6,16 @@ import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/auth/forgot-password")({
   component: ForgotPassword,
+  head: () => ({
+    meta: [
+      { title: "Forgot Password — Estate Guard" },
+      { name: "description", content: "Reset your Estate Guard password by requesting a secure reset link by email." },
+      { property: "og:title", content: "Forgot Password — Estate Guard" },
+      { property: "og:description", content: "Request a password reset link for your Estate Guard account." },
+      { property: "og:url", content: "https://guard-estate-flow.lovable.app/auth/forgot-password" },
+    ],
+    links: [{ rel: "canonical", href: "https://guard-estate-flow.lovable.app/auth/forgot-password" }],
+  }),
 });
 
 function ForgotPassword() {
