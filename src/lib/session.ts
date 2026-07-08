@@ -66,6 +66,24 @@ export async function fetchSessionInfo(): Promise<SessionInfo> {
   };
 }
 
+export async function waitForSessionInfo({
+  attempts = 16,
+  delayMs = 250,
+  requireRole = true,
+}: {
+  attempts?: number;
+  delayMs?: number;
+  requireRole?: boolean;
+} = {}): Promise<SessionInfo> {
+  let latest = await fetchSessionInfo();
+  for (let attempt = 1; attempt < attempts; attempt += 1) {
+    if (latest.userId && (!requireRole || latest.role)) return latest;
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+    latest = await fetchSessionInfo();
+  }
+  return latest;
+}
+
 export function useSession() {
   return useQuery({
     queryKey: ["session"],
