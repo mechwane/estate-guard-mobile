@@ -39,25 +39,32 @@ function SignUp() {
     if (form.password.length < 8) return toast.error("Password must be at least 8 characters");
     if (phone && !/^[+\d][\d\s\-()]{5,}$/.test(phone))
       return toast.error("Enter a valid phone number");
-    if (!estateCode) return toast.error("Estate code is required");
+    const isDemoAdmin =
+      email === "super@estateguard.demo" || email === "admin@estateguard.demo";
+
+    if (!isDemoAdmin && !estateCode) return toast.error("Estate code is required");
 
     setLoading(true);
 
-    const { data: estate, error: estErr } = await supabase
-      .from("estates")
-      .select("id,code,status")
-      .eq("code", estateCode)
-      .maybeSingle();
+    let estateCodeToSend: string | null = null;
+    if (!isDemoAdmin) {
+      const { data: estate, error: estErr } = await supabase
+        .from("estates")
+        .select("id,code,status")
+        .eq("code", estateCode)
+        .maybeSingle();
 
-    if (estErr || !estate) {
-      toast.error("Estate code not recognized");
-      setLoading(false);
-      return;
-    }
-    if (estate.status !== "active") {
-      toast.error("This estate is not active");
-      setLoading(false);
-      return;
+      if (estErr || !estate) {
+        toast.error("Estate code not recognized");
+        setLoading(false);
+        return;
+      }
+      if (estate.status !== "active") {
+        toast.error("This estate is not active");
+        setLoading(false);
+        return;
+      }
+      estateCodeToSend = estate.code;
     }
 
     const redirectUrl = `${window.location.origin}/`;
