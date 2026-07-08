@@ -1,53 +1,71 @@
 
-# Final submission pass
+# Production Readiness & Auth Hardening Plan
 
-Focused, sequential, one preview at the end. No new backend tables except `meetings` (community meetings) and a seed migration for demo admin/super accounts.
+Goal: make the app safe to submit. Keep visual design, dark-green/gold palette, working routes/features. VTU stays removed. No changes to `vite.config.ts`, `nitro()` config, or the `build` script.
 
-## 1. Resident Home (`app.resident.index.tsx`)
-- Show profile photo (already on More) in the header avatar — same source, with initials fallback.
-- Turn the "LG2RA" estate chip into an **Estate Switcher**: tap → bottom sheet listing estates the user has access to (from `profiles.estate_id` + memberships); switching updates `profiles.estate_id`. If only one estate, show read-only chip with a copy-code action.
-- Floating action button (bottom-right, above tab bar): shield/logo + live clock. Tap → sheet showing the user's active guest invite codes + "Create invite" shortcut. Uses `guest_invites` where `resident_id = me AND status='active' AND expires_at > now()`.
-- Keep the existing quick-action tiles (Single Invite, Multiple Invite, Estate Shop, Manage Invites, Submit Request, Report Issue).
+## 1. Fix admin authentication (highest priority)
 
-## 2. Inbox (`app.resident.inbox.tsx`)
-- Sectioned list: Unread / Earlier.
-- Row actions: mark read, mark all read, delete.
-- Empty state with illustration.
-- Tap notification → deep-link via `notifications.link` when present.
+**Problem:** `handle_new_user` currently grants `super_admin` / `estate_admin` when the email matches `super@estateguard.demo` or `admin@estateguard.demo`. `auth.sign-up.tsx` also bypasses the estate-code requirement for those emails. Global auto-confirm is on. All of this is a production risk.
 
-## 3. Guard Validate (`app.guard.validate.tsx`)
-- Replace search field with a dedicated **code input**: large monospaced input + big "Validate" primary button + optional scan icon (uses camera on mobile if available; otherwise manual entry).
-- After validate, show host card + Check-in / Check-out buttons.
-- Fully responsive: single-column, safe-area padding, tap targets ≥ 44px, no horizontal scroll on 360px width.
+**Migration `harden_auth_roles`:**
+- Rewrite `public.handle_new_user`: only ever assign `resident` or `guard` from public sign-up. Ignore any `role`/email that would grant `estate_admin` or `super_admin`. Estate is resolved only via `estate_code`.
+- Add `public.invite_estate_admin(_email, _estate_id)` (SECURITY DEFINER, super-admin only): creates the auth user via `auth.admin` is not available in SQL, so instead insert a pending row into a new `public.estate_admin_invites` table `(email, estate_id, token, expires_at, accepted_at)` with RLS + GRANTs. Super admin generates an invite link; the invitee signs up normally as resident, then on first login a `redeem_estate_admin_invite(_token)` RPC promotes them to `estate_admin` and links their estate. This keeps role assignment server-side and gated by a one-time token.
+- Add `public.remove_estate_admin(_estate_id)` (super-admin only): clears `admin_user_id`, revokes `estate_admin` role from that user.
+- Keep existing `assign_estate_admin` / `reassign_estate_admin` for direct super-admin actions on an existing user.
+- Seed a single super admin only if none exists yet, using a check against `user_roles` — no email-based hardcoding.
 
-## 4. Community meetings (new)
-- New table `public.meetings` (title, description, starts_at, location or link, created_by, estate_id).
-- Admin can create meetings from `/app/admin/community` (new tab).
-- Resident community page gets a **Meetings** tab showing upcoming meetings; creating a meeting inserts a `notifications` row for every resident in the estate so it also lands in the inbox.
+**Frontend `src/routes/auth.sign-up.tsx`:**
+- Remove `isDemoAdmin` bypass entirely. Estate code required for all public sign-ups. Role limited to `resident` | `guard`.
+- If URL has `?admin_invite=<token>`, show a distinct "Accept admin invitation" flow: email + password only, then call `redeem_estate_admin_invite`.
 
-## 5. Super admin & Estate admin
-- Complete `/app/super` and `/app/admin` overviews with real counts from existing tables (already partially built — verify counts, add empty-state guards, wire "Assign admin" flow end-to-end).
-- Seed migration creates a demo estate + two accounts:
-  - `super@estateguard.demo` / `SuperAdmin!2026`
-  - `admin@estateguard.demo` / `EstateAdmin!2026`
-  - Roles inserted into `user_roles`; admin linked to the demo estate.
-- Report credentials in the closing message.
+**Auth config:** turn OFF global `auto_confirm_email`. Document that Supabase email confirmation should be enabled for production; invited admins are confirmed via the invite acceptance flow which runs after normal signup.
 
-## 6. Splash + auth polish
-- `src/routes/index.tsx`: replace static splash with animated logo (spring scale-in + gold ring pulse + tagline fade), 900ms minimum before route resolution.
-- `auth.sign-in.tsx` + `auth.sign-up.tsx` + `auth.tsx` layout: premium dark-green gradient background, glass card, gold accents, animated logo header, better field styling, show/hide password toggle. Keep all form logic identical.
+## 2. Super Admin → Estate Admin invite UI
 
-## 7. Verification
-- Build must pass.
-- Manual smoke via Playwright: sign-in page renders new design; resident home shows avatar + estate switcher + FAB; guard validate has code input; admin community has Meetings tab.
+New route `src/routes/app.super.estates.$estateId.tsx` already exists — add an "Estate admins" section with:
+- Current admin (name/email, active status, remove button)
+- "Invite estate admin" form → calls `invite_estate_admin`, shows generated link `/auth/sign-up?admin_invite=<token>` to copy.
+- "Reassign to existing user" (existing RPC).
 
-## Technical notes
-- All new UI uses existing `motion-kit` + tokens (`--primary` dark green, `--accent` gold). No hardcoded colors.
-- Meetings table: `GRANT` to authenticated + service_role, RLS by `estate_id = current_estate_id()`, admin/super insert-only.
-- Estate switcher only lists estates where the current user is a member or an admin — for now that is just their `estate_id`; UI still built so multi-estate works if backend grows.
-- No changes to auto-generated files (`client.ts`, `types.ts`, `routeTree.gen.ts`) except regeneration after migration.
+## 3. Role routing & guard verification
 
-## Out of scope for this pass
-- Rebuilding shop / dependents / IDs / requests flows (already shipped in prior turns).
-- Guard incident deep-redesign (only validate page).
-- Push notifications infra.
+- Confirm `src/lib/session.ts` `roleHome()` covers all four roles and `_authenticated` layout redirects unknown users to `/auth`.
+- Add a top-level role-guard helper in each `app.<role>.*` route via the existing `app.tsx` layout: if `role` mismatch → `/app/denied`.
+- Verify RLS: spot-check policies on `profiles`, `estates`, `guest_invites`, `bills`, `meetings`, `notifications` are scoped by `estate_id` and role.
+
+## 4. Feature audit sweep
+
+Walk each Resident/Guard/Admin/Super route file listed in the request. For each, either:
+- Confirm it works end-to-end, OR
+- Replace non-functional buttons with clear "Coming soon" state, OR
+- Hide from nav.
+
+Specifically check: Rate App, Share App, Premium/upgrade, checkout — mark as "Coming soon" (no fake payment success). No fake testimonials/stats/logos.
+
+## 5. Mobile & polish
+
+- Verify Guard Validate page, bottom nav clearance, dialog fit on small screens.
+- Respect `prefers-reduced-motion` in splash and framer-motion usage (wrap heavy animations).
+- No design changes beyond fixes.
+
+## 6. Secrets / VTU / branding scan
+
+Grep for: `service_role`, hardcoded passwords, `VTU`, `Arkcess`, fake app-store links. Fix or remove.
+
+## 7. Verify
+
+- `tsgo` typecheck
+- Build check via the sandbox
+- Playwright smoke: sign in as each seeded role, hit each dashboard, attempt cross-role URL → expect `/app/denied`.
+
+## 8. Final report
+
+Return the 22-section report as specified.
+
+---
+
+**Note on scope:** this is a large multi-file pass. I'll batch edits aggressively (parallel writes) and only stop for confirmation if a decision is genuinely ambiguous. The one place I want your OK before starting:
+
+**The Estate Admin invite flow requires the invitee to sign up as a normal user first, then accept the invite token to be promoted.** I'm doing it this way because Supabase's `auth.admin.createUser` isn't available from SQL RPC and adding a server function that uses the service-role admin client is a bigger surface. If you'd rather I add a `createServerFn` that uses `supabaseAdmin.auth.admin.inviteUserByEmail` to send a real Supabase invite email (requires the service role, still safe because it's gated by `has_role(super_admin)`), say so and I'll do that instead.
+
+Approve and I'll execute.

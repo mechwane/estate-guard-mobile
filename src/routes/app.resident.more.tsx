@@ -17,7 +17,6 @@ import {
   Pencil,
   Check,
   X,
-  Loader2,
   MessageSquareHeart,
   Star,
   Share2,
@@ -25,7 +24,7 @@ import {
   FileText,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/resident/more")({
@@ -90,8 +89,8 @@ function More() {
   }
 
   function rateApp() {
-    toast.success("Thanks! Opening the app store rating…", {
-      description: "In-app rating opens once the app is published to the store.",
+    toast.info("Rating opens after the app is published to the store", {
+      description: "Coming soon.",
     });
   }
 
@@ -258,7 +257,6 @@ function More() {
       {showUpgrade && (
         <UpgradeModal
           onClose={() => setShowUpgrade(false)}
-          userId={session?.userId!}
           currentPlan={plan}
         />
       )}
@@ -360,50 +358,12 @@ const PLANS = [
 
 function UpgradeModal({
   onClose,
-  userId,
   currentPlan,
 }: {
   onClose: () => void;
-  userId: string;
   currentPlan: string;
 }) {
-  const qc = useQueryClient();
   const [selected, setSelected] = useState("yearly");
-
-  const upgrade = useMutation({
-    mutationFn: async () => {
-      const plan = PLANS.find((p) => p.id === selected)!;
-      const expires = new Date();
-      expires.setDate(expires.getDate() + plan.days);
-      const { error } = await supabase
-        .from("profiles")
-        .update({ premium_plan: "premium", expires_at: expires.toISOString() } as any)
-        .eq("id", userId);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast.success("Welcome to Premium ✨");
-      qc.invalidateQueries({ queryKey: ["session"] });
-      onClose();
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-  const cancel = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ premium_plan: "free", expires_at: null } as any)
-        .eq("id", userId);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast.success("Premium cancelled");
-      qc.invalidateQueries({ queryKey: ["session"] });
-      onClose();
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
 
   const perks = [
     "Priority handling on service requests",
@@ -434,7 +394,9 @@ function UpgradeModal({
           <div className="flex items-center gap-2 text-sm font-semibold">
             <Sparkles className="h-4 w-4" /> Estate Premium
           </div>
-          <div className="mt-1 text-xs opacity-90">Get more from your estate</div>
+          <div className="mt-1 text-xs opacity-90">
+            Current plan: <span className="font-medium">{currentPlan === "premium" ? "Premium" : "Free"}</span>
+          </div>
         </div>
 
         <div className="space-y-4 p-5">
@@ -472,26 +434,16 @@ function UpgradeModal({
           </div>
 
           <button
-            onClick={() => upgrade.mutate()}
-            disabled={upgrade.isPending}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
+            disabled
+            aria-disabled="true"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-muted px-4 py-3 text-sm font-medium text-muted-foreground"
           >
-            {upgrade.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-            {currentPlan === "premium" ? "Switch plan" : "Upgrade now"}
+            Upgrade — Coming soon
           </button>
 
-          {currentPlan === "premium" && (
-            <button
-              onClick={() => cancel.mutate()}
-              disabled={cancel.isPending}
-              className="w-full text-center text-xs text-muted-foreground underline hover:text-destructive"
-            >
-              Cancel Premium
-            </button>
-          )}
-
-          <p className="text-center text-[10px] text-muted-foreground">
-            Payment integration coming soon. This is a preview of the flow.
+          <p className="text-center text-[11px] text-muted-foreground">
+            Secure payment integration is not yet configured. Upgrades will be enabled
+            once payments are live.
           </p>
         </div>
       </div>
