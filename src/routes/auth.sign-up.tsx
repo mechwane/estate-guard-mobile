@@ -1,16 +1,24 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchSessionInfo, roleHome } from "@/lib/session";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
+type Search = { admin_invite?: string };
+
 export const Route = createFileRoute("/auth/sign-up")({
   component: SignUp,
+  validateSearch: (s: Record<string, unknown>): Search => ({
+    admin_invite: typeof s.admin_invite === "string" ? s.admin_invite : undefined,
+  }),
 });
 
 function SignUp() {
   const navigate = useNavigate();
+  const { admin_invite: inviteToken } = useSearch({ from: "/auth/sign-up" });
+  const isInviteFlow = !!inviteToken;
+
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
@@ -39,15 +47,16 @@ function SignUp() {
     if (form.password.length < 8) return toast.error("Password must be at least 8 characters");
     if (phone && !/^[+\d][\d\s\-()]{5,}$/.test(phone))
       return toast.error("Enter a valid phone number");
-    const isDemoAdmin =
-      email === "super@estateguard.demo" || email === "admin@estateguard.demo";
 
-    if (!isDemoAdmin && !estateCode) return toast.error("Estate code is required");
+    // Invite flow doesn't need an estate code (estate is set at redemption).
+    let estateCodeToSend: string | null = null;
+    if (!isInviteFlow) {
+      if (!estateCode) return toast.error("Estate code is required");
+    }
 
     setLoading(true);
 
-    let estateCodeToSend: string | null = null;
-    if (!isDemoAdmin) {
+    if (!isInviteFlow && estateCode) {
       const { data: estate, error: estErr } = await supabase
         .from("estates")
         .select("id,code,status")
@@ -76,7 +85,8 @@ function SignUp() {
         data: {
           full_name: fullName,
           phone: phone || null,
-          role: form.role,
+          // Invite flow: create as a normal resident then promote via redeem.
+          role: isInviteFlow ? "resident" : form.role,
           estate_code: estateCodeToSend,
           unit: unit || null,
         },
@@ -90,21 +100,54 @@ function SignUp() {
     }
 
     const info = await fetchSessionInfo();
-    if (info.userId) {
-      toast.success("Account created");
-      navigate({ to: roleHome(info.role), replace: true });
-    } else {
-      toast.success("Check your email to confirm your account");
-      navigate({ to: "/auth/sign-in", replace: true });
+    if (!info.userId) {
+      // Email confirmation is required.
+      toast.success("Check your email to confirm your account, then sign in.");
+      if (isInviteFlow) {
+        navigate({
+          to: "/auth/sign-in",
+          search: { admin_invite: inviteToken } as never,
+          replace: true,
+        });
+      } else {
+        navigate({ to: "/auth/sign-in", replace: true });
+      }
+      return;
     }
+
+    if (isInviteFlow) {
+      const { error: rErr } = await supabase.rpc(
+        "redeem_estate_admin_invite" as never,
+        { _token: inviteToken } as never,
+      );
+      if (rErr) {
+        toast.error(`Signed up, but couldn't accept the admin invite: ${rErr.message}`);
+        navigate({ to: roleHome("resident"), replace: true });
+        return;
+      }
+      toast.success("Estate admin access granted");
+      navigate({ to: roleHome("estate_admin"), replace: true });
+      return;
+    }
+
+    toast.success("Account created");
+    navigate({ to: roleHome(info.role), replace: true });
   };
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight text-foreground">Create account</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+        {isInviteFlow ? "Accept admin invitation" : "Create account"}
+      </h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Join your estate in a moment. Try code{" "}
-        <span className="font-medium text-foreground">DEMO01</span>.
+        {isInviteFlow ? (
+          <>Complete your details to accept your Estate Admin invitation.</>
+        ) : (
+          <>
+            Join your estate in a moment. Ask your estate admin for your{" "}
+            <span className="font-medium text-foreground">estate code</span>.
+          </>
+        )}
       </p>
 
       <form onSubmit={onSubmit} className="mt-8 space-y-4">
@@ -125,9 +168,11 @@ function SignUp() {
               autoComplete="tel"
             />
           </Field>
-          <Field label="Unit / Apt">
-            <Input value={form.unit} onChange={(v) => set("unit", v)} placeholder="A12" />
-          </Field>
+          {!isInviteFlow && (
+            <Field label="Unit / Apt">
+              <Input value={form.unit} onChange={(v) => set("unit", v)} placeholder="A12" />
+            </Field>
+          )}
         </div>
         <Field label="Email">
           <Input
@@ -148,26 +193,28 @@ function SignUp() {
           />
         </Field>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="I am a">
-            <select
-              value={form.role}
-              onChange={(e) => set("role", e.target.value as "resident" | "guard")}
-              className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-            >
-              <option value="resident">Resident</option>
-              <option value="guard">Guard</option>
-            </select>
-          </Field>
-          <Field label="Estate code">
-            <Input
-              value={form.estateCode}
-              onChange={(v) => set("estateCode", v.toUpperCase())}
-              required
-              placeholder="DEMO01"
-            />
-          </Field>
-        </div>
+        {!isInviteFlow && (
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="I am a">
+              <select
+                value={form.role}
+                onChange={(e) => set("role", e.target.value as "resident" | "guard")}
+                className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              >
+                <option value="resident">Resident</option>
+                <option value="guard">Guard</option>
+              </select>
+            </Field>
+            <Field label="Estate code">
+              <Input
+                value={form.estateCode}
+                onChange={(v) => set("estateCode", v.toUpperCase())}
+                required
+                placeholder="e.g. ABC123"
+              />
+            </Field>
+          </div>
+        )}
 
         <button
           type="submit"
@@ -175,7 +222,7 @@ function SignUp() {
           className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary-dark disabled:opacity-60"
         >
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-          Create account
+          {isInviteFlow ? "Accept invitation" : "Create account"}
         </button>
       </form>
 
