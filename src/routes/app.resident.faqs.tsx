@@ -6,6 +6,30 @@ import { ChevronDown, HelpCircle, Search } from "lucide-react";
 
 export const Route = createFileRoute("/app/resident/faqs")({
   component: FAQs,
+  head: () => ({
+    meta: [
+      { title: "Frequently Asked Questions — Estate Guard" },
+      { name: "description", content: "Answers to common questions about invites, dependents, verification, bills, and premium features on Estate Guard." },
+      { property: "og:title", content: "Frequently Asked Questions — Estate Guard" },
+      { property: "og:description", content: "Answers to common questions about Estate Guard for residents." },
+      { property: "og:url", content: "https://guard-estate-flow.lovable.app/app/resident/faqs" },
+    ],
+    links: [{ rel: "canonical", href: "https://guard-estate-flow.lovable.app/app/resident/faqs" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: FAQ_ITEMS.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }),
+      },
+    ],
+  }),
 });
 
 const FAQ_ITEMS = [

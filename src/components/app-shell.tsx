@@ -64,7 +64,10 @@ export function AppShell({
         </div>
       </header>
 
-      <main className="mx-auto max-w-2xl px-5 pb-28 pt-4 fade-in">{children}</main>
+      <main className="mx-auto max-w-2xl px-5 pb-28 pt-4 fade-in">
+        <h1 className="sr-only">{title}{subtitle ? ` — ${subtitle}` : ""}</h1>
+        {children}
+      </main>
 
       <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur">
         <div className="mx-auto flex max-w-2xl items-stretch justify-between px-2 py-1.5">
