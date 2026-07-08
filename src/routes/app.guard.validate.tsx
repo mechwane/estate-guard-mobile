@@ -86,33 +86,36 @@ function GuardValidate() {
 
   return (
     <div className="space-y-4">
-      <Card>
+      <Card className="!p-4 sm:!p-5">
         <form onSubmit={validate} className="space-y-3">
           <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Enter code
+            Enter guest code
           </div>
-          <div className="flex gap-2">
-            <input
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength={6}
-              placeholder="000000"
-              value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-              className="flex-1 rounded-lg border border-border bg-card px-3 py-3 text-center font-mono text-2xl tracking-widest outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-            />
-            <button
-              disabled={busy || code.length < 4}
-              type="submit"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
-            >
-              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-            </button>
-          </div>
+          <input
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={6}
+            placeholder="000000"
+            value={code}
+            onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+            className="w-full rounded-xl border-2 border-border bg-card px-3 py-4 text-center font-mono text-3xl tracking-[0.4em] outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+          />
+          <button
+            disabled={busy || code.length < 4}
+            type="submit"
+            className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
+          >
+            {busy ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Search className="h-4 w-4" />
+            )}
+            {busy ? "Validating…" : "Validate code"}
+          </button>
           <button
             type="button"
             onClick={() => toast.info("Camera scan is not enabled in MVP — enter code manually")}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted"
+            className="inline-flex min-h-[40px] w-full items-center justify-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted"
           >
             <ScanLine className="h-4 w-4" /> Scan QR (coming soon)
           </button>
