@@ -69,14 +69,8 @@ function Splash() {
           className="text-center"
         >
           <h1 className="text-2xl font-semibold tracking-tight text-primary-foreground">
-            Estate Guard — Estate operations, elevated.
-          </h1>
-          transition={{ delay: 0.35, duration: 0.5 }}
-          className="text-center"
-        >
-          <div className="text-2xl font-semibold tracking-tight text-primary-foreground">
             Estate Guard
-          </div>
+          </h1>
           <div className="mt-1 text-sm text-primary-foreground/70">
             Estate operations, elevated.
           </div>
