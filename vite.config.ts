@@ -9,6 +9,13 @@ export default defineConfig({
   plugins: [
     tanstackStart({
       server: { entry: "server" },
+      spa: {
+        enabled: true,
+        maskPath: "/",
+        prerender: {
+          outputPath: "/index",
+        },
+      },
     }),
     nitro(),
     viteReact(),
