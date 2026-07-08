@@ -365,6 +365,29 @@ function EstateDetail() {
           }}
         />
       )}
+      {inviting && (
+        <InviteAdminSheet
+          estate={e}
+          onClose={() => setInviting(false)}
+        />
+      )}
+      <ConfirmActionDialog
+        open={removing}
+        title={`Remove admin from ${e.name}?`}
+        description={
+          <>
+            The current admin will lose their <strong>Estate Admin</strong> role and access to this
+            estate. They keep their user account.
+          </>
+        }
+        confirmLabel="Remove admin"
+        tone="destructive"
+        busy={removeAdmin.isPending}
+        onCancel={() => setRemoving(false)}
+        onConfirm={() =>
+          removeAdmin.mutate(undefined, { onSettled: () => setRemoving(false) })
+        }
+      />
     </div>
   );
 }
