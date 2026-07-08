@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "postbuild": "rm -rf dist && mkdir -p dist && cp -r .output/public/. dist/",
-    "build:dev": "vite build --mode development && rm -rf dist && mkdir -p dist && cp -r .output/public/. dist/",
+    "postbuild": "rm -rf dist && mkdir -p dist && cp -r .output/public/. dist/ && node scripts/create-spa-fallback.mjs",
+    "build:dev": "vite build --mode development && rm -rf dist && mkdir -p dist && cp -r .output/public/. dist/ && node scripts/create-spa-fallback.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
