@@ -67,7 +67,7 @@ export async function fetchSessionInfo(): Promise<SessionInfo> {
 }
 
 export async function waitForSessionInfo({
-  attempts = 8,
+  attempts = 16,
   delayMs = 250,
   requireRole = true,
 }: {
