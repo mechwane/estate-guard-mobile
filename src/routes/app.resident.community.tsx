@@ -15,15 +15,18 @@ import {
   Loader2,
   Send,
   X,
+  CalendarDays,
+  MapPin,
+  Link as LinkIcon,
 } from "lucide-react";
-import { formatDistanceToNowStrict } from "date-fns";
+import { format, formatDistanceToNowStrict } from "date-fns";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/resident/community")({
   component: Community,
 });
 
-type Tab = "blog" | "polls" | "announcement";
+type Tab = "blog" | "polls" | "announcement" | "meetings";
 
 function Community() {
   const [tab, setTab] = useState<Tab>("blog");
@@ -33,15 +36,15 @@ function Community() {
     <div className="space-y-4 pb-4">
       <FadeIn>
         <div className="relative flex items-center justify-around border-b border-border">
-          {(["blog", "polls", "announcement"] as Tab[]).map((t) => (
+          {(["blog", "polls", "announcement", "meetings"] as Tab[]).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`relative flex-1 px-3 py-2.5 text-sm font-medium capitalize transition-colors ${
+              className={`relative flex-1 px-2 py-2.5 text-xs font-medium capitalize transition-colors sm:text-sm ${
                 tab === t ? "text-foreground" : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              {t === "polls" ? "Polls & Election" : t}
+              {t === "polls" ? "Polls" : t === "announcement" ? "News" : t}
               {tab === t && (
                 <motion.span
                   layoutId="communityTab"
@@ -69,9 +72,129 @@ function Community() {
           {tab === "polls" && (
             <PollsList estateId={session?.estate?.id} userId={session?.userId} />
           )}
+          {tab === "meetings" && <MeetingsList estateId={session?.estate?.id} />}
         </motion.div>
       </AnimatePresence>
     </div>
+  );
+}
+
+function MeetingsList({ estateId }: { estateId?: string }) {
+  const q = useQuery({
+    queryKey: ["meetings", estateId],
+    enabled: !!estateId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("meetings" as any)
+        .select("*")
+        .eq("estate_id", estateId!)
+        .order("starts_at", { ascending: true });
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+
+  if (q.isLoading) {
+    return (
+      <div className="flex justify-center py-10">
+        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (!q.data || q.data.length === 0) {
+    return (
+      <EmptyState
+        title="No meetings scheduled"
+        description="Estate meetings announced by admin will show up here."
+        icon={<CalendarDays className="h-6 w-6" />}
+      />
+    );
+  }
+
+  const now = Date.now();
+  const upcoming = q.data.filter((m) => new Date(m.starts_at).getTime() >= now);
+  const past = q.data.filter((m) => new Date(m.starts_at).getTime() < now);
+
+  return (
+    <div className="space-y-4">
+      {upcoming.length > 0 && (
+        <section className="space-y-2">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Upcoming
+          </h3>
+          <Stagger className="space-y-2">
+            {upcoming.map((m) => (
+              <StaggerItem key={m.id}>
+                <MeetingCard m={m} highlight />
+              </StaggerItem>
+            ))}
+          </Stagger>
+        </section>
+      )}
+      {past.length > 0 && (
+        <section className="space-y-2">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Past
+          </h3>
+          <Stagger className="space-y-2">
+            {past.slice(0, 10).map((m) => (
+              <StaggerItem key={m.id}>
+                <MeetingCard m={m} />
+              </StaggerItem>
+            ))}
+          </Stagger>
+        </section>
+      )}
+    </div>
+  );
+}
+
+function MeetingCard({ m, highlight }: { m: any; highlight?: boolean }) {
+  const dt = new Date(m.starts_at);
+  return (
+    <motion.div
+      whileHover={{ y: -2 }}
+      transition={{ type: "spring", stiffness: 380, damping: 26 }}
+      className={`card-surface p-4 ${highlight ? "border-primary/30 bg-primary/5" : ""}`}
+    >
+      <div className="flex items-start gap-3">
+        <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl bg-primary text-primary-foreground">
+          <span className="text-[10px] font-medium uppercase leading-none">
+            {format(dt, "MMM")}
+          </span>
+          <span className="text-lg font-bold leading-tight">{format(dt, "d")}</span>
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-semibold text-foreground">{m.title}</div>
+          <div className="mt-0.5 text-xs text-muted-foreground">
+            {format(dt, "EEEE, p")}
+          </div>
+          {m.description && (
+            <p className="mt-2 whitespace-pre-line text-xs text-muted-foreground">
+              {m.description}
+            </p>
+          )}
+          <div className="mt-2 flex flex-wrap gap-3 text-[11px]">
+            {m.location && (
+              <span className="inline-flex items-center gap-1 text-muted-foreground">
+                <MapPin className="h-3 w-3" /> {m.location}
+              </span>
+            )}
+            {m.join_url && (
+              <a
+                href={m.join_url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
+              >
+                <LinkIcon className="h-3 w-3" /> Join link
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
