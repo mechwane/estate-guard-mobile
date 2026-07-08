@@ -1,4 +1,4 @@
-import { cp, mkdir, stat, copyFile, readFile, writeFile } from "node:fs/promises";
+import { cp, mkdir, rm, stat, copyFile, readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 
@@ -18,6 +18,7 @@ if (!(await existsDirectory(publicOutput))) {
   throw new Error(`Missing build output: ${publicOutput}`);
 }
 
+await rm(distOutput, { recursive: true, force: true });
 await mkdir(distOutput, { recursive: true });
 await cp(publicOutput, distOutput, { recursive: true, force: true });
 
