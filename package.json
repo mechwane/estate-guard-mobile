@@ -7,7 +7,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "postbuild": "rm -rf dist && cp -r .output/public dist && cp dist/index.html dist/404.html",
-    "build:dev": "NITRO_PRESET=cloudflare_module vite build --mode development && rm -rf dist && cp -r .output/public dist && cp dist/index.html dist/404.html",
+    "build:dev": "vite build --mode development && rm -rf dist && cp -r .output/public dist && cp dist/index.html dist/404.html",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
