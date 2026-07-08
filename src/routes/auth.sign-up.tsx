@@ -77,7 +77,7 @@ function SignUp() {
           full_name: fullName,
           phone: phone || null,
           role: form.role,
-          estate_code: estate.code,
+          estate_code: estateCodeToSend,
           unit: unit || null,
         },
       },
