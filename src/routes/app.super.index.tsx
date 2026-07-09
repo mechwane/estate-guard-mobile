@@ -6,6 +6,7 @@ import { Building2, Loader2, Pencil, Plus, Power, PowerOff, UserCog } from "luci
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import {
   Card,
   ConfirmActionDialog,
@@ -34,6 +35,15 @@ type Estate = {
   admin_user_id: string | null;
   created_at: string;
 };
+
+type PublicTable = keyof Database["public"]["Tables"];
+type PlatformActivity = Database["public"]["Tables"]["audit_logs"]["Row"] & {
+  estate?: { id: string; name: string; code: string } | null;
+};
+type ProfileLite = Pick<
+  Database["public"]["Tables"]["profiles"]["Row"],
+  "id" | "full_name" | "email"
+>;
 
 function SuperDashboard() {
   const qc = useQueryClient();
@@ -66,8 +76,8 @@ function SuperDashboard() {
   const stats = useQuery({
     queryKey: ["platform-stats"],
     queryFn: async () => {
-      const count = (table: string) =>
-        supabase.from(table as any).select("id", { count: "exact", head: true });
+      const count = (table: PublicTable) =>
+        supabase.from(table).select("id", { count: "exact", head: true });
       const [
         totalEstates,
         activeEstates,
@@ -176,7 +186,10 @@ function SuperDashboard() {
         estate.status === "active"
           ? { _estate_id: estate.id, _reason: "Suspended from platform dashboard" }
           : { _estate_id: estate.id };
-      const { error } = await supabase.rpc(fn as any, args as any);
+      const { error } =
+        estate.status === "active"
+          ? await supabase.rpc("suspend_estate", args)
+          : await supabase.rpc("activate_estate", args);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -407,14 +420,14 @@ function EstateCard({
   );
 }
 
-function ActivityList({ query }: { query: ReturnType<typeof useQuery<any[]>> }) {
+function ActivityList({ query }: { query: ReturnType<typeof useQuery<PlatformActivity[]>> }) {
   if (query.isLoading) return <ListSkeleton rows={5} />;
   if (query.isError) return <ErrorState onRetry={() => query.refetch()} />;
   const rows = query.data ?? [];
   if (rows.length === 0) return <EmptyState title="No platform activity yet" />;
   return (
     <div className="space-y-2">
-      {rows.map((a: any) => (
+      {rows.map((a) => (
         <Card key={a.id} className="p-3">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
@@ -501,7 +514,7 @@ function NewEstateForm({ onDone }: { onDone: () => void }) {
           state: form.state.trim() || null,
           contact_email: form.contact_email.trim() || null,
           contact_phone: form.contact_phone.trim() || null,
-        } as any)
+        })
         .select("id,code")
         .single();
       if (error) throw error;
@@ -517,7 +530,7 @@ function NewEstateForm({ onDone }: { onDone: () => void }) {
       return data;
     },
     onSuccess: (data) => {
-      toast.success(`Estate created · code ${(data as any).code}`);
+      toast.success(`Estate created · code ${data.code}`);
       onDone();
     },
     onError: (error: Error) => toast.error(error.message),
@@ -584,7 +597,7 @@ function EditEstateModal({
   const save = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.rpc(
-        "update_estate" as any,
+        "update_estate",
         {
           _estate_id: estate.id,
           _name: form.name,
@@ -593,7 +606,7 @@ function EditEstateModal({
           _state: form.state || null,
           _contact_email: form.contact_email || null,
           _contact_phone: form.contact_phone || null,
-        } as any,
+        },
       );
       if (error) throw error;
     },
@@ -673,11 +686,11 @@ function AssignAdminModal({
       if (!userId) throw new Error("Choose a user");
       const rpc = estate.admin_user_id ? "reassign_estate_admin" : "assign_estate_admin";
       const { error } = await supabase.rpc(
-        rpc as any,
+        rpc,
         {
           _estate_id: estate.id,
           [estate.admin_user_id ? "_new_admin_user_id" : "_user_id"]: userId,
-        } as any,
+        } as never,
       );
       if (error) throw error;
     },
@@ -697,7 +710,7 @@ function AssignAdminModal({
           <Input value={q} onChange={setQ} />
         </Field>
         <div className="max-h-56 overflow-y-auto rounded-lg border border-border">
-          {(search.data ?? []).map((u: any) => (
+          {(search.data ?? []).map((u: ProfileLite) => (
             <button
               key={u.id}
               onClick={() => setUserId(u.id)}
