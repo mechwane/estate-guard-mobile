@@ -48,4 +48,3 @@ export const navByRole: Record<AppRole, { to: string; label: string; icon: React
     { to: "/app/super/audit", label: "Audit", icon: <ScrollText /> },
   ],
 };
-

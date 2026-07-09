@@ -54,7 +54,10 @@ function SuperDashboard() {
   const estatesQ = useQuery({
     queryKey: ["all-estates"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("estates").select("*").order("created_at", { ascending: false });
+      const { data, error } = await supabase
+        .from("estates")
+        .select("*")
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as Estate[];
     },
@@ -63,7 +66,8 @@ function SuperDashboard() {
   const stats = useQuery({
     queryKey: ["platform-stats"],
     queryFn: async () => {
-      const count = (table: string) => supabase.from(table as any).select("id", { count: "exact", head: true });
+      const count = (table: string) =>
+        supabase.from(table as any).select("id", { count: "exact", head: true });
       const [
         totalEstates,
         activeEstates,
@@ -81,15 +85,39 @@ function SuperDashboard() {
         bills,
       ] = await Promise.all([
         count("estates"),
-        supabase.from("estates").select("id", { count: "exact", head: true }).eq("status", "active"),
-        supabase.from("estates").select("id", { count: "exact", head: true }).eq("status", "suspended"),
+        supabase
+          .from("estates")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "active"),
+        supabase
+          .from("estates")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "suspended"),
         count("profiles"),
-        supabase.from("user_roles").select("user_id", { count: "exact", head: true }).eq("role", "resident"),
-        supabase.from("user_roles").select("user_id", { count: "exact", head: true }).eq("role", "guard"),
-        supabase.from("user_roles").select("user_id", { count: "exact", head: true }).eq("role", "estate_admin"),
-        supabase.from("profiles").select("id", { count: "exact", head: true }).eq("verification_status", "pending"),
-        supabase.from("support_tickets").select("id", { count: "exact", head: true }).in("status", ["open", "in_progress"]),
-        supabase.from("issues").select("id", { count: "exact", head: true }).in("status", ["open", "in_progress"]),
+        supabase
+          .from("user_roles")
+          .select("user_id", { count: "exact", head: true })
+          .eq("role", "resident"),
+        supabase
+          .from("user_roles")
+          .select("user_id", { count: "exact", head: true })
+          .eq("role", "guard"),
+        supabase
+          .from("user_roles")
+          .select("user_id", { count: "exact", head: true })
+          .eq("role", "estate_admin"),
+        supabase
+          .from("profiles")
+          .select("id", { count: "exact", head: true })
+          .eq("verification_status", "pending"),
+        supabase
+          .from("support_tickets")
+          .select("id", { count: "exact", head: true })
+          .in("status", ["open", "in_progress"]),
+        supabase
+          .from("issues")
+          .select("id", { count: "exact", head: true })
+          .in("status", ["open", "in_progress"]),
         count("shop_orders"),
         count("resident_requests"),
         count("meetings"),
@@ -123,7 +151,10 @@ function SuperDashboard() {
       ]);
       if (error) throw error;
       const estateMap = new Map((estates ?? []).map((e) => [e.id, e]));
-      return (logs ?? []).map((l) => ({ ...l, estate: l.estate_id ? estateMap.get(l.estate_id) : null }));
+      return (logs ?? []).map((l) => ({
+        ...l,
+        estate: l.estate_id ? estateMap.get(l.estate_id) : null,
+      }));
     },
   });
 
@@ -131,13 +162,20 @@ function SuperDashboard() {
     const needle = q.trim().toLowerCase();
     if (status !== "all" && e.status !== status) return false;
     if (!needle) return true;
-    return e.name.toLowerCase().includes(needle) || e.code.toLowerCase().includes(needle) || (e.city ?? "").toLowerCase().includes(needle);
+    return (
+      e.name.toLowerCase().includes(needle) ||
+      e.code.toLowerCase().includes(needle) ||
+      (e.city ?? "").toLowerCase().includes(needle)
+    );
   });
 
   const toggle = useMutation({
     mutationFn: async (estate: Estate) => {
       const fn = estate.status === "active" ? "suspend_estate" : "activate_estate";
-      const args = estate.status === "active" ? { _estate_id: estate.id, _reason: "Suspended from platform dashboard" } : { _estate_id: estate.id };
+      const args =
+        estate.status === "active"
+          ? { _estate_id: estate.id, _reason: "Suspended from platform dashboard" }
+          : { _estate_id: estate.id };
       const { error } = await supabase.rpc(fn as any, args as any);
       if (error) throw error;
     },
@@ -152,24 +190,50 @@ function SuperDashboard() {
     <div className="space-y-5">
       <div className="grid grid-cols-3 gap-2 rounded-lg border border-border bg-card p-1">
         {(["overview", "estates", "activity"] as const).map((s) => (
-          <button key={s} onClick={() => setSection(s)} className={`rounded-md px-2 py-2 text-xs font-medium capitalize ${section === s ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}>{s}</button>
+          <button
+            key={s}
+            onClick={() => setSection(s)}
+            className={`rounded-md px-2 py-2 text-xs font-medium capitalize ${section === s ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            {s}
+          </button>
         ))}
       </div>
 
       {section === "overview" && (
         <>
-          {stats.isLoading ? <ListSkeleton rows={4} /> : stats.isError || !stats.data ? <ErrorState onRetry={() => stats.refetch()} /> : (
+          {stats.isLoading ? (
+            <ListSkeleton rows={4} />
+          ) : stats.isError || !stats.data ? (
+            <ErrorState onRetry={() => stats.refetch()} />
+          ) : (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <StatCard label="Total estates" value={stats.data!.totalEstates} />
               <StatCard label="Active estates" value={stats.data!.activeEstates} tone="success" />
-              <StatCard label="Suspended" value={stats.data!.suspendedEstates} tone={stats.data!.suspendedEstates ? "warning" : "default"} />
+              <StatCard
+                label="Suspended"
+                value={stats.data!.suspendedEstates}
+                tone={stats.data!.suspendedEstates ? "warning" : "default"}
+              />
               <StatCard label="Total users" value={stats.data!.users} />
               <StatCard label="Residents" value={stats.data!.residents} />
               <StatCard label="Guards" value={stats.data!.guards} />
               <StatCard label="Estate admins" value={stats.data!.admins} />
-              <StatCard label="Pending verifications" value={stats.data!.pendingVerifications} tone={stats.data!.pendingVerifications ? "warning" : "default"} />
-              <StatCard label="Open support" value={stats.data!.supportOpen} tone={stats.data!.supportOpen ? "warning" : "default"} />
-              <StatCard label="Open incidents" value={stats.data!.incidentsOpen} tone={stats.data!.incidentsOpen ? "error" : "default"} />
+              <StatCard
+                label="Pending verifications"
+                value={stats.data!.pendingVerifications}
+                tone={stats.data!.pendingVerifications ? "warning" : "default"}
+              />
+              <StatCard
+                label="Open support"
+                value={stats.data!.supportOpen}
+                tone={stats.data!.supportOpen ? "warning" : "default"}
+              />
+              <StatCard
+                label="Open incidents"
+                value={stats.data!.incidentsOpen}
+                tone={stats.data!.incidentsOpen ? "error" : "default"}
+              />
               <StatCard label="Shop orders" value={stats.data!.shopOrders} />
               <StatCard label="Resident requests" value={stats.data!.residentRequests} />
               <StatCard label="Meetings" value={stats.data!.meetings} />
@@ -187,19 +251,53 @@ function SuperDashboard() {
 
       {section === "estates" && (
         <>
-          <button onClick={() => setCreating(!creating)} className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark">
+          <button
+            onClick={() => setCreating(!creating)}
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark"
+          >
             <Plus className="h-4 w-4" /> {creating ? "Close estate form" : "Create estate"}
           </button>
-          {creating && <NewEstateForm onDone={() => { setCreating(false); invalidate(); }} />}
-          <SearchInput value={q} onChange={setQ} placeholder="Search estates by name, code, or city" />
+          {creating && (
+            <NewEstateForm
+              onDone={() => {
+                setCreating(false);
+                invalidate();
+              }}
+            />
+          )}
+          <SearchInput
+            value={q}
+            onChange={setQ}
+            placeholder="Search estates by name, code, or city"
+          />
           <div className="grid grid-cols-3 gap-2">
-            {(["all", "active", "suspended"] as const).map((s) => <button key={s} onClick={() => setStatus(s)} className={`rounded-lg px-3 py-2 text-xs font-medium capitalize ${status === s ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground hover:bg-muted"}`}>{s}</button>)}
+            {(["all", "active", "suspended"] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setStatus(s)}
+                className={`rounded-lg px-3 py-2 text-xs font-medium capitalize ${status === s ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground hover:bg-muted"}`}
+              >
+                {s}
+              </button>
+            ))}
           </div>
-          {estatesQ.isLoading ? <ListSkeleton rows={5} /> : estatesQ.isError ? <ErrorState onRetry={() => estatesQ.refetch()} /> : filtered.length === 0 ? (
+          {estatesQ.isLoading ? (
+            <ListSkeleton rows={5} />
+          ) : estatesQ.isError ? (
+            <ErrorState onRetry={() => estatesQ.refetch()} />
+          ) : filtered.length === 0 ? (
             <EmptyState title="No estates match" icon={<Building2 className="h-6 w-6" />} />
           ) : (
             <div className="space-y-2">
-              {filtered.map((e) => <EstateCard key={e.id} estate={e} onEdit={() => setEditing(e)} onAssign={() => setAssigning(e)} onToggle={() => setToggling(e)} />)}
+              {filtered.map((e) => (
+                <EstateCard
+                  key={e.id}
+                  estate={e}
+                  onEdit={() => setEditing(e)}
+                  onAssign={() => setAssigning(e)}
+                  onToggle={() => setToggling(e)}
+                />
+              ))}
             </div>
           )}
         </>
@@ -209,35 +307,101 @@ function SuperDashboard() {
 
       <ConfirmActionDialog
         open={!!toggling}
-        title={toggling?.status === "active" ? `Suspend ${toggling?.name}?` : `Activate ${toggling?.name}?`}
-        description={toggling?.status === "active" ? "Residents and guards in this estate will lose access until it is reactivated." : "Residents and guards will regain access to this estate immediately."}
+        title={
+          toggling?.status === "active"
+            ? `Suspend ${toggling?.name}?`
+            : `Activate ${toggling?.name}?`
+        }
+        description={
+          toggling?.status === "active"
+            ? "Residents and guards in this estate will lose access until it is reactivated."
+            : "Residents and guards will regain access to this estate immediately."
+        }
         confirmLabel={toggling?.status === "active" ? "Suspend estate" : "Activate estate"}
         tone={toggling?.status === "active" ? "destructive" : "default"}
         busy={toggle.isPending}
         onCancel={() => setToggling(null)}
-        onConfirm={() => toggling && toggle.mutate(toggling, { onSettled: () => setToggling(null) })}
+        onConfirm={() =>
+          toggling && toggle.mutate(toggling, { onSettled: () => setToggling(null) })
+        }
       />
-      {editing && <EditEstateModal estate={editing} onClose={() => setEditing(null)} onDone={() => { setEditing(null); invalidate(); }} />}
-      {assigning && <AssignAdminModal estate={assigning} onClose={() => setAssigning(null)} onDone={() => { setAssigning(null); invalidate(); }} />}
+      {editing && (
+        <EditEstateModal
+          estate={editing}
+          onClose={() => setEditing(null)}
+          onDone={() => {
+            setEditing(null);
+            invalidate();
+          }}
+        />
+      )}
+      {assigning && (
+        <AssignAdminModal
+          estate={assigning}
+          onClose={() => setAssigning(null)}
+          onDone={() => {
+            setAssigning(null);
+            invalidate();
+          }}
+        />
+      )}
     </div>
   );
 }
 
-function EstateCard({ estate, onEdit, onAssign, onToggle }: { estate: Estate; onEdit: () => void; onAssign: () => void; onToggle: () => void }) {
+function EstateCard({
+  estate,
+  onEdit,
+  onAssign,
+  onToggle,
+}: {
+  estate: Estate;
+  onEdit: () => void;
+  onAssign: () => void;
+  onToggle: () => void;
+}) {
   return (
     <Card className="p-4">
       <div className="flex items-start justify-between gap-3">
-        <Link to="/app/super/estates/$estateId" params={{ estateId: estate.id }} className="min-w-0 flex-1 text-left">
-          <div className="truncate text-sm font-medium text-foreground hover:text-primary">{estate.name}</div>
-          <div className="mt-0.5 text-xs text-muted-foreground">Code {estate.code} · {format(new Date(estate.created_at), "MMM d, yyyy")}</div>
-          {(estate.city || estate.state) && <div className="mt-0.5 text-xs text-muted-foreground">{[estate.city, estate.state].filter(Boolean).join(", ")}</div>}
+        <Link
+          to="/app/super/estates/$estateId"
+          params={{ estateId: estate.id }}
+          className="min-w-0 flex-1 text-left"
+        >
+          <div className="truncate text-sm font-medium text-foreground hover:text-primary">
+            {estate.name}
+          </div>
+          <div className="mt-0.5 text-xs text-muted-foreground">
+            Code {estate.code} · {format(new Date(estate.created_at), "MMM d, yyyy")}
+          </div>
+          {(estate.city || estate.state) && (
+            <div className="mt-0.5 text-xs text-muted-foreground">
+              {[estate.city, estate.state].filter(Boolean).join(", ")}
+            </div>
+          )}
         </Link>
-        <StatusBadge tone={estate.status === "active" ? "success" : "warning"}>{estate.status}</StatusBadge>
+        <StatusBadge tone={estate.status === "active" ? "success" : "warning"}>
+          {estate.status}
+        </StatusBadge>
       </div>
       <div className="mt-3 grid grid-cols-3 gap-2">
         <ActionBtn onClick={onEdit} icon={<Pencil className="h-3.5 w-3.5" />} label="Edit" />
-        <ActionBtn onClick={onAssign} icon={<UserCog className="h-3.5 w-3.5" />} label={estate.admin_user_id ? "Reassign" : "Assign"} />
-        <ActionBtn onClick={onToggle} icon={estate.status === "active" ? <PowerOff className="h-3.5 w-3.5" /> : <Power className="h-3.5 w-3.5" />} label={estate.status === "active" ? "Suspend" : "Activate"} />
+        <ActionBtn
+          onClick={onAssign}
+          icon={<UserCog className="h-3.5 w-3.5" />}
+          label={estate.admin_user_id ? "Reassign" : "Assign"}
+        />
+        <ActionBtn
+          onClick={onToggle}
+          icon={
+            estate.status === "active" ? (
+              <PowerOff className="h-3.5 w-3.5" />
+            ) : (
+              <Power className="h-3.5 w-3.5" />
+            )
+          }
+          label={estate.status === "active" ? "Suspend" : "Activate"}
+        />
       </div>
     </Card>
   );
@@ -248,19 +412,75 @@ function ActivityList({ query }: { query: ReturnType<typeof useQuery<any[]>> }) 
   if (query.isError) return <ErrorState onRetry={() => query.refetch()} />;
   const rows = query.data ?? [];
   if (rows.length === 0) return <EmptyState title="No platform activity yet" />;
-  return <div className="space-y-2">{rows.map((a: any) => <Card key={a.id} className="p-3"><div className="flex items-start justify-between gap-3"><div className="min-w-0"><div className="truncate text-sm font-medium text-foreground">{a.action}</div><div className="mt-0.5 text-[11px] text-muted-foreground">Actor {a.actor_id?.slice(0, 8) ?? "system"} · {a.entity ?? "record"}{a.entity_id ? ` · ${a.entity_id.slice(0, 8)}` : ""}{a.estate ? ` · ${a.estate.name}` : ""}</div></div><span className="whitespace-nowrap text-[11px] text-muted-foreground">{formatDistanceToNow(new Date(a.created_at), { addSuffix: true })}</span></div></Card>)}</div>;
+  return (
+    <div className="space-y-2">
+      {rows.map((a: any) => (
+        <Card key={a.id} className="p-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="truncate text-sm font-medium text-foreground">{a.action}</div>
+              <div className="mt-0.5 text-[11px] text-muted-foreground">
+                Actor {a.actor_id?.slice(0, 8) ?? "system"} · {a.entity ?? "record"}
+                {a.entity_id ? ` · ${a.entity_id.slice(0, 8)}` : ""}
+                {a.estate ? ` · ${a.estate.name}` : ""}
+              </div>
+            </div>
+            <span className="whitespace-nowrap text-[11px] text-muted-foreground">
+              {formatDistanceToNow(new Date(a.created_at), { addSuffix: true })}
+            </span>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
 }
 
-function QuickLink({ to, label }: { to: "/app/super/users" | "/app/super/invites" | "/app/super/support" | "/app/super/settings"; label: string }) {
-  return <Link to={to} className="card-surface flex items-center justify-center py-3 text-sm font-medium text-foreground hover:bg-muted/50">{label}</Link>;
+function QuickLink({
+  to,
+  label,
+}: {
+  to: "/app/super/users" | "/app/super/invites" | "/app/super/support" | "/app/super/settings";
+  label: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="card-surface flex items-center justify-center py-3 text-sm font-medium text-foreground hover:bg-muted/50"
+    >
+      {label}
+    </Link>
+  );
 }
 
-function ActionBtn({ onClick, icon, label }: { onClick: () => void; icon: React.ReactNode; label: string }) {
-  return <button onClick={onClick} className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-2 py-2 text-xs font-medium text-foreground hover:bg-muted">{icon} {label}</button>;
+function ActionBtn({
+  onClick,
+  icon,
+  label,
+}: {
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-2 py-2 text-xs font-medium text-foreground hover:bg-muted"
+    >
+      {icon} {label}
+    </button>
+  );
 }
 
 function NewEstateForm({ onDone }: { onDone: () => void }) {
-  const [form, setForm] = useState({ name: "", code: "", address: "", city: "", state: "", contact_email: "", contact_phone: "" });
+  const [form, setForm] = useState({
+    name: "",
+    code: "",
+    address: "",
+    city: "",
+    state: "",
+    contact_email: "",
+    contact_phone: "",
+  });
   const create = useMutation({
     mutationFn: async () => {
       if (!form.name.trim()) throw new Error("Name required");
@@ -270,39 +490,284 @@ function NewEstateForm({ onDone }: { onDone: () => void }) {
         if (error) throw error;
         code = data as string;
       }
-      const { data, error } = await supabase.from("estates").insert({ name: form.name.trim(), code, status: "active", address: form.address.trim() || null, city: form.city.trim() || null, state: form.state.trim() || null, contact_email: form.contact_email.trim() || null, contact_phone: form.contact_phone.trim() || null } as any).select("id,code").single();
+      const { data, error } = await supabase
+        .from("estates")
+        .insert({
+          name: form.name.trim(),
+          code,
+          status: "active",
+          address: form.address.trim() || null,
+          city: form.city.trim() || null,
+          state: form.state.trim() || null,
+          contact_email: form.contact_email.trim() || null,
+          contact_phone: form.contact_phone.trim() || null,
+        } as any)
+        .select("id,code")
+        .single();
       if (error) throw error;
-      await supabase.from("audit_logs").insert({ estate_id: data.id, action: "estate.created", entity: "estates", entity_id: data.id, metadata: { code: data.code } });
+      await supabase
+        .from("audit_logs")
+        .insert({
+          estate_id: data.id,
+          action: "estate.created",
+          entity: "estates",
+          entity_id: data.id,
+          metadata: { code: data.code },
+        });
       return data;
     },
-    onSuccess: (data) => { toast.success(`Estate created · code ${(data as any).code}`); onDone(); },
+    onSuccess: (data) => {
+      toast.success(`Estate created · code ${(data as any).code}`);
+      onDone();
+    },
     onError: (error: Error) => toast.error(error.message),
   });
-  return <Card className="space-y-3"><Field label="Estate name"><Input value={form.name} onChange={(v) => setForm({ ...form, name: v })} /></Field><Field label="Code (blank = auto-generate)"><Input value={form.code} onChange={(v) => setForm({ ...form, code: v.toUpperCase() })} /></Field><Field label="Address"><Input value={form.address} onChange={(v) => setForm({ ...form, address: v })} /></Field><div className="grid grid-cols-2 gap-2"><Field label="City"><Input value={form.city} onChange={(v) => setForm({ ...form, city: v })} /></Field><Field label="State"><Input value={form.state} onChange={(v) => setForm({ ...form, state: v })} /></Field></div><Field label="Contact email"><Input value={form.contact_email} onChange={(v) => setForm({ ...form, contact_email: v })} /></Field><Field label="Contact phone"><Input value={form.contact_phone} onChange={(v) => setForm({ ...form, contact_phone: v })} /></Field><button onClick={() => create.mutate()} disabled={create.isPending} className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60">{create.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Create estate</button></Card>;
+  return (
+    <Card className="space-y-3">
+      <Field label="Estate name">
+        <Input value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
+      </Field>
+      <Field label="Code (blank = auto-generate)">
+        <Input value={form.code} onChange={(v) => setForm({ ...form, code: v.toUpperCase() })} />
+      </Field>
+      <Field label="Address">
+        <Input value={form.address} onChange={(v) => setForm({ ...form, address: v })} />
+      </Field>
+      <div className="grid grid-cols-2 gap-2">
+        <Field label="City">
+          <Input value={form.city} onChange={(v) => setForm({ ...form, city: v })} />
+        </Field>
+        <Field label="State">
+          <Input value={form.state} onChange={(v) => setForm({ ...form, state: v })} />
+        </Field>
+      </div>
+      <Field label="Contact email">
+        <Input
+          value={form.contact_email}
+          onChange={(v) => setForm({ ...form, contact_email: v })}
+        />
+      </Field>
+      <Field label="Contact phone">
+        <Input
+          value={form.contact_phone}
+          onChange={(v) => setForm({ ...form, contact_phone: v })}
+        />
+      </Field>
+      <button
+        onClick={() => create.mutate()}
+        disabled={create.isPending}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
+      >
+        {create.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Create estate
+      </button>
+    </Card>
+  );
 }
 
-function EditEstateModal({ estate, onClose, onDone }: { estate: Estate; onClose: () => void; onDone: () => void }) {
-  const [form, setForm] = useState({ name: estate.name, address: estate.address ?? "", city: estate.city ?? "", state: estate.state ?? "", contact_email: estate.contact_email ?? "", contact_phone: estate.contact_phone ?? "" });
-  const save = useMutation({ mutationFn: async () => { const { error } = await supabase.rpc("update_estate" as any, { _estate_id: estate.id, _name: form.name, _address: form.address || null, _city: form.city || null, _state: form.state || null, _contact_email: form.contact_email || null, _contact_phone: form.contact_phone || null } as any); if (error) throw error; }, onSuccess: () => { toast.success("Estate updated"); onDone(); }, onError: (error: Error) => toast.error(error.message) });
-  return <Overlay onClose={onClose} title={`Edit ${estate.name}`}><div className="space-y-3"><Field label="Estate name"><Input value={form.name} onChange={(v) => setForm({ ...form, name: v })} /></Field><Field label="Address"><Input value={form.address} onChange={(v) => setForm({ ...form, address: v })} /></Field><div className="grid grid-cols-2 gap-2"><Field label="City"><Input value={form.city} onChange={(v) => setForm({ ...form, city: v })} /></Field><Field label="State"><Input value={form.state} onChange={(v) => setForm({ ...form, state: v })} /></Field></div><Field label="Contact email"><Input value={form.contact_email} onChange={(v) => setForm({ ...form, contact_email: v })} /></Field><Field label="Contact phone"><Input value={form.contact_phone} onChange={(v) => setForm({ ...form, contact_phone: v })} /></Field><button onClick={() => save.mutate()} disabled={save.isPending} className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60">{save.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Save changes</button></div></Overlay>;
+function EditEstateModal({
+  estate,
+  onClose,
+  onDone,
+}: {
+  estate: Estate;
+  onClose: () => void;
+  onDone: () => void;
+}) {
+  const [form, setForm] = useState({
+    name: estate.name,
+    address: estate.address ?? "",
+    city: estate.city ?? "",
+    state: estate.state ?? "",
+    contact_email: estate.contact_email ?? "",
+    contact_phone: estate.contact_phone ?? "",
+  });
+  const save = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.rpc(
+        "update_estate" as any,
+        {
+          _estate_id: estate.id,
+          _name: form.name,
+          _address: form.address || null,
+          _city: form.city || null,
+          _state: form.state || null,
+          _contact_email: form.contact_email || null,
+          _contact_phone: form.contact_phone || null,
+        } as any,
+      );
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Estate updated");
+      onDone();
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+  return (
+    <Overlay onClose={onClose} title={`Edit ${estate.name}`}>
+      <div className="space-y-3">
+        <Field label="Estate name">
+          <Input value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
+        </Field>
+        <Field label="Address">
+          <Input value={form.address} onChange={(v) => setForm({ ...form, address: v })} />
+        </Field>
+        <div className="grid grid-cols-2 gap-2">
+          <Field label="City">
+            <Input value={form.city} onChange={(v) => setForm({ ...form, city: v })} />
+          </Field>
+          <Field label="State">
+            <Input value={form.state} onChange={(v) => setForm({ ...form, state: v })} />
+          </Field>
+        </div>
+        <Field label="Contact email">
+          <Input
+            value={form.contact_email}
+            onChange={(v) => setForm({ ...form, contact_email: v })}
+          />
+        </Field>
+        <Field label="Contact phone">
+          <Input
+            value={form.contact_phone}
+            onChange={(v) => setForm({ ...form, contact_phone: v })}
+          />
+        </Field>
+        <button
+          onClick={() => save.mutate()}
+          disabled={save.isPending}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
+        >
+          {save.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Save changes
+        </button>
+      </div>
+    </Overlay>
+  );
 }
 
-function AssignAdminModal({ estate, onClose, onDone }: { estate: Estate; onClose: () => void; onDone: () => void }) {
+function AssignAdminModal({
+  estate,
+  onClose,
+  onDone,
+}: {
+  estate: Estate;
+  onClose: () => void;
+  onDone: () => void;
+}) {
   const [userId, setUserId] = useState("");
   const [q, setQ] = useState("");
-  const search = useQuery({ queryKey: ["assign-admin-search", q], enabled: q.length >= 2, queryFn: async () => { const { data, error } = await supabase.from("profiles").select("id,full_name,email").or(`full_name.ilike.%${q}%,email.ilike.%${q}%`).limit(10); if (error) throw error; return data ?? []; } });
-  const assign = useMutation({ mutationFn: async () => { if (!userId) throw new Error("Choose a user"); const rpc = estate.admin_user_id ? "reassign_estate_admin" : "assign_estate_admin"; const { error } = await supabase.rpc(rpc as any, { _estate_id: estate.id, [estate.admin_user_id ? "_new_admin_user_id" : "_user_id"]: userId } as any); if (error) throw error; }, onSuccess: () => { toast.success("Admin assigned"); onDone(); }, onError: (error: Error) => toast.error(error.message) });
-  return <Overlay onClose={onClose} title={estate.admin_user_id ? "Reassign estate admin" : "Assign estate admin"}><div className="space-y-3"><Field label="Search users by name or email"><Input value={q} onChange={setQ} /></Field><div className="max-h-56 overflow-y-auto rounded-lg border border-border">{(search.data ?? []).map((u: any) => <button key={u.id} onClick={() => setUserId(u.id)} className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-muted ${userId === u.id ? "bg-primary/10 text-primary" : ""}`}><span className="truncate">{u.full_name || u.email || u.id}</span>{userId === u.id && <span className="text-xs">Selected</span>}</button>)}{q.length >= 2 && (search.data ?? []).length === 0 && <div className="p-3 text-xs text-muted-foreground">No matches</div>}</div><button onClick={() => assign.mutate()} disabled={assign.isPending || !userId} className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60">{assign.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Confirm</button></div></Overlay>;
+  const search = useQuery({
+    queryKey: ["assign-admin-search", q],
+    enabled: q.length >= 2,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id,full_name,email")
+        .or(`full_name.ilike.%${q}%,email.ilike.%${q}%`)
+        .limit(10);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+  const assign = useMutation({
+    mutationFn: async () => {
+      if (!userId) throw new Error("Choose a user");
+      const rpc = estate.admin_user_id ? "reassign_estate_admin" : "assign_estate_admin";
+      const { error } = await supabase.rpc(
+        rpc as any,
+        {
+          _estate_id: estate.id,
+          [estate.admin_user_id ? "_new_admin_user_id" : "_user_id"]: userId,
+        } as any,
+      );
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Admin assigned");
+      onDone();
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+  return (
+    <Overlay
+      onClose={onClose}
+      title={estate.admin_user_id ? "Reassign estate admin" : "Assign estate admin"}
+    >
+      <div className="space-y-3">
+        <Field label="Search users by name or email">
+          <Input value={q} onChange={setQ} />
+        </Field>
+        <div className="max-h-56 overflow-y-auto rounded-lg border border-border">
+          {(search.data ?? []).map((u: any) => (
+            <button
+              key={u.id}
+              onClick={() => setUserId(u.id)}
+              className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-muted ${userId === u.id ? "bg-primary/10 text-primary" : ""}`}
+            >
+              <span className="truncate">{u.full_name || u.email || u.id}</span>
+              {userId === u.id && <span className="text-xs">Selected</span>}
+            </button>
+          ))}
+          {q.length >= 2 && (search.data ?? []).length === 0 && (
+            <div className="p-3 text-xs text-muted-foreground">No matches</div>
+          )}
+        </div>
+        <button
+          onClick={() => assign.mutate()}
+          disabled={assign.isPending || !userId}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
+        >
+          {assign.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Confirm
+        </button>
+      </div>
+    </Overlay>
+  );
 }
 
-function Overlay({ title, children, onClose }: { title: string; children: React.ReactNode; onClose: () => void }) {
-  return <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4" onClick={onClose}><div className="w-full max-w-md rounded-t-2xl bg-background p-5 shadow-lg sm:rounded-2xl" onClick={(e) => e.stopPropagation()}><div className="mb-3 flex items-center justify-between"><h3 className="text-sm font-semibold text-foreground">{title}</h3><button onClick={onClose} className="text-xs text-muted-foreground hover:text-foreground">Close</button></div>{children}</div></div>;
+function Overlay({
+  title,
+  children,
+  onClose,
+}: {
+  title: string;
+  children: React.ReactNode;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 p-0 sm:items-center sm:p-4"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md rounded-t-2xl bg-background p-5 shadow-lg sm:rounded-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+          <button onClick={onClose} className="text-xs text-muted-foreground hover:text-foreground">
+            Close
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <label className="block"><span className="mb-1.5 block text-xs font-medium text-muted-foreground">{label}</span>{children}</label>;
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-xs font-medium text-muted-foreground">{label}</span>
+      {children}
+    </label>
+  );
 }
 
 function Input({ value, onChange }: { value: string; onChange: (v: string) => void }) {
-  return <input value={value} onChange={(e) => onChange(e.target.value)} className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />;
+  return (
+    <input
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+    />
+  );
 }

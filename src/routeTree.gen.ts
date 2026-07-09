@@ -20,6 +20,7 @@ import { Route as AppDeniedRouteImport } from './routes/app.denied'
 import { Route as AppSuperIndexRouteImport } from './routes/app.super.index'
 import { Route as AppResidentIndexRouteImport } from './routes/app.resident.index'
 import { Route as AppGuardIndexRouteImport } from './routes/app.guard.index'
+import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 import { Route as AppSuperUsersRouteImport } from './routes/app.super.users'
 import { Route as AppSuperSupportRouteImport } from './routes/app.super.support'
 import { Route as AppSuperSettingsRouteImport } from './routes/app.super.settings'
@@ -119,6 +120,11 @@ const AppResidentIndexRoute = AppResidentIndexRouteImport.update({
 const AppGuardIndexRoute = AppGuardIndexRouteImport.update({
   id: '/guard/',
   path: '/guard/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
   getParentRoute: () => AppRoute,
 } as any)
 const AppSuperUsersRoute = AppSuperUsersRouteImport.update({
@@ -396,6 +402,7 @@ export interface FileRoutesByFullPath {
   '/app/super/settings': typeof AppSuperSettingsRoute
   '/app/super/support': typeof AppSuperSupportRoute
   '/app/super/users': typeof AppSuperUsersRoute
+  '/app/admin/': typeof AppAdminIndexRoute
   '/app/guard/': typeof AppGuardIndexRoute
   '/app/resident/': typeof AppResidentIndexRoute
   '/app/super/': typeof AppSuperIndexRoute
@@ -454,6 +461,7 @@ export interface FileRoutesByTo {
   '/app/super/settings': typeof AppSuperSettingsRoute
   '/app/super/support': typeof AppSuperSupportRoute
   '/app/super/users': typeof AppSuperUsersRoute
+  '/app/admin': typeof AppAdminIndexRoute
   '/app/guard': typeof AppGuardIndexRoute
   '/app/resident': typeof AppResidentIndexRoute
   '/app/super': typeof AppSuperIndexRoute
@@ -513,6 +521,7 @@ export interface FileRoutesById {
   '/app/super/settings': typeof AppSuperSettingsRoute
   '/app/super/support': typeof AppSuperSupportRoute
   '/app/super/users': typeof AppSuperUsersRoute
+  '/app/admin/': typeof AppAdminIndexRoute
   '/app/guard/': typeof AppGuardIndexRoute
   '/app/resident/': typeof AppResidentIndexRoute
   '/app/super/': typeof AppSuperIndexRoute
@@ -573,6 +582,7 @@ export interface FileRouteTypes {
     | '/app/super/settings'
     | '/app/super/support'
     | '/app/super/users'
+    | '/app/admin/'
     | '/app/guard/'
     | '/app/resident/'
     | '/app/super/'
@@ -631,6 +641,7 @@ export interface FileRouteTypes {
     | '/app/super/settings'
     | '/app/super/support'
     | '/app/super/users'
+    | '/app/admin'
     | '/app/guard'
     | '/app/resident'
     | '/app/super'
@@ -689,6 +700,7 @@ export interface FileRouteTypes {
     | '/app/super/settings'
     | '/app/super/support'
     | '/app/super/users'
+    | '/app/admin/'
     | '/app/guard/'
     | '/app/resident/'
     | '/app/super/'
@@ -782,6 +794,13 @@ declare module '@tanstack/react-router' {
       path: '/guard'
       fullPath: '/app/guard/'
       preLoaderRoute: typeof AppGuardIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/': {
+      id: '/app/admin/'
+      path: '/admin'
+      fullPath: '/app/admin/'
+      preLoaderRoute: typeof AppAdminIndexRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/super/users': {
@@ -1144,6 +1163,7 @@ interface AppRouteChildren {
   AppSuperSettingsRoute: typeof AppSuperSettingsRoute
   AppSuperSupportRoute: typeof AppSuperSupportRoute
   AppSuperUsersRoute: typeof AppSuperUsersRoute
+  AppAdminIndexRoute: typeof AppAdminIndexRoute
   AppGuardIndexRoute: typeof AppGuardIndexRoute
   AppResidentIndexRoute: typeof AppResidentIndexRoute
   AppSuperIndexRoute: typeof AppSuperIndexRoute
@@ -1196,6 +1216,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppSuperSettingsRoute: AppSuperSettingsRoute,
   AppSuperSupportRoute: AppSuperSupportRoute,
   AppSuperUsersRoute: AppSuperUsersRoute,
+  AppAdminIndexRoute: AppAdminIndexRoute,
   AppGuardIndexRoute: AppGuardIndexRoute,
   AppResidentIndexRoute: AppResidentIndexRoute,
   AppSuperIndexRoute: AppSuperIndexRoute,
