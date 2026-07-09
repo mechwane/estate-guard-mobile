@@ -37,6 +37,8 @@ if (!html.includes("<script") || !html.includes("/assets/")) {
   throw new Error("Built SPA shell is missing its asset scripts");
 }
 
+await copyFile(indexFile, path.join(publicOutput, "index.html"));
+
 async function routeFiles(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
   const files = await Promise.all(
@@ -68,19 +70,25 @@ async function concreteRoutePaths() {
   return [...paths].sort();
 }
 
-async function writeRouteFallback(routePath) {
+async function writeRouteFallback(outputRoot, routePath) {
   if (routePath === "/") return;
-  const outputDir = path.join(distOutput, routePath.replace(/^\//, ""));
+  const outputDir = path.join(outputRoot, routePath.replace(/^\//, ""));
   await mkdir(outputDir, { recursive: true });
   await writeFile(path.join(outputDir, "index.html"), html);
 }
 
+async function writeFallbackFiles(outputRoot) {
+  await Promise.all([
+    writeFile(path.join(outputRoot, "404.html"), html),
+    writeFile(path.join(outputRoot, "200.html"), html),
+    ...routes.map((routePath) => writeRouteFallback(outputRoot, routePath)),
+  ]);
+}
+
 const routes = await concreteRoutePaths();
 
-await Promise.all([
-  writeFile(path.join(distOutput, "404.html"), html),
-  writeFile(path.join(distOutput, "200.html"), html),
-  ...routes.map(writeRouteFallback),
-]);
+await Promise.all([writeFallbackFiles(distOutput), writeFallbackFiles(publicOutput)]);
 
-console.log(`Prepared dist with current SPA shell and ${routes.length} route fallbacks.`);
+console.log(
+  `Prepared dist and .output/public with current SPA shell and ${routes.length} route fallbacks.`,
+);
