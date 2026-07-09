@@ -17,7 +17,6 @@ import { Route as AuthSignInRouteImport } from './routes/auth.sign-in'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
 import { Route as AppDeniedRouteImport } from './routes/app.denied'
-import { Route as AppSuperIndexRouteImport } from './routes/app.super.index'
 import { Route as AppResidentIndexRouteImport } from './routes/app.resident.index'
 import { Route as AppGuardIndexRouteImport } from './routes/app.guard.index'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
@@ -105,11 +104,6 @@ const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
 const AppDeniedRoute = AppDeniedRouteImport.update({
   id: '/denied',
   path: '/denied',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSuperIndexRoute = AppSuperIndexRouteImport.update({
-  id: '/super/',
-  path: '/super/',
   getParentRoute: () => AppRoute,
 } as any)
 const AppResidentIndexRoute = AppResidentIndexRouteImport.update({
@@ -405,7 +399,6 @@ export interface FileRoutesByFullPath {
   '/app/admin/': typeof AppAdminIndexRoute
   '/app/guard/': typeof AppGuardIndexRoute
   '/app/resident/': typeof AppResidentIndexRoute
-  '/app/super/': typeof AppSuperIndexRoute
   '/app/resident/events/$id': typeof AppResidentEventsIdRoute
   '/app/resident/events/mine': typeof AppResidentEventsMineRoute
   '/app/resident/events/new': typeof AppResidentEventsNewRoute
@@ -464,7 +457,6 @@ export interface FileRoutesByTo {
   '/app/admin': typeof AppAdminIndexRoute
   '/app/guard': typeof AppGuardIndexRoute
   '/app/resident': typeof AppResidentIndexRoute
-  '/app/super': typeof AppSuperIndexRoute
   '/app/resident/events/$id': typeof AppResidentEventsIdRoute
   '/app/resident/events/mine': typeof AppResidentEventsMineRoute
   '/app/resident/events/new': typeof AppResidentEventsNewRoute
@@ -524,7 +516,6 @@ export interface FileRoutesById {
   '/app/admin/': typeof AppAdminIndexRoute
   '/app/guard/': typeof AppGuardIndexRoute
   '/app/resident/': typeof AppResidentIndexRoute
-  '/app/super/': typeof AppSuperIndexRoute
   '/app/resident/events/$id': typeof AppResidentEventsIdRoute
   '/app/resident/events/mine': typeof AppResidentEventsMineRoute
   '/app/resident/events/new': typeof AppResidentEventsNewRoute
@@ -585,7 +576,6 @@ export interface FileRouteTypes {
     | '/app/admin/'
     | '/app/guard/'
     | '/app/resident/'
-    | '/app/super/'
     | '/app/resident/events/$id'
     | '/app/resident/events/mine'
     | '/app/resident/events/new'
@@ -644,7 +634,6 @@ export interface FileRouteTypes {
     | '/app/admin'
     | '/app/guard'
     | '/app/resident'
-    | '/app/super'
     | '/app/resident/events/$id'
     | '/app/resident/events/mine'
     | '/app/resident/events/new'
@@ -703,7 +692,6 @@ export interface FileRouteTypes {
     | '/app/admin/'
     | '/app/guard/'
     | '/app/resident/'
-    | '/app/super/'
     | '/app/resident/events/$id'
     | '/app/resident/events/mine'
     | '/app/resident/events/new'
@@ -773,13 +761,6 @@ declare module '@tanstack/react-router' {
       path: '/denied'
       fullPath: '/app/denied'
       preLoaderRoute: typeof AppDeniedRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/super/': {
-      id: '/app/super/'
-      path: '/super'
-      fullPath: '/app/super/'
-      preLoaderRoute: typeof AppSuperIndexRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/resident/': {
@@ -1166,7 +1147,6 @@ interface AppRouteChildren {
   AppAdminIndexRoute: typeof AppAdminIndexRoute
   AppGuardIndexRoute: typeof AppGuardIndexRoute
   AppResidentIndexRoute: typeof AppResidentIndexRoute
-  AppSuperIndexRoute: typeof AppSuperIndexRoute
   AppResidentEventsIdRoute: typeof AppResidentEventsIdRoute
   AppResidentEventsMineRoute: typeof AppResidentEventsMineRoute
   AppResidentEventsNewRoute: typeof AppResidentEventsNewRoute
@@ -1219,7 +1199,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminIndexRoute: AppAdminIndexRoute,
   AppGuardIndexRoute: AppGuardIndexRoute,
   AppResidentIndexRoute: AppResidentIndexRoute,
-  AppSuperIndexRoute: AppSuperIndexRoute,
   AppResidentEventsIdRoute: AppResidentEventsIdRoute,
   AppResidentEventsMineRoute: AppResidentEventsMineRoute,
   AppResidentEventsNewRoute: AppResidentEventsNewRoute,
