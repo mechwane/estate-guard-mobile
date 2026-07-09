@@ -67,13 +67,10 @@ function SuperUsers() {
 
   const setAccess = useMutation({
     mutationFn: async ({ id, approved }: { id: string; approved: boolean }) => {
-      const { error } = await supabase.rpc(
-        "set_estate_access" as any,
-        {
-          _user_id: id,
-          _approved: approved,
-        } as any,
-      );
+      const { error } = await supabase.rpc("set_estate_access", {
+        _user_id: id,
+        _approved: approved,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
