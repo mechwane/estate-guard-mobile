@@ -1,10 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { formatDistanceToNow, startOfDay } from "date-fns";
+import { formatDistanceToNow, startOfDay, subDays } from "date-fns";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
+import {
+  ChartCard,
+  DonutChart,
+  LineBarChart,
+  RangeTabs,
+  VerticalBarChart,
+  type AdminRangeKey,
+} from "@/components/dashboard-charts";
 import {
   Card,
   EmptyState,
@@ -22,6 +30,7 @@ function AdminDashboard() {
   const { data: session } = useSession();
   const estateId = session?.estate?.id;
   const [section, setSection] = useState<"overview" | "operations" | "activity">("overview");
+  const [visitorRange, setVisitorRange] = useState<AdminRangeKey>("7d");
 
   const metrics = useQuery({
     queryKey: ["admin-control-center", estateId],
@@ -157,6 +166,133 @@ function AdminDashboard() {
     },
   });
 
+  const charts = useQuery({
+    queryKey: ["admin-dashboard-charts", estateId, visitorRange],
+    enabled: !!estateId,
+    queryFn: async () => {
+      const since = adminRangeStart(visitorRange);
+      const [profiles, guests, requests, issues, bills, orders, estateProfiles, guardRoles] =
+        await Promise.all([
+          supabase.from("profiles").select("id,verification_status").eq("estate_id", estateId!),
+          supabase
+            .from("guest_invites")
+            .select("id,created_at,checked_in_at,checked_out_at,expires_at,validated_by,exited_by")
+            .eq("estate_id", estateId!),
+          supabase.from("resident_requests").select("id,category").eq("estate_id", estateId!),
+          supabase
+            .from("issues")
+            .select("id,status,severity,created_at,reporter_id,reporter_role")
+            .eq("estate_id", estateId!),
+          supabase.from("bills").select("id,status,amount").eq("estate_id", estateId!),
+          supabase.from("shop_orders").select("id,status").eq("estate_id", estateId!),
+          supabase.from("profiles").select("id,full_name,email").eq("estate_id", estateId!),
+          supabase.from("user_roles").select("user_id,role").eq("role", "guard"),
+        ]);
+
+      const error = [
+        profiles.error,
+        guests.error,
+        requests.error,
+        issues.error,
+        bills.error,
+        orders.error,
+        estateProfiles.error,
+        guardRoles.error,
+      ].find(Boolean);
+      if (error) throw error;
+
+      const profileRows = profiles.data ?? [];
+      const guestRows = guests.data ?? [];
+      const requestRows = requests.data ?? [];
+      const issueRows = issues.data ?? [];
+      const billRows = bills.data ?? [];
+      const orderRows = orders.data ?? [];
+
+      const verificationCounts = countStrings(
+        profileRows.map((profile) => profile.verification_status ?? "not_submitted"),
+      );
+      const guardIds = new Set((guardRoles.data ?? []).map((role) => role.user_id));
+      const guardNames = new Map(
+        (estateProfiles.data ?? [])
+          .filter((profile) => guardIds.has(profile.id))
+          .map((profile) => [profile.id, profile.full_name || profile.email || profile.id.slice(0, 8)]),
+      );
+      const guardActivity = Array.from(guardNames.entries())
+        .map(([id, name]) => ({
+          name,
+          validations: guestRows.filter((guest) => guest.validated_by === id && inRange(guest.checked_in_at, since)).length,
+          checkIns: guestRows.filter((guest) => guest.validated_by === id && inRange(guest.checked_in_at, since)).length,
+          checkOuts: guestRows.filter((guest) => guest.exited_by === id && inRange(guest.checked_out_at, since)).length,
+          incidents: issueRows.filter(
+            (issue) => issue.reporter_id === id && issue.reporter_role === "guard" && inRange(issue.created_at, since),
+          ).length,
+        }))
+        .filter((row) => row.validations + row.checkIns + row.checkOuts + row.incidents > 0)
+        .slice(0, 8);
+      const billCounts = countStrings(billRows.map((bill) => String(bill.status)));
+      const outstandingAmount = billRows
+        .filter((bill) => ["unpaid", "overdue", "partially_paid", "partial"].includes(String(bill.status)))
+        .reduce((sum, bill) => sum + Number(bill.amount ?? 0), 0);
+
+      return {
+        verification: [
+          { name: "Verified", value: verificationCounts.approved ?? 0 },
+          { name: "Pending", value: verificationCounts.pending ?? 0 },
+          { name: "Rejected", value: verificationCounts.rejected ?? 0 },
+          {
+            name: "Unverified",
+            value: (verificationCounts.not_submitted ?? 0) + (verificationCounts.incomplete ?? 0),
+          },
+        ],
+        visitorActivity: [
+          { name: "Invites", count: guestRows.filter((guest) => inRange(guest.created_at, since)).length },
+          { name: "Check-ins", count: guestRows.filter((guest) => inRange(guest.checked_in_at, since)).length },
+          { name: "Check-outs", count: guestRows.filter((guest) => inRange(guest.checked_out_at, since)).length },
+          {
+            name: "Inside",
+            count: guestRows.filter((guest) => guest.checked_in_at && !guest.checked_out_at).length,
+          },
+          {
+            name: "Missing exits",
+            count: guestRows.filter(
+              (guest) => guest.checked_in_at && !guest.checked_out_at && new Date(guest.expires_at) < new Date(),
+            ).length,
+          },
+        ],
+        requestCategories: requestCategoryRows(requestRows.map((request) => request.category)),
+        issueBreakdown: [
+          { name: "Open", count: issueRows.filter((issue) => issue.status === "open").length },
+          {
+            name: "In progress",
+            count: issueRows.filter((issue) => issue.status === "in_progress").length,
+          },
+          { name: "Resolved", count: issueRows.filter((issue) => issue.status === "resolved").length },
+          { name: "Low", count: issueRows.filter((issue) => issue.severity === "low").length },
+          { name: "Medium", count: issueRows.filter((issue) => issue.severity === "medium").length },
+          { name: "High", count: issueRows.filter((issue) => issue.severity === "high").length },
+          { name: "Critical", count: issueRows.filter((issue) => issue.severity === "critical").length },
+        ],
+        bills: [
+          { name: "Paid", count: billCounts.paid ?? 0 },
+          { name: "Unpaid", count: billCounts.unpaid ?? 0 },
+          { name: "Partially paid", count: (billCounts.partially_paid ?? 0) + (billCounts.partial ?? 0) },
+          { name: "Overdue", count: billCounts.overdue ?? 0 },
+          { name: "Outstanding", amount: outstandingAmount },
+        ],
+        orders: statusRows(orderRows.map((order) => order.status), [
+          "pending",
+          "confirmed",
+          "processing",
+          "ready",
+          "completed",
+          "cancelled",
+          "rejected",
+        ]),
+        guardActivity,
+      };
+    },
+  });
+
   const operations = useMemo(
     () =>
       [
@@ -253,6 +389,61 @@ function AdminDashboard() {
           </div>
         ))}
 
+      {section === "overview" &&
+        (charts.isLoading ? (
+          <ListSkeleton rows={4} />
+        ) : charts.isError || !charts.data ? (
+          <ErrorState onRetry={() => charts.refetch()} />
+        ) : (
+          <div className="grid gap-3 lg:grid-cols-2">
+            <ChartCard title="Resident verification">
+              <DonutChart data={charts.data.verification} />
+            </ChartCard>
+            <ChartCard
+              title="Visitor activity"
+              action={
+                <RangeTabs
+                  value={visitorRange}
+                  onChange={setVisitorRange}
+                  options={adminRangeOptions}
+                />
+              }
+            >
+              <VerticalBarChart data={charts.data.visitorActivity} bars={[{ key: "count", label: "Records" }]} />
+            </ChartCard>
+            <ChartCard title="Requests by category">
+              <VerticalBarChart data={charts.data.requestCategories} bars={[{ key: "count", label: "Requests" }]} />
+            </ChartCard>
+            <ChartCard title="Issues by status and severity">
+              <VerticalBarChart data={charts.data.issueBreakdown} bars={[{ key: "count", label: "Issues" }]} />
+            </ChartCard>
+            <ChartCard title="Bills">
+              <VerticalBarChart
+                data={charts.data.bills}
+                bars={[
+                  { key: "count", label: "Bills" },
+                  { key: "amount", label: "Amount" },
+                ]}
+                currencyKeys={["amount"]}
+              />
+            </ChartCard>
+            <ChartCard title="Shop orders">
+              <VerticalBarChart data={charts.data.orders} bars={[{ key: "count", label: "Orders" }]} />
+            </ChartCard>
+            <ChartCard title="Guard activity">
+              <LineBarChart
+                data={charts.data.guardActivity}
+                bars={[
+                  { key: "validations", label: "Validations" },
+                  { key: "checkIns", label: "Check-ins" },
+                  { key: "checkOuts", label: "Check-outs" },
+                  { key: "incidents", label: "Incidents" },
+                ]}
+              />
+            </ChartCard>
+          </div>
+        ))}
+
       {section === "operations" && (
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {operations.map(([label, to]) => (
@@ -306,4 +497,54 @@ function AdminDashboard() {
       )}
     </div>
   );
+}
+
+const adminRangeOptions = [
+  { value: "today", label: "Today" },
+  { value: "7d", label: "7 days" },
+  { value: "30d", label: "30 days" },
+] as const;
+
+function adminRangeStart(range: AdminRangeKey) {
+  if (range === "today") return startOfDay(new Date());
+  return startOfDay(subDays(new Date(), range === "7d" ? 6 : 29));
+}
+
+function inRange(value: string | null | undefined, since: Date) {
+  return !!value && new Date(value) >= since;
+}
+
+function countStrings(values: string[]) {
+  return values.reduce<Record<string, number>>((acc, value) => {
+    acc[value] = (acc[value] ?? 0) + 1;
+    return acc;
+  }, {});
+}
+
+function titleCase(value: string) {
+  return value.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function statusRows(values: string[], statuses: string[]) {
+  const counts = countStrings(values.map((value) => String(value)));
+  return statuses.map((status) => ({ name: titleCase(status), count: counts[status] ?? 0 }));
+}
+
+function requestCategoryRows(values: string[]) {
+  const rows = {
+    "Development/Renovation": 0,
+    Events: 0,
+    Code: 0,
+    Billing: 0,
+    Others: 0,
+  };
+  values.forEach((raw) => {
+    const value = raw.toLowerCase();
+    if (value.includes("development") || value.includes("renovation")) rows["Development/Renovation"] += 1;
+    else if (value.includes("event")) rows.Events += 1;
+    else if (value.includes("code")) rows.Code += 1;
+    else if (value.includes("bill") || value.includes("payment")) rows.Billing += 1;
+    else rows.Others += 1;
+  });
+  return Object.entries(rows).map(([name, count]) => ({ name, count }));
 }
