@@ -601,11 +601,11 @@ function EditEstateModal({
         {
           _estate_id: estate.id,
           _name: form.name,
-          _address: form.address || null,
-          _city: form.city || null,
-          _state: form.state || null,
-          _contact_email: form.contact_email || null,
-          _contact_phone: form.contact_phone || null,
+          _address: form.address,
+          _city: form.city,
+          _state: form.state,
+          _contact_email: form.contact_email,
+          _contact_phone: form.contact_phone,
         },
       );
       if (error) throw error;
