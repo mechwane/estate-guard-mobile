@@ -55,13 +55,10 @@ function SuperInvites() {
       if (!estateId) throw new Error("Choose an estate");
       const trimmed = email.trim().toLowerCase();
       if (!/^\S+@\S+\.\S+$/.test(trimmed)) throw new Error("Enter a valid email");
-      const { data, error } = await supabase.rpc(
-        "create_estate_admin_invite" as any,
-        {
-          _estate_id: estateId,
-          _email: trimmed,
-        } as any,
-      );
+      const { data, error } = await supabase.rpc("create_estate_admin_invite", {
+        _estate_id: estateId,
+        _email: trimmed,
+      });
       if (error) throw error;
       return `${window.location.origin}/auth/sign-up?admin_invite=${data as string}`;
     },
