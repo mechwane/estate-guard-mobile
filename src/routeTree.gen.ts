@@ -23,6 +23,7 @@ import { Route as AppGuardIndexRouteImport } from './routes/app.guard.index'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 import { Route as AppSuperUsersRouteImport } from './routes/app.super.users'
 import { Route as AppSuperSupportRouteImport } from './routes/app.super.support'
+import { Route as AppSuperSettingsRouteImport } from './routes/app.super.settings'
 import { Route as AppSuperInvitesRouteImport } from './routes/app.super.invites'
 import { Route as AppSuperAuditRouteImport } from './routes/app.super.audit'
 import { Route as AppResidentVerificationRouteImport } from './routes/app.resident.verification'
@@ -134,6 +135,11 @@ const AppSuperUsersRoute = AppSuperUsersRouteImport.update({
 const AppSuperSupportRoute = AppSuperSupportRouteImport.update({
   id: '/super/support',
   path: '/super/support',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperSettingsRoute = AppSuperSettingsRouteImport.update({
+  id: '/super/settings',
+  path: '/super/settings',
   getParentRoute: () => AppRoute,
 } as any)
 const AppSuperInvitesRoute = AppSuperInvitesRouteImport.update({
@@ -393,6 +399,7 @@ export interface FileRoutesByFullPath {
   '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
   '/app/super/invites': typeof AppSuperInvitesRoute
+  '/app/super/settings': typeof AppSuperSettingsRoute
   '/app/super/support': typeof AppSuperSupportRoute
   '/app/super/users': typeof AppSuperUsersRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -451,6 +458,7 @@ export interface FileRoutesByTo {
   '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
   '/app/super/invites': typeof AppSuperInvitesRoute
+  '/app/super/settings': typeof AppSuperSettingsRoute
   '/app/super/support': typeof AppSuperSupportRoute
   '/app/super/users': typeof AppSuperUsersRoute
   '/app/admin': typeof AppAdminIndexRoute
@@ -510,6 +518,7 @@ export interface FileRoutesById {
   '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
   '/app/super/invites': typeof AppSuperInvitesRoute
+  '/app/super/settings': typeof AppSuperSettingsRoute
   '/app/super/support': typeof AppSuperSupportRoute
   '/app/super/users': typeof AppSuperUsersRoute
   '/app/admin/': typeof AppAdminIndexRoute
@@ -570,6 +579,7 @@ export interface FileRouteTypes {
     | '/app/resident/verification'
     | '/app/super/audit'
     | '/app/super/invites'
+    | '/app/super/settings'
     | '/app/super/support'
     | '/app/super/users'
     | '/app/admin/'
@@ -628,6 +638,7 @@ export interface FileRouteTypes {
     | '/app/resident/verification'
     | '/app/super/audit'
     | '/app/super/invites'
+    | '/app/super/settings'
     | '/app/super/support'
     | '/app/super/users'
     | '/app/admin'
@@ -686,6 +697,7 @@ export interface FileRouteTypes {
     | '/app/resident/verification'
     | '/app/super/audit'
     | '/app/super/invites'
+    | '/app/super/settings'
     | '/app/super/support'
     | '/app/super/users'
     | '/app/admin/'
@@ -803,6 +815,13 @@ declare module '@tanstack/react-router' {
       path: '/super/support'
       fullPath: '/app/super/support'
       preLoaderRoute: typeof AppSuperSupportRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/settings': {
+      id: '/app/super/settings'
+      path: '/super/settings'
+      fullPath: '/app/super/settings'
+      preLoaderRoute: typeof AppSuperSettingsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/super/invites': {
@@ -1141,6 +1160,7 @@ interface AppRouteChildren {
   AppResidentVerificationRoute: typeof AppResidentVerificationRoute
   AppSuperAuditRoute: typeof AppSuperAuditRoute
   AppSuperInvitesRoute: typeof AppSuperInvitesRoute
+  AppSuperSettingsRoute: typeof AppSuperSettingsRoute
   AppSuperSupportRoute: typeof AppSuperSupportRoute
   AppSuperUsersRoute: typeof AppSuperUsersRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
@@ -1193,6 +1213,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppResidentVerificationRoute: AppResidentVerificationRoute,
   AppSuperAuditRoute: AppSuperAuditRoute,
   AppSuperInvitesRoute: AppSuperInvitesRoute,
+  AppSuperSettingsRoute: AppSuperSettingsRoute,
   AppSuperSupportRoute: AppSuperSupportRoute,
   AppSuperUsersRoute: AppSuperUsersRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
