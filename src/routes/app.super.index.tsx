@@ -1,12 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { format, formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow, startOfDay, subDays } from "date-fns";
 import { Building2, Loader2, Pencil, Plus, Power, PowerOff, UserCog } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import {
+  ChartCard,
+  DonutChart,
+  RangeTabs,
+  TrendChart,
+  VerticalBarChart,
+  type RangeKey,
+} from "@/components/dashboard-charts";
 import {
   Card,
   ConfirmActionDialog,
@@ -17,6 +25,7 @@ import {
   StatCard,
   StatusBadge,
 } from "@/components/ui-kit";
+import { ngn } from "@/lib/format";
 
 export const Route = createFileRoute("/app/super/")({
   component: SuperDashboard,
@@ -54,6 +63,7 @@ function SuperDashboard() {
   const [editing, setEditing] = useState<Estate | null>(null);
   const [assigning, setAssigning] = useState<Estate | null>(null);
   const [toggling, setToggling] = useState<Estate | null>(null);
+  const [growthRange, setGrowthRange] = useState<RangeKey>("30d");
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["all-estates"] });
@@ -168,6 +178,135 @@ function SuperDashboard() {
     },
   });
 
+  const charts = useQuery({
+    queryKey: ["super-dashboard-charts", growthRange],
+    queryFn: async () => {
+      const [
+        estates,
+        profiles,
+        roles,
+        guests,
+        requests,
+        issues,
+        meetings,
+        posts,
+        support,
+        bills,
+        orders,
+      ] = await Promise.all([
+        supabase.from("estates").select("id,name,status,created_at"),
+        supabase.from("profiles").select("id,created_at,estate_id"),
+        supabase.from("user_roles").select("user_id,role"),
+        supabase.from("guest_invites").select("id,estate_id,created_at,checked_in_at,checked_out_at"),
+        supabase.from("resident_requests").select("id,estate_id,created_at,status"),
+        supabase.from("issues").select("id,estate_id,created_at,status"),
+        supabase.from("meetings").select("id,estate_id,created_at"),
+        supabase.from("community_posts").select("id,estate_id,created_at,post_type"),
+        supabase.from("support_tickets").select("id,status,created_at"),
+        supabase.from("bills").select("id,estate_id,status,amount,created_at"),
+        supabase.from("shop_orders").select("id,estate_id,status,created_at"),
+      ]);
+
+      const error = [
+        estates.error,
+        profiles.error,
+        roles.error,
+        guests.error,
+        requests.error,
+        issues.error,
+        meetings.error,
+        posts.error,
+        support.error,
+        bills.error,
+        orders.error,
+      ].find(Boolean);
+      if (error) throw error;
+
+      const estateRows = estates.data ?? [];
+      const profileRows = profiles.data ?? [];
+      const roleRows = roles.data ?? [];
+      const guestRows = guests.data ?? [];
+      const requestRows = requests.data ?? [];
+      const issueRows = issues.data ?? [];
+      const meetingRows = meetings.data ?? [];
+      const postRows = posts.data ?? [];
+      const supportRows = support.data ?? [];
+      const billRows = bills.data ?? [];
+      const orderRows = orders.data ?? [];
+      const start = rangeStart(growthRange, [...profileRows, ...estateRows].map((row) => row.created_at));
+      const residentIds = new Set(
+        roleRows.filter((role) => role.role === "resident").map((role) => role.user_id),
+      );
+      const guardIds = new Set(roleRows.filter((role) => role.role === "guard").map((role) => role.user_id));
+      const roleCounts = countStrings(roleRows.map((role) => role.role));
+      const estateStatusCounts = countStrings(estateRows.map((estate) => String(estate.status)));
+      const billCounts = countStrings(billRows.map((bill) => String(bill.status)));
+      const collectedAmount = billRows
+        .filter((bill) => bill.status === "paid")
+        .reduce((sum, bill) => sum + Number(bill.amount ?? 0), 0);
+      const outstandingAmount = billRows
+        .filter((bill) => bill.status !== "paid")
+        .reduce((sum, bill) => sum + Number(bill.amount ?? 0), 0);
+
+      return {
+        growth: buildGrowthRows({
+          start,
+          users: profileRows,
+          estates: estateRows,
+          residents: profileRows.filter((profile) => residentIds.has(profile.id)),
+        }),
+        roleDistribution: [
+          { name: "Residents", value: roleCounts.resident ?? 0 },
+          { name: "Guards", value: roleCounts.guard ?? 0 },
+          { name: "Estate Admins", value: roleCounts.estate_admin ?? 0 },
+          { name: "Super Admins", value: roleCounts.super_admin ?? 0 },
+        ],
+        estateStatus: [
+          { name: "Active", value: estateStatusCounts.active ?? 0 },
+          { name: "Suspended", value: estateStatusCounts.suspended ?? 0 },
+          { name: "Pending", value: estateStatusCounts.pending ?? 0 },
+        ],
+        activity: [
+          { name: "Invites", count: guestRows.length },
+          { name: "Check-ins", count: guestRows.filter((guest) => guest.checked_in_at).length },
+          { name: "Check-outs", count: guestRows.filter((guest) => guest.checked_out_at).length },
+          { name: "Requests", count: requestRows.length },
+          { name: "Issues", count: issueRows.length },
+          { name: "Meetings", count: meetingRows.length },
+          {
+            name: "Announcements",
+            count: postRows.filter((post) => String(post.post_type).toLowerCase().includes("announcement")).length,
+          },
+        ],
+        support: statusRows(
+          supportRows.map((ticket) => ticket.status),
+          ["open", "in_progress", "resolved", "closed"],
+        ),
+        bills: [
+          { name: "Paid bills", count: billCounts.paid ?? 0 },
+          { name: "Unpaid bills", count: billCounts.unpaid ?? 0 },
+          { name: "Overdue bills", count: billCounts.overdue ?? 0 },
+          { name: "Collected", amount: collectedAmount },
+          { name: "Outstanding", amount: outstandingAmount },
+        ],
+        estates: estateRows.map((estate) => ({
+          id: estate.id,
+          name: estate.name,
+          residents: profileRows.filter((profile) => profile.estate_id === estate.id && residentIds.has(profile.id)).length,
+          guards: profileRows.filter((profile) => profile.estate_id === estate.id && guardIds.has(profile.id)).length,
+          openIncidents: issueRows.filter(
+            (issue) => estate.id === issue.estate_id && ["open", "in_progress"].includes(String(issue.status)),
+          ).length,
+          pendingRequests: requestRows.filter(
+            (request) => estate.id === request.estate_id && !["resolved", "closed", "approved", "rejected"].includes(String(request.status)),
+          ).length,
+          unpaidBills: billRows.filter((bill) => estate.id === bill.estate_id && bill.status !== "paid").length,
+          shopOrders: orderRows.filter((order) => estate.id === order.estate_id).length,
+        })),
+      };
+    },
+  });
+
   const filtered = (estatesQ.data ?? []).filter((e) => {
     const needle = q.trim().toLowerCase();
     if (status !== "all" && e.status !== status) return false;
@@ -259,6 +398,55 @@ function SuperDashboard() {
             <QuickLink to="/app/super/support" label="Support center" />
             <QuickLink to="/app/super/settings" label="Platform settings" />
           </div>
+          {charts.isLoading ? (
+            <ListSkeleton rows={4} />
+          ) : charts.isError || !charts.data ? (
+            <ErrorState onRetry={() => charts.refetch()} />
+          ) : (
+            <div className="space-y-3">
+              <div className="grid gap-3 lg:grid-cols-2">
+                <ChartCard
+                  title="Platform growth"
+                  subtitle="New users, estates, and residents"
+                  action={
+                    <RangeTabs value={growthRange} onChange={setGrowthRange} options={growthRangeOptions} />
+                  }
+                >
+                  <TrendChart
+                    data={charts.data.growth}
+                    series={[
+                      { key: "users", label: "New users" },
+                      { key: "estates", label: "New estates" },
+                      { key: "residents", label: "New residents" },
+                    ]}
+                  />
+                </ChartCard>
+                <ChartCard title="User role distribution">
+                  <DonutChart data={charts.data.roleDistribution} />
+                </ChartCard>
+                <ChartCard title="Estate status">
+                  <DonutChart data={charts.data.estateStatus} />
+                </ChartCard>
+                <ChartCard title="Platform activity">
+                  <VerticalBarChart data={charts.data.activity} bars={[{ key: "count", label: "Records" }]} />
+                </ChartCard>
+                <ChartCard title="Support status">
+                  <VerticalBarChart data={charts.data.support} bars={[{ key: "count", label: "Tickets" }]} />
+                </ChartCard>
+                <ChartCard title="Bills and payments">
+                  <VerticalBarChart
+                    data={charts.data.bills}
+                    bars={[
+                      { key: "count", label: "Bills" },
+                      { key: "amount", label: "Amount" },
+                    ]}
+                    currencyKeys={["amount", "Amount"]}
+                  />
+                </ChartCard>
+              </div>
+              <EstateComparisonTable rows={charts.data.estates} />
+            </div>
+          )}
         </>
       )}
 
@@ -359,6 +547,119 @@ function SuperDashboard() {
         />
       )}
     </div>
+  );
+}
+
+const growthRangeOptions = [
+  { value: "7d", label: "7 days" },
+  { value: "30d", label: "30 days" },
+  { value: "90d", label: "90 days" },
+  { value: "all", label: "All" },
+] as const;
+
+type CreatedRow = { created_at: string };
+
+function rangeStart(range: RangeKey, dates: string[]) {
+  if (range === "all") {
+    const earliest = dates.length
+      ? dates.reduce((min, date) => (new Date(date) < new Date(min) ? date : min), dates[0])
+      : new Date().toISOString();
+    return startOfDay(new Date(earliest));
+  }
+  const days = range === "7d" ? 6 : range === "30d" ? 29 : 89;
+  return startOfDay(subDays(new Date(), days));
+}
+
+function buildGrowthRows({
+  start,
+  users,
+  estates,
+  residents,
+}: {
+  start: Date;
+  users: CreatedRow[];
+  estates: CreatedRow[];
+  residents: CreatedRow[];
+}) {
+  const rows: { name: string; users: number; estates: number; residents: number }[] = [];
+  const today = startOfDay(new Date());
+  for (let day = new Date(start); day <= today; day.setDate(day.getDate() + 1)) {
+    const key = format(day, "yyyy-MM-dd");
+    rows.push({
+      name: format(day, "MMM d"),
+      users: users.filter((row) => format(new Date(row.created_at), "yyyy-MM-dd") === key).length,
+      estates: estates.filter((row) => format(new Date(row.created_at), "yyyy-MM-dd") === key).length,
+      residents: residents.filter((row) => format(new Date(row.created_at), "yyyy-MM-dd") === key).length,
+    });
+  }
+  return rows;
+}
+
+function countStrings(values: string[]) {
+  return values.reduce<Record<string, number>>((acc, value) => {
+    acc[value] = (acc[value] ?? 0) + 1;
+    return acc;
+  }, {});
+}
+
+function titleCase(value: string) {
+  return value.replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function statusRows(values: string[], statuses: string[]) {
+  const counts = countStrings(values.map((value) => String(value)));
+  return statuses.map((status) => ({ name: titleCase(status), count: counts[status] ?? 0 }));
+}
+
+function EstateComparisonTable({
+  rows,
+}: {
+  rows: {
+    id: string;
+    name: string;
+    residents: number;
+    guards: number;
+    openIncidents: number;
+    pendingRequests: number;
+    unpaidBills: number;
+    shopOrders: number;
+  }[];
+}) {
+  if (rows.length === 0) return <EmptyState title="No estates yet" />;
+  return (
+    <Card className="overflow-hidden p-0">
+      <div className="border-b border-border p-4">
+        <h2 className="text-sm font-semibold text-foreground">Estate comparison</h2>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[46rem] text-left text-sm">
+          <thead className="bg-muted/50 text-[11px] uppercase text-muted-foreground">
+            <tr>
+              <th className="px-4 py-3 font-medium">Estate</th>
+              <th className="px-3 py-3 font-medium">Residents</th>
+              <th className="px-3 py-3 font-medium">Guards</th>
+              <th className="px-3 py-3 font-medium">Open incidents</th>
+              <th className="px-3 py-3 font-medium">Pending requests</th>
+              <th className="px-3 py-3 font-medium">Unpaid bills</th>
+              <th className="px-3 py-3 font-medium">Shop orders</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {rows.map((row) => (
+              <tr key={row.id}>
+                <td className="max-w-52 truncate px-4 py-3 font-medium text-foreground">{row.name}</td>
+                <td className="px-3 py-3 tabular-nums">{row.residents}</td>
+                <td className="px-3 py-3 tabular-nums">{row.guards}</td>
+                <td className="px-3 py-3 tabular-nums">{row.openIncidents}</td>
+                <td className="px-3 py-3 tabular-nums">{row.pendingRequests}</td>
+                <td className="px-3 py-3 tabular-nums">{row.unpaidBills}</td>
+                <td className="px-3 py-3 tabular-nums">{row.shopOrders}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Card>
   );
 }
 
