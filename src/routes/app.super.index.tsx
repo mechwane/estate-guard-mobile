@@ -158,22 +158,22 @@ function SuperDashboard() {
 
       {section === "overview" && (
         <>
-          {stats.isLoading ? <ListSkeleton rows={4} /> : stats.isError ? <ErrorState onRetry={() => stats.refetch()} /> : (
+          {stats.isLoading ? <ListSkeleton rows={4} /> : stats.isError || !stats.data ? <ErrorState onRetry={() => stats.refetch()} /> : (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <StatCard label="Total estates" value={stats.data.totalEstates} />
-              <StatCard label="Active estates" value={stats.data.activeEstates} tone="success" />
-              <StatCard label="Suspended" value={stats.data.suspendedEstates} tone={stats.data.suspendedEstates ? "warning" : "default"} />
-              <StatCard label="Total users" value={stats.data.users} />
-              <StatCard label="Residents" value={stats.data.residents} />
-              <StatCard label="Guards" value={stats.data.guards} />
-              <StatCard label="Estate admins" value={stats.data.admins} />
-              <StatCard label="Pending verifications" value={stats.data.pendingVerifications} tone={stats.data.pendingVerifications ? "warning" : "default"} />
-              <StatCard label="Open support" value={stats.data.supportOpen} tone={stats.data.supportOpen ? "warning" : "default"} />
-              <StatCard label="Open incidents" value={stats.data.incidentsOpen} tone={stats.data.incidentsOpen ? "error" : "default"} />
-              <StatCard label="Shop orders" value={stats.data.shopOrders} />
-              <StatCard label="Resident requests" value={stats.data.residentRequests} />
-              <StatCard label="Meetings" value={stats.data.meetings} />
-              <StatCard label="Bills created" value={stats.data.bills} />
+              <StatCard label="Total estates" value={stats.data!.totalEstates} />
+              <StatCard label="Active estates" value={stats.data!.activeEstates} tone="success" />
+              <StatCard label="Suspended" value={stats.data!.suspendedEstates} tone={stats.data!.suspendedEstates ? "warning" : "default"} />
+              <StatCard label="Total users" value={stats.data!.users} />
+              <StatCard label="Residents" value={stats.data!.residents} />
+              <StatCard label="Guards" value={stats.data!.guards} />
+              <StatCard label="Estate admins" value={stats.data!.admins} />
+              <StatCard label="Pending verifications" value={stats.data!.pendingVerifications} tone={stats.data!.pendingVerifications ? "warning" : "default"} />
+              <StatCard label="Open support" value={stats.data!.supportOpen} tone={stats.data!.supportOpen ? "warning" : "default"} />
+              <StatCard label="Open incidents" value={stats.data!.incidentsOpen} tone={stats.data!.incidentsOpen ? "error" : "default"} />
+              <StatCard label="Shop orders" value={stats.data!.shopOrders} />
+              <StatCard label="Resident requests" value={stats.data!.residentRequests} />
+              <StatCard label="Meetings" value={stats.data!.meetings} />
+              <StatCard label="Bills created" value={stats.data!.bills} />
             </div>
           )}
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
