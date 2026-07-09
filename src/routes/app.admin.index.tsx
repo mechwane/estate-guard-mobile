@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow, startOfDay } from "date-fns";
 
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import { useSession } from "@/lib/session";
 import {
   Card,
@@ -18,6 +19,16 @@ export const Route = createFileRoute("/app/admin/")({
   component: AdminDashboard,
 });
 
+type EstateScopedTable =
+  | "guest_invites"
+  | "issues"
+  | "resident_requests"
+  | "shop_orders"
+  | "bills"
+  | "meetings"
+  | "estate_contacts";
+type UserRole = Database["public"]["Tables"]["user_roles"]["Row"];
+
 function AdminDashboard() {
   const { data: session } = useSession();
   const estateId = session?.estate?.id;
@@ -28,9 +39,9 @@ function AdminDashboard() {
     enabled: !!estateId,
     queryFn: async () => {
       const today = startOfDay(new Date()).toISOString();
-      const count = (table: string) =>
+      const count = (table: EstateScopedTable) =>
         supabase
-          .from(table as any)
+          .from(table)
           .select("id", { count: "exact", head: true })
           .eq("estate_id", estateId!);
       const [
@@ -85,7 +96,9 @@ function AdminDashboard() {
         count("estate_contacts"),
       ]);
       const profileIds = new Set((profiles.data ?? []).map((p) => p.id));
-      const totalGuards = (guardsRoles.data ?? []).filter((r) => profileIds.has(r.user_id)).length;
+      const totalGuards = ((guardsRoles.data ?? []) as UserRole[]).filter((r) =>
+        profileIds.has(r.user_id),
+      ).length;
       return {
         totalResidents: profiles.count ?? 0,
         verifiedResidents: verified.count ?? 0,
