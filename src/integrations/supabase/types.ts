@@ -714,6 +714,30 @@ export type Database = {
           },
         ]
       }
+      platform_settings: {
+        Row: {
+          created_at: string
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
       poll_votes: {
         Row: {
           created_at: string
@@ -1345,6 +1369,10 @@ export type Database = {
       activate_estate: { Args: { _estate_id: string }; Returns: undefined }
       assign_estate_admin: {
         Args: { _estate_id: string; _user_id: string }
+        Returns: undefined
+      }
+      assign_guard_to_current_estate: {
+        Args: { _user_id: string }
         Returns: undefined
       }
       create_estate_admin_invite: {

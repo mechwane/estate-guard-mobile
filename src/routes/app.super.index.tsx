@@ -1,20 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { format, formatDistanceToNow } from "date-fns";
+import { Building2, Loader2, Pencil, Plus, Power, PowerOff, UserCog } from "lucide-react";
+import { toast } from "sonner";
+
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import {
   Card,
-  StatCard,
-  StatusBadge,
-  SearchInput,
-  ListSkeleton,
+  ConfirmActionDialog,
   EmptyState,
   ErrorState,
-  ConfirmActionDialog,
+  ListSkeleton,
+  SearchInput,
+  StatCard,
+  StatusBadge,
 } from "@/components/ui-kit";
-import { format } from "date-fns";
-import { Loader2, Plus, Pencil, UserCog, Power, PowerOff, Building2 } from "lucide-react";
-import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/super/")({
   component: SuperDashboard,
@@ -34,13 +36,30 @@ type Estate = {
   created_at: string;
 };
 
+type PublicTable = keyof Database["public"]["Tables"];
+type PlatformActivity = Database["public"]["Tables"]["audit_logs"]["Row"] & {
+  estate?: { id: string; name: string; code: string } | null;
+};
+type ProfileLite = Pick<
+  Database["public"]["Tables"]["profiles"]["Row"],
+  "id" | "full_name" | "email"
+>;
+
 function SuperDashboard() {
   const qc = useQueryClient();
-  const [tab, setTab] = useState<"list" | "new">("list");
+  const [section, setSection] = useState<"overview" | "estates" | "activity">("overview");
   const [q, setQ] = useState("");
+  const [status, setStatus] = useState<"all" | "active" | "suspended">("all");
+  const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<Estate | null>(null);
   const [assigning, setAssigning] = useState<Estate | null>(null);
   const [toggling, setToggling] = useState<Estate | null>(null);
+
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: ["all-estates"] });
+    qc.invalidateQueries({ queryKey: ["platform-stats"] });
+    qc.invalidateQueries({ queryKey: ["platform-activity"] });
+  };
 
   const estatesQ = useQuery({
     queryKey: ["all-estates"],
@@ -57,174 +76,247 @@ function SuperDashboard() {
   const stats = useQuery({
     queryKey: ["platform-stats"],
     queryFn: async () => {
-      const [users, estatesTotal, active, suspended, admins, guards, residents] =
-        await Promise.all([
-          supabase.from("profiles").select("id", { count: "exact", head: true }),
-          supabase.from("estates").select("id", { count: "exact", head: true }),
-          supabase
-            .from("estates")
-            .select("id", { count: "exact", head: true })
-            .eq("status", "active"),
-          supabase
-            .from("estates")
-            .select("id", { count: "exact", head: true })
-            .eq("status", "suspended"),
-          supabase
-            .from("user_roles")
-            .select("user_id", { count: "exact", head: true })
-            .eq("role", "estate_admin"),
-          supabase
-            .from("user_roles")
-            .select("user_id", { count: "exact", head: true })
-            .eq("role", "guard"),
-          supabase
-            .from("user_roles")
-            .select("user_id", { count: "exact", head: true })
-            .eq("role", "resident"),
-        ]);
+      const count = (table: PublicTable) =>
+        supabase.from(table).select("id", { count: "exact", head: true });
+      const [
+        totalEstates,
+        activeEstates,
+        suspendedEstates,
+        users,
+        residents,
+        guards,
+        admins,
+        pendingVerifications,
+        supportOpen,
+        incidentsOpen,
+        shopOrders,
+        residentRequests,
+        meetings,
+        bills,
+      ] = await Promise.all([
+        count("estates"),
+        supabase
+          .from("estates")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "active"),
+        supabase
+          .from("estates")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "suspended"),
+        count("profiles"),
+        supabase
+          .from("user_roles")
+          .select("user_id", { count: "exact", head: true })
+          .eq("role", "resident"),
+        supabase
+          .from("user_roles")
+          .select("user_id", { count: "exact", head: true })
+          .eq("role", "guard"),
+        supabase
+          .from("user_roles")
+          .select("user_id", { count: "exact", head: true })
+          .eq("role", "estate_admin"),
+        supabase
+          .from("profiles")
+          .select("id", { count: "exact", head: true })
+          .eq("verification_status", "pending"),
+        supabase
+          .from("support_tickets")
+          .select("id", { count: "exact", head: true })
+          .in("status", ["open", "in_progress"]),
+        supabase
+          .from("issues")
+          .select("id", { count: "exact", head: true })
+          .in("status", ["open", "in_progress"]),
+        count("shop_orders"),
+        count("resident_requests"),
+        count("meetings"),
+        count("bills"),
+      ]);
       return {
+        totalEstates: totalEstates.count ?? 0,
+        activeEstates: activeEstates.count ?? 0,
+        suspendedEstates: suspendedEstates.count ?? 0,
         users: users.count ?? 0,
-        estatesTotal: estatesTotal.count ?? 0,
-        active: active.count ?? 0,
-        suspended: suspended.count ?? 0,
-        admins: admins.count ?? 0,
-        guards: guards.count ?? 0,
         residents: residents.count ?? 0,
+        guards: guards.count ?? 0,
+        admins: admins.count ?? 0,
+        pendingVerifications: pendingVerifications.count ?? 0,
+        supportOpen: supportOpen.count ?? 0,
+        incidentsOpen: incidentsOpen.count ?? 0,
+        shopOrders: shopOrders.count ?? 0,
+        residentRequests: residentRequests.count ?? 0,
+        meetings: meetings.count ?? 0,
+        bills: bills.count ?? 0,
       };
     },
   });
 
-  const filtered = (estatesQ.data ?? []).filter(
-    (e) =>
-      !q ||
-      e.name.toLowerCase().includes(q.toLowerCase()) ||
-      e.code.toLowerCase().includes(q.toLowerCase()),
-  );
+  const activity = useQuery({
+    queryKey: ["platform-activity"],
+    queryFn: async () => {
+      const [{ data: logs, error }, { data: estates }] = await Promise.all([
+        supabase.from("audit_logs").select("*").order("created_at", { ascending: false }).limit(30),
+        supabase.from("estates").select("id,name,code"),
+      ]);
+      if (error) throw error;
+      const estateMap = new Map((estates ?? []).map((e) => [e.id, e]));
+      return (logs ?? []).map((l) => ({
+        ...l,
+        estate: l.estate_id ? estateMap.get(l.estate_id) : null,
+      }));
+    },
+  });
+
+  const filtered = (estatesQ.data ?? []).filter((e) => {
+    const needle = q.trim().toLowerCase();
+    if (status !== "all" && e.status !== status) return false;
+    if (!needle) return true;
+    return (
+      e.name.toLowerCase().includes(needle) ||
+      e.code.toLowerCase().includes(needle) ||
+      (e.city ?? "").toLowerCase().includes(needle)
+    );
+  });
 
   const toggle = useMutation({
-    mutationFn: async (e: Estate) => {
-      const fn = e.status === "active" ? "suspend_estate" : "activate_estate";
+    mutationFn: async (estate: Estate) => {
+      const fn = estate.status === "active" ? "suspend_estate" : "activate_estate";
       const args =
-        e.status === "active" ? { _estate_id: e.id, _reason: null } : { _estate_id: e.id };
-      const { error } = await supabase.rpc(fn as any, args as any);
+        estate.status === "active"
+          ? { _estate_id: estate.id, _reason: "Suspended from platform dashboard" }
+          : { _estate_id: estate.id };
+      const { error } =
+        estate.status === "active"
+          ? await supabase.rpc("suspend_estate", args)
+          : await supabase.rpc("activate_estate", args);
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Estate updated");
-      qc.invalidateQueries({ queryKey: ["all-estates"] });
-      qc.invalidateQueries({ queryKey: ["platform-stats"] });
+      invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (error: Error) => toast.error(error.message),
   });
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard label="Estates" value={stats.data?.estatesTotal ?? "—"} />
-        <StatCard label="Active" value={stats.data?.active ?? "—"} tone="success" />
-        <StatCard
-          label="Suspended"
-          value={stats.data?.suspended ?? "—"}
-          tone={stats.data?.suspended ? "warning" : "default"}
-        />
-        <StatCard label="Users" value={stats.data?.users ?? "—"} />
-      </div>
-      <div className="grid grid-cols-3 gap-3">
-        <StatCard label="Admins" value={stats.data?.admins ?? "—"} />
-        <StatCard label="Guards" value={stats.data?.guards ?? "—"} />
-        <StatCard label="Residents" value={stats.data?.residents ?? "—"} />
+    <div className="space-y-5">
+      <div className="grid grid-cols-3 gap-2 rounded-lg border border-border bg-card p-1">
+        {(["overview", "estates", "activity"] as const).map((s) => (
+          <button
+            key={s}
+            onClick={() => setSection(s)}
+            className={`rounded-md px-2 py-2 text-xs font-medium capitalize ${section === s ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          >
+            {s}
+          </button>
+        ))}
       </div>
 
-      <Link
-        to="/app/super/audit"
-        className="card-surface flex items-center justify-center py-3 text-sm font-medium text-primary hover:bg-muted/40"
-      >
-        View audit logs
-      </Link>
-
-      <div className="flex items-center justify-between">
-        <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          Estates
-        </h2>
-        <button
-          onClick={() => setTab(tab === "new" ? "list" : "new")}
-          className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary-dark"
-        >
-          <Plus className="h-3.5 w-3.5" /> {tab === "new" ? "Close" : "New estate"}
-        </button>
-      </div>
-
-      {tab === "new" && (
-        <NewEstateForm
-          onDone={() => {
-            setTab("list");
-            qc.invalidateQueries({ queryKey: ["all-estates"] });
-            qc.invalidateQueries({ queryKey: ["platform-stats"] });
-          }}
-        />
+      {section === "overview" && (
+        <>
+          {stats.isLoading ? (
+            <ListSkeleton rows={4} />
+          ) : stats.isError || !stats.data ? (
+            <ErrorState onRetry={() => stats.refetch()} />
+          ) : (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <StatCard label="Total estates" value={stats.data!.totalEstates} />
+              <StatCard label="Active estates" value={stats.data!.activeEstates} tone="success" />
+              <StatCard
+                label="Suspended"
+                value={stats.data!.suspendedEstates}
+                tone={stats.data!.suspendedEstates ? "warning" : "default"}
+              />
+              <StatCard label="Total users" value={stats.data!.users} />
+              <StatCard label="Residents" value={stats.data!.residents} />
+              <StatCard label="Guards" value={stats.data!.guards} />
+              <StatCard label="Estate admins" value={stats.data!.admins} />
+              <StatCard
+                label="Pending verifications"
+                value={stats.data!.pendingVerifications}
+                tone={stats.data!.pendingVerifications ? "warning" : "default"}
+              />
+              <StatCard
+                label="Open support"
+                value={stats.data!.supportOpen}
+                tone={stats.data!.supportOpen ? "warning" : "default"}
+              />
+              <StatCard
+                label="Open incidents"
+                value={stats.data!.incidentsOpen}
+                tone={stats.data!.incidentsOpen ? "error" : "default"}
+              />
+              <StatCard label="Shop orders" value={stats.data!.shopOrders} />
+              <StatCard label="Resident requests" value={stats.data!.residentRequests} />
+              <StatCard label="Meetings" value={stats.data!.meetings} />
+              <StatCard label="Bills created" value={stats.data!.bills} />
+            </div>
+          )}
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <QuickLink to="/app/super/users" label="Users & roles" />
+            <QuickLink to="/app/super/invites" label="Admin invites" />
+            <QuickLink to="/app/super/support" label="Support center" />
+            <QuickLink to="/app/super/settings" label="Platform settings" />
+          </div>
+        </>
       )}
 
-      <SearchInput value={q} onChange={setQ} placeholder="Search by name or code" />
-
-      {estatesQ.isError ? (
-        <ErrorState onRetry={() => estatesQ.refetch()} />
-      ) : estatesQ.isLoading ? (
-        <ListSkeleton rows={4} />
-      ) : filtered.length === 0 ? (
-        <EmptyState title="No estates" icon={<Building2 className="h-6 w-6" />} />
-      ) : (
-        <div className="space-y-2">
-          {filtered.map((e) => (
-            <Card key={e.id} className="p-4">
-              <div className="flex items-start justify-between gap-3">
-                <Link
-                  to="/app/super/estates/$estateId"
-                  params={{ estateId: e.id }}
-                  className="min-w-0 flex-1 text-left"
-                >
-                  <div className="truncate text-sm font-medium text-foreground hover:text-primary">
-                    {e.name}
-                  </div>
-                  <div className="mt-0.5 text-xs text-muted-foreground">
-                    Code {e.code} · {format(new Date(e.created_at), "MMM d, yyyy")}
-                  </div>
-                  {(e.city || e.state) && (
-                    <div className="mt-0.5 text-xs text-muted-foreground">
-                      {[e.city, e.state].filter(Boolean).join(", ")}
-                    </div>
-                  )}
-                </Link>
-                <StatusBadge tone={e.status === "active" ? "success" : "warning"}>
-                  {e.status}
-                </StatusBadge>
-              </div>
-              <div className="mt-3 grid grid-cols-3 gap-2">
-                <ActionBtn
-                  onClick={() => setEditing(e)}
-                  icon={<Pencil className="h-3.5 w-3.5" />}
-                  label="Edit"
+      {section === "estates" && (
+        <>
+          <button
+            onClick={() => setCreating(!creating)}
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark"
+          >
+            <Plus className="h-4 w-4" /> {creating ? "Close estate form" : "Create estate"}
+          </button>
+          {creating && (
+            <NewEstateForm
+              onDone={() => {
+                setCreating(false);
+                invalidate();
+              }}
+            />
+          )}
+          <SearchInput
+            value={q}
+            onChange={setQ}
+            placeholder="Search estates by name, code, or city"
+          />
+          <div className="grid grid-cols-3 gap-2">
+            {(["all", "active", "suspended"] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setStatus(s)}
+                className={`rounded-lg px-3 py-2 text-xs font-medium capitalize ${status === s ? "bg-primary text-primary-foreground" : "border border-border bg-card text-foreground hover:bg-muted"}`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+          {estatesQ.isLoading ? (
+            <ListSkeleton rows={5} />
+          ) : estatesQ.isError ? (
+            <ErrorState onRetry={() => estatesQ.refetch()} />
+          ) : filtered.length === 0 ? (
+            <EmptyState title="No estates match" icon={<Building2 className="h-6 w-6" />} />
+          ) : (
+            <div className="space-y-2">
+              {filtered.map((e) => (
+                <EstateCard
+                  key={e.id}
+                  estate={e}
+                  onEdit={() => setEditing(e)}
+                  onAssign={() => setAssigning(e)}
+                  onToggle={() => setToggling(e)}
                 />
-                <ActionBtn
-                  onClick={() => setAssigning(e)}
-                  icon={<UserCog className="h-3.5 w-3.5" />}
-                  label={e.admin_user_id ? "Reassign" : "Assign"}
-                />
-                <ActionBtn
-                  onClick={() => setToggling(e)}
-                  icon={
-                    e.status === "active" ? (
-                      <PowerOff className="h-3.5 w-3.5" />
-                    ) : (
-                      <Power className="h-3.5 w-3.5" />
-                    )
-                  }
-                  label={e.status === "active" ? "Suspend" : "Activate"}
-                />
-              </div>
-            </Card>
-          ))}
-        </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
+
+      {section === "activity" && <ActivityList query={activity} />}
 
       <ConfirmActionDialog
         open={!!toggling}
@@ -242,18 +334,17 @@ function SuperDashboard() {
         tone={toggling?.status === "active" ? "destructive" : "default"}
         busy={toggle.isPending}
         onCancel={() => setToggling(null)}
-        onConfirm={() => {
-          if (toggling) toggle.mutate(toggling, { onSettled: () => setToggling(null) });
-        }}
+        onConfirm={() =>
+          toggling && toggle.mutate(toggling, { onSettled: () => setToggling(null) })
+        }
       />
-
       {editing && (
         <EditEstateModal
           estate={editing}
           onClose={() => setEditing(null)}
           onDone={() => {
             setEditing(null);
-            qc.invalidateQueries({ queryKey: ["all-estates"] });
+            invalidate();
           }}
         />
       )}
@@ -263,12 +354,114 @@ function SuperDashboard() {
           onClose={() => setAssigning(null)}
           onDone={() => {
             setAssigning(null);
-            qc.invalidateQueries({ queryKey: ["all-estates"] });
-            qc.invalidateQueries({ queryKey: ["platform-stats"] });
+            invalidate();
           }}
         />
       )}
     </div>
+  );
+}
+
+function EstateCard({
+  estate,
+  onEdit,
+  onAssign,
+  onToggle,
+}: {
+  estate: Estate;
+  onEdit: () => void;
+  onAssign: () => void;
+  onToggle: () => void;
+}) {
+  return (
+    <Card className="p-4">
+      <div className="flex items-start justify-between gap-3">
+        <Link
+          to="/app/super/estates/$estateId"
+          params={{ estateId: estate.id }}
+          className="min-w-0 flex-1 text-left"
+        >
+          <div className="truncate text-sm font-medium text-foreground hover:text-primary">
+            {estate.name}
+          </div>
+          <div className="mt-0.5 text-xs text-muted-foreground">
+            Code {estate.code} · {format(new Date(estate.created_at), "MMM d, yyyy")}
+          </div>
+          {(estate.city || estate.state) && (
+            <div className="mt-0.5 text-xs text-muted-foreground">
+              {[estate.city, estate.state].filter(Boolean).join(", ")}
+            </div>
+          )}
+        </Link>
+        <StatusBadge tone={estate.status === "active" ? "success" : "warning"}>
+          {estate.status}
+        </StatusBadge>
+      </div>
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        <ActionBtn onClick={onEdit} icon={<Pencil className="h-3.5 w-3.5" />} label="Edit" />
+        <ActionBtn
+          onClick={onAssign}
+          icon={<UserCog className="h-3.5 w-3.5" />}
+          label={estate.admin_user_id ? "Reassign" : "Assign"}
+        />
+        <ActionBtn
+          onClick={onToggle}
+          icon={
+            estate.status === "active" ? (
+              <PowerOff className="h-3.5 w-3.5" />
+            ) : (
+              <Power className="h-3.5 w-3.5" />
+            )
+          }
+          label={estate.status === "active" ? "Suspend" : "Activate"}
+        />
+      </div>
+    </Card>
+  );
+}
+
+function ActivityList({ query }: { query: ReturnType<typeof useQuery<PlatformActivity[]>> }) {
+  if (query.isLoading) return <ListSkeleton rows={5} />;
+  if (query.isError) return <ErrorState onRetry={() => query.refetch()} />;
+  const rows = query.data ?? [];
+  if (rows.length === 0) return <EmptyState title="No platform activity yet" />;
+  return (
+    <div className="space-y-2">
+      {rows.map((a) => (
+        <Card key={a.id} className="p-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="truncate text-sm font-medium text-foreground">{a.action}</div>
+              <div className="mt-0.5 text-[11px] text-muted-foreground">
+                Actor {a.actor_id?.slice(0, 8) ?? "system"} · {a.entity ?? "record"}
+                {a.entity_id ? ` · ${a.entity_id.slice(0, 8)}` : ""}
+                {a.estate ? ` · ${a.estate.name}` : ""}
+              </div>
+            </div>
+            <span className="whitespace-nowrap text-[11px] text-muted-foreground">
+              {formatDistanceToNow(new Date(a.created_at), { addSuffix: true })}
+            </span>
+          </div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function QuickLink({
+  to,
+  label,
+}: {
+  to: "/app/super/users" | "/app/super/invites" | "/app/super/support" | "/app/super/settings";
+  label: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="card-surface flex items-center justify-center py-3 text-sm font-medium text-foreground hover:bg-muted/50"
+    >
+      {label}
+    </Link>
   );
 }
 
@@ -321,7 +514,7 @@ function NewEstateForm({ onDone }: { onDone: () => void }) {
           state: form.state.trim() || null,
           contact_email: form.contact_email.trim() || null,
           contact_phone: form.contact_phone.trim() || null,
-        } as any)
+        })
         .select("id,code")
         .single();
       if (error) throw error;
@@ -334,11 +527,11 @@ function NewEstateForm({ onDone }: { onDone: () => void }) {
       });
       return data;
     },
-    onSuccess: (d) => {
-      toast.success(`Estate created · code ${(d as any).code}`);
+    onSuccess: (data) => {
+      toast.success(`Estate created · code ${data.code}`);
       onDone();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (error: Error) => toast.error(error.message),
   });
   return (
     <Card className="space-y-3">
@@ -401,25 +594,22 @@ function EditEstateModal({
   });
   const save = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.rpc(
-        "update_estate" as any,
-        {
-          _estate_id: estate.id,
-          _name: form.name,
-          _address: form.address || null,
-          _city: form.city || null,
-          _state: form.state || null,
-          _contact_email: form.contact_email || null,
-          _contact_phone: form.contact_phone || null,
-        } as any,
-      );
+      const { error } = await supabase.rpc("update_estate", {
+        _estate_id: estate.id,
+        _name: form.name,
+        _address: form.address,
+        _city: form.city,
+        _state: form.state,
+        _contact_email: form.contact_email,
+        _contact_phone: form.contact_phone,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Estate updated");
       onDone();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (error: Error) => toast.error(error.message),
   });
   return (
     <Overlay onClose={onClose} title={`Edit ${estate.name}`}>
@@ -490,20 +680,17 @@ function AssignAdminModal({
     mutationFn: async () => {
       if (!userId) throw new Error("Choose a user");
       const rpc = estate.admin_user_id ? "reassign_estate_admin" : "assign_estate_admin";
-      const { error } = await supabase.rpc(
-        rpc as any,
-        {
-          _estate_id: estate.id,
-          [estate.admin_user_id ? "_new_admin_user_id" : "_user_id"]: userId,
-        } as any,
-      );
+      const { error } = await supabase.rpc(rpc, {
+        _estate_id: estate.id,
+        [estate.admin_user_id ? "_new_admin_user_id" : "_user_id"]: userId,
+      } as never);
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Admin assigned");
       onDone();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (error: Error) => toast.error(error.message),
   });
   return (
     <Overlay
@@ -511,17 +698,11 @@ function AssignAdminModal({
       title={estate.admin_user_id ? "Reassign estate admin" : "Assign estate admin"}
     >
       <div className="space-y-3">
-        {estate.admin_user_id && (
-          <p className="text-xs text-muted-foreground">
-            Reassigning will revoke the current admin's access to this estate and grant it to the
-            new user. Confirm before saving.
-          </p>
-        )}
         <Field label="Search users by name or email">
           <Input value={q} onChange={setQ} />
         </Field>
         <div className="max-h-56 overflow-y-auto rounded-lg border border-border">
-          {(search.data ?? []).map((u: any) => (
+          {(search.data ?? []).map((u: ProfileLite) => (
             <button
               key={u.id}
               onClick={() => setUserId(u.id)}
@@ -585,6 +766,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </label>
   );
 }
+
 function Input({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
     <input
