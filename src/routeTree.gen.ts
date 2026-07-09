@@ -52,7 +52,6 @@ import { Route as AppGuardIncidentsRouteImport } from './routes/app.guard.incide
 import { Route as AppGuardHistoryRouteImport } from './routes/app.guard.history'
 import { Route as AppGuardActiveRouteImport } from './routes/app.guard.active'
 import { Route as AppAdminVerificationsRouteImport } from './routes/app.admin.verifications'
-import { Route as AppAdminStaffRouteImport } from './routes/app.admin.staff'
 import { Route as AppAdminShopRouteImport } from './routes/app.admin.shop'
 import { Route as AppAdminResidentsRouteImport } from './routes/app.admin.residents'
 import { Route as AppAdminRequestsRouteImport } from './routes/app.admin.requests'
@@ -282,11 +281,6 @@ const AppAdminVerificationsRoute = AppAdminVerificationsRouteImport.update({
   path: '/admin/verifications',
   getParentRoute: () => AppRoute,
 } as any)
-const AppAdminStaffRoute = AppAdminStaffRouteImport.update({
-  id: '/admin/staff',
-  path: '/admin/staff',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppAdminShopRoute = AppAdminShopRouteImport.update({
   id: '/admin/shop',
   path: '/admin/shop',
@@ -370,7 +364,6 @@ export interface FileRoutesByFullPath {
   '/app/admin/requests': typeof AppAdminRequestsRoute
   '/app/admin/residents': typeof AppAdminResidentsRoute
   '/app/admin/shop': typeof AppAdminShopRoute
-  '/app/admin/staff': typeof AppAdminStaffRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
   '/app/guard/active': typeof AppGuardActiveRoute
   '/app/guard/history': typeof AppGuardHistoryRoute
@@ -429,7 +422,6 @@ export interface FileRoutesByTo {
   '/app/admin/requests': typeof AppAdminRequestsRoute
   '/app/admin/residents': typeof AppAdminResidentsRoute
   '/app/admin/shop': typeof AppAdminShopRoute
-  '/app/admin/staff': typeof AppAdminStaffRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
   '/app/guard/active': typeof AppGuardActiveRoute
   '/app/guard/history': typeof AppGuardHistoryRoute
@@ -489,7 +481,6 @@ export interface FileRoutesById {
   '/app/admin/requests': typeof AppAdminRequestsRoute
   '/app/admin/residents': typeof AppAdminResidentsRoute
   '/app/admin/shop': typeof AppAdminShopRoute
-  '/app/admin/staff': typeof AppAdminStaffRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
   '/app/guard/active': typeof AppGuardActiveRoute
   '/app/guard/history': typeof AppGuardHistoryRoute
@@ -550,7 +541,6 @@ export interface FileRouteTypes {
     | '/app/admin/requests'
     | '/app/admin/residents'
     | '/app/admin/shop'
-    | '/app/admin/staff'
     | '/app/admin/verifications'
     | '/app/guard/active'
     | '/app/guard/history'
@@ -609,7 +599,6 @@ export interface FileRouteTypes {
     | '/app/admin/requests'
     | '/app/admin/residents'
     | '/app/admin/shop'
-    | '/app/admin/staff'
     | '/app/admin/verifications'
     | '/app/guard/active'
     | '/app/guard/history'
@@ -668,7 +657,6 @@ export interface FileRouteTypes {
     | '/app/admin/requests'
     | '/app/admin/residents'
     | '/app/admin/shop'
-    | '/app/admin/staff'
     | '/app/admin/verifications'
     | '/app/guard/active'
     | '/app/guard/history'
@@ -1020,13 +1008,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminVerificationsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/admin/staff': {
-      id: '/app/admin/staff'
-      path: '/admin/staff'
-      fullPath: '/app/admin/staff'
-      preLoaderRoute: typeof AppAdminStaffRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/admin/shop': {
       id: '/app/admin/shop'
       path: '/admin/shop'
@@ -1131,7 +1112,6 @@ interface AppRouteChildren {
   AppAdminRequestsRoute: typeof AppAdminRequestsRoute
   AppAdminResidentsRoute: typeof AppAdminResidentsRoute
   AppAdminShopRoute: typeof AppAdminShopRoute
-  AppAdminStaffRoute: typeof AppAdminStaffRoute
   AppAdminVerificationsRoute: typeof AppAdminVerificationsRoute
   AppGuardActiveRoute: typeof AppGuardActiveRoute
   AppGuardHistoryRoute: typeof AppGuardHistoryRoute
@@ -1184,7 +1164,6 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminRequestsRoute: AppAdminRequestsRoute,
   AppAdminResidentsRoute: AppAdminResidentsRoute,
   AppAdminShopRoute: AppAdminShopRoute,
-  AppAdminStaffRoute: AppAdminStaffRoute,
   AppAdminVerificationsRoute: AppAdminVerificationsRoute,
   AppGuardActiveRoute: AppGuardActiveRoute,
   AppGuardHistoryRoute: AppGuardHistoryRoute,
