@@ -68,10 +68,10 @@ function AdminStaff() {
 
   const setAccess = useMutation({
     mutationFn: async ({ id, approved }: { id: string; approved: boolean }) => {
-      const { error } = await supabase.rpc(
-        "set_estate_access" as any,
-        { _user_id: id, _approved: approved } as any,
-      );
+      const { error } = await supabase.rpc("set_estate_access", {
+        _user_id: id,
+        _approved: approved,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -83,10 +83,7 @@ function AdminStaff() {
 
   const assignGuard = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.rpc(
-        "assign_guard_to_current_estate" as any,
-        { _user_id: id } as any,
-      );
+      const { error } = await supabase.rpc("assign_guard_to_current_estate", { _user_id: id });
       if (error) throw error;
     },
     onSuccess: () => {
