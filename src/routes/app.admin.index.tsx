@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow, startOfDay } from "date-fns";
 
 import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/integrations/supabase/types";
 import { useSession } from "@/lib/session";
 import {
   Card,
@@ -19,16 +18,6 @@ export const Route = createFileRoute("/app/admin/")({
   component: AdminDashboard,
 });
 
-type EstateScopedTable =
-  | "guest_invites"
-  | "issues"
-  | "resident_requests"
-  | "shop_orders"
-  | "bills"
-  | "meetings"
-  | "estate_contacts";
-type UserRole = Database["public"]["Tables"]["user_roles"]["Row"];
-
 function AdminDashboard() {
   const { data: session } = useSession();
   const estateId = session?.estate?.id;
@@ -39,11 +28,6 @@ function AdminDashboard() {
     enabled: !!estateId,
     queryFn: async () => {
       const today = startOfDay(new Date()).toISOString();
-      const count = (table: EstateScopedTable) =>
-        supabase
-          .from(table)
-          .select("id", { count: "exact", head: true })
-          .eq("estate_id", estateId!);
       const [
         profiles,
         guardsRoles,
@@ -81,24 +65,22 @@ function AdminDashboard() {
           .select("id", { count: "exact", head: true })
           .eq("estate_id", estateId!)
           .eq("approved", false),
-        count("guest_invites").not("checked_in_at", "is", null).is("checked_out_at", null),
-        count("guest_invites").gte("created_at", today),
-        count("guest_invites").lt("expires_at", new Date().toISOString()).neq("status", "revoked"),
-        count("guest_invites")
+        supabase.from("guest_invites").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).not("checked_in_at", "is", null).is("checked_out_at", null),
+        supabase.from("guest_invites").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).gte("created_at", today),
+        supabase.from("guest_invites").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).lt("expires_at", new Date().toISOString()).neq("status", "revoked"),
+        supabase.from("guest_invites").select("id", { count: "exact", head: true }).eq("estate_id", estateId!)
           .not("checked_in_at", "is", null)
           .is("checked_out_at", null)
           .lt("expires_at", new Date().toISOString()),
-        count("issues").in("status", ["open", "in_progress"]),
-        count("resident_requests").in("status", ["pending", "under_review", "more_info"]),
-        count("shop_orders").in("status", ["pending", "confirmed", "processing"]),
-        count("bills").in("status", ["unpaid", "overdue"]),
-        count("meetings").gte("starts_at", new Date().toISOString()),
-        count("estate_contacts"),
+        supabase.from("issues").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).in("status", ["open", "in_progress"]),
+        supabase.from("resident_requests").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).in("status", ["pending", "under_review", "more_info"]),
+        supabase.from("shop_orders").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).in("status", ["pending", "confirmed", "processing"]),
+        supabase.from("bills").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).in("status", ["unpaid", "overdue"]),
+        supabase.from("meetings").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).gte("starts_at", new Date().toISOString()),
+        supabase.from("estate_contacts").select("id", { count: "exact", head: true }).eq("estate_id", estateId!),
       ]);
       const profileIds = new Set((profiles.data ?? []).map((p) => p.id));
-      const totalGuards = ((guardsRoles.data ?? []) as UserRole[]).filter((r) =>
-        profileIds.has(r.user_id),
-      ).length;
+      const totalGuards = (guardsRoles.data ?? []).filter((r) => profileIds.has(r.user_id)).length;
       return {
         totalResidents: profiles.count ?? 0,
         verifiedResidents: verified.count ?? 0,
