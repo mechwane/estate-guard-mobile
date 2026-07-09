@@ -65,19 +65,59 @@ function AdminDashboard() {
           .select("id", { count: "exact", head: true })
           .eq("estate_id", estateId!)
           .eq("approved", false),
-        supabase.from("guest_invites").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).not("checked_in_at", "is", null).is("checked_out_at", null),
-        supabase.from("guest_invites").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).gte("created_at", today),
-        supabase.from("guest_invites").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).lt("expires_at", new Date().toISOString()).neq("status", "revoked"),
-        supabase.from("guest_invites").select("id", { count: "exact", head: true }).eq("estate_id", estateId!)
+        supabase
+          .from("guest_invites")
+          .select("id", { count: "exact", head: true })
+          .eq("estate_id", estateId!)
+          .not("checked_in_at", "is", null)
+          .is("checked_out_at", null),
+        supabase
+          .from("guest_invites")
+          .select("id", { count: "exact", head: true })
+          .eq("estate_id", estateId!)
+          .gte("created_at", today),
+        supabase
+          .from("guest_invites")
+          .select("id", { count: "exact", head: true })
+          .eq("estate_id", estateId!)
+          .lt("expires_at", new Date().toISOString())
+          .neq("status", "revoked"),
+        supabase
+          .from("guest_invites")
+          .select("id", { count: "exact", head: true })
+          .eq("estate_id", estateId!)
           .not("checked_in_at", "is", null)
           .is("checked_out_at", null)
           .lt("expires_at", new Date().toISOString()),
-        supabase.from("issues").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).in("status", ["open", "in_progress"]),
-        supabase.from("resident_requests").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).in("status", ["pending", "under_review", "more_info"]),
-        supabase.from("shop_orders").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).in("status", ["pending", "confirmed", "processing"]),
-        supabase.from("bills").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).in("status", ["unpaid", "overdue"]),
-        supabase.from("meetings").select("id", { count: "exact", head: true }).eq("estate_id", estateId!).gte("starts_at", new Date().toISOString()),
-        supabase.from("estate_contacts").select("id", { count: "exact", head: true }).eq("estate_id", estateId!),
+        supabase
+          .from("issues")
+          .select("id", { count: "exact", head: true })
+          .eq("estate_id", estateId!)
+          .in("status", ["open", "in_progress"]),
+        supabase
+          .from("resident_requests")
+          .select("id", { count: "exact", head: true })
+          .eq("estate_id", estateId!)
+          .in("status", ["pending", "under_review", "more_info"]),
+        supabase
+          .from("shop_orders")
+          .select("id", { count: "exact", head: true })
+          .eq("estate_id", estateId!)
+          .in("status", ["pending", "confirmed", "processing"]),
+        supabase
+          .from("bills")
+          .select("id", { count: "exact", head: true })
+          .eq("estate_id", estateId!)
+          .in("status", ["unpaid", "overdue"]),
+        supabase
+          .from("meetings")
+          .select("id", { count: "exact", head: true })
+          .eq("estate_id", estateId!)
+          .gte("starts_at", new Date().toISOString()),
+        supabase
+          .from("estate_contacts")
+          .select("id", { count: "exact", head: true })
+          .eq("estate_id", estateId!),
       ]);
       const profileIds = new Set((profiles.data ?? []).map((p) => p.id));
       const totalGuards = (guardsRoles.data ?? []).filter((r) => profileIds.has(r.user_id)).length;

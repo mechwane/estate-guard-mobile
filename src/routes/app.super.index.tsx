@@ -518,15 +518,13 @@ function NewEstateForm({ onDone }: { onDone: () => void }) {
         .select("id,code")
         .single();
       if (error) throw error;
-      await supabase
-        .from("audit_logs")
-        .insert({
-          estate_id: data.id,
-          action: "estate.created",
-          entity: "estates",
-          entity_id: data.id,
-          metadata: { code: data.code },
-        });
+      await supabase.from("audit_logs").insert({
+        estate_id: data.id,
+        action: "estate.created",
+        entity: "estates",
+        entity_id: data.id,
+        metadata: { code: data.code },
+      });
       return data;
     },
     onSuccess: (data) => {
@@ -596,18 +594,15 @@ function EditEstateModal({
   });
   const save = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.rpc(
-        "update_estate",
-        {
-          _estate_id: estate.id,
-          _name: form.name,
-          _address: form.address,
-          _city: form.city,
-          _state: form.state,
-          _contact_email: form.contact_email,
-          _contact_phone: form.contact_phone,
-        },
-      );
+      const { error } = await supabase.rpc("update_estate", {
+        _estate_id: estate.id,
+        _name: form.name,
+        _address: form.address,
+        _city: form.city,
+        _state: form.state,
+        _contact_email: form.contact_email,
+        _contact_phone: form.contact_phone,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -685,13 +680,10 @@ function AssignAdminModal({
     mutationFn: async () => {
       if (!userId) throw new Error("Choose a user");
       const rpc = estate.admin_user_id ? "reassign_estate_admin" : "assign_estate_admin";
-      const { error } = await supabase.rpc(
-        rpc,
-        {
-          _estate_id: estate.id,
-          [estate.admin_user_id ? "_new_admin_user_id" : "_user_id"]: userId,
-        } as never,
-      );
+      const { error } = await supabase.rpc(rpc, {
+        _estate_id: estate.id,
+        [estate.admin_user_id ? "_new_admin_user_id" : "_user_id"]: userId,
+      } as never);
       if (error) throw error;
     },
     onSuccess: () => {
