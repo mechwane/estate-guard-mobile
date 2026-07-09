@@ -103,7 +103,11 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
     "/app/admin/requests": { title: "Resident requests" },
     "/app/admin/community": { title: "Community posts" },
     "/app/super": { title: "Platform overview" },
+    "/app/super/users": { title: "Platform users" },
+    "/app/super/invites": { title: "Admin invites" },
+    "/app/super/support": { title: "Support center" },
     "/app/super/audit": { title: "Audit logs" },
+    "/app/super/settings": { title: "Platform settings" },
     "/app/denied": { title: "Access denied" },
   };
 

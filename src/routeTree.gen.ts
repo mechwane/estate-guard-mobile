@@ -21,6 +21,9 @@ import { Route as AppSuperIndexRouteImport } from './routes/app.super.index'
 import { Route as AppResidentIndexRouteImport } from './routes/app.resident.index'
 import { Route as AppGuardIndexRouteImport } from './routes/app.guard.index'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
+import { Route as AppSuperUsersRouteImport } from './routes/app.super.users'
+import { Route as AppSuperSupportRouteImport } from './routes/app.super.support'
+import { Route as AppSuperInvitesRouteImport } from './routes/app.super.invites'
 import { Route as AppSuperAuditRouteImport } from './routes/app.super.audit'
 import { Route as AppResidentVerificationRouteImport } from './routes/app.resident.verification'
 import { Route as AppResidentTermsRouteImport } from './routes/app.resident.terms'
@@ -121,6 +124,21 @@ const AppGuardIndexRoute = AppGuardIndexRouteImport.update({
 const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperUsersRoute = AppSuperUsersRouteImport.update({
+  id: '/super/users',
+  path: '/super/users',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperSupportRoute = AppSuperSupportRouteImport.update({
+  id: '/super/support',
+  path: '/super/support',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperInvitesRoute = AppSuperInvitesRouteImport.update({
+  id: '/super/invites',
+  path: '/super/invites',
   getParentRoute: () => AppRoute,
 } as any)
 const AppSuperAuditRoute = AppSuperAuditRouteImport.update({
@@ -374,6 +392,9 @@ export interface FileRoutesByFullPath {
   '/app/resident/terms': typeof AppResidentTermsRoute
   '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
+  '/app/super/invites': typeof AppSuperInvitesRoute
+  '/app/super/support': typeof AppSuperSupportRoute
+  '/app/super/users': typeof AppSuperUsersRoute
   '/app/admin/': typeof AppAdminIndexRoute
   '/app/guard/': typeof AppGuardIndexRoute
   '/app/resident/': typeof AppResidentIndexRoute
@@ -429,6 +450,9 @@ export interface FileRoutesByTo {
   '/app/resident/terms': typeof AppResidentTermsRoute
   '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
+  '/app/super/invites': typeof AppSuperInvitesRoute
+  '/app/super/support': typeof AppSuperSupportRoute
+  '/app/super/users': typeof AppSuperUsersRoute
   '/app/admin': typeof AppAdminIndexRoute
   '/app/guard': typeof AppGuardIndexRoute
   '/app/resident': typeof AppResidentIndexRoute
@@ -485,6 +509,9 @@ export interface FileRoutesById {
   '/app/resident/terms': typeof AppResidentTermsRoute
   '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
+  '/app/super/invites': typeof AppSuperInvitesRoute
+  '/app/super/support': typeof AppSuperSupportRoute
+  '/app/super/users': typeof AppSuperUsersRoute
   '/app/admin/': typeof AppAdminIndexRoute
   '/app/guard/': typeof AppGuardIndexRoute
   '/app/resident/': typeof AppResidentIndexRoute
@@ -542,6 +569,9 @@ export interface FileRouteTypes {
     | '/app/resident/terms'
     | '/app/resident/verification'
     | '/app/super/audit'
+    | '/app/super/invites'
+    | '/app/super/support'
+    | '/app/super/users'
     | '/app/admin/'
     | '/app/guard/'
     | '/app/resident/'
@@ -597,6 +627,9 @@ export interface FileRouteTypes {
     | '/app/resident/terms'
     | '/app/resident/verification'
     | '/app/super/audit'
+    | '/app/super/invites'
+    | '/app/super/support'
+    | '/app/super/users'
     | '/app/admin'
     | '/app/guard'
     | '/app/resident'
@@ -652,6 +685,9 @@ export interface FileRouteTypes {
     | '/app/resident/terms'
     | '/app/resident/verification'
     | '/app/super/audit'
+    | '/app/super/invites'
+    | '/app/super/support'
+    | '/app/super/users'
     | '/app/admin/'
     | '/app/guard/'
     | '/app/resident/'
@@ -753,6 +789,27 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/app/admin/'
       preLoaderRoute: typeof AppAdminIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/users': {
+      id: '/app/super/users'
+      path: '/super/users'
+      fullPath: '/app/super/users'
+      preLoaderRoute: typeof AppSuperUsersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/support': {
+      id: '/app/super/support'
+      path: '/super/support'
+      fullPath: '/app/super/support'
+      preLoaderRoute: typeof AppSuperSupportRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/invites': {
+      id: '/app/super/invites'
+      path: '/super/invites'
+      fullPath: '/app/super/invites'
+      preLoaderRoute: typeof AppSuperInvitesRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/super/audit': {
@@ -1083,6 +1140,9 @@ interface AppRouteChildren {
   AppResidentTermsRoute: typeof AppResidentTermsRoute
   AppResidentVerificationRoute: typeof AppResidentVerificationRoute
   AppSuperAuditRoute: typeof AppSuperAuditRoute
+  AppSuperInvitesRoute: typeof AppSuperInvitesRoute
+  AppSuperSupportRoute: typeof AppSuperSupportRoute
+  AppSuperUsersRoute: typeof AppSuperUsersRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
   AppGuardIndexRoute: typeof AppGuardIndexRoute
   AppResidentIndexRoute: typeof AppResidentIndexRoute
@@ -1132,6 +1192,9 @@ const AppRouteChildren: AppRouteChildren = {
   AppResidentTermsRoute: AppResidentTermsRoute,
   AppResidentVerificationRoute: AppResidentVerificationRoute,
   AppSuperAuditRoute: AppSuperAuditRoute,
+  AppSuperInvitesRoute: AppSuperInvitesRoute,
+  AppSuperSupportRoute: AppSuperSupportRoute,
+  AppSuperUsersRoute: AppSuperUsersRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
   AppGuardIndexRoute: AppGuardIndexRoute,
   AppResidentIndexRoute: AppResidentIndexRoute,
