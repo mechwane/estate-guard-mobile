@@ -98,7 +98,14 @@ export function DonutChart({ data }: { data: { name: string; value: number }[] }
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Tooltip formatter={(value) => Number(value).toLocaleString()} />
-          <Pie data={rows} dataKey="value" nameKey="name" innerRadius="58%" outerRadius="82%" paddingAngle={2}>
+          <Pie
+            data={rows}
+            dataKey="value"
+            nameKey="name"
+            innerRadius="58%"
+            outerRadius="82%"
+            paddingAngle={2}
+          >
             {rows.map((_, index) => (
               <Cell key={index} fill={palette[index % palette.length]} />
             ))}
@@ -119,17 +126,35 @@ export function VerticalBarChart({
   bars: { key: string; label: string }[];
   currencyKeys?: string[];
 }) {
-  if (!hasValues(data, bars.map((bar) => bar.key))) return <ChartEmpty />;
+  if (
+    !hasValues(
+      data,
+      bars.map((bar) => bar.key),
+    )
+  )
+    return <ChartEmpty />;
   return (
     <div className="h-72 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 6, right: 6, left: 0, bottom: 4 }}>
           <CartesianGrid stroke={gridColor} vertical={false} strokeDasharray="3 3" />
-          <XAxis dataKey="name" tick={{ fill: axisColor, fontSize: 11 }} tickLine={false} axisLine={false} />
-          <YAxis tick={{ fill: axisColor, fontSize: 11 }} tickLine={false} axisLine={false} width={34} />
+          <XAxis
+            dataKey="name"
+            tick={{ fill: axisColor, fontSize: 11 }}
+            tickLine={false}
+            axisLine={false}
+          />
+          <YAxis
+            tick={{ fill: axisColor, fontSize: 11 }}
+            tickLine={false}
+            axisLine={false}
+            width={34}
+          />
           <Tooltip
             formatter={(value, name) =>
-              currencyKeys.includes(String(name)) ? ngn(Number(value)) : Number(value).toLocaleString()
+              currencyKeys.includes(String(name))
+                ? ngn(Number(value))
+                : Number(value).toLocaleString()
             }
           />
           <Legend wrapperStyle={{ fontSize: 11 }} />
@@ -155,14 +180,30 @@ export function TrendChart({
   data: ChartDatum[];
   series: { key: string; label: string }[];
 }) {
-  if (!hasValues(data, series.map((item) => item.key))) return <ChartEmpty />;
+  if (
+    !hasValues(
+      data,
+      series.map((item) => item.key),
+    )
+  )
+    return <ChartEmpty />;
   return (
     <div className="h-72 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 6, right: 6, left: 0, bottom: 4 }}>
           <CartesianGrid stroke={gridColor} vertical={false} strokeDasharray="3 3" />
-          <XAxis dataKey="name" tick={{ fill: axisColor, fontSize: 11 }} tickLine={false} axisLine={false} />
-          <YAxis tick={{ fill: axisColor, fontSize: 11 }} tickLine={false} axisLine={false} width={34} />
+          <XAxis
+            dataKey="name"
+            tick={{ fill: axisColor, fontSize: 11 }}
+            tickLine={false}
+            axisLine={false}
+          />
+          <YAxis
+            tick={{ fill: axisColor, fontSize: 11 }}
+            tickLine={false}
+            axisLine={false}
+            width={34}
+          />
           <Tooltip formatter={(value) => Number(value).toLocaleString()} />
           <Legend wrapperStyle={{ fontSize: 11 }} />
           {series.map((item, index) => (
@@ -199,8 +240,18 @@ export function LineBarChart({
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 6, right: 6, left: 0, bottom: 4 }}>
           <CartesianGrid stroke={gridColor} vertical={false} strokeDasharray="3 3" />
-          <XAxis dataKey="name" tick={{ fill: axisColor, fontSize: 11 }} tickLine={false} axisLine={false} />
-          <YAxis tick={{ fill: axisColor, fontSize: 11 }} tickLine={false} axisLine={false} width={34} />
+          <XAxis
+            dataKey="name"
+            tick={{ fill: axisColor, fontSize: 11 }}
+            tickLine={false}
+            axisLine={false}
+          />
+          <YAxis
+            tick={{ fill: axisColor, fontSize: 11 }}
+            tickLine={false}
+            axisLine={false}
+            width={34}
+          />
           <Tooltip formatter={(value) => Number(value).toLocaleString()} />
           <Legend wrapperStyle={{ fontSize: 11 }} />
           {bars.map((bar, index) => (
@@ -230,7 +281,9 @@ export function LineBarChart({
 }
 
 function ChartEmpty() {
-  return <EmptyState title="No chart data yet" description="Data will appear here once records exist." />;
+  return (
+    <EmptyState title="No chart data yet" description="Data will appear here once records exist." />
+  );
 }
 
 function hasValues(data: ChartDatum[], keys: string[]) {

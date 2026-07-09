@@ -89,4 +89,6 @@ const routes = await concreteRoutePaths();
 
 await Promise.all([writeFallbackFiles(distOutput), writeFallbackFiles(publicOutput)]);
 
-console.log(`Prepared dist and .output/public with current SPA shell and ${routes.length} route fallbacks.`);
+console.log(
+  `Prepared dist and .output/public with current SPA shell and ${routes.length} route fallbacks.`,
+);

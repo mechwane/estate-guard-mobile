@@ -215,23 +215,37 @@ function AdminDashboard() {
       const guardNames = new Map(
         (estateProfiles.data ?? [])
           .filter((profile) => guardIds.has(profile.id))
-          .map((profile) => [profile.id, profile.full_name || profile.email || profile.id.slice(0, 8)]),
+          .map((profile) => [
+            profile.id,
+            profile.full_name || profile.email || profile.id.slice(0, 8),
+          ]),
       );
       const guardActivity = Array.from(guardNames.entries())
         .map(([id, name]) => ({
           name,
-          validations: guestRows.filter((guest) => guest.validated_by === id && inRange(guest.checked_in_at, since)).length,
-          checkIns: guestRows.filter((guest) => guest.validated_by === id && inRange(guest.checked_in_at, since)).length,
-          checkOuts: guestRows.filter((guest) => guest.exited_by === id && inRange(guest.checked_out_at, since)).length,
+          validations: guestRows.filter(
+            (guest) => guest.validated_by === id && inRange(guest.checked_in_at, since),
+          ).length,
+          checkIns: guestRows.filter(
+            (guest) => guest.validated_by === id && inRange(guest.checked_in_at, since),
+          ).length,
+          checkOuts: guestRows.filter(
+            (guest) => guest.exited_by === id && inRange(guest.checked_out_at, since),
+          ).length,
           incidents: issueRows.filter(
-            (issue) => issue.reporter_id === id && issue.reporter_role === "guard" && inRange(issue.created_at, since),
+            (issue) =>
+              issue.reporter_id === id &&
+              issue.reporter_role === "guard" &&
+              inRange(issue.created_at, since),
           ).length,
         }))
         .filter((row) => row.validations + row.checkIns + row.checkOuts + row.incidents > 0)
         .slice(0, 8);
       const billCounts = countStrings(billRows.map((bill) => String(bill.status)));
       const outstandingAmount = billRows
-        .filter((bill) => ["unpaid", "overdue", "partially_paid", "partial"].includes(String(bill.status)))
+        .filter((bill) =>
+          ["unpaid", "overdue", "partially_paid", "partial"].includes(String(bill.status)),
+        )
         .reduce((sum, bill) => sum + Number(bill.amount ?? 0), 0);
 
       return {
@@ -245,9 +259,18 @@ function AdminDashboard() {
           },
         ],
         visitorActivity: [
-          { name: "Invites", count: guestRows.filter((guest) => inRange(guest.created_at, since)).length },
-          { name: "Check-ins", count: guestRows.filter((guest) => inRange(guest.checked_in_at, since)).length },
-          { name: "Check-outs", count: guestRows.filter((guest) => inRange(guest.checked_out_at, since)).length },
+          {
+            name: "Invites",
+            count: guestRows.filter((guest) => inRange(guest.created_at, since)).length,
+          },
+          {
+            name: "Check-ins",
+            count: guestRows.filter((guest) => inRange(guest.checked_in_at, since)).length,
+          },
+          {
+            name: "Check-outs",
+            count: guestRows.filter((guest) => inRange(guest.checked_out_at, since)).length,
+          },
           {
             name: "Inside",
             count: guestRows.filter((guest) => guest.checked_in_at && !guest.checked_out_at).length,
@@ -255,7 +278,10 @@ function AdminDashboard() {
           {
             name: "Missing exits",
             count: guestRows.filter(
-              (guest) => guest.checked_in_at && !guest.checked_out_at && new Date(guest.expires_at) < new Date(),
+              (guest) =>
+                guest.checked_in_at &&
+                !guest.checked_out_at &&
+                new Date(guest.expires_at) < new Date(),
             ).length,
           },
         ],
@@ -266,28 +292,35 @@ function AdminDashboard() {
             name: "In progress",
             count: issueRows.filter((issue) => issue.status === "in_progress").length,
           },
-          { name: "Resolved", count: issueRows.filter((issue) => issue.status === "resolved").length },
+          {
+            name: "Resolved",
+            count: issueRows.filter((issue) => issue.status === "resolved").length,
+          },
           { name: "Low", count: issueRows.filter((issue) => issue.severity === "low").length },
-          { name: "Medium", count: issueRows.filter((issue) => issue.severity === "medium").length },
+          {
+            name: "Medium",
+            count: issueRows.filter((issue) => issue.severity === "medium").length,
+          },
           { name: "High", count: issueRows.filter((issue) => issue.severity === "high").length },
-          { name: "Critical", count: issueRows.filter((issue) => issue.severity === "critical").length },
+          {
+            name: "Critical",
+            count: issueRows.filter((issue) => issue.severity === "critical").length,
+          },
         ],
         bills: [
           { name: "Paid", count: billCounts.paid ?? 0 },
           { name: "Unpaid", count: billCounts.unpaid ?? 0 },
-          { name: "Partially paid", count: (billCounts.partially_paid ?? 0) + (billCounts.partial ?? 0) },
+          {
+            name: "Partially paid",
+            count: (billCounts.partially_paid ?? 0) + (billCounts.partial ?? 0),
+          },
           { name: "Overdue", count: billCounts.overdue ?? 0 },
           { name: "Outstanding", amount: outstandingAmount },
         ],
-        orders: statusRows(orderRows.map((order) => order.status), [
-          "pending",
-          "confirmed",
-          "processing",
-          "ready",
-          "completed",
-          "cancelled",
-          "rejected",
-        ]),
+        orders: statusRows(
+          orderRows.map((order) => order.status),
+          ["pending", "confirmed", "processing", "ready", "completed", "cancelled", "rejected"],
+        ),
         guardActivity,
       };
     },
@@ -409,13 +442,22 @@ function AdminDashboard() {
                 />
               }
             >
-              <VerticalBarChart data={charts.data.visitorActivity} bars={[{ key: "count", label: "Records" }]} />
+              <VerticalBarChart
+                data={charts.data.visitorActivity}
+                bars={[{ key: "count", label: "Records" }]}
+              />
             </ChartCard>
             <ChartCard title="Requests by category">
-              <VerticalBarChart data={charts.data.requestCategories} bars={[{ key: "count", label: "Requests" }]} />
+              <VerticalBarChart
+                data={charts.data.requestCategories}
+                bars={[{ key: "count", label: "Requests" }]}
+              />
             </ChartCard>
             <ChartCard title="Issues by status and severity">
-              <VerticalBarChart data={charts.data.issueBreakdown} bars={[{ key: "count", label: "Issues" }]} />
+              <VerticalBarChart
+                data={charts.data.issueBreakdown}
+                bars={[{ key: "count", label: "Issues" }]}
+              />
             </ChartCard>
             <ChartCard title="Bills">
               <VerticalBarChart
@@ -428,7 +470,10 @@ function AdminDashboard() {
               />
             </ChartCard>
             <ChartCard title="Shop orders">
-              <VerticalBarChart data={charts.data.orders} bars={[{ key: "count", label: "Orders" }]} />
+              <VerticalBarChart
+                data={charts.data.orders}
+                bars={[{ key: "count", label: "Orders" }]}
+              />
             </ChartCard>
             <ChartCard title="Guard activity">
               <LineBarChart
@@ -540,7 +585,8 @@ function requestCategoryRows(values: string[]) {
   };
   values.forEach((raw) => {
     const value = raw.toLowerCase();
-    if (value.includes("development") || value.includes("renovation")) rows["Development/Renovation"] += 1;
+    if (value.includes("development") || value.includes("renovation"))
+      rows["Development/Renovation"] += 1;
     else if (value.includes("event")) rows.Events += 1;
     else if (value.includes("code")) rows.Code += 1;
     else if (value.includes("bill") || value.includes("payment")) rows.Billing += 1;

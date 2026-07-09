@@ -197,7 +197,9 @@ function SuperDashboard() {
         supabase.from("estates").select("id,name,status,created_at"),
         supabase.from("profiles").select("id,created_at,estate_id"),
         supabase.from("user_roles").select("user_id,role"),
-        supabase.from("guest_invites").select("id,estate_id,created_at,checked_in_at,checked_out_at"),
+        supabase
+          .from("guest_invites")
+          .select("id,estate_id,created_at,checked_in_at,checked_out_at"),
         supabase.from("resident_requests").select("id,estate_id,created_at,status"),
         supabase.from("issues").select("id,estate_id,created_at,status"),
         supabase.from("meetings").select("id,estate_id,created_at"),
@@ -233,11 +235,16 @@ function SuperDashboard() {
       const supportRows = support.data ?? [];
       const billRows = bills.data ?? [];
       const orderRows = orders.data ?? [];
-      const start = rangeStart(growthRange, [...profileRows, ...estateRows].map((row) => row.created_at));
+      const start = rangeStart(
+        growthRange,
+        [...profileRows, ...estateRows].map((row) => row.created_at),
+      );
       const residentIds = new Set(
         roleRows.filter((role) => role.role === "resident").map((role) => role.user_id),
       );
-      const guardIds = new Set(roleRows.filter((role) => role.role === "guard").map((role) => role.user_id));
+      const guardIds = new Set(
+        roleRows.filter((role) => role.role === "guard").map((role) => role.user_id),
+      );
       const roleCounts = countStrings(roleRows.map((role) => role.role));
       const estateStatusCounts = countStrings(estateRows.map((estate) => String(estate.status)));
       const billCounts = countStrings(billRows.map((bill) => String(bill.status)));
@@ -275,7 +282,9 @@ function SuperDashboard() {
           { name: "Meetings", count: meetingRows.length },
           {
             name: "Announcements",
-            count: postRows.filter((post) => String(post.post_type).toLowerCase().includes("announcement")).length,
+            count: postRows.filter((post) =>
+              String(post.post_type).toLowerCase().includes("announcement"),
+            ).length,
           },
         ],
         support: statusRows(
@@ -292,15 +301,25 @@ function SuperDashboard() {
         estates: estateRows.map((estate) => ({
           id: estate.id,
           name: estate.name,
-          residents: profileRows.filter((profile) => profile.estate_id === estate.id && residentIds.has(profile.id)).length,
-          guards: profileRows.filter((profile) => profile.estate_id === estate.id && guardIds.has(profile.id)).length,
+          residents: profileRows.filter(
+            (profile) => profile.estate_id === estate.id && residentIds.has(profile.id),
+          ).length,
+          guards: profileRows.filter(
+            (profile) => profile.estate_id === estate.id && guardIds.has(profile.id),
+          ).length,
           openIncidents: issueRows.filter(
-            (issue) => estate.id === issue.estate_id && ["open", "in_progress"].includes(String(issue.status)),
+            (issue) =>
+              estate.id === issue.estate_id &&
+              ["open", "in_progress"].includes(String(issue.status)),
           ).length,
           pendingRequests: requestRows.filter(
-            (request) => estate.id === request.estate_id && !["resolved", "closed", "approved", "rejected"].includes(String(request.status)),
+            (request) =>
+              estate.id === request.estate_id &&
+              !["resolved", "closed", "approved", "rejected"].includes(String(request.status)),
           ).length,
-          unpaidBills: billRows.filter((bill) => estate.id === bill.estate_id && bill.status !== "paid").length,
+          unpaidBills: billRows.filter(
+            (bill) => estate.id === bill.estate_id && bill.status !== "paid",
+          ).length,
           shopOrders: orderRows.filter((order) => estate.id === order.estate_id).length,
         })),
       };
@@ -409,7 +428,11 @@ function SuperDashboard() {
                   title="Platform growth"
                   subtitle="New users, estates, and residents"
                   action={
-                    <RangeTabs value={growthRange} onChange={setGrowthRange} options={growthRangeOptions} />
+                    <RangeTabs
+                      value={growthRange}
+                      onChange={setGrowthRange}
+                      options={growthRangeOptions}
+                    />
                   }
                 >
                   <TrendChart
@@ -428,10 +451,16 @@ function SuperDashboard() {
                   <DonutChart data={charts.data.estateStatus} />
                 </ChartCard>
                 <ChartCard title="Platform activity">
-                  <VerticalBarChart data={charts.data.activity} bars={[{ key: "count", label: "Records" }]} />
+                  <VerticalBarChart
+                    data={charts.data.activity}
+                    bars={[{ key: "count", label: "Records" }]}
+                  />
                 </ChartCard>
                 <ChartCard title="Support status">
-                  <VerticalBarChart data={charts.data.support} bars={[{ key: "count", label: "Tickets" }]} />
+                  <VerticalBarChart
+                    data={charts.data.support}
+                    bars={[{ key: "count", label: "Tickets" }]}
+                  />
                 </ChartCard>
                 <ChartCard title="Bills and payments">
                   <VerticalBarChart
@@ -588,8 +617,10 @@ function buildGrowthRows({
     rows.push({
       name: format(day, "MMM d"),
       users: users.filter((row) => format(new Date(row.created_at), "yyyy-MM-dd") === key).length,
-      estates: estates.filter((row) => format(new Date(row.created_at), "yyyy-MM-dd") === key).length,
-      residents: residents.filter((row) => format(new Date(row.created_at), "yyyy-MM-dd") === key).length,
+      estates: estates.filter((row) => format(new Date(row.created_at), "yyyy-MM-dd") === key)
+        .length,
+      residents: residents.filter((row) => format(new Date(row.created_at), "yyyy-MM-dd") === key)
+        .length,
     });
   }
   return rows;
@@ -647,7 +678,9 @@ function EstateComparisonTable({
           <tbody className="divide-y divide-border">
             {rows.map((row) => (
               <tr key={row.id}>
-                <td className="max-w-52 truncate px-4 py-3 font-medium text-foreground">{row.name}</td>
+                <td className="max-w-52 truncate px-4 py-3 font-medium text-foreground">
+                  {row.name}
+                </td>
                 <td className="px-3 py-3 tabular-nums">{row.residents}</td>
                 <td className="px-3 py-3 tabular-nums">{row.guards}</td>
                 <td className="px-3 py-3 tabular-nums">{row.openIncidents}</td>
