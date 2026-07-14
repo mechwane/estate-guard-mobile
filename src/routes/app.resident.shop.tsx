@@ -38,13 +38,9 @@ function Shop() {
 
   const order = useMutation({
     mutationFn: async (item: any) => {
-      const { error } = await supabase.from("shop_orders").insert({
-        estate_id: session!.estate!.id,
-        resident_id: session!.userId!,
-        item_id: item.id,
-        item_name: item.name,
-        amount_ngn: item.price_ngn,
-        quantity: 1,
+      const { error } = await supabase.rpc("place_shop_order", {
+        _item_id: item.id,
+        _quantity: 1,
       });
       if (error) throw error;
     },
