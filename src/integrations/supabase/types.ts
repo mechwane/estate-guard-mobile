@@ -1417,6 +1417,14 @@ export type Database = {
           status: Database["public"]["Enums"]["estate_status"]
         }[]
       }
+      pay_bill: {
+        Args: { _bill_id: string; _method?: string; _reference?: string }
+        Returns: undefined
+      }
+      place_shop_order: {
+        Args: { _item_id: string; _quantity?: number }
+        Returns: string
+      }
       reassign_estate_admin: {
         Args: { _estate_id: string; _new_admin_user_id: string }
         Returns: undefined
