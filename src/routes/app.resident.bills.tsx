@@ -64,17 +64,12 @@ function Bills() {
 
   const pay = useMutation({
     mutationFn: async (billId: string) => {
-      const bill = (data ?? []).find((b) => b.id === billId);
-      if (!bill || !session?.userId || !session.estate?.id) throw new Error("Missing context");
-      const { error } = await supabase.from("bills").update({ status: "paid" }).eq("id", billId);
-      if (error) throw error;
-      await supabase.from("payments").insert({
-        bill_id: billId,
-        estate_id: session.estate.id,
-        resident_id: session.userId,
-        amount: bill.amount,
-        method: "manual",
+      if (!session?.userId) throw new Error("Not signed in");
+      const { error } = await supabase.rpc("pay_bill", {
+        _bill_id: billId,
+        _method: "manual",
       });
+      if (error) throw error;
     },
     onMutate: (id) => setPayingId(id),
     onSettled: () => setPayingId(null),
