@@ -466,7 +466,7 @@ function AdminDashboard() {
                   { key: "count", label: "Bills" },
                   { key: "amount", label: "Amount" },
                 ]}
-                currencyKeys={["amount"]}
+                currencyKeys={["amount", "Amount"]}
               />
             </ChartCard>
             <ChartCard title="Shop orders">
