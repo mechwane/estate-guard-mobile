@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_cards: {
+        Row: {
+          active: boolean
+          card_number: string
+          created_at: string
+          estate_id: string
+          id: string
+          issued_at: string
+          notes: string | null
+          resident_id: string
+          revoked_at: string | null
+        }
+        Insert: {
+          active?: boolean
+          card_number: string
+          created_at?: string
+          estate_id: string
+          id?: string
+          issued_at?: string
+          notes?: string | null
+          resident_id: string
+          revoked_at?: string | null
+        }
+        Update: {
+          active?: boolean
+          card_number?: string
+          created_at?: string
+          estate_id?: string
+          id?: string
+          issued_at?: string
+          notes?: string | null
+          resident_id?: string
+          revoked_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "access_cards_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -187,6 +231,47 @@ export type Database = {
           },
         ]
       }
+      discounts: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          estate_id: string
+          id: string
+          name: string
+          percent: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          estate_id: string
+          id?: string
+          name: string
+          percent: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          estate_id?: string
+          id?: string
+          name?: string
+          percent?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discounts_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       estate_admin_invites: {
         Row: {
           accepted_at: string | null
@@ -265,6 +350,77 @@ export type Database = {
             columns: ["estate_id"]
             isOneToOne: false
             referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      estate_feature_flags: {
+        Row: {
+          enabled: boolean
+          estate_id: string
+          key: string
+          updated_at: string
+        }
+        Insert: {
+          enabled?: boolean
+          estate_id: string
+          key: string
+          updated_at?: string
+        }
+        Update: {
+          enabled?: boolean
+          estate_id?: string
+          key?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estate_feature_flags_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      estate_subscriptions: {
+        Row: {
+          estate_id: string
+          expires_at: string | null
+          plan_id: string | null
+          started_at: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          estate_id: string
+          expires_at?: string | null
+          plan_id?: string | null
+          started_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          estate_id?: string
+          expires_at?: string | null
+          plan_id?: string | null
+          started_at?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estate_subscriptions_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: true
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estate_subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "platform_plans"
             referencedColumns: ["id"]
           },
         ]
@@ -714,6 +870,33 @@ export type Database = {
           },
         ]
       }
+      platform_plans: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          limits: Json
+          monthly_ngn: number
+          name: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          limits?: Json
+          monthly_ngn?: number
+          name: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          limits?: Json
+          monthly_ngn?: number
+          name?: string
+        }
+        Relationships: []
+      }
       platform_settings: {
         Row: {
           created_at: string
@@ -1003,6 +1186,42 @@ export type Database = {
           },
         ]
       }
+      resident_biometric_credentials: {
+        Row: {
+          created_at: string
+          credential_id: string
+          device_name: string | null
+          id: string
+          last_used_at: string | null
+          public_key: string
+          sign_count: number
+          transports: string[] | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credential_id: string
+          device_name?: string | null
+          id?: string
+          last_used_at?: string | null
+          public_key: string
+          sign_count?: number
+          transports?: string[] | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          credential_id?: string
+          device_name?: string | null
+          id?: string
+          last_used_at?: string | null
+          public_key?: string
+          sign_count?: number
+          transports?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       resident_ids: {
         Row: {
           created_at: string
@@ -1032,6 +1251,59 @@ export type Database = {
           verified?: boolean
         }
         Relationships: []
+      }
+      resident_passes: {
+        Row: {
+          code: string
+          created_at: string
+          credential_id: string | null
+          estate_id: string
+          expires_at: string
+          guest_name: string | null
+          id: string
+          issued_via: string
+          kind: Database["public"]["Enums"]["resident_pass_kind"]
+          resident_id: string
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          credential_id?: string | null
+          estate_id: string
+          expires_at: string
+          guest_name?: string | null
+          id?: string
+          issued_via?: string
+          kind?: Database["public"]["Enums"]["resident_pass_kind"]
+          resident_id: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          credential_id?: string | null
+          estate_id?: string
+          expires_at?: string
+          guest_name?: string | null
+          id?: string
+          issued_via?: string
+          kind?: Database["public"]["Enums"]["resident_pass_kind"]
+          resident_id?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resident_passes_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       resident_requests: {
         Row: {
@@ -1272,6 +1544,50 @@ export type Database = {
         }
         Relationships: []
       }
+      vehicle_tags: {
+        Row: {
+          active: boolean
+          color: string | null
+          created_at: string
+          estate_id: string
+          id: string
+          make_model: string | null
+          plate: string
+          resident_id: string
+          tag_number: string | null
+        }
+        Insert: {
+          active?: boolean
+          color?: string | null
+          created_at?: string
+          estate_id: string
+          id?: string
+          make_model?: string | null
+          plate: string
+          resident_id: string
+          tag_number?: string | null
+        }
+        Update: {
+          active?: boolean
+          color?: string | null
+          created_at?: string
+          estate_id?: string
+          id?: string
+          make_model?: string | null
+          plate?: string
+          resident_id?: string
+          tag_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_tags_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vtu_providers: {
         Row: {
           active: boolean
@@ -1394,12 +1710,22 @@ export type Database = {
         Args: { _role: Database["public"]["Enums"]["app_role"] }
         Returns: boolean
       }
+      enroll_biometric_credential: {
+        Args: {
+          _credential_id: string
+          _device_name: string
+          _public_key: string
+          _transports: string[]
+        }
+        Returns: string
+      }
       generate_unique_estate_code: { Args: never; Returns: string }
       guard_check_in: {
         Args: { _invite_id: string; _vehicle_number?: string }
         Returns: Json
       }
       guard_check_out: { Args: { _invite_id: string }; Returns: Json }
+      guard_use_resident_pass: { Args: { _code: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1408,6 +1734,15 @@ export type Database = {
         Returns: boolean
       }
       is_super_admin: { Args: never; Returns: boolean }
+      issue_resident_pass: {
+        Args: {
+          _credential_id: string
+          _guest_name: string
+          _kind: Database["public"]["Enums"]["resident_pass_kind"]
+          _ttl_minutes: number
+        }
+        Returns: Json
+      }
       lookup_estate_by_code: {
         Args: { _code: string }
         Returns: {
@@ -1425,6 +1760,7 @@ export type Database = {
         Args: { _item_id: string; _quantity?: number }
         Returns: string
       }
+      platform_rollup: { Args: never; Returns: Json }
       reassign_estate_admin: {
         Args: { _estate_id: string; _new_admin_user_id: string }
         Returns: undefined
@@ -1437,6 +1773,19 @@ export type Database = {
       }
       set_estate_access: {
         Args: { _approved: boolean; _user_id: string }
+        Returns: undefined
+      }
+      set_estate_feature_flag: {
+        Args: { _enabled: boolean; _estate_id: string; _key: string }
+        Returns: undefined
+      }
+      set_estate_plan: {
+        Args: {
+          _estate_id: string
+          _expires_at: string
+          _plan_id: string
+          _status: string
+        }
         Returns: undefined
       }
       submit_verification: {
@@ -1469,6 +1818,7 @@ export type Database = {
         Returns: undefined
       }
       validate_guest_code: { Args: { _code: string }; Returns: Json }
+      validate_resident_pass: { Args: { _code: string }; Returns: Json }
     }
     Enums: {
       app_role:
@@ -1483,6 +1833,7 @@ export type Database = {
       issue_severity: "low" | "medium" | "high" | "critical"
       issue_status: "open" | "in_progress" | "resolved"
       occupant_type: "resident" | "commercial"
+      resident_pass_kind: "self" | "guest"
       verification_status:
         | "not_submitted"
         | "incomplete"
@@ -1629,6 +1980,7 @@ export const Constants = {
       issue_severity: ["low", "medium", "high", "critical"],
       issue_status: ["open", "in_progress", "resolved"],
       occupant_type: ["resident", "commercial"],
+      resident_pass_kind: ["self", "guest"],
       verification_status: [
         "not_submitted",
         "incomplete",
