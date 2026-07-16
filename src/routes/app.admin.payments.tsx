@@ -121,9 +121,9 @@ function PaymentsAdmin() {
                 <li key={p.id} className="flex items-center justify-between rounded-lg border border-border/60 bg-card px-3 py-2 text-sm">
                   <div>
                     <div className="font-medium">{ngn(Number(p.amount))}</div>
-                    <div className="text-xs text-muted-foreground">{p.method}{p.reference ? ` · ${p.reference}` : ""}</div>
+                    <div className="text-xs text-muted-foreground">{p.method}</div>
                   </div>
-                  <div className="text-xs text-muted-foreground">{format(new Date(p.created_at), "MMM d, HH:mm")}</div>
+                  <div className="text-xs text-muted-foreground">{format(new Date(p.paid_at), "MMM d, HH:mm")}</div>
                 </li>
               ))}
             </ul>
@@ -134,12 +134,10 @@ function PaymentsAdmin() {
       {tab === "discounts" && (
         <>
           <Card>
-            <h2 className="mb-3 text-sm font-semibold">New discount code</h2>
+            <h2 className="mb-3 text-sm font-semibold">New discount</h2>
             <div className="grid grid-cols-2 gap-2">
-              <input value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} placeholder="Code" className="rounded-lg border border-border bg-card px-3 py-2 text-sm" />
-              <input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Description" className="rounded-lg border border-border bg-card px-3 py-2 text-sm" />
-              <input type="number" value={form.percent_off || ""} onChange={(e) => setForm({ ...form, percent_off: Number(e.target.value) })} placeholder="% off" className="rounded-lg border border-border bg-card px-3 py-2 text-sm" />
-              <input type="number" value={form.amount_off || ""} onChange={(e) => setForm({ ...form, amount_off: Number(e.target.value) })} placeholder="₦ off" className="rounded-lg border border-border bg-card px-3 py-2 text-sm" />
+              <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Name" className="rounded-lg border border-border bg-card px-3 py-2 text-sm" />
+              <input type="number" min={0} max={100} value={form.percent} onChange={(e) => setForm({ ...form, percent: Number(e.target.value) })} placeholder="% off" className="rounded-lg border border-border bg-card px-3 py-2 text-sm" />
             </div>
             <button
               onClick={() => createDiscount.mutate()}
@@ -158,12 +156,8 @@ function PaymentsAdmin() {
                 {data.data.discounts.map((d) => (
                   <li key={d.id} className="flex items-center justify-between rounded-lg border border-border/60 bg-card px-3 py-2 text-sm">
                     <div>
-                      <div className="font-medium">{d.code}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {d.percent_off ? `${d.percent_off}% off` : ""}
-                        {d.amount_off ? ` ${ngn(Number(d.amount_off))} off` : ""}
-                        {d.description ? ` · ${d.description}` : ""}
-                      </div>
+                      <div className="font-medium">{d.name}</div>
+                      <div className="text-xs text-muted-foreground">{d.percent}% off</div>
                     </div>
                     <div className="flex items-center gap-2">
                       <StatusBadge tone={d.active ? "success" : "neutral"}>{d.active ? "Active" : "Inactive"}</StatusBadge>
