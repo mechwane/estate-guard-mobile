@@ -412,6 +412,8 @@ function SuperDashboard() {
             </div>
           )}
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <QuickLink to="/app/super/plans" label="Plans & revenue" />
+            <QuickLink to="/app/super/features" label="Feature flags" />
             <QuickLink to="/app/super/users" label="Users & roles" />
             <QuickLink to="/app/super/invites" label="Admin invites" />
             <QuickLink to="/app/super/support" label="Support center" />
