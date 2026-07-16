@@ -329,6 +329,10 @@ function AdminDashboard() {
   const operations = useMemo(
     () =>
       [
+        ["Realtime access", "/app/admin/realtime"],
+        ["Security alerts", "/app/admin/alerts"],
+        ["Payments", "/app/admin/payments"],
+        ["Access passes", "/app/admin/passes"],
         ["Residents", "/app/admin/residents"],
         ["Guards", "/app/admin/staff"],
         ["Guest logs", "/app/admin/guests"],

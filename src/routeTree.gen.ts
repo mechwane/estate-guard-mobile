@@ -24,7 +24,9 @@ import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 import { Route as AppSuperUsersRouteImport } from './routes/app.super.users'
 import { Route as AppSuperSupportRouteImport } from './routes/app.super.support'
 import { Route as AppSuperSettingsRouteImport } from './routes/app.super.settings'
+import { Route as AppSuperPlansRouteImport } from './routes/app.super.plans'
 import { Route as AppSuperInvitesRouteImport } from './routes/app.super.invites'
+import { Route as AppSuperFeaturesRouteImport } from './routes/app.super.features'
 import { Route as AppSuperAuditRouteImport } from './routes/app.super.audit'
 import { Route as AppResidentVerificationRouteImport } from './routes/app.resident.verification'
 import { Route as AppResidentTermsRouteImport } from './routes/app.resident.terms'
@@ -34,6 +36,7 @@ import { Route as AppResidentSettingsRouteImport } from './routes/app.resident.s
 import { Route as AppResidentRequestsRouteImport } from './routes/app.resident.requests'
 import { Route as AppResidentProfileRouteImport } from './routes/app.resident.profile'
 import { Route as AppResidentPrivacyRouteImport } from './routes/app.resident.privacy'
+import { Route as AppResidentPassRouteImport } from './routes/app.resident.pass'
 import { Route as AppResidentMoreRouteImport } from './routes/app.resident.more'
 import { Route as AppResidentIssuesRouteImport } from './routes/app.resident.issues'
 import { Route as AppResidentInviteRouteImport } from './routes/app.resident.invite'
@@ -56,11 +59,15 @@ import { Route as AppAdminStaffRouteImport } from './routes/app.admin.staff'
 import { Route as AppAdminShopRouteImport } from './routes/app.admin.shop'
 import { Route as AppAdminResidentsRouteImport } from './routes/app.admin.residents'
 import { Route as AppAdminRequestsRouteImport } from './routes/app.admin.requests'
+import { Route as AppAdminRealtimeRouteImport } from './routes/app.admin.realtime'
+import { Route as AppAdminPaymentsRouteImport } from './routes/app.admin.payments'
+import { Route as AppAdminPassesRouteImport } from './routes/app.admin.passes'
 import { Route as AppAdminIssuesRouteImport } from './routes/app.admin.issues'
 import { Route as AppAdminGuestsRouteImport } from './routes/app.admin.guests'
 import { Route as AppAdminEventsRouteImport } from './routes/app.admin.events'
 import { Route as AppAdminCommunityRouteImport } from './routes/app.admin.community'
 import { Route as AppAdminBillsRouteImport } from './routes/app.admin.bills'
+import { Route as AppAdminAlertsRouteImport } from './routes/app.admin.alerts'
 import { Route as AppResidentEventsIndexRouteImport } from './routes/app.resident.events.index'
 import { Route as AppSuperEstatesEstateIdRouteImport } from './routes/app.super.estates.$estateId'
 import { Route as AppResidentEventsNewRouteImport } from './routes/app.resident.events.new'
@@ -142,9 +149,19 @@ const AppSuperSettingsRoute = AppSuperSettingsRouteImport.update({
   path: '/super/settings',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSuperPlansRoute = AppSuperPlansRouteImport.update({
+  id: '/super/plans',
+  path: '/super/plans',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSuperInvitesRoute = AppSuperInvitesRouteImport.update({
   id: '/super/invites',
   path: '/super/invites',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperFeaturesRoute = AppSuperFeaturesRouteImport.update({
+  id: '/super/features',
+  path: '/super/features',
   getParentRoute: () => AppRoute,
 } as any)
 const AppSuperAuditRoute = AppSuperAuditRouteImport.update({
@@ -190,6 +207,11 @@ const AppResidentProfileRoute = AppResidentProfileRouteImport.update({
 const AppResidentPrivacyRoute = AppResidentPrivacyRouteImport.update({
   id: '/resident/privacy',
   path: '/resident/privacy',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentPassRoute = AppResidentPassRouteImport.update({
+  id: '/resident/pass',
+  path: '/resident/pass',
   getParentRoute: () => AppRoute,
 } as any)
 const AppResidentMoreRoute = AppResidentMoreRouteImport.update({
@@ -302,6 +324,21 @@ const AppAdminRequestsRoute = AppAdminRequestsRouteImport.update({
   path: '/admin/requests',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminRealtimeRoute = AppAdminRealtimeRouteImport.update({
+  id: '/admin/realtime',
+  path: '/admin/realtime',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminPaymentsRoute = AppAdminPaymentsRouteImport.update({
+  id: '/admin/payments',
+  path: '/admin/payments',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminPassesRoute = AppAdminPassesRouteImport.update({
+  id: '/admin/passes',
+  path: '/admin/passes',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminIssuesRoute = AppAdminIssuesRouteImport.update({
   id: '/admin/issues',
   path: '/admin/issues',
@@ -325,6 +362,11 @@ const AppAdminCommunityRoute = AppAdminCommunityRouteImport.update({
 const AppAdminBillsRoute = AppAdminBillsRouteImport.update({
   id: '/admin/bills',
   path: '/admin/bills',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminAlertsRoute = AppAdminAlertsRouteImport.update({
+  id: '/admin/alerts',
+  path: '/admin/alerts',
   getParentRoute: () => AppRoute,
 } as any)
 const AppResidentEventsIndexRoute = AppResidentEventsIndexRouteImport.update({
@@ -362,11 +404,15 @@ export interface FileRoutesByFullPath {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/app/admin/alerts': typeof AppAdminAlertsRoute
   '/app/admin/bills': typeof AppAdminBillsRoute
   '/app/admin/community': typeof AppAdminCommunityRoute
   '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
+  '/app/admin/passes': typeof AppAdminPassesRoute
+  '/app/admin/payments': typeof AppAdminPaymentsRoute
+  '/app/admin/realtime': typeof AppAdminRealtimeRoute
   '/app/admin/requests': typeof AppAdminRequestsRoute
   '/app/admin/residents': typeof AppAdminResidentsRoute
   '/app/admin/shop': typeof AppAdminShopRoute
@@ -389,6 +435,7 @@ export interface FileRoutesByFullPath {
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
   '/app/resident/more': typeof AppResidentMoreRoute
+  '/app/resident/pass': typeof AppResidentPassRoute
   '/app/resident/privacy': typeof AppResidentPrivacyRoute
   '/app/resident/profile': typeof AppResidentProfileRoute
   '/app/resident/requests': typeof AppResidentRequestsRoute
@@ -398,7 +445,9 @@ export interface FileRoutesByFullPath {
   '/app/resident/terms': typeof AppResidentTermsRoute
   '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
+  '/app/super/features': typeof AppSuperFeaturesRoute
   '/app/super/invites': typeof AppSuperInvitesRoute
+  '/app/super/plans': typeof AppSuperPlansRoute
   '/app/super/settings': typeof AppSuperSettingsRoute
   '/app/super/support': typeof AppSuperSupportRoute
   '/app/super/users': typeof AppSuperUsersRoute
@@ -421,11 +470,15 @@ export interface FileRoutesByTo {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/app/admin/alerts': typeof AppAdminAlertsRoute
   '/app/admin/bills': typeof AppAdminBillsRoute
   '/app/admin/community': typeof AppAdminCommunityRoute
   '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
+  '/app/admin/passes': typeof AppAdminPassesRoute
+  '/app/admin/payments': typeof AppAdminPaymentsRoute
+  '/app/admin/realtime': typeof AppAdminRealtimeRoute
   '/app/admin/requests': typeof AppAdminRequestsRoute
   '/app/admin/residents': typeof AppAdminResidentsRoute
   '/app/admin/shop': typeof AppAdminShopRoute
@@ -448,6 +501,7 @@ export interface FileRoutesByTo {
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
   '/app/resident/more': typeof AppResidentMoreRoute
+  '/app/resident/pass': typeof AppResidentPassRoute
   '/app/resident/privacy': typeof AppResidentPrivacyRoute
   '/app/resident/profile': typeof AppResidentProfileRoute
   '/app/resident/requests': typeof AppResidentRequestsRoute
@@ -457,7 +511,9 @@ export interface FileRoutesByTo {
   '/app/resident/terms': typeof AppResidentTermsRoute
   '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
+  '/app/super/features': typeof AppSuperFeaturesRoute
   '/app/super/invites': typeof AppSuperInvitesRoute
+  '/app/super/plans': typeof AppSuperPlansRoute
   '/app/super/settings': typeof AppSuperSettingsRoute
   '/app/super/support': typeof AppSuperSupportRoute
   '/app/super/users': typeof AppSuperUsersRoute
@@ -481,11 +537,15 @@ export interface FileRoutesById {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/app/admin/alerts': typeof AppAdminAlertsRoute
   '/app/admin/bills': typeof AppAdminBillsRoute
   '/app/admin/community': typeof AppAdminCommunityRoute
   '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
+  '/app/admin/passes': typeof AppAdminPassesRoute
+  '/app/admin/payments': typeof AppAdminPaymentsRoute
+  '/app/admin/realtime': typeof AppAdminRealtimeRoute
   '/app/admin/requests': typeof AppAdminRequestsRoute
   '/app/admin/residents': typeof AppAdminResidentsRoute
   '/app/admin/shop': typeof AppAdminShopRoute
@@ -508,6 +568,7 @@ export interface FileRoutesById {
   '/app/resident/invite': typeof AppResidentInviteRoute
   '/app/resident/issues': typeof AppResidentIssuesRoute
   '/app/resident/more': typeof AppResidentMoreRoute
+  '/app/resident/pass': typeof AppResidentPassRoute
   '/app/resident/privacy': typeof AppResidentPrivacyRoute
   '/app/resident/profile': typeof AppResidentProfileRoute
   '/app/resident/requests': typeof AppResidentRequestsRoute
@@ -517,7 +578,9 @@ export interface FileRoutesById {
   '/app/resident/terms': typeof AppResidentTermsRoute
   '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
+  '/app/super/features': typeof AppSuperFeaturesRoute
   '/app/super/invites': typeof AppSuperInvitesRoute
+  '/app/super/plans': typeof AppSuperPlansRoute
   '/app/super/settings': typeof AppSuperSettingsRoute
   '/app/super/support': typeof AppSuperSupportRoute
   '/app/super/users': typeof AppSuperUsersRoute
@@ -542,11 +605,15 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/app/admin/alerts'
     | '/app/admin/bills'
     | '/app/admin/community'
     | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/issues'
+    | '/app/admin/passes'
+    | '/app/admin/payments'
+    | '/app/admin/realtime'
     | '/app/admin/requests'
     | '/app/admin/residents'
     | '/app/admin/shop'
@@ -569,6 +636,7 @@ export interface FileRouteTypes {
     | '/app/resident/invite'
     | '/app/resident/issues'
     | '/app/resident/more'
+    | '/app/resident/pass'
     | '/app/resident/privacy'
     | '/app/resident/profile'
     | '/app/resident/requests'
@@ -578,7 +646,9 @@ export interface FileRouteTypes {
     | '/app/resident/terms'
     | '/app/resident/verification'
     | '/app/super/audit'
+    | '/app/super/features'
     | '/app/super/invites'
+    | '/app/super/plans'
     | '/app/super/settings'
     | '/app/super/support'
     | '/app/super/users'
@@ -601,11 +671,15 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/app/admin/alerts'
     | '/app/admin/bills'
     | '/app/admin/community'
     | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/issues'
+    | '/app/admin/passes'
+    | '/app/admin/payments'
+    | '/app/admin/realtime'
     | '/app/admin/requests'
     | '/app/admin/residents'
     | '/app/admin/shop'
@@ -628,6 +702,7 @@ export interface FileRouteTypes {
     | '/app/resident/invite'
     | '/app/resident/issues'
     | '/app/resident/more'
+    | '/app/resident/pass'
     | '/app/resident/privacy'
     | '/app/resident/profile'
     | '/app/resident/requests'
@@ -637,7 +712,9 @@ export interface FileRouteTypes {
     | '/app/resident/terms'
     | '/app/resident/verification'
     | '/app/super/audit'
+    | '/app/super/features'
     | '/app/super/invites'
+    | '/app/super/plans'
     | '/app/super/settings'
     | '/app/super/support'
     | '/app/super/users'
@@ -660,11 +737,15 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/app/admin/alerts'
     | '/app/admin/bills'
     | '/app/admin/community'
     | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/issues'
+    | '/app/admin/passes'
+    | '/app/admin/payments'
+    | '/app/admin/realtime'
     | '/app/admin/requests'
     | '/app/admin/residents'
     | '/app/admin/shop'
@@ -687,6 +768,7 @@ export interface FileRouteTypes {
     | '/app/resident/invite'
     | '/app/resident/issues'
     | '/app/resident/more'
+    | '/app/resident/pass'
     | '/app/resident/privacy'
     | '/app/resident/profile'
     | '/app/resident/requests'
@@ -696,7 +778,9 @@ export interface FileRouteTypes {
     | '/app/resident/terms'
     | '/app/resident/verification'
     | '/app/super/audit'
+    | '/app/super/features'
     | '/app/super/invites'
+    | '/app/super/plans'
     | '/app/super/settings'
     | '/app/super/support'
     | '/app/super/users'
@@ -824,11 +908,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSuperSettingsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/super/plans': {
+      id: '/app/super/plans'
+      path: '/super/plans'
+      fullPath: '/app/super/plans'
+      preLoaderRoute: typeof AppSuperPlansRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/super/invites': {
       id: '/app/super/invites'
       path: '/super/invites'
       fullPath: '/app/super/invites'
       preLoaderRoute: typeof AppSuperInvitesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/features': {
+      id: '/app/super/features'
+      path: '/super/features'
+      fullPath: '/app/super/features'
+      preLoaderRoute: typeof AppSuperFeaturesRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/super/audit': {
@@ -892,6 +990,13 @@ declare module '@tanstack/react-router' {
       path: '/resident/privacy'
       fullPath: '/app/resident/privacy'
       preLoaderRoute: typeof AppResidentPrivacyRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/pass': {
+      id: '/app/resident/pass'
+      path: '/resident/pass'
+      fullPath: '/app/resident/pass'
+      preLoaderRoute: typeof AppResidentPassRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/resident/more': {
@@ -1048,6 +1153,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminRequestsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/realtime': {
+      id: '/app/admin/realtime'
+      path: '/admin/realtime'
+      fullPath: '/app/admin/realtime'
+      preLoaderRoute: typeof AppAdminRealtimeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/payments': {
+      id: '/app/admin/payments'
+      path: '/admin/payments'
+      fullPath: '/app/admin/payments'
+      preLoaderRoute: typeof AppAdminPaymentsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/passes': {
+      id: '/app/admin/passes'
+      path: '/admin/passes'
+      fullPath: '/app/admin/passes'
+      preLoaderRoute: typeof AppAdminPassesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/issues': {
       id: '/app/admin/issues'
       path: '/admin/issues'
@@ -1081,6 +1207,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/bills'
       fullPath: '/app/admin/bills'
       preLoaderRoute: typeof AppAdminBillsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/alerts': {
+      id: '/app/admin/alerts'
+      path: '/admin/alerts'
+      fullPath: '/app/admin/alerts'
+      preLoaderRoute: typeof AppAdminAlertsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/resident/events/': {
@@ -1123,11 +1256,15 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppDeniedRoute: typeof AppDeniedRoute
+  AppAdminAlertsRoute: typeof AppAdminAlertsRoute
   AppAdminBillsRoute: typeof AppAdminBillsRoute
   AppAdminCommunityRoute: typeof AppAdminCommunityRoute
   AppAdminEventsRoute: typeof AppAdminEventsRoute
   AppAdminGuestsRoute: typeof AppAdminGuestsRoute
   AppAdminIssuesRoute: typeof AppAdminIssuesRoute
+  AppAdminPassesRoute: typeof AppAdminPassesRoute
+  AppAdminPaymentsRoute: typeof AppAdminPaymentsRoute
+  AppAdminRealtimeRoute: typeof AppAdminRealtimeRoute
   AppAdminRequestsRoute: typeof AppAdminRequestsRoute
   AppAdminResidentsRoute: typeof AppAdminResidentsRoute
   AppAdminShopRoute: typeof AppAdminShopRoute
@@ -1150,6 +1287,7 @@ interface AppRouteChildren {
   AppResidentInviteRoute: typeof AppResidentInviteRoute
   AppResidentIssuesRoute: typeof AppResidentIssuesRoute
   AppResidentMoreRoute: typeof AppResidentMoreRoute
+  AppResidentPassRoute: typeof AppResidentPassRoute
   AppResidentPrivacyRoute: typeof AppResidentPrivacyRoute
   AppResidentProfileRoute: typeof AppResidentProfileRoute
   AppResidentRequestsRoute: typeof AppResidentRequestsRoute
@@ -1159,7 +1297,9 @@ interface AppRouteChildren {
   AppResidentTermsRoute: typeof AppResidentTermsRoute
   AppResidentVerificationRoute: typeof AppResidentVerificationRoute
   AppSuperAuditRoute: typeof AppSuperAuditRoute
+  AppSuperFeaturesRoute: typeof AppSuperFeaturesRoute
   AppSuperInvitesRoute: typeof AppSuperInvitesRoute
+  AppSuperPlansRoute: typeof AppSuperPlansRoute
   AppSuperSettingsRoute: typeof AppSuperSettingsRoute
   AppSuperSupportRoute: typeof AppSuperSupportRoute
   AppSuperUsersRoute: typeof AppSuperUsersRoute
@@ -1176,11 +1316,15 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppDeniedRoute: AppDeniedRoute,
+  AppAdminAlertsRoute: AppAdminAlertsRoute,
   AppAdminBillsRoute: AppAdminBillsRoute,
   AppAdminCommunityRoute: AppAdminCommunityRoute,
   AppAdminEventsRoute: AppAdminEventsRoute,
   AppAdminGuestsRoute: AppAdminGuestsRoute,
   AppAdminIssuesRoute: AppAdminIssuesRoute,
+  AppAdminPassesRoute: AppAdminPassesRoute,
+  AppAdminPaymentsRoute: AppAdminPaymentsRoute,
+  AppAdminRealtimeRoute: AppAdminRealtimeRoute,
   AppAdminRequestsRoute: AppAdminRequestsRoute,
   AppAdminResidentsRoute: AppAdminResidentsRoute,
   AppAdminShopRoute: AppAdminShopRoute,
@@ -1203,6 +1347,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppResidentInviteRoute: AppResidentInviteRoute,
   AppResidentIssuesRoute: AppResidentIssuesRoute,
   AppResidentMoreRoute: AppResidentMoreRoute,
+  AppResidentPassRoute: AppResidentPassRoute,
   AppResidentPrivacyRoute: AppResidentPrivacyRoute,
   AppResidentProfileRoute: AppResidentProfileRoute,
   AppResidentRequestsRoute: AppResidentRequestsRoute,
@@ -1212,7 +1357,9 @@ const AppRouteChildren: AppRouteChildren = {
   AppResidentTermsRoute: AppResidentTermsRoute,
   AppResidentVerificationRoute: AppResidentVerificationRoute,
   AppSuperAuditRoute: AppSuperAuditRoute,
+  AppSuperFeaturesRoute: AppSuperFeaturesRoute,
   AppSuperInvitesRoute: AppSuperInvitesRoute,
+  AppSuperPlansRoute: AppSuperPlansRoute,
   AppSuperSettingsRoute: AppSuperSettingsRoute,
   AppSuperSupportRoute: AppSuperSupportRoute,
   AppSuperUsersRoute: AppSuperUsersRoute,
