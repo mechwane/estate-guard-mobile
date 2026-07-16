@@ -28,7 +28,7 @@ function PaymentsAdmin() {
     queryFn: async () => {
       const [bills, payments, orders, discounts] = await Promise.all([
         supabase.from("bills").select("id,title,amount,status,due_date,created_at,resident_id").eq("estate_id", estateId!).order("created_at", { ascending: false }),
-        supabase.from("payments").select("id,amount,method,reference,created_at,bill_id,resident_id").eq("estate_id", estateId!).order("created_at", { ascending: false }).limit(100),
+        supabase.from("payments").select("id,amount,method,paid_at,bill_id,resident_id").eq("estate_id", estateId!).order("paid_at", { ascending: false }).limit(100),
         supabase.from("shop_orders").select("id,item_name,amount_ngn,quantity,status,created_at,resident_id").eq("estate_id", estateId!).order("created_at", { ascending: false }).limit(100),
         supabase.from("discounts").select("*").eq("estate_id", estateId!).order("created_at", { ascending: false }),
       ]);
@@ -50,23 +50,21 @@ function PaymentsAdmin() {
     return { billed, collected, outstanding, orderRevenue };
   }, [data.data]);
 
-  const [form, setForm] = useState({ code: "", percent_off: 0, amount_off: 0, description: "", active: true });
+  const [form, setForm] = useState({ name: "", percent: 10, active: true });
   const createDiscount = useMutation({
     mutationFn: async () => {
-      if (!form.code.trim()) throw new Error("Code required");
+      if (!form.name.trim()) throw new Error("Name required");
       const { error } = await supabase.from("discounts").insert({
         estate_id: estateId!,
-        code: form.code.trim().toUpperCase(),
-        percent_off: form.percent_off || null,
-        amount_off: form.amount_off || null,
-        description: form.description || null,
+        name: form.name.trim(),
+        percent: form.percent,
         active: form.active,
       });
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Discount created");
-      setForm({ code: "", percent_off: 0, amount_off: 0, description: "", active: true });
+      setForm({ name: "", percent: 10, active: true });
       qc.invalidateQueries({ queryKey: ["admin-payments", estateId] });
     },
     onError: (e: Error) => toast.error(e.message),
