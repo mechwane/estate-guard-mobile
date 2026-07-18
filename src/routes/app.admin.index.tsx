@@ -331,20 +331,28 @@ function AdminDashboard() {
       [
         ["Realtime access", "/app/admin/realtime"],
         ["Security alerts", "/app/admin/alerts"],
+        ["Broadcast", "/app/admin/messages"],
         ["Payments", "/app/admin/payments"],
+        ["Access cards", "/app/admin/cards"],
+        ["Vehicle tags", "/app/admin/vehicles"],
         ["Access passes", "/app/admin/passes"],
         ["Residents", "/app/admin/residents"],
+        ["Dependants", "/app/admin/dependents"],
         ["Guards", "/app/admin/staff"],
         ["Guest logs", "/app/admin/guests"],
         ["Requests", "/app/admin/requests"],
         ["Issues", "/app/admin/issues"],
         ["Bills", "/app/admin/bills"],
+        ["Discounts", "/app/admin/discounts"],
         ["Shop", "/app/admin/shop"],
         ["Community", "/app/admin/community"],
+        ["Blog", "/app/admin/blog"],
         ["Verifications", "/app/admin/verifications"],
+        ["Troubleshoot", "/app/admin/troubleshoot"],
       ] as const,
     [],
   );
+
 
   if (!estateId)
     return (

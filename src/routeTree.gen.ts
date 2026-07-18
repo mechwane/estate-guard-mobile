@@ -55,6 +55,8 @@ import { Route as AppGuardIncidentsRouteImport } from './routes/app.guard.incide
 import { Route as AppGuardHistoryRouteImport } from './routes/app.guard.history'
 import { Route as AppGuardActiveRouteImport } from './routes/app.guard.active'
 import { Route as AppAdminVerificationsRouteImport } from './routes/app.admin.verifications'
+import { Route as AppAdminVehiclesRouteImport } from './routes/app.admin.vehicles'
+import { Route as AppAdminTroubleshootRouteImport } from './routes/app.admin.troubleshoot'
 import { Route as AppAdminStaffRouteImport } from './routes/app.admin.staff'
 import { Route as AppAdminShopRouteImport } from './routes/app.admin.shop'
 import { Route as AppAdminResidentsRouteImport } from './routes/app.admin.residents'
@@ -62,10 +64,15 @@ import { Route as AppAdminRequestsRouteImport } from './routes/app.admin.request
 import { Route as AppAdminRealtimeRouteImport } from './routes/app.admin.realtime'
 import { Route as AppAdminPaymentsRouteImport } from './routes/app.admin.payments'
 import { Route as AppAdminPassesRouteImport } from './routes/app.admin.passes'
+import { Route as AppAdminMessagesRouteImport } from './routes/app.admin.messages'
 import { Route as AppAdminIssuesRouteImport } from './routes/app.admin.issues'
 import { Route as AppAdminGuestsRouteImport } from './routes/app.admin.guests'
 import { Route as AppAdminEventsRouteImport } from './routes/app.admin.events'
+import { Route as AppAdminDiscountsRouteImport } from './routes/app.admin.discounts'
+import { Route as AppAdminDependentsRouteImport } from './routes/app.admin.dependents'
 import { Route as AppAdminCommunityRouteImport } from './routes/app.admin.community'
+import { Route as AppAdminCardsRouteImport } from './routes/app.admin.cards'
+import { Route as AppAdminBlogRouteImport } from './routes/app.admin.blog'
 import { Route as AppAdminBillsRouteImport } from './routes/app.admin.bills'
 import { Route as AppAdminAlertsRouteImport } from './routes/app.admin.alerts'
 import { Route as AppResidentEventsIndexRouteImport } from './routes/app.resident.events.index'
@@ -304,6 +311,16 @@ const AppAdminVerificationsRoute = AppAdminVerificationsRouteImport.update({
   path: '/admin/verifications',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminVehiclesRoute = AppAdminVehiclesRouteImport.update({
+  id: '/admin/vehicles',
+  path: '/admin/vehicles',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminTroubleshootRoute = AppAdminTroubleshootRouteImport.update({
+  id: '/admin/troubleshoot',
+  path: '/admin/troubleshoot',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminStaffRoute = AppAdminStaffRouteImport.update({
   id: '/admin/staff',
   path: '/admin/staff',
@@ -339,6 +356,11 @@ const AppAdminPassesRoute = AppAdminPassesRouteImport.update({
   path: '/admin/passes',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminMessagesRoute = AppAdminMessagesRouteImport.update({
+  id: '/admin/messages',
+  path: '/admin/messages',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminIssuesRoute = AppAdminIssuesRouteImport.update({
   id: '/admin/issues',
   path: '/admin/issues',
@@ -354,9 +376,29 @@ const AppAdminEventsRoute = AppAdminEventsRouteImport.update({
   path: '/admin/events',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminDiscountsRoute = AppAdminDiscountsRouteImport.update({
+  id: '/admin/discounts',
+  path: '/admin/discounts',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminDependentsRoute = AppAdminDependentsRouteImport.update({
+  id: '/admin/dependents',
+  path: '/admin/dependents',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminCommunityRoute = AppAdminCommunityRouteImport.update({
   id: '/admin/community',
   path: '/admin/community',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminCardsRoute = AppAdminCardsRouteImport.update({
+  id: '/admin/cards',
+  path: '/admin/cards',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminBlogRoute = AppAdminBlogRouteImport.update({
+  id: '/admin/blog',
+  path: '/admin/blog',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminBillsRoute = AppAdminBillsRouteImport.update({
@@ -406,10 +448,15 @@ export interface FileRoutesByFullPath {
   '/auth/sign-up': typeof AuthSignUpRoute
   '/app/admin/alerts': typeof AppAdminAlertsRoute
   '/app/admin/bills': typeof AppAdminBillsRoute
+  '/app/admin/blog': typeof AppAdminBlogRoute
+  '/app/admin/cards': typeof AppAdminCardsRoute
   '/app/admin/community': typeof AppAdminCommunityRoute
+  '/app/admin/dependents': typeof AppAdminDependentsRoute
+  '/app/admin/discounts': typeof AppAdminDiscountsRoute
   '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
+  '/app/admin/messages': typeof AppAdminMessagesRoute
   '/app/admin/passes': typeof AppAdminPassesRoute
   '/app/admin/payments': typeof AppAdminPaymentsRoute
   '/app/admin/realtime': typeof AppAdminRealtimeRoute
@@ -417,6 +464,8 @@ export interface FileRoutesByFullPath {
   '/app/admin/residents': typeof AppAdminResidentsRoute
   '/app/admin/shop': typeof AppAdminShopRoute
   '/app/admin/staff': typeof AppAdminStaffRoute
+  '/app/admin/troubleshoot': typeof AppAdminTroubleshootRoute
+  '/app/admin/vehicles': typeof AppAdminVehiclesRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
   '/app/guard/active': typeof AppGuardActiveRoute
   '/app/guard/history': typeof AppGuardHistoryRoute
@@ -472,10 +521,15 @@ export interface FileRoutesByTo {
   '/auth/sign-up': typeof AuthSignUpRoute
   '/app/admin/alerts': typeof AppAdminAlertsRoute
   '/app/admin/bills': typeof AppAdminBillsRoute
+  '/app/admin/blog': typeof AppAdminBlogRoute
+  '/app/admin/cards': typeof AppAdminCardsRoute
   '/app/admin/community': typeof AppAdminCommunityRoute
+  '/app/admin/dependents': typeof AppAdminDependentsRoute
+  '/app/admin/discounts': typeof AppAdminDiscountsRoute
   '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
+  '/app/admin/messages': typeof AppAdminMessagesRoute
   '/app/admin/passes': typeof AppAdminPassesRoute
   '/app/admin/payments': typeof AppAdminPaymentsRoute
   '/app/admin/realtime': typeof AppAdminRealtimeRoute
@@ -483,6 +537,8 @@ export interface FileRoutesByTo {
   '/app/admin/residents': typeof AppAdminResidentsRoute
   '/app/admin/shop': typeof AppAdminShopRoute
   '/app/admin/staff': typeof AppAdminStaffRoute
+  '/app/admin/troubleshoot': typeof AppAdminTroubleshootRoute
+  '/app/admin/vehicles': typeof AppAdminVehiclesRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
   '/app/guard/active': typeof AppGuardActiveRoute
   '/app/guard/history': typeof AppGuardHistoryRoute
@@ -539,10 +595,15 @@ export interface FileRoutesById {
   '/auth/sign-up': typeof AuthSignUpRoute
   '/app/admin/alerts': typeof AppAdminAlertsRoute
   '/app/admin/bills': typeof AppAdminBillsRoute
+  '/app/admin/blog': typeof AppAdminBlogRoute
+  '/app/admin/cards': typeof AppAdminCardsRoute
   '/app/admin/community': typeof AppAdminCommunityRoute
+  '/app/admin/dependents': typeof AppAdminDependentsRoute
+  '/app/admin/discounts': typeof AppAdminDiscountsRoute
   '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
+  '/app/admin/messages': typeof AppAdminMessagesRoute
   '/app/admin/passes': typeof AppAdminPassesRoute
   '/app/admin/payments': typeof AppAdminPaymentsRoute
   '/app/admin/realtime': typeof AppAdminRealtimeRoute
@@ -550,6 +611,8 @@ export interface FileRoutesById {
   '/app/admin/residents': typeof AppAdminResidentsRoute
   '/app/admin/shop': typeof AppAdminShopRoute
   '/app/admin/staff': typeof AppAdminStaffRoute
+  '/app/admin/troubleshoot': typeof AppAdminTroubleshootRoute
+  '/app/admin/vehicles': typeof AppAdminVehiclesRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
   '/app/guard/active': typeof AppGuardActiveRoute
   '/app/guard/history': typeof AppGuardHistoryRoute
@@ -607,10 +670,15 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/app/admin/alerts'
     | '/app/admin/bills'
+    | '/app/admin/blog'
+    | '/app/admin/cards'
     | '/app/admin/community'
+    | '/app/admin/dependents'
+    | '/app/admin/discounts'
     | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/issues'
+    | '/app/admin/messages'
     | '/app/admin/passes'
     | '/app/admin/payments'
     | '/app/admin/realtime'
@@ -618,6 +686,8 @@ export interface FileRouteTypes {
     | '/app/admin/residents'
     | '/app/admin/shop'
     | '/app/admin/staff'
+    | '/app/admin/troubleshoot'
+    | '/app/admin/vehicles'
     | '/app/admin/verifications'
     | '/app/guard/active'
     | '/app/guard/history'
@@ -673,10 +743,15 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/app/admin/alerts'
     | '/app/admin/bills'
+    | '/app/admin/blog'
+    | '/app/admin/cards'
     | '/app/admin/community'
+    | '/app/admin/dependents'
+    | '/app/admin/discounts'
     | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/issues'
+    | '/app/admin/messages'
     | '/app/admin/passes'
     | '/app/admin/payments'
     | '/app/admin/realtime'
@@ -684,6 +759,8 @@ export interface FileRouteTypes {
     | '/app/admin/residents'
     | '/app/admin/shop'
     | '/app/admin/staff'
+    | '/app/admin/troubleshoot'
+    | '/app/admin/vehicles'
     | '/app/admin/verifications'
     | '/app/guard/active'
     | '/app/guard/history'
@@ -739,10 +816,15 @@ export interface FileRouteTypes {
     | '/auth/sign-up'
     | '/app/admin/alerts'
     | '/app/admin/bills'
+    | '/app/admin/blog'
+    | '/app/admin/cards'
     | '/app/admin/community'
+    | '/app/admin/dependents'
+    | '/app/admin/discounts'
     | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/issues'
+    | '/app/admin/messages'
     | '/app/admin/passes'
     | '/app/admin/payments'
     | '/app/admin/realtime'
@@ -750,6 +832,8 @@ export interface FileRouteTypes {
     | '/app/admin/residents'
     | '/app/admin/shop'
     | '/app/admin/staff'
+    | '/app/admin/troubleshoot'
+    | '/app/admin/vehicles'
     | '/app/admin/verifications'
     | '/app/guard/active'
     | '/app/guard/history'
@@ -1125,6 +1209,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminVerificationsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/vehicles': {
+      id: '/app/admin/vehicles'
+      path: '/admin/vehicles'
+      fullPath: '/app/admin/vehicles'
+      preLoaderRoute: typeof AppAdminVehiclesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/troubleshoot': {
+      id: '/app/admin/troubleshoot'
+      path: '/admin/troubleshoot'
+      fullPath: '/app/admin/troubleshoot'
+      preLoaderRoute: typeof AppAdminTroubleshootRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/staff': {
       id: '/app/admin/staff'
       path: '/admin/staff'
@@ -1174,6 +1272,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminPassesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/messages': {
+      id: '/app/admin/messages'
+      path: '/admin/messages'
+      fullPath: '/app/admin/messages'
+      preLoaderRoute: typeof AppAdminMessagesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/issues': {
       id: '/app/admin/issues'
       path: '/admin/issues'
@@ -1195,11 +1300,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminEventsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/discounts': {
+      id: '/app/admin/discounts'
+      path: '/admin/discounts'
+      fullPath: '/app/admin/discounts'
+      preLoaderRoute: typeof AppAdminDiscountsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/dependents': {
+      id: '/app/admin/dependents'
+      path: '/admin/dependents'
+      fullPath: '/app/admin/dependents'
+      preLoaderRoute: typeof AppAdminDependentsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/community': {
       id: '/app/admin/community'
       path: '/admin/community'
       fullPath: '/app/admin/community'
       preLoaderRoute: typeof AppAdminCommunityRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/cards': {
+      id: '/app/admin/cards'
+      path: '/admin/cards'
+      fullPath: '/app/admin/cards'
+      preLoaderRoute: typeof AppAdminCardsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/blog': {
+      id: '/app/admin/blog'
+      path: '/admin/blog'
+      fullPath: '/app/admin/blog'
+      preLoaderRoute: typeof AppAdminBlogRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/admin/bills': {
@@ -1258,10 +1391,15 @@ interface AppRouteChildren {
   AppDeniedRoute: typeof AppDeniedRoute
   AppAdminAlertsRoute: typeof AppAdminAlertsRoute
   AppAdminBillsRoute: typeof AppAdminBillsRoute
+  AppAdminBlogRoute: typeof AppAdminBlogRoute
+  AppAdminCardsRoute: typeof AppAdminCardsRoute
   AppAdminCommunityRoute: typeof AppAdminCommunityRoute
+  AppAdminDependentsRoute: typeof AppAdminDependentsRoute
+  AppAdminDiscountsRoute: typeof AppAdminDiscountsRoute
   AppAdminEventsRoute: typeof AppAdminEventsRoute
   AppAdminGuestsRoute: typeof AppAdminGuestsRoute
   AppAdminIssuesRoute: typeof AppAdminIssuesRoute
+  AppAdminMessagesRoute: typeof AppAdminMessagesRoute
   AppAdminPassesRoute: typeof AppAdminPassesRoute
   AppAdminPaymentsRoute: typeof AppAdminPaymentsRoute
   AppAdminRealtimeRoute: typeof AppAdminRealtimeRoute
@@ -1269,6 +1407,8 @@ interface AppRouteChildren {
   AppAdminResidentsRoute: typeof AppAdminResidentsRoute
   AppAdminShopRoute: typeof AppAdminShopRoute
   AppAdminStaffRoute: typeof AppAdminStaffRoute
+  AppAdminTroubleshootRoute: typeof AppAdminTroubleshootRoute
+  AppAdminVehiclesRoute: typeof AppAdminVehiclesRoute
   AppAdminVerificationsRoute: typeof AppAdminVerificationsRoute
   AppGuardActiveRoute: typeof AppGuardActiveRoute
   AppGuardHistoryRoute: typeof AppGuardHistoryRoute
@@ -1318,10 +1458,15 @@ const AppRouteChildren: AppRouteChildren = {
   AppDeniedRoute: AppDeniedRoute,
   AppAdminAlertsRoute: AppAdminAlertsRoute,
   AppAdminBillsRoute: AppAdminBillsRoute,
+  AppAdminBlogRoute: AppAdminBlogRoute,
+  AppAdminCardsRoute: AppAdminCardsRoute,
   AppAdminCommunityRoute: AppAdminCommunityRoute,
+  AppAdminDependentsRoute: AppAdminDependentsRoute,
+  AppAdminDiscountsRoute: AppAdminDiscountsRoute,
   AppAdminEventsRoute: AppAdminEventsRoute,
   AppAdminGuestsRoute: AppAdminGuestsRoute,
   AppAdminIssuesRoute: AppAdminIssuesRoute,
+  AppAdminMessagesRoute: AppAdminMessagesRoute,
   AppAdminPassesRoute: AppAdminPassesRoute,
   AppAdminPaymentsRoute: AppAdminPaymentsRoute,
   AppAdminRealtimeRoute: AppAdminRealtimeRoute,
@@ -1329,6 +1474,8 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminResidentsRoute: AppAdminResidentsRoute,
   AppAdminShopRoute: AppAdminShopRoute,
   AppAdminStaffRoute: AppAdminStaffRoute,
+  AppAdminTroubleshootRoute: AppAdminTroubleshootRoute,
+  AppAdminVehiclesRoute: AppAdminVehiclesRoute,
   AppAdminVerificationsRoute: AppAdminVerificationsRoute,
   AppGuardActiveRoute: AppGuardActiveRoute,
   AppGuardHistoryRoute: AppGuardHistoryRoute,
