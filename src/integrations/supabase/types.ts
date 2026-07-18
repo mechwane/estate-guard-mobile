@@ -1691,6 +1691,10 @@ export type Database = {
         Args: { _user_id: string }
         Returns: undefined
       }
+      broadcast_message: {
+        Args: { _body: string; _link?: string; _title: string }
+        Returns: number
+      }
       create_estate_admin_invite: {
         Args: { _email: string; _estate_id: string }
         Returns: string
