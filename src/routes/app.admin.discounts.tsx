@@ -31,7 +31,7 @@ function Discounts() {
   const add = useMutation({
     mutationFn: async () => {
       if (!name.trim() || percent <= 0 || percent > 100) throw new Error("Name and percent (1-100) required");
-      const { error } = await supabase.from("discounts").insert({ estate_id: estateId!, name: name.trim(), percent, created_by: session?.user.id });
+      const { error } = await supabase.from("discounts").insert({ estate_id: estateId!, name: name.trim(), percent, created_by: session?.userId });
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Discount added"); setName(""); setPercent(10); qc.invalidateQueries({ queryKey: ["admin-discounts", estateId] }); },

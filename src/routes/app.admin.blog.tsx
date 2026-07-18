@@ -37,7 +37,7 @@ function BlogAdmin() {
     mutationFn: async () => {
       if (!title.trim() || !body.trim()) throw new Error("Title and body required");
       const { error } = await supabase.from("community_posts").insert({
-        estate_id: estateId!, author_id: session?.user.id, post_type: "blog",
+        estate_id: estateId!, author_id: session?.userId, post_type: "blog",
         title: title.trim(), body: body.trim(), cover_url: coverUrl.trim() || null,
       });
       if (error) throw error;
