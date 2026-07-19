@@ -24,6 +24,7 @@ import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 import { Route as AppSuperUsersRouteImport } from './routes/app.super.users'
 import { Route as AppSuperSupportRouteImport } from './routes/app.super.support'
 import { Route as AppSuperSettingsRouteImport } from './routes/app.super.settings'
+import { Route as AppSuperProfileRouteImport } from './routes/app.super.profile'
 import { Route as AppSuperPlansRouteImport } from './routes/app.super.plans'
 import { Route as AppSuperInvitesRouteImport } from './routes/app.super.invites'
 import { Route as AppSuperFeaturesRouteImport } from './routes/app.super.features'
@@ -50,6 +51,7 @@ import { Route as AppResidentContactsRouteImport } from './routes/app.resident.c
 import { Route as AppResidentCommunityRouteImport } from './routes/app.resident.community'
 import { Route as AppResidentBillsRouteImport } from './routes/app.resident.bills'
 import { Route as AppGuardValidateRouteImport } from './routes/app.guard.validate'
+import { Route as AppGuardProfileRouteImport } from './routes/app.guard.profile'
 import { Route as AppGuardMoreRouteImport } from './routes/app.guard.more'
 import { Route as AppGuardIncidentsRouteImport } from './routes/app.guard.incidents'
 import { Route as AppGuardHistoryRouteImport } from './routes/app.guard.history'
@@ -62,6 +64,7 @@ import { Route as AppAdminShopRouteImport } from './routes/app.admin.shop'
 import { Route as AppAdminResidentsRouteImport } from './routes/app.admin.residents'
 import { Route as AppAdminRequestsRouteImport } from './routes/app.admin.requests'
 import { Route as AppAdminRealtimeRouteImport } from './routes/app.admin.realtime'
+import { Route as AppAdminProfileRouteImport } from './routes/app.admin.profile'
 import { Route as AppAdminPaymentsRouteImport } from './routes/app.admin.payments'
 import { Route as AppAdminPassesRouteImport } from './routes/app.admin.passes'
 import { Route as AppAdminMessagesRouteImport } from './routes/app.admin.messages'
@@ -154,6 +157,11 @@ const AppSuperSupportRoute = AppSuperSupportRouteImport.update({
 const AppSuperSettingsRoute = AppSuperSettingsRouteImport.update({
   id: '/super/settings',
   path: '/super/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperProfileRoute = AppSuperProfileRouteImport.update({
+  id: '/super/profile',
+  path: '/super/profile',
   getParentRoute: () => AppRoute,
 } as any)
 const AppSuperPlansRoute = AppSuperPlansRouteImport.update({
@@ -286,6 +294,11 @@ const AppGuardValidateRoute = AppGuardValidateRouteImport.update({
   path: '/guard/validate',
   getParentRoute: () => AppRoute,
 } as any)
+const AppGuardProfileRoute = AppGuardProfileRouteImport.update({
+  id: '/guard/profile',
+  path: '/guard/profile',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppGuardMoreRoute = AppGuardMoreRouteImport.update({
   id: '/guard/more',
   path: '/guard/more',
@@ -344,6 +357,11 @@ const AppAdminRequestsRoute = AppAdminRequestsRouteImport.update({
 const AppAdminRealtimeRoute = AppAdminRealtimeRouteImport.update({
   id: '/admin/realtime',
   path: '/admin/realtime',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminProfileRoute = AppAdminProfileRouteImport.update({
+  id: '/admin/profile',
+  path: '/admin/profile',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminPaymentsRoute = AppAdminPaymentsRouteImport.update({
@@ -459,6 +477,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/messages': typeof AppAdminMessagesRoute
   '/app/admin/passes': typeof AppAdminPassesRoute
   '/app/admin/payments': typeof AppAdminPaymentsRoute
+  '/app/admin/profile': typeof AppAdminProfileRoute
   '/app/admin/realtime': typeof AppAdminRealtimeRoute
   '/app/admin/requests': typeof AppAdminRequestsRoute
   '/app/admin/residents': typeof AppAdminResidentsRoute
@@ -471,6 +490,7 @@ export interface FileRoutesByFullPath {
   '/app/guard/history': typeof AppGuardHistoryRoute
   '/app/guard/incidents': typeof AppGuardIncidentsRoute
   '/app/guard/more': typeof AppGuardMoreRoute
+  '/app/guard/profile': typeof AppGuardProfileRoute
   '/app/guard/validate': typeof AppGuardValidateRoute
   '/app/resident/bills': typeof AppResidentBillsRoute
   '/app/resident/community': typeof AppResidentCommunityRoute
@@ -497,6 +517,7 @@ export interface FileRoutesByFullPath {
   '/app/super/features': typeof AppSuperFeaturesRoute
   '/app/super/invites': typeof AppSuperInvitesRoute
   '/app/super/plans': typeof AppSuperPlansRoute
+  '/app/super/profile': typeof AppSuperProfileRoute
   '/app/super/settings': typeof AppSuperSettingsRoute
   '/app/super/support': typeof AppSuperSupportRoute
   '/app/super/users': typeof AppSuperUsersRoute
@@ -532,6 +553,7 @@ export interface FileRoutesByTo {
   '/app/admin/messages': typeof AppAdminMessagesRoute
   '/app/admin/passes': typeof AppAdminPassesRoute
   '/app/admin/payments': typeof AppAdminPaymentsRoute
+  '/app/admin/profile': typeof AppAdminProfileRoute
   '/app/admin/realtime': typeof AppAdminRealtimeRoute
   '/app/admin/requests': typeof AppAdminRequestsRoute
   '/app/admin/residents': typeof AppAdminResidentsRoute
@@ -544,6 +566,7 @@ export interface FileRoutesByTo {
   '/app/guard/history': typeof AppGuardHistoryRoute
   '/app/guard/incidents': typeof AppGuardIncidentsRoute
   '/app/guard/more': typeof AppGuardMoreRoute
+  '/app/guard/profile': typeof AppGuardProfileRoute
   '/app/guard/validate': typeof AppGuardValidateRoute
   '/app/resident/bills': typeof AppResidentBillsRoute
   '/app/resident/community': typeof AppResidentCommunityRoute
@@ -570,6 +593,7 @@ export interface FileRoutesByTo {
   '/app/super/features': typeof AppSuperFeaturesRoute
   '/app/super/invites': typeof AppSuperInvitesRoute
   '/app/super/plans': typeof AppSuperPlansRoute
+  '/app/super/profile': typeof AppSuperProfileRoute
   '/app/super/settings': typeof AppSuperSettingsRoute
   '/app/super/support': typeof AppSuperSupportRoute
   '/app/super/users': typeof AppSuperUsersRoute
@@ -606,6 +630,7 @@ export interface FileRoutesById {
   '/app/admin/messages': typeof AppAdminMessagesRoute
   '/app/admin/passes': typeof AppAdminPassesRoute
   '/app/admin/payments': typeof AppAdminPaymentsRoute
+  '/app/admin/profile': typeof AppAdminProfileRoute
   '/app/admin/realtime': typeof AppAdminRealtimeRoute
   '/app/admin/requests': typeof AppAdminRequestsRoute
   '/app/admin/residents': typeof AppAdminResidentsRoute
@@ -618,6 +643,7 @@ export interface FileRoutesById {
   '/app/guard/history': typeof AppGuardHistoryRoute
   '/app/guard/incidents': typeof AppGuardIncidentsRoute
   '/app/guard/more': typeof AppGuardMoreRoute
+  '/app/guard/profile': typeof AppGuardProfileRoute
   '/app/guard/validate': typeof AppGuardValidateRoute
   '/app/resident/bills': typeof AppResidentBillsRoute
   '/app/resident/community': typeof AppResidentCommunityRoute
@@ -644,6 +670,7 @@ export interface FileRoutesById {
   '/app/super/features': typeof AppSuperFeaturesRoute
   '/app/super/invites': typeof AppSuperInvitesRoute
   '/app/super/plans': typeof AppSuperPlansRoute
+  '/app/super/profile': typeof AppSuperProfileRoute
   '/app/super/settings': typeof AppSuperSettingsRoute
   '/app/super/support': typeof AppSuperSupportRoute
   '/app/super/users': typeof AppSuperUsersRoute
@@ -681,6 +708,7 @@ export interface FileRouteTypes {
     | '/app/admin/messages'
     | '/app/admin/passes'
     | '/app/admin/payments'
+    | '/app/admin/profile'
     | '/app/admin/realtime'
     | '/app/admin/requests'
     | '/app/admin/residents'
@@ -693,6 +721,7 @@ export interface FileRouteTypes {
     | '/app/guard/history'
     | '/app/guard/incidents'
     | '/app/guard/more'
+    | '/app/guard/profile'
     | '/app/guard/validate'
     | '/app/resident/bills'
     | '/app/resident/community'
@@ -719,6 +748,7 @@ export interface FileRouteTypes {
     | '/app/super/features'
     | '/app/super/invites'
     | '/app/super/plans'
+    | '/app/super/profile'
     | '/app/super/settings'
     | '/app/super/support'
     | '/app/super/users'
@@ -754,6 +784,7 @@ export interface FileRouteTypes {
     | '/app/admin/messages'
     | '/app/admin/passes'
     | '/app/admin/payments'
+    | '/app/admin/profile'
     | '/app/admin/realtime'
     | '/app/admin/requests'
     | '/app/admin/residents'
@@ -766,6 +797,7 @@ export interface FileRouteTypes {
     | '/app/guard/history'
     | '/app/guard/incidents'
     | '/app/guard/more'
+    | '/app/guard/profile'
     | '/app/guard/validate'
     | '/app/resident/bills'
     | '/app/resident/community'
@@ -792,6 +824,7 @@ export interface FileRouteTypes {
     | '/app/super/features'
     | '/app/super/invites'
     | '/app/super/plans'
+    | '/app/super/profile'
     | '/app/super/settings'
     | '/app/super/support'
     | '/app/super/users'
@@ -827,6 +860,7 @@ export interface FileRouteTypes {
     | '/app/admin/messages'
     | '/app/admin/passes'
     | '/app/admin/payments'
+    | '/app/admin/profile'
     | '/app/admin/realtime'
     | '/app/admin/requests'
     | '/app/admin/residents'
@@ -839,6 +873,7 @@ export interface FileRouteTypes {
     | '/app/guard/history'
     | '/app/guard/incidents'
     | '/app/guard/more'
+    | '/app/guard/profile'
     | '/app/guard/validate'
     | '/app/resident/bills'
     | '/app/resident/community'
@@ -865,6 +900,7 @@ export interface FileRouteTypes {
     | '/app/super/features'
     | '/app/super/invites'
     | '/app/super/plans'
+    | '/app/super/profile'
     | '/app/super/settings'
     | '/app/super/support'
     | '/app/super/users'
@@ -990,6 +1026,13 @@ declare module '@tanstack/react-router' {
       path: '/super/settings'
       fullPath: '/app/super/settings'
       preLoaderRoute: typeof AppSuperSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/profile': {
+      id: '/app/super/profile'
+      path: '/super/profile'
+      fullPath: '/app/super/profile'
+      preLoaderRoute: typeof AppSuperProfileRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/super/plans': {
@@ -1174,6 +1217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppGuardValidateRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/guard/profile': {
+      id: '/app/guard/profile'
+      path: '/guard/profile'
+      fullPath: '/app/guard/profile'
+      preLoaderRoute: typeof AppGuardProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/guard/more': {
       id: '/app/guard/more'
       path: '/guard/more'
@@ -1256,6 +1306,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/realtime'
       fullPath: '/app/admin/realtime'
       preLoaderRoute: typeof AppAdminRealtimeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/profile': {
+      id: '/app/admin/profile'
+      path: '/admin/profile'
+      fullPath: '/app/admin/profile'
+      preLoaderRoute: typeof AppAdminProfileRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/admin/payments': {
@@ -1402,6 +1459,7 @@ interface AppRouteChildren {
   AppAdminMessagesRoute: typeof AppAdminMessagesRoute
   AppAdminPassesRoute: typeof AppAdminPassesRoute
   AppAdminPaymentsRoute: typeof AppAdminPaymentsRoute
+  AppAdminProfileRoute: typeof AppAdminProfileRoute
   AppAdminRealtimeRoute: typeof AppAdminRealtimeRoute
   AppAdminRequestsRoute: typeof AppAdminRequestsRoute
   AppAdminResidentsRoute: typeof AppAdminResidentsRoute
@@ -1414,6 +1472,7 @@ interface AppRouteChildren {
   AppGuardHistoryRoute: typeof AppGuardHistoryRoute
   AppGuardIncidentsRoute: typeof AppGuardIncidentsRoute
   AppGuardMoreRoute: typeof AppGuardMoreRoute
+  AppGuardProfileRoute: typeof AppGuardProfileRoute
   AppGuardValidateRoute: typeof AppGuardValidateRoute
   AppResidentBillsRoute: typeof AppResidentBillsRoute
   AppResidentCommunityRoute: typeof AppResidentCommunityRoute
@@ -1440,6 +1499,7 @@ interface AppRouteChildren {
   AppSuperFeaturesRoute: typeof AppSuperFeaturesRoute
   AppSuperInvitesRoute: typeof AppSuperInvitesRoute
   AppSuperPlansRoute: typeof AppSuperPlansRoute
+  AppSuperProfileRoute: typeof AppSuperProfileRoute
   AppSuperSettingsRoute: typeof AppSuperSettingsRoute
   AppSuperSupportRoute: typeof AppSuperSupportRoute
   AppSuperUsersRoute: typeof AppSuperUsersRoute
@@ -1469,6 +1529,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminMessagesRoute: AppAdminMessagesRoute,
   AppAdminPassesRoute: AppAdminPassesRoute,
   AppAdminPaymentsRoute: AppAdminPaymentsRoute,
+  AppAdminProfileRoute: AppAdminProfileRoute,
   AppAdminRealtimeRoute: AppAdminRealtimeRoute,
   AppAdminRequestsRoute: AppAdminRequestsRoute,
   AppAdminResidentsRoute: AppAdminResidentsRoute,
@@ -1481,6 +1542,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppGuardHistoryRoute: AppGuardHistoryRoute,
   AppGuardIncidentsRoute: AppGuardIncidentsRoute,
   AppGuardMoreRoute: AppGuardMoreRoute,
+  AppGuardProfileRoute: AppGuardProfileRoute,
   AppGuardValidateRoute: AppGuardValidateRoute,
   AppResidentBillsRoute: AppResidentBillsRoute,
   AppResidentCommunityRoute: AppResidentCommunityRoute,
@@ -1507,6 +1569,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppSuperFeaturesRoute: AppSuperFeaturesRoute,
   AppSuperInvitesRoute: AppSuperInvitesRoute,
   AppSuperPlansRoute: AppSuperPlansRoute,
+  AppSuperProfileRoute: AppSuperProfileRoute,
   AppSuperSettingsRoute: AppSuperSettingsRoute,
   AppSuperSupportRoute: AppSuperSupportRoute,
   AppSuperUsersRoute: AppSuperUsersRoute,
