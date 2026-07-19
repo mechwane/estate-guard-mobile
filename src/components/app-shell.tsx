@@ -69,14 +69,14 @@ export function AppShell({
   const isActive = (to: string) =>
     location.pathname === to || (to !== "/" && location.pathname.startsWith(to));
 
-  const AvatarBtn = ({ size = 8 }: { size?: number }) => (
+  const AvatarBtn = ({ large = false }: { large?: boolean }) => (
     <Link
       to={profileHref}
       aria-label="My profile"
       title="My profile"
       className={cn(
         "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-primary/70 to-primary text-xs font-semibold text-primary-foreground ring-2 ring-transparent transition hover:ring-primary/40",
-        `h-${size} w-${size}`,
+        large ? "h-10 w-10 text-sm" : "h-8 w-8",
       )}
     >
       {avatarUrl ? (
