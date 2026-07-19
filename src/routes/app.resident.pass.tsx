@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { format, formatDistanceToNow } from "date-fns";
 import { Fingerprint, KeyRound, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, EmptyState, ErrorState, ListSkeleton, StatusBadge } from "@/components/ui-kit";
+import { beginPassChallenge, issuePassVerified } from "@/lib/pass.functions";
 
 export const Route = createFileRoute("/app/resident/pass")({
   component: BiometricPass,
@@ -49,21 +51,29 @@ async function enrollWebAuthn(displayName: string) {
   };
 }
 
-async function verifyWebAuthn(credentialId: string) {
+async function performAssertion(credentialId: string, challenge: string) {
   if (typeof window === "undefined" || !window.PublicKeyCredential) {
     throw new Error("Biometric not supported on this device");
   }
   const idBytes = Uint8Array.from(atob(credentialId.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
-  const cred = await navigator.credentials.get({
+  const challengeBytes = Uint8Array.from(atob(challenge.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
+  const cred = (await navigator.credentials.get({
     publicKey: {
-      challenge: randomChallenge(),
+      challenge: challengeBytes,
       allowCredentials: [{ id: idBytes, type: "public-key" }],
       userVerification: "required",
       timeout: 60_000,
     },
-  });
+  })) as PublicKeyCredential | null;
   if (!cred) throw new Error("Verification cancelled");
+  const r = cred.response as AuthenticatorAssertionResponse;
+  return {
+    client_data_json: b64url(new Uint8Array(r.clientDataJSON)),
+    authenticator_data: b64url(new Uint8Array(r.authenticatorData)),
+    signature: b64url(new Uint8Array(r.signature)),
+  };
 }
+
 
 function BiometricPass() {
   const qc = useQueryClient();
@@ -122,19 +132,25 @@ function BiometricPass() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const beginChallenge = useServerFn(beginPassChallenge);
+  const issueVerified = useServerFn(issuePassVerified);
+
   const issue = useMutation({
     mutationFn: async () => {
       const cred = (creds.data ?? [])[0] as any;
       if (!cred) throw new Error("Enrol a biometric device first");
-      await verifyWebAuthn(cred.credential_id);
-      const { data, error } = await supabase.rpc("issue_resident_pass" as never, {
-        _kind: kind,
-        _guest_name: kind === "guest" ? guestName : null,
-        _ttl_minutes: ttl,
-        _credential_id: cred.credential_id,
-      } as never);
-      if (error) throw error;
-      return data as any;
+      const ch = await beginChallenge({ data: { credential_id: cred.credential_id } });
+      const assertion = await performAssertion(cred.credential_id, ch.challenge);
+      return await issueVerified({
+        data: {
+          credential_id: cred.credential_id,
+          challenge_id: ch.id,
+          ...assertion,
+          kind,
+          guest_name: kind === "guest" ? guestName : null,
+          ttl_minutes: ttl,
+        },
+      });
     },
     onSuccess: (res: any) => {
       toast.success(`Pass ready: ${res?.code}`);

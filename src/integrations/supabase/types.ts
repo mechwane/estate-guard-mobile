@@ -1677,6 +1677,39 @@ export type Database = {
           },
         ]
       }
+      webauthn_challenges: {
+        Row: {
+          challenge: string
+          consumed_at: string | null
+          created_at: string
+          credential_id: string | null
+          expires_at: string
+          id: string
+          purpose: string
+          user_id: string
+        }
+        Insert: {
+          challenge: string
+          consumed_at?: string | null
+          created_at?: string
+          credential_id?: string | null
+          expires_at?: string
+          id?: string
+          purpose: string
+          user_id: string
+        }
+        Update: {
+          challenge?: string
+          consumed_at?: string | null
+          created_at?: string
+          credential_id?: string | null
+          expires_at?: string
+          id?: string
+          purpose?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1691,6 +1724,7 @@ export type Database = {
         Args: { _user_id: string }
         Returns: undefined
       }
+      begin_pass_challenge: { Args: { _credential_id: string }; Returns: Json }
       broadcast_message: {
         Args: { _body: string; _link?: string; _title: string }
         Returns: number
@@ -1744,6 +1778,17 @@ export type Database = {
           _guest_name: string
           _kind: Database["public"]["Enums"]["resident_pass_kind"]
           _ttl_minutes: number
+        }
+        Returns: Json
+      }
+      issue_resident_pass_verified: {
+        Args: {
+          _challenge_id: string
+          _credential_id: string
+          _guest_name: string
+          _kind: Database["public"]["Enums"]["resident_pass_kind"]
+          _ttl_minutes: number
+          _user_id: string
         }
         Returns: Json
       }
