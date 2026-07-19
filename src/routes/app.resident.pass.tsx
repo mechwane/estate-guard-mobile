@@ -132,19 +132,25 @@ function BiometricPass() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const beginChallenge = useServerFn(beginPassChallenge);
+  const issueVerified = useServerFn(issuePassVerified);
+
   const issue = useMutation({
     mutationFn: async () => {
       const cred = (creds.data ?? [])[0] as any;
       if (!cred) throw new Error("Enrol a biometric device first");
-      await verifyWebAuthn(cred.credential_id);
-      const { data, error } = await supabase.rpc("issue_resident_pass" as never, {
-        _kind: kind,
-        _guest_name: kind === "guest" ? guestName : null,
-        _ttl_minutes: ttl,
-        _credential_id: cred.credential_id,
-      } as never);
-      if (error) throw error;
-      return data as any;
+      const ch = await beginChallenge({ data: { credential_id: cred.credential_id } });
+      const assertion = await performAssertion(cred.credential_id, ch.challenge);
+      return await issueVerified({
+        data: {
+          credential_id: cred.credential_id,
+          challenge_id: ch.id,
+          ...assertion,
+          kind,
+          guest_name: kind === "guest" ? guestName : null,
+          ttl_minutes: ttl,
+        },
+      });
     },
     onSuccess: (res: any) => {
       toast.success(`Pass ready: ${res?.code}`);
