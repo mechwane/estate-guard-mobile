@@ -51,21 +51,29 @@ async function enrollWebAuthn(displayName: string) {
   };
 }
 
-async function verifyWebAuthn(credentialId: string) {
+async function performAssertion(credentialId: string, challenge: string) {
   if (typeof window === "undefined" || !window.PublicKeyCredential) {
     throw new Error("Biometric not supported on this device");
   }
   const idBytes = Uint8Array.from(atob(credentialId.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
-  const cred = await navigator.credentials.get({
+  const challengeBytes = Uint8Array.from(atob(challenge.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
+  const cred = (await navigator.credentials.get({
     publicKey: {
-      challenge: randomChallenge(),
+      challenge: challengeBytes,
       allowCredentials: [{ id: idBytes, type: "public-key" }],
       userVerification: "required",
       timeout: 60_000,
     },
-  });
+  })) as PublicKeyCredential | null;
   if (!cred) throw new Error("Verification cancelled");
+  const r = cred.response as AuthenticatorAssertionResponse;
+  return {
+    client_data_json: b64url(new Uint8Array(r.clientDataJSON)),
+    authenticator_data: b64url(new Uint8Array(r.authenticatorData)),
+    signature: b64url(new Uint8Array(r.signature)),
+  };
 }
+
 
 function BiometricPass() {
   const qc = useQueryClient();
