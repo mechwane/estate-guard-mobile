@@ -93,7 +93,7 @@ export function AppShell({
       {/* Desktop sidebar */}
       <aside className="hidden md:flex md:w-64 md:flex-col md:border-r md:border-border/60 md:bg-card/40">
         <div className="flex h-16 items-center gap-3 border-b border-border/60 px-4">
-          <AvatarBtn size={10} />
+          <AvatarBtn large />
           <div className="min-w-0">
             <div className="truncate text-sm font-semibold">{session?.profile?.full_name ?? session?.email}</div>
             <div className="truncate text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -151,7 +151,7 @@ export function AppShell({
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <AvatarBtn size={8} />
+              <AvatarBtn />
               <button
                 onClick={signOut}
                 aria-label="Sign out"
