@@ -91,6 +91,7 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
     "/app/guard/incidents": { title: "Incidents" },
     "/app/guard/history": { title: "Entry & exit history" },
     "/app/guard/more": { title: "More" },
+    "/app/guard/profile": { title: "My profile" },
     "/app/admin": { title: "Overview" },
     "/app/admin/verifications": { title: "Verification queue" },
     "/app/admin/residents": { title: "Residents" },
@@ -102,12 +103,14 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
     "/app/admin/shop": { title: "Estate Shop", subtitle: "Manage items and orders" },
     "/app/admin/requests": { title: "Resident requests" },
     "/app/admin/community": { title: "Community posts" },
+    "/app/admin/profile": { title: "My profile" },
     "/app/super": { title: "Platform overview" },
     "/app/super/users": { title: "Platform users" },
     "/app/super/invites": { title: "Admin invites" },
     "/app/super/support": { title: "Support center" },
     "/app/super/audit": { title: "Audit logs" },
     "/app/super/settings": { title: "Platform settings" },
+    "/app/super/profile": { title: "My profile" },
     "/app/denied": { title: "Access denied" },
   };
 
