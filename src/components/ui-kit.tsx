@@ -1,8 +1,66 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-export function Card({ className, children }: { className?: string; children: ReactNode }) {
-  return <div className={cn("card-surface p-5", className)}>{children}</div>;
+export function Card({
+  className,
+  children,
+  interactive = true,
+}: {
+  className?: string;
+  children: ReactNode;
+  interactive?: boolean;
+}) {
+  return (
+    <div className={cn("card-surface p-4 sm:p-5", interactive && "lift-3d", className)}>
+      {children}
+    </div>
+  );
+}
+
+/**
+ * Responsive scroll-tab bar. Prevents cramped multi-tab rows on mobile
+ * (e.g. Payments with 4 tabs or Admin overview with Overview/Operations/Activity).
+ */
+export function ScrollTabs<T extends string>({
+  value,
+  onChange,
+  tabs,
+  className,
+}: {
+  value: T;
+  onChange: (v: T) => void;
+  tabs: readonly { key: T; label: string }[];
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "scroll-x -mx-1 flex gap-1 rounded-xl border border-border bg-card p-1",
+        className,
+      )}
+      role="tablist"
+    >
+      {tabs.map((t) => {
+        const active = value === t.key;
+        return (
+          <button
+            key={t.key}
+            role="tab"
+            aria-selected={active}
+            onClick={() => onChange(t.key)}
+            className={cn(
+              "shrink-0 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium capitalize transition-all",
+              active
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground",
+            )}
+          >
+            {t.label}
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
 export function SectionTitle({ children, action }: { children: ReactNode; action?: ReactNode }) {
@@ -35,12 +93,14 @@ export function StatCard({
     error: "text-destructive",
   }[tone];
   return (
-    <div className="card-surface p-4">
-      <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+    <div className="card-surface lift-3d min-w-0 p-3 sm:p-4">
+      <div className="truncate text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:text-[11px]">
         {label}
       </div>
-      <div className={cn("mt-1 text-2xl font-semibold tabular-nums", toneClass)}>{value}</div>
-      {hint && <div className="mt-1 text-xs text-muted-foreground">{hint}</div>}
+      <div className={cn("mt-1 text-xl font-semibold tabular-nums sm:text-2xl", toneClass)}>
+        {value}
+      </div>
+      {hint && <div className="mt-1 truncate text-xs text-muted-foreground">{hint}</div>}
     </div>
   );
 }
