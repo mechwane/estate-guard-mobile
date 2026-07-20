@@ -6,7 +6,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { Card, EmptyState, ErrorState, ListSkeleton, StatCard, StatusBadge } from "@/components/ui-kit";
+import { Card, EmptyState, ErrorState, ListSkeleton, ScrollTabs, StatCard, StatusBadge } from "@/components/ui-kit";
 import { ngn } from "@/lib/format";
 
 export const Route = createFileRoute("/app/admin/payments")({
@@ -89,17 +89,17 @@ function PaymentsAdmin() {
   return (
     <div className="space-y-4">
       <h1 className="text-lg font-semibold">Payments</h1>
-      <div className="grid grid-cols-4 gap-1 rounded-lg border border-border bg-card p-1">
-        {(["overview", "collections", "discounts", "orders"] as Tab[]).map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`rounded-md px-2 py-2 text-xs font-medium capitalize ${tab === t ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
-          >
-            {t}
-          </button>
-        ))}
-      </div>
+      <ScrollTabs
+        value={tab}
+        onChange={setTab}
+        tabs={[
+          { key: "overview", label: "Overview" },
+          { key: "collections", label: "Collections" },
+          { key: "discounts", label: "Discounts" },
+          { key: "orders", label: "Orders" },
+        ] as const}
+      />
+
 
       {tab === "overview" && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

@@ -18,6 +18,7 @@ import {
   EmptyState,
   ErrorState,
   ListSkeleton,
+  ScrollTabs,
   StatCard,
   StatusBadge,
 } from "@/components/ui-kit";
@@ -364,17 +365,16 @@ function AdminDashboard() {
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-3 gap-2 rounded-lg border border-border bg-card p-1">
-        {(["overview", "operations", "activity"] as const).map((s) => (
-          <button
-            key={s}
-            onClick={() => setSection(s)}
-            className={`rounded-md px-2 py-2 text-xs font-medium capitalize ${section === s ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-          >
-            {s}
-          </button>
-        ))}
-      </div>
+      <ScrollTabs
+        value={section}
+        onChange={setSection}
+        tabs={[
+          { key: "overview", label: "Overview" },
+          { key: "operations", label: "Operations" },
+          { key: "activity", label: "Activity" },
+        ] as const}
+      />
+
 
       {section === "overview" &&
         (metrics.isLoading ? (
