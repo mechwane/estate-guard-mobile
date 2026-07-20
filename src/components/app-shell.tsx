@@ -164,29 +164,31 @@ export function AppShell({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-2xl px-5 pb-28 pt-4 fade-in md:max-w-7xl md:px-8 md:pb-10 md:pt-8">
+        <main className="mx-auto w-full max-w-2xl px-4 pb-28 pt-4 page-enter sm:px-5 md:max-w-7xl md:px-8 md:pb-10 md:pt-8">
           <h1 className="sr-only">
             {title}
             {subtitle ? ` — ${subtitle}` : ""}
           </h1>
-          {children}
+          <div key={location.pathname} className="page-enter">
+            {children}
+          </div>
         </main>
       </div>
 
-      {/* Mobile bottom nav */}
+      {/* Mobile bottom nav — horizontally scrollable if crowded */}
       <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur md:hidden">
-        <div className="mx-auto flex max-w-2xl items-stretch justify-between px-2 py-1.5">
+        <div className="scroll-x mx-auto flex max-w-2xl items-stretch gap-1 px-2 pt-1.5 safe-bottom">
           {navItems.map((it) => (
             <Link
               key={it.to}
               to={it.to}
               className={cn(
-                "flex flex-1 flex-col items-center gap-0.5 rounded-lg px-2 py-2 text-[11px] font-medium transition-colors",
+                "flex min-w-[64px] flex-1 flex-col items-center gap-0.5 rounded-lg px-2 py-2 text-[11px] font-medium transition-colors",
                 isActive(it.to) ? "text-primary" : "text-muted-foreground hover:text-foreground",
               )}
             >
               <span className="[&>svg]:h-5 [&>svg]:w-5">{it.icon}</span>
-              <span>{it.label}</span>
+              <span className="max-w-full truncate">{it.label}</span>
             </Link>
           ))}
         </div>
