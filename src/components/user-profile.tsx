@@ -52,7 +52,23 @@ async function enrollWebAuthn(displayName: string) {
   };
 }
 
-export function UserProfile({ roleLabel }: { roleLabel: string }) {
+export function UserProfile({
+  roleLabel,
+  showBiometric = false,
+}: {
+  roleLabel: string;
+  /**
+   * Show Face Recognition / Fingerprint tiles.
+   *
+   * NOTE: The in-app WebAuthn toggle is intentionally NOT exposed for
+   * staff profiles (admin, guard, super admin). For residents, biometric
+   * access is managed as an external-device access mode via the
+   * `biometric_access` table — not through phone-fingerprint WebAuthn on
+   * the account profile page. Left `false` by default and unused; kept
+   * for backwards compatibility with any existing callers.
+   */
+  showBiometric?: boolean;
+}) {
   const { data: session, refetch } = useSession();
   const qc = useQueryClient();
   const profile = session?.profile;
