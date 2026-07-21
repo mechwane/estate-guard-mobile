@@ -430,12 +430,24 @@ function SuperDashboard() {
               <StatCard label="Resident requests" value={stats.data!.residentRequests} />
               <StatCard label="Meetings" value={stats.data!.meetings} />
               <StatCard label="Bills created" value={stats.data!.bills} />
+              <StatCard label="Access devices" value={stats.data!.devicesTotal} />
+              <StatCard label="Devices online" value={stats.data!.devicesOnline} tone="success" />
+              <StatCard
+                label="Devices offline"
+                value={stats.data!.devicesOffline}
+                tone={stats.data!.devicesOffline ? "warning" : "default"}
+              />
+              <StatCard
+                label="Biometric enrolled"
+                value={stats.data!.biometricEnrolled}
+              />
             </div>
           )}
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <QuickLink to="/app/super/plans" label="Plans & revenue" />
             <QuickLink to="/app/super/features" label="Feature flags" />
             <QuickLink to="/app/super/users" label="Users & roles" />
+            <QuickLink to="/app/super/devices" label="Access devices" />
             <QuickLink to="/app/super/invites" label="Admin invites" />
             <QuickLink to="/app/super/support" label="Support center" />
             <QuickLink to="/app/super/settings" label="Platform settings" />
