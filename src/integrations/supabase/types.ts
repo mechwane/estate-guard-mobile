@@ -58,6 +58,59 @@ export type Database = {
           },
         ]
       }
+      access_devices: {
+        Row: {
+          created_at: string
+          device_token_hash: string | null
+          device_type: string
+          estate_id: string
+          id: string
+          last_seen_at: string | null
+          last_sync_at: string | null
+          location: string | null
+          name: string
+          notes: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          device_token_hash?: string | null
+          device_type: string
+          estate_id: string
+          id?: string
+          last_seen_at?: string | null
+          last_sync_at?: string | null
+          location?: string | null
+          name: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          device_token_hash?: string | null
+          device_type?: string
+          estate_id?: string
+          id?: string
+          last_seen_at?: string | null
+          last_sync_at?: string | null
+          location?: string | null
+          name?: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "access_devices_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -145,6 +198,171 @@ export type Database = {
             columns: ["estate_id"]
             isOneToOne: false
             referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      biometric_access: {
+        Row: {
+          access_status: string
+          approved_at: string | null
+          approved_by: string | null
+          biometric_type: string
+          created_at: string
+          dependent_id: string | null
+          device_id: string | null
+          enrollment_status: string
+          estate_id: string
+          external_credential_ref: string | null
+          id: string
+          last_used_at: string | null
+          notes: string | null
+          resident_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          access_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
+          biometric_type: string
+          created_at?: string
+          dependent_id?: string | null
+          device_id?: string | null
+          enrollment_status?: string
+          estate_id: string
+          external_credential_ref?: string | null
+          id?: string
+          last_used_at?: string | null
+          notes?: string | null
+          resident_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          access_status?: string
+          approved_at?: string | null
+          approved_by?: string | null
+          biometric_type?: string
+          created_at?: string
+          dependent_id?: string | null
+          device_id?: string | null
+          enrollment_status?: string
+          estate_id?: string
+          external_credential_ref?: string | null
+          id?: string
+          last_used_at?: string | null
+          notes?: string | null
+          resident_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "biometric_access_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "biometric_access_dependent_id_fkey"
+            columns: ["dependent_id"]
+            isOneToOne: false
+            referencedRelation: "dependents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "biometric_access_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "access_devices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "biometric_access_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "biometric_access_resident_id_fkey"
+            columns: ["resident_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      biometric_access_events: {
+        Row: {
+          biometric_access_id: string | null
+          biometric_type: string | null
+          created_at: string
+          dependent_id: string | null
+          device_id: string | null
+          estate_id: string
+          id: string
+          outcome: string
+          reason: string | null
+          resident_id: string | null
+        }
+        Insert: {
+          biometric_access_id?: string | null
+          biometric_type?: string | null
+          created_at?: string
+          dependent_id?: string | null
+          device_id?: string | null
+          estate_id: string
+          id?: string
+          outcome: string
+          reason?: string | null
+          resident_id?: string | null
+        }
+        Update: {
+          biometric_access_id?: string | null
+          biometric_type?: string | null
+          created_at?: string
+          dependent_id?: string | null
+          device_id?: string | null
+          estate_id?: string
+          id?: string
+          outcome?: string
+          reason?: string | null
+          resident_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "biometric_access_events_biometric_access_id_fkey"
+            columns: ["biometric_access_id"]
+            isOneToOne: false
+            referencedRelation: "biometric_access"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "biometric_access_events_dependent_id_fkey"
+            columns: ["dependent_id"]
+            isOneToOne: false
+            referencedRelation: "dependents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "biometric_access_events_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "access_devices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "biometric_access_events_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "biometric_access_events_resident_id_fkey"
+            columns: ["resident_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1716,6 +1934,26 @@ export type Database = {
     }
     Functions: {
       activate_estate: { Args: { _estate_id: string }; Returns: undefined }
+      admin_register_device: {
+        Args: { _device_type: string; _location: string; _name: string }
+        Returns: string
+      }
+      admin_set_device_status: {
+        Args: { _device_id: string; _status: string }
+        Returns: undefined
+      }
+      admin_upsert_biometric_access: {
+        Args: {
+          _access_status: string
+          _biometric_type: string
+          _dependent_id: string
+          _device_id: string
+          _enrollment_status: string
+          _notes: string
+          _resident_id: string
+        }
+        Returns: string
+      }
       assign_estate_admin: {
         Args: { _estate_id: string; _user_id: string }
         Returns: undefined

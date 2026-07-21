@@ -14,6 +14,7 @@ import {
   Megaphone,
   LifeBuoy,
   UserCog,
+  Cpu,
 } from "lucide-react";
 import type { AppRole } from "@/lib/session";
 import type { ReactNode } from "react";
@@ -43,6 +44,7 @@ export const navByRole: Record<AppRole, { to: string; label: string; icon: React
   super_admin: [
     { to: "/app/super", label: "Overview", icon: <Building2 /> },
     { to: "/app/super/users", label: "Users", icon: <UserCog /> },
+    { to: "/app/super/devices", label: "Devices", icon: <Cpu /> },
     { to: "/app/super/invites", label: "Invites", icon: <Inbox /> },
     { to: "/app/super/support", label: "Support", icon: <LifeBuoy /> },
     { to: "/app/super/audit", label: "Audit", icon: <ScrollText /> },

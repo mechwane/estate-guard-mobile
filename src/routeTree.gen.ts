@@ -28,6 +28,7 @@ import { Route as AppSuperProfileRouteImport } from './routes/app.super.profile'
 import { Route as AppSuperPlansRouteImport } from './routes/app.super.plans'
 import { Route as AppSuperInvitesRouteImport } from './routes/app.super.invites'
 import { Route as AppSuperFeaturesRouteImport } from './routes/app.super.features'
+import { Route as AppSuperDevicesRouteImport } from './routes/app.super.devices'
 import { Route as AppSuperAuditRouteImport } from './routes/app.super.audit'
 import { Route as AppResidentVerificationRouteImport } from './routes/app.resident.verification'
 import { Route as AppResidentTermsRouteImport } from './routes/app.resident.terms'
@@ -177,6 +178,11 @@ const AppSuperInvitesRoute = AppSuperInvitesRouteImport.update({
 const AppSuperFeaturesRoute = AppSuperFeaturesRouteImport.update({
   id: '/super/features',
   path: '/super/features',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperDevicesRoute = AppSuperDevicesRouteImport.update({
+  id: '/super/devices',
+  path: '/super/devices',
   getParentRoute: () => AppRoute,
 } as any)
 const AppSuperAuditRoute = AppSuperAuditRouteImport.update({
@@ -514,6 +520,7 @@ export interface FileRoutesByFullPath {
   '/app/resident/terms': typeof AppResidentTermsRoute
   '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
+  '/app/super/devices': typeof AppSuperDevicesRoute
   '/app/super/features': typeof AppSuperFeaturesRoute
   '/app/super/invites': typeof AppSuperInvitesRoute
   '/app/super/plans': typeof AppSuperPlansRoute
@@ -590,6 +597,7 @@ export interface FileRoutesByTo {
   '/app/resident/terms': typeof AppResidentTermsRoute
   '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
+  '/app/super/devices': typeof AppSuperDevicesRoute
   '/app/super/features': typeof AppSuperFeaturesRoute
   '/app/super/invites': typeof AppSuperInvitesRoute
   '/app/super/plans': typeof AppSuperPlansRoute
@@ -667,6 +675,7 @@ export interface FileRoutesById {
   '/app/resident/terms': typeof AppResidentTermsRoute
   '/app/resident/verification': typeof AppResidentVerificationRoute
   '/app/super/audit': typeof AppSuperAuditRoute
+  '/app/super/devices': typeof AppSuperDevicesRoute
   '/app/super/features': typeof AppSuperFeaturesRoute
   '/app/super/invites': typeof AppSuperInvitesRoute
   '/app/super/plans': typeof AppSuperPlansRoute
@@ -745,6 +754,7 @@ export interface FileRouteTypes {
     | '/app/resident/terms'
     | '/app/resident/verification'
     | '/app/super/audit'
+    | '/app/super/devices'
     | '/app/super/features'
     | '/app/super/invites'
     | '/app/super/plans'
@@ -821,6 +831,7 @@ export interface FileRouteTypes {
     | '/app/resident/terms'
     | '/app/resident/verification'
     | '/app/super/audit'
+    | '/app/super/devices'
     | '/app/super/features'
     | '/app/super/invites'
     | '/app/super/plans'
@@ -897,6 +908,7 @@ export interface FileRouteTypes {
     | '/app/resident/terms'
     | '/app/resident/verification'
     | '/app/super/audit'
+    | '/app/super/devices'
     | '/app/super/features'
     | '/app/super/invites'
     | '/app/super/plans'
@@ -1054,6 +1066,13 @@ declare module '@tanstack/react-router' {
       path: '/super/features'
       fullPath: '/app/super/features'
       preLoaderRoute: typeof AppSuperFeaturesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/devices': {
+      id: '/app/super/devices'
+      path: '/super/devices'
+      fullPath: '/app/super/devices'
+      preLoaderRoute: typeof AppSuperDevicesRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/super/audit': {
@@ -1496,6 +1515,7 @@ interface AppRouteChildren {
   AppResidentTermsRoute: typeof AppResidentTermsRoute
   AppResidentVerificationRoute: typeof AppResidentVerificationRoute
   AppSuperAuditRoute: typeof AppSuperAuditRoute
+  AppSuperDevicesRoute: typeof AppSuperDevicesRoute
   AppSuperFeaturesRoute: typeof AppSuperFeaturesRoute
   AppSuperInvitesRoute: typeof AppSuperInvitesRoute
   AppSuperPlansRoute: typeof AppSuperPlansRoute
@@ -1566,6 +1586,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppResidentTermsRoute: AppResidentTermsRoute,
   AppResidentVerificationRoute: AppResidentVerificationRoute,
   AppSuperAuditRoute: AppSuperAuditRoute,
+  AppSuperDevicesRoute: AppSuperDevicesRoute,
   AppSuperFeaturesRoute: AppSuperFeaturesRoute,
   AppSuperInvitesRoute: AppSuperInvitesRoute,
   AppSuperPlansRoute: AppSuperPlansRoute,
