@@ -106,6 +106,7 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
     "/app/admin/profile": { title: "My profile" },
     "/app/super": { title: "Platform overview" },
     "/app/super/users": { title: "Platform users" },
+    "/app/super/devices": { title: "Access devices", subtitle: "Every terminal across all estates" },
     "/app/super/invites": { title: "Admin invites" },
     "/app/super/support": { title: "Support center" },
     "/app/super/audit": { title: "Audit logs" },
