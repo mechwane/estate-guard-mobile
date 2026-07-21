@@ -103,6 +103,10 @@ function SuperDashboard() {
         residentRequests,
         meetings,
         bills,
+        devicesTotal,
+        devicesOnline,
+        devicesOffline,
+        biometricEnrolled,
       ] = await Promise.all([
         count("estates"),
         supabase
@@ -142,6 +146,19 @@ function SuperDashboard() {
         count("resident_requests"),
         count("meetings"),
         count("bills"),
+        count("access_devices"),
+        supabase
+          .from("access_devices")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "online"),
+        supabase
+          .from("access_devices")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "offline"),
+        supabase
+          .from("biometric_access")
+          .select("id", { count: "exact", head: true })
+          .eq("enrollment_status", "enrolled"),
       ]);
       return {
         totalEstates: totalEstates.count ?? 0,
@@ -158,6 +175,10 @@ function SuperDashboard() {
         residentRequests: residentRequests.count ?? 0,
         meetings: meetings.count ?? 0,
         bills: bills.count ?? 0,
+        devicesTotal: devicesTotal.count ?? 0,
+        devicesOnline: devicesOnline.count ?? 0,
+        devicesOffline: devicesOffline.count ?? 0,
+        biometricEnrolled: biometricEnrolled.count ?? 0,
       };
     },
   });
