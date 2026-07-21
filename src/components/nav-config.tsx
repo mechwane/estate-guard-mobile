@@ -14,6 +14,7 @@ import {
   Megaphone,
   LifeBuoy,
   UserCog,
+  Cpu,
 } from "lucide-react";
 import type { AppRole } from "@/lib/session";
 import type { ReactNode } from "react";
