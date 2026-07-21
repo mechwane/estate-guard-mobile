@@ -62,10 +62,10 @@ const TYPE_LABEL: Record<DeviceType, string> = {
 
 const STATUS_TONE: Record<
   DeviceStatus,
-  "success" | "warning" | "error" | "default"
+  "success" | "warning" | "error" | "neutral"
 > = {
   online: "success",
-  offline: "default",
+  offline: "neutral",
   maintenance: "warning",
   disabled: "error",
 };
