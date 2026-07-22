@@ -1,0 +1,12 @@
+-- Estate Guard — schema pointer
+--
+-- The full schema is defined as a chain of timestamped migrations under
+-- supabase/migrations/. Apply the whole chain with:
+--
+--     supabase db push
+--
+-- That single command recreates every enum, table, RLS policy, GRANT,
+-- trigger, and SECURITY DEFINER function used by the app. Do not run
+-- migrations individually or out of order.
+--
+-- See HANDOVER.md §4 for the full walkthrough.
