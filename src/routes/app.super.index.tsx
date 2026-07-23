@@ -821,7 +821,7 @@ function QuickLink({
   to,
   label,
 }: {
-  to: "/app/super/users" | "/app/super/invites" | "/app/super/support" | "/app/super/settings" | "/app/super/plans" | "/app/super/features";
+  to: "/app/super/users" | "/app/super/invites" | "/app/super/support" | "/app/super/settings" | "/app/super/plans" | "/app/super/features" | "/app/super/devices";
   label: string;
 }) {
   return (
