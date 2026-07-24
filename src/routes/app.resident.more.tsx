@@ -191,6 +191,11 @@ function More() {
 
         <Section title="App">
           <Row
+            to="/app/resident/access"
+            icon={<ShieldCheck className="h-4 w-4" />}
+            label="My Access Methods"
+          />
+          <Row
             to="/app/resident/pass"
             icon={<ShieldCheck className="h-4 w-4" />}
             label="Biometric Pass"
