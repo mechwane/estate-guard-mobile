@@ -567,6 +567,33 @@ function SuperDashboard() {
                     currencyKeys={["amount", "Amount"]}
                   />
                 </ChartCard>
+                <ChartCard title="Device status" subtitle="Access hardware health">
+                  <DonutChart data={charts.data.deviceStatus} />
+                </ChartCard>
+                <ChartCard
+                  title="Access methods"
+                  subtitle="Enrolled and active credentials"
+                >
+                  <VerticalBarChart
+                    data={charts.data.accessMethods}
+                    bars={[{ key: "count", label: "Count" }]}
+                  />
+                </ChartCard>
+                <ChartCard title="Entry / exit activity" subtitle="Guest check-ins and check-outs">
+                  <TrendChart
+                    data={charts.data.entryExit}
+                    series={[
+                      { key: "checkIns", label: "Check-ins" },
+                      { key: "checkOuts", label: "Check-outs" },
+                    ]}
+                  />
+                </ChartCard>
+                <ChartCard title="Incident severity">
+                  <VerticalBarChart
+                    data={charts.data.incidentSeverity}
+                    bars={[{ key: "count", label: "Incidents" }]}
+                  />
+                </ChartCard>
               </div>
               <EstateComparisonTable rows={charts.data.estates} />
             </div>
