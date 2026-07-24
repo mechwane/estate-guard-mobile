@@ -214,6 +214,10 @@ function SuperDashboard() {
         support,
         bills,
         orders,
+        devices,
+        biometric,
+        cards,
+        vehicles,
       ] = await Promise.all([
         supabase.from("estates").select("id,name,status,created_at"),
         supabase.from("profiles").select("id,created_at,estate_id"),
@@ -222,12 +226,18 @@ function SuperDashboard() {
           .from("guest_invites")
           .select("id,estate_id,created_at,checked_in_at,checked_out_at"),
         supabase.from("resident_requests").select("id,estate_id,created_at,status"),
-        supabase.from("issues").select("id,estate_id,created_at,status"),
+        supabase.from("issues").select("id,estate_id,created_at,status,severity"),
         supabase.from("meetings").select("id,estate_id,created_at"),
         supabase.from("community_posts").select("id,estate_id,created_at,post_type"),
         supabase.from("support_tickets").select("id,status,created_at"),
         supabase.from("bills").select("id,estate_id,status,amount,created_at"),
         supabase.from("shop_orders").select("id,estate_id,status,created_at"),
+        supabase.from("access_devices").select("id,status,device_type"),
+        supabase
+          .from("biometric_access")
+          .select("id,biometric_type,enrollment_status,access_status"),
+        supabase.from("access_cards").select("id,active"),
+        supabase.from("vehicle_tags").select("id,active"),
       ]);
 
       const error = [
@@ -242,6 +252,10 @@ function SuperDashboard() {
         support.error,
         bills.error,
         orders.error,
+        devices.error,
+        biometric.error,
+        cards.error,
+        vehicles.error,
       ].find(Boolean);
       if (error) throw error;
 
@@ -256,6 +270,10 @@ function SuperDashboard() {
       const supportRows = support.data ?? [];
       const billRows = bills.data ?? [];
       const orderRows = orders.data ?? [];
+      const deviceRows = devices.data ?? [];
+      const biometricRows = biometric.data ?? [];
+      const cardRows = cards.data ?? [];
+      const vehicleRows = vehicles.data ?? [];
       const start = rangeStart(
         growthRange,
         [...profileRows, ...estateRows].map((row) => row.created_at),
@@ -275,6 +293,21 @@ function SuperDashboard() {
       const outstandingAmount = billRows
         .filter((bill) => bill.status !== "paid")
         .reduce((sum, bill) => sum + Number(bill.amount ?? 0), 0);
+      const deviceStatusCounts = countStrings(deviceRows.map((d) => String(d.status ?? "unknown")));
+      const severityCounts = countStrings(
+        issueRows.map((i) => String(i.severity ?? "unspecified")),
+      );
+      const fingerprintEnrolled = biometricRows.filter(
+        (b) => b.biometric_type === "fingerprint" && b.enrollment_status === "enrolled",
+      ).length;
+      const faceEnrolled = biometricRows.filter(
+        (b) => b.biometric_type === "face" && b.enrollment_status === "enrolled",
+      ).length;
+      const activeCards = cardRows.filter((c) => c.active).length;
+      const activeVehicles = vehicleRows.filter((v) => v.active).length;
+      const activeGuestInvites = guestRows.filter(
+        (g) => g.checked_in_at && !g.checked_out_at,
+      ).length;
 
       return {
         growth: buildGrowthRows({
@@ -282,6 +315,15 @@ function SuperDashboard() {
           users: profileRows,
           estates: estateRows,
           residents: profileRows.filter((profile) => residentIds.has(profile.id)),
+        }),
+        entryExit: buildEntryExitRows({
+          start,
+          checkIns: guestRows
+            .filter((g) => g.checked_in_at)
+            .map((g) => ({ created_at: g.checked_in_at as string })),
+          checkOuts: guestRows
+            .filter((g) => g.checked_out_at)
+            .map((g) => ({ created_at: g.checked_out_at as string })),
         }),
         roleDistribution: [
           { name: "Residents", value: roleCounts.resident ?? 0 },
@@ -294,6 +336,23 @@ function SuperDashboard() {
           { name: "Suspended", value: estateStatusCounts.suspended ?? 0 },
           { name: "Pending", value: estateStatusCounts.pending ?? 0 },
         ],
+        deviceStatus: [
+          { name: "Online", value: deviceStatusCounts.online ?? 0 },
+          { name: "Offline", value: deviceStatusCounts.offline ?? 0 },
+          { name: "Maintenance", value: deviceStatusCounts.maintenance ?? 0 },
+          { name: "Disabled", value: deviceStatusCounts.disabled ?? 0 },
+        ],
+        accessMethods: [
+          { name: "Fingerprint", count: fingerprintEnrolled },
+          { name: "Face", count: faceEnrolled },
+          { name: "Access cards", count: activeCards },
+          { name: "Vehicle tags", count: activeVehicles },
+          { name: "Guest invites (inside)", count: activeGuestInvites },
+        ],
+        incidentSeverity: statusRows(
+          issueRows.map((i) => String(i.severity ?? "unspecified")),
+          ["low", "medium", "high", "critical", "unspecified"],
+        ),
         activity: [
           { name: "Invites", count: guestRows.length },
           { name: "Check-ins", count: guestRows.filter((guest) => guest.checked_in_at).length },
@@ -346,6 +405,7 @@ function SuperDashboard() {
       };
     },
   });
+
 
   const filtered = (estatesQ.data ?? []).filter((e) => {
     const needle = q.trim().toLowerCase();
@@ -507,6 +567,33 @@ function SuperDashboard() {
                     currencyKeys={["amount", "Amount"]}
                   />
                 </ChartCard>
+                <ChartCard title="Device status" subtitle="Access hardware health">
+                  <DonutChart data={charts.data.deviceStatus} />
+                </ChartCard>
+                <ChartCard
+                  title="Access methods"
+                  subtitle="Enrolled and active credentials"
+                >
+                  <VerticalBarChart
+                    data={charts.data.accessMethods}
+                    bars={[{ key: "count", label: "Count" }]}
+                  />
+                </ChartCard>
+                <ChartCard title="Entry / exit activity" subtitle="Guest check-ins and check-outs">
+                  <TrendChart
+                    data={charts.data.entryExit}
+                    series={[
+                      { key: "checkIns", label: "Check-ins" },
+                      { key: "checkOuts", label: "Check-outs" },
+                    ]}
+                  />
+                </ChartCard>
+                <ChartCard title="Incident severity">
+                  <VerticalBarChart
+                    data={charts.data.incidentSeverity}
+                    bars={[{ key: "count", label: "Incidents" }]}
+                  />
+                </ChartCard>
               </div>
               <EstateComparisonTable rows={charts.data.estates} />
             </div>
@@ -655,6 +742,29 @@ function buildGrowthRows({
       estates: estates.filter((row) => format(new Date(row.created_at), "yyyy-MM-dd") === key)
         .length,
       residents: residents.filter((row) => format(new Date(row.created_at), "yyyy-MM-dd") === key)
+        .length,
+    });
+  }
+  return rows;
+}
+
+function buildEntryExitRows({
+  start,
+  checkIns,
+  checkOuts,
+}: {
+  start: Date;
+  checkIns: CreatedRow[];
+  checkOuts: CreatedRow[];
+}) {
+  const rows: { name: string; checkIns: number; checkOuts: number }[] = [];
+  const today = startOfDay(new Date());
+  for (let day = new Date(start); day <= today; day.setDate(day.getDate() + 1)) {
+    const key = format(day, "yyyy-MM-dd");
+    rows.push({
+      name: format(day, "MMM d"),
+      checkIns: checkIns.filter((r) => format(new Date(r.created_at), "yyyy-MM-dd") === key).length,
+      checkOuts: checkOuts.filter((r) => format(new Date(r.created_at), "yyyy-MM-dd") === key)
         .length,
     });
   }

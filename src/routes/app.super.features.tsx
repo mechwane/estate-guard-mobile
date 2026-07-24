@@ -11,12 +11,18 @@ export const Route = createFileRoute("/app/super/features")({
 });
 
 const FEATURES: { key: string; label: string; description: string }[] = [
-  { key: "biometric_pass", label: "Biometric pass", description: "Residents can issue passes via fingerprint / face." },
+  { key: "guest_code_access", label: "Guest code access", description: "Residents can generate guest codes for one-time visitors." },
+  { key: "multiple_invite", label: "Multiple invites", description: "Residents can issue several invites at once." },
+  { key: "fingerprint_access", label: "Fingerprint access", description: "Fingerprint credentials at estate access devices." },
+  { key: "face_recognition_access", label: "Face recognition access", description: "Face credentials at estate access devices." },
+  { key: "access_cards", label: "Access cards", description: "RFID / proximity access cards for residents." },
+  { key: "vehicle_tags", label: "Vehicle tags", description: "Vehicle plate / RFID tags for gate access." },
   { key: "shop", label: "Estate shop", description: "Residents can order items from the estate shop." },
-  { key: "vtu", label: "VTU top-ups", description: "Airtime and data top-ups inside the app." },
-  { key: "events", label: "Events & polls", description: "Community events, registrations and polls." },
+  { key: "bills", label: "Bills", description: "Estate can bill residents and collect payments." },
   { key: "meetings", label: "Meetings", description: "Estate meetings with notifications." },
-  { key: "discounts", label: "Discount codes", description: "Admin-managed discount codes." },
+  { key: "polls", label: "Polls", description: "Community polls and voting." },
+  { key: "events", label: "Events", description: "Community events and registrations." },
+  { key: "premium", label: "Premium", description: "Premium tier features for eligible residents." },
 ];
 
 function FeatureFlags() {
