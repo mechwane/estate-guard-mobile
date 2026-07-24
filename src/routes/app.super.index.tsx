@@ -721,6 +721,29 @@ function buildGrowthRows({
   return rows;
 }
 
+function buildEntryExitRows({
+  start,
+  checkIns,
+  checkOuts,
+}: {
+  start: Date;
+  checkIns: CreatedRow[];
+  checkOuts: CreatedRow[];
+}) {
+  const rows: { name: string; checkIns: number; checkOuts: number }[] = [];
+  const today = startOfDay(new Date());
+  for (let day = new Date(start); day <= today; day.setDate(day.getDate() + 1)) {
+    const key = format(day, "yyyy-MM-dd");
+    rows.push({
+      name: format(day, "MMM d"),
+      checkIns: checkIns.filter((r) => format(new Date(r.created_at), "yyyy-MM-dd") === key).length,
+      checkOuts: checkOuts.filter((r) => format(new Date(r.created_at), "yyyy-MM-dd") === key)
+        .length,
+    });
+  }
+  return rows;
+}
+
 function countStrings(values: string[]) {
   return values.reduce<Record<string, number>>((acc, value) => {
     acc[value] = (acc[value] ?? 0) + 1;
