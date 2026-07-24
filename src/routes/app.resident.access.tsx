@@ -70,7 +70,7 @@ type DeviceRow = { id: string; name: string; location: string | null };
 function MyAccessMethods() {
   const qc = useQueryClient();
   const { data: session } = useSession();
-  const userId = session?.user?.id;
+  const userId = session?.userId;
 
   const q = useQuery({
     queryKey: ["resident-access-methods", userId],
