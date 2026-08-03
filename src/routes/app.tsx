@@ -2,7 +2,7 @@ import { Outlet, createFileRoute, useNavigate, useLocation } from "@tanstack/rea
 import { useEffect } from "react";
 import { useSession, roleHome, type AppRole } from "@/lib/session";
 import { AppShell } from "@/components/app-shell";
-import { navByRole } from "@/components/nav-config";
+import { navByRole, sidebarGroupsByRole, desktopFirstRoles } from "@/components/nav-config";
 import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/app")({
@@ -50,6 +50,8 @@ function AppLayout() {
       subtitle={subtitle}
       estateName={session.estate?.name ?? null}
       navItems={navByRole[role]}
+      navGroups={sidebarGroupsByRole[role]}
+      desktopFirst={desktopFirstRoles.includes(role)}
     >
       <Outlet />
     </AppShell>
@@ -104,6 +106,21 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
     "/app/admin/requests": { title: "Resident requests" },
     "/app/admin/community": { title: "Community posts" },
     "/app/admin/profile": { title: "My profile" },
+    "/app/admin/messages": { title: "Messages" },
+    "/app/admin/troubleshoot": { title: "Troubleshoot" },
+    "/app/admin/dependents": { title: "Dependants" },
+    "/app/admin/realtime": { title: "Realtime access" },
+    "/app/admin/alerts": { title: "Security alerts" },
+    "/app/admin/passes": { title: "Passes" },
+    "/app/admin/cards": { title: "Access cards" },
+    "/app/admin/vehicles": { title: "Vehicles" },
+    "/app/admin/payments": { title: "Payments overview" },
+    "/app/admin/discounts": { title: "Discounts" },
+    "/app/admin/blog": { title: "Blog" },
+    "/app/resident/access": { title: "My access methods" },
+    "/app/resident/pass": { title: "My pass" },
+    "/app/super/features": { title: "Feature flags" },
+    "/app/super/plans": { title: "Plans" },
     "/app/super": { title: "Platform overview" },
     "/app/super/users": { title: "Platform users" },
     "/app/super/devices": { title: "Access devices", subtitle: "Every terminal across all estates" },
