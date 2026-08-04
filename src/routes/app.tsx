@@ -117,6 +117,8 @@ function deriveHeader(path: string): { title: string; subtitle?: string } {
     "/app/admin/payments": { title: "Payments overview" },
     "/app/admin/discounts": { title: "Discounts" },
     "/app/admin/blog": { title: "Blog" },
+    "/app/admin/households": { title: "Households", subtitle: "Addresses and occupancy" },
+    "/app/admin/estate": { title: "Estate profile", subtitle: "Address, code and contacts" },
     "/app/resident/access": { title: "My access methods" },
     "/app/resident/pass": { title: "My pass" },
     "/app/super/features": { title: "Feature flags" },
