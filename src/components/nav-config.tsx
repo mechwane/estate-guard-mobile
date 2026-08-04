@@ -136,6 +136,7 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
       label: "People",
       items: [
         { to: "/app/admin/residents", label: "Residents", icon: <Users /> },
+        { to: "/app/admin/households", label: "Households", icon: <Home /> },
         { to: "/app/admin/dependents", label: "Dependants", icon: <UsersRound /> },
         { to: "/app/admin/staff", label: "Staff & guards", icon: <Shield /> },
         { to: "/app/admin/verifications", label: "Verifications", icon: <ShieldCheck /> },
@@ -172,6 +173,13 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
     {
       label: "Shop",
       items: [{ to: "/app/admin/shop", label: "Products & orders", icon: <Store /> }],
+    },
+    {
+      label: "More",
+      items: [
+        { to: "/app/admin/bills", label: "Invoices", icon: <FileText /> },
+        { to: "/app/admin/estate", label: "Estate profile", icon: <Building2 /> },
+      ],
     },
   ],
   super_admin: [
