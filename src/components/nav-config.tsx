@@ -157,7 +157,9 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
       label: "Payments",
       items: [
         { to: "/app/admin/payments", label: "Overview", icon: <Wallet /> },
-        { to: "/app/admin/bills", label: "Collections", icon: <Receipt /> },
+        { to: "/app/admin/collections", label: "Collections", icon: <Receipt /> },
+        { to: "/app/admin/invoices", label: "Invoices", icon: <FileText /> },
+        { to: "/app/admin/bills", label: "Create bill", icon: <Wallet /> },
         { to: "/app/admin/discounts", label: "Discounts", icon: <Percent /> },
       ],
     },
@@ -177,7 +179,6 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
     {
       label: "More",
       items: [
-        { to: "/app/admin/bills", label: "Invoices", icon: <FileText /> },
         { to: "/app/admin/estate", label: "Estate profile", icon: <Building2 /> },
       ],
     },

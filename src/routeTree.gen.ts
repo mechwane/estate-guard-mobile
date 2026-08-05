@@ -71,6 +71,7 @@ import { Route as AppAdminPaymentsRouteImport } from './routes/app.admin.payment
 import { Route as AppAdminPassesRouteImport } from './routes/app.admin.passes'
 import { Route as AppAdminMessagesRouteImport } from './routes/app.admin.messages'
 import { Route as AppAdminIssuesRouteImport } from './routes/app.admin.issues'
+import { Route as AppAdminInvoicesRouteImport } from './routes/app.admin.invoices'
 import { Route as AppAdminHouseholdsRouteImport } from './routes/app.admin.households'
 import { Route as AppAdminGuestsRouteImport } from './routes/app.admin.guests'
 import { Route as AppAdminEventsRouteImport } from './routes/app.admin.events'
@@ -78,6 +79,7 @@ import { Route as AppAdminEstateRouteImport } from './routes/app.admin.estate'
 import { Route as AppAdminDiscountsRouteImport } from './routes/app.admin.discounts'
 import { Route as AppAdminDependentsRouteImport } from './routes/app.admin.dependents'
 import { Route as AppAdminCommunityRouteImport } from './routes/app.admin.community'
+import { Route as AppAdminCollectionsRouteImport } from './routes/app.admin.collections'
 import { Route as AppAdminCardsRouteImport } from './routes/app.admin.cards'
 import { Route as AppAdminBlogRouteImport } from './routes/app.admin.blog'
 import { Route as AppAdminBillsRouteImport } from './routes/app.admin.bills'
@@ -398,6 +400,11 @@ const AppAdminIssuesRoute = AppAdminIssuesRouteImport.update({
   path: '/admin/issues',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminInvoicesRoute = AppAdminInvoicesRouteImport.update({
+  id: '/admin/invoices',
+  path: '/admin/invoices',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminHouseholdsRoute = AppAdminHouseholdsRouteImport.update({
   id: '/admin/households',
   path: '/admin/households',
@@ -431,6 +438,11 @@ const AppAdminDependentsRoute = AppAdminDependentsRouteImport.update({
 const AppAdminCommunityRoute = AppAdminCommunityRouteImport.update({
   id: '/admin/community',
   path: '/admin/community',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminCollectionsRoute = AppAdminCollectionsRouteImport.update({
+  id: '/admin/collections',
+  path: '/admin/collections',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminCardsRoute = AppAdminCardsRouteImport.update({
@@ -492,6 +504,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/bills': typeof AppAdminBillsRoute
   '/app/admin/blog': typeof AppAdminBlogRoute
   '/app/admin/cards': typeof AppAdminCardsRoute
+  '/app/admin/collections': typeof AppAdminCollectionsRoute
   '/app/admin/community': typeof AppAdminCommunityRoute
   '/app/admin/dependents': typeof AppAdminDependentsRoute
   '/app/admin/discounts': typeof AppAdminDiscountsRoute
@@ -499,6 +512,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/households': typeof AppAdminHouseholdsRoute
+  '/app/admin/invoices': typeof AppAdminInvoicesRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
   '/app/admin/messages': typeof AppAdminMessagesRoute
   '/app/admin/passes': typeof AppAdminPassesRoute
@@ -572,6 +586,7 @@ export interface FileRoutesByTo {
   '/app/admin/bills': typeof AppAdminBillsRoute
   '/app/admin/blog': typeof AppAdminBlogRoute
   '/app/admin/cards': typeof AppAdminCardsRoute
+  '/app/admin/collections': typeof AppAdminCollectionsRoute
   '/app/admin/community': typeof AppAdminCommunityRoute
   '/app/admin/dependents': typeof AppAdminDependentsRoute
   '/app/admin/discounts': typeof AppAdminDiscountsRoute
@@ -579,6 +594,7 @@ export interface FileRoutesByTo {
   '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/households': typeof AppAdminHouseholdsRoute
+  '/app/admin/invoices': typeof AppAdminInvoicesRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
   '/app/admin/messages': typeof AppAdminMessagesRoute
   '/app/admin/passes': typeof AppAdminPassesRoute
@@ -653,6 +669,7 @@ export interface FileRoutesById {
   '/app/admin/bills': typeof AppAdminBillsRoute
   '/app/admin/blog': typeof AppAdminBlogRoute
   '/app/admin/cards': typeof AppAdminCardsRoute
+  '/app/admin/collections': typeof AppAdminCollectionsRoute
   '/app/admin/community': typeof AppAdminCommunityRoute
   '/app/admin/dependents': typeof AppAdminDependentsRoute
   '/app/admin/discounts': typeof AppAdminDiscountsRoute
@@ -660,6 +677,7 @@ export interface FileRoutesById {
   '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/households': typeof AppAdminHouseholdsRoute
+  '/app/admin/invoices': typeof AppAdminInvoicesRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
   '/app/admin/messages': typeof AppAdminMessagesRoute
   '/app/admin/passes': typeof AppAdminPassesRoute
@@ -735,6 +753,7 @@ export interface FileRouteTypes {
     | '/app/admin/bills'
     | '/app/admin/blog'
     | '/app/admin/cards'
+    | '/app/admin/collections'
     | '/app/admin/community'
     | '/app/admin/dependents'
     | '/app/admin/discounts'
@@ -742,6 +761,7 @@ export interface FileRouteTypes {
     | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/households'
+    | '/app/admin/invoices'
     | '/app/admin/issues'
     | '/app/admin/messages'
     | '/app/admin/passes'
@@ -815,6 +835,7 @@ export interface FileRouteTypes {
     | '/app/admin/bills'
     | '/app/admin/blog'
     | '/app/admin/cards'
+    | '/app/admin/collections'
     | '/app/admin/community'
     | '/app/admin/dependents'
     | '/app/admin/discounts'
@@ -822,6 +843,7 @@ export interface FileRouteTypes {
     | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/households'
+    | '/app/admin/invoices'
     | '/app/admin/issues'
     | '/app/admin/messages'
     | '/app/admin/passes'
@@ -895,6 +917,7 @@ export interface FileRouteTypes {
     | '/app/admin/bills'
     | '/app/admin/blog'
     | '/app/admin/cards'
+    | '/app/admin/collections'
     | '/app/admin/community'
     | '/app/admin/dependents'
     | '/app/admin/discounts'
@@ -902,6 +925,7 @@ export interface FileRouteTypes {
     | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/households'
+    | '/app/admin/invoices'
     | '/app/admin/issues'
     | '/app/admin/messages'
     | '/app/admin/passes'
@@ -1405,6 +1429,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminIssuesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/invoices': {
+      id: '/app/admin/invoices'
+      path: '/admin/invoices'
+      fullPath: '/app/admin/invoices'
+      preLoaderRoute: typeof AppAdminInvoicesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/households': {
       id: '/app/admin/households'
       path: '/admin/households'
@@ -1452,6 +1483,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/community'
       fullPath: '/app/admin/community'
       preLoaderRoute: typeof AppAdminCommunityRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/collections': {
+      id: '/app/admin/collections'
+      path: '/admin/collections'
+      fullPath: '/app/admin/collections'
+      preLoaderRoute: typeof AppAdminCollectionsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/admin/cards': {
@@ -1526,6 +1564,7 @@ interface AppRouteChildren {
   AppAdminBillsRoute: typeof AppAdminBillsRoute
   AppAdminBlogRoute: typeof AppAdminBlogRoute
   AppAdminCardsRoute: typeof AppAdminCardsRoute
+  AppAdminCollectionsRoute: typeof AppAdminCollectionsRoute
   AppAdminCommunityRoute: typeof AppAdminCommunityRoute
   AppAdminDependentsRoute: typeof AppAdminDependentsRoute
   AppAdminDiscountsRoute: typeof AppAdminDiscountsRoute
@@ -1533,6 +1572,7 @@ interface AppRouteChildren {
   AppAdminEventsRoute: typeof AppAdminEventsRoute
   AppAdminGuestsRoute: typeof AppAdminGuestsRoute
   AppAdminHouseholdsRoute: typeof AppAdminHouseholdsRoute
+  AppAdminInvoicesRoute: typeof AppAdminInvoicesRoute
   AppAdminIssuesRoute: typeof AppAdminIssuesRoute
   AppAdminMessagesRoute: typeof AppAdminMessagesRoute
   AppAdminPassesRoute: typeof AppAdminPassesRoute
@@ -1600,6 +1640,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminBillsRoute: AppAdminBillsRoute,
   AppAdminBlogRoute: AppAdminBlogRoute,
   AppAdminCardsRoute: AppAdminCardsRoute,
+  AppAdminCollectionsRoute: AppAdminCollectionsRoute,
   AppAdminCommunityRoute: AppAdminCommunityRoute,
   AppAdminDependentsRoute: AppAdminDependentsRoute,
   AppAdminDiscountsRoute: AppAdminDiscountsRoute,
@@ -1607,6 +1648,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminEventsRoute: AppAdminEventsRoute,
   AppAdminGuestsRoute: AppAdminGuestsRoute,
   AppAdminHouseholdsRoute: AppAdminHouseholdsRoute,
+  AppAdminInvoicesRoute: AppAdminInvoicesRoute,
   AppAdminIssuesRoute: AppAdminIssuesRoute,
   AppAdminMessagesRoute: AppAdminMessagesRoute,
   AppAdminPassesRoute: AppAdminPassesRoute,
