@@ -1934,6 +1934,10 @@ export type Database = {
     }
     Functions: {
       activate_estate: { Args: { _estate_id: string }; Returns: undefined }
+      admin_record_bill_payment: {
+        Args: { _bill_id: string; _method?: string; _reference?: string }
+        Returns: undefined
+      }
       admin_register_device: {
         Args: { _device_type: string; _location: string; _name: string }
         Returns: string
