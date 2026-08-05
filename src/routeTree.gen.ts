@@ -78,6 +78,7 @@ import { Route as AppAdminEstateRouteImport } from './routes/app.admin.estate'
 import { Route as AppAdminDiscountsRouteImport } from './routes/app.admin.discounts'
 import { Route as AppAdminDependentsRouteImport } from './routes/app.admin.dependents'
 import { Route as AppAdminCommunityRouteImport } from './routes/app.admin.community'
+import { Route as AppAdminCollectionsRouteImport } from './routes/app.admin.collections'
 import { Route as AppAdminCardsRouteImport } from './routes/app.admin.cards'
 import { Route as AppAdminBlogRouteImport } from './routes/app.admin.blog'
 import { Route as AppAdminBillsRouteImport } from './routes/app.admin.bills'
@@ -433,6 +434,11 @@ const AppAdminCommunityRoute = AppAdminCommunityRouteImport.update({
   path: '/admin/community',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminCollectionsRoute = AppAdminCollectionsRouteImport.update({
+  id: '/admin/collections',
+  path: '/admin/collections',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminCardsRoute = AppAdminCardsRouteImport.update({
   id: '/admin/cards',
   path: '/admin/cards',
@@ -492,6 +498,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/bills': typeof AppAdminBillsRoute
   '/app/admin/blog': typeof AppAdminBlogRoute
   '/app/admin/cards': typeof AppAdminCardsRoute
+  '/app/admin/collections': typeof AppAdminCollectionsRoute
   '/app/admin/community': typeof AppAdminCommunityRoute
   '/app/admin/dependents': typeof AppAdminDependentsRoute
   '/app/admin/discounts': typeof AppAdminDiscountsRoute
@@ -572,6 +579,7 @@ export interface FileRoutesByTo {
   '/app/admin/bills': typeof AppAdminBillsRoute
   '/app/admin/blog': typeof AppAdminBlogRoute
   '/app/admin/cards': typeof AppAdminCardsRoute
+  '/app/admin/collections': typeof AppAdminCollectionsRoute
   '/app/admin/community': typeof AppAdminCommunityRoute
   '/app/admin/dependents': typeof AppAdminDependentsRoute
   '/app/admin/discounts': typeof AppAdminDiscountsRoute
@@ -653,6 +661,7 @@ export interface FileRoutesById {
   '/app/admin/bills': typeof AppAdminBillsRoute
   '/app/admin/blog': typeof AppAdminBlogRoute
   '/app/admin/cards': typeof AppAdminCardsRoute
+  '/app/admin/collections': typeof AppAdminCollectionsRoute
   '/app/admin/community': typeof AppAdminCommunityRoute
   '/app/admin/dependents': typeof AppAdminDependentsRoute
   '/app/admin/discounts': typeof AppAdminDiscountsRoute
@@ -735,6 +744,7 @@ export interface FileRouteTypes {
     | '/app/admin/bills'
     | '/app/admin/blog'
     | '/app/admin/cards'
+    | '/app/admin/collections'
     | '/app/admin/community'
     | '/app/admin/dependents'
     | '/app/admin/discounts'
@@ -815,6 +825,7 @@ export interface FileRouteTypes {
     | '/app/admin/bills'
     | '/app/admin/blog'
     | '/app/admin/cards'
+    | '/app/admin/collections'
     | '/app/admin/community'
     | '/app/admin/dependents'
     | '/app/admin/discounts'
@@ -895,6 +906,7 @@ export interface FileRouteTypes {
     | '/app/admin/bills'
     | '/app/admin/blog'
     | '/app/admin/cards'
+    | '/app/admin/collections'
     | '/app/admin/community'
     | '/app/admin/dependents'
     | '/app/admin/discounts'
@@ -1454,6 +1466,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminCommunityRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/collections': {
+      id: '/app/admin/collections'
+      path: '/admin/collections'
+      fullPath: '/app/admin/collections'
+      preLoaderRoute: typeof AppAdminCollectionsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/cards': {
       id: '/app/admin/cards'
       path: '/admin/cards'
@@ -1526,6 +1545,7 @@ interface AppRouteChildren {
   AppAdminBillsRoute: typeof AppAdminBillsRoute
   AppAdminBlogRoute: typeof AppAdminBlogRoute
   AppAdminCardsRoute: typeof AppAdminCardsRoute
+  AppAdminCollectionsRoute: typeof AppAdminCollectionsRoute
   AppAdminCommunityRoute: typeof AppAdminCommunityRoute
   AppAdminDependentsRoute: typeof AppAdminDependentsRoute
   AppAdminDiscountsRoute: typeof AppAdminDiscountsRoute
@@ -1600,6 +1620,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminBillsRoute: AppAdminBillsRoute,
   AppAdminBlogRoute: AppAdminBlogRoute,
   AppAdminCardsRoute: AppAdminCardsRoute,
+  AppAdminCollectionsRoute: AppAdminCollectionsRoute,
   AppAdminCommunityRoute: AppAdminCommunityRoute,
   AppAdminDependentsRoute: AppAdminDependentsRoute,
   AppAdminDiscountsRoute: AppAdminDiscountsRoute,
