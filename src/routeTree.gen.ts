@@ -71,6 +71,7 @@ import { Route as AppAdminPaymentsRouteImport } from './routes/app.admin.payment
 import { Route as AppAdminPassesRouteImport } from './routes/app.admin.passes'
 import { Route as AppAdminMessagesRouteImport } from './routes/app.admin.messages'
 import { Route as AppAdminIssuesRouteImport } from './routes/app.admin.issues'
+import { Route as AppAdminInvoicesRouteImport } from './routes/app.admin.invoices'
 import { Route as AppAdminHouseholdsRouteImport } from './routes/app.admin.households'
 import { Route as AppAdminGuestsRouteImport } from './routes/app.admin.guests'
 import { Route as AppAdminEventsRouteImport } from './routes/app.admin.events'
@@ -399,6 +400,11 @@ const AppAdminIssuesRoute = AppAdminIssuesRouteImport.update({
   path: '/admin/issues',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminInvoicesRoute = AppAdminInvoicesRouteImport.update({
+  id: '/admin/invoices',
+  path: '/admin/invoices',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminHouseholdsRoute = AppAdminHouseholdsRouteImport.update({
   id: '/admin/households',
   path: '/admin/households',
@@ -506,6 +512,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/households': typeof AppAdminHouseholdsRoute
+  '/app/admin/invoices': typeof AppAdminInvoicesRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
   '/app/admin/messages': typeof AppAdminMessagesRoute
   '/app/admin/passes': typeof AppAdminPassesRoute
@@ -587,6 +594,7 @@ export interface FileRoutesByTo {
   '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/households': typeof AppAdminHouseholdsRoute
+  '/app/admin/invoices': typeof AppAdminInvoicesRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
   '/app/admin/messages': typeof AppAdminMessagesRoute
   '/app/admin/passes': typeof AppAdminPassesRoute
@@ -669,6 +677,7 @@ export interface FileRoutesById {
   '/app/admin/events': typeof AppAdminEventsRoute
   '/app/admin/guests': typeof AppAdminGuestsRoute
   '/app/admin/households': typeof AppAdminHouseholdsRoute
+  '/app/admin/invoices': typeof AppAdminInvoicesRoute
   '/app/admin/issues': typeof AppAdminIssuesRoute
   '/app/admin/messages': typeof AppAdminMessagesRoute
   '/app/admin/passes': typeof AppAdminPassesRoute
@@ -752,6 +761,7 @@ export interface FileRouteTypes {
     | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/households'
+    | '/app/admin/invoices'
     | '/app/admin/issues'
     | '/app/admin/messages'
     | '/app/admin/passes'
@@ -833,6 +843,7 @@ export interface FileRouteTypes {
     | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/households'
+    | '/app/admin/invoices'
     | '/app/admin/issues'
     | '/app/admin/messages'
     | '/app/admin/passes'
@@ -914,6 +925,7 @@ export interface FileRouteTypes {
     | '/app/admin/events'
     | '/app/admin/guests'
     | '/app/admin/households'
+    | '/app/admin/invoices'
     | '/app/admin/issues'
     | '/app/admin/messages'
     | '/app/admin/passes'
@@ -1417,6 +1429,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminIssuesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/invoices': {
+      id: '/app/admin/invoices'
+      path: '/admin/invoices'
+      fullPath: '/app/admin/invoices'
+      preLoaderRoute: typeof AppAdminInvoicesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/households': {
       id: '/app/admin/households'
       path: '/admin/households'
@@ -1553,6 +1572,7 @@ interface AppRouteChildren {
   AppAdminEventsRoute: typeof AppAdminEventsRoute
   AppAdminGuestsRoute: typeof AppAdminGuestsRoute
   AppAdminHouseholdsRoute: typeof AppAdminHouseholdsRoute
+  AppAdminInvoicesRoute: typeof AppAdminInvoicesRoute
   AppAdminIssuesRoute: typeof AppAdminIssuesRoute
   AppAdminMessagesRoute: typeof AppAdminMessagesRoute
   AppAdminPassesRoute: typeof AppAdminPassesRoute
@@ -1628,6 +1648,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminEventsRoute: AppAdminEventsRoute,
   AppAdminGuestsRoute: AppAdminGuestsRoute,
   AppAdminHouseholdsRoute: AppAdminHouseholdsRoute,
+  AppAdminInvoicesRoute: AppAdminInvoicesRoute,
   AppAdminIssuesRoute: AppAdminIssuesRoute,
   AppAdminMessagesRoute: AppAdminMessagesRoute,
   AppAdminPassesRoute: AppAdminPassesRoute,
