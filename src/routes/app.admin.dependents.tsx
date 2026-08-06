@@ -91,7 +91,9 @@ function Dependents() {
         onChange={setTab}
         tabs={TABS.map((t) => ({ key: t.key, label: `${t.label} ${counts[t.key]}` }))}
       />
-      <SearchInput value={q} onChange={setQ} placeholder="Search dependants" />
+      <div className="sm:max-w-xl">
+        <SearchInput value={q} onChange={setQ} placeholder="Search dependants" />
+      </div>
 
       {rows.isLoading ? (
         <ListSkeleton rows={6} />

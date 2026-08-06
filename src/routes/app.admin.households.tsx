@@ -133,7 +133,9 @@ function Households() {
               />
             </div>
           </div>
-          <SearchInput value={q} onChange={setQ} placeholder="Search households by address" />
+          <div className="sm:max-w-xl">
+            <SearchInput value={q} onChange={setQ} placeholder="Search households by address" />
+          </div>
 
           {rows.isLoading ? (
             <ListSkeleton rows={6} />

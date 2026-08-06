@@ -104,7 +104,9 @@ function Verifications() {
 
   return (
     <div className="space-y-3">
-      <SearchInput value={q} onChange={setQ} placeholder="Search name, phone, address" />
+      <div className="sm:max-w-xl">
+        <SearchInput value={q} onChange={setQ} placeholder="Search name, phone, address" />
+      </div>
       <div className="flex gap-2 overflow-x-auto">
         {STATUS.map((k) => (
           <button
