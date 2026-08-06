@@ -96,7 +96,7 @@ function Bills() {
     const now = new Date();
     return {
       unpaid: list.filter((b) => b.status === "unpaid" && !isBefore(new Date(b.due_date), now)),
-      paid: list.filter((b) => b.status === "paid"),
+      paid: list.filter((b) => b.status === "paid" || b.status === "waived"),
       overdue: list.filter((b) => b.status === "unpaid" && isBefore(new Date(b.due_date), now)),
     };
   }, [data, main, search]);
@@ -349,7 +349,7 @@ function Bills() {
                         <div className="mt-1">
                           <StatusBadge
                             tone={
-                              b.status === "paid" ? "success" : overdue ? "error" : "warning"
+                              b.status === "paid" || b.status === "waived" ? "success" : overdue ? "error" : "warning"
                             }
                           >
                             {overdue ? "overdue" : b.status}

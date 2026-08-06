@@ -1668,6 +1668,53 @@ export type Database = {
           },
         ]
       }
+      support_otps: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string | null
+          email: string
+          estate_id: string
+          expires_at: string
+          id: string
+          purpose: string
+          used_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by?: string | null
+          email: string
+          estate_id: string
+          expires_at: string
+          id?: string
+          purpose?: string
+          used_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          estate_id?: string
+          expires_at?: string
+          id?: string
+          purpose?: string
+          used_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_otps_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       support_tickets: {
         Row: {
           body: string
@@ -1934,6 +1981,14 @@ export type Database = {
     }
     Functions: {
       activate_estate: { Args: { _estate_id: string }; Returns: undefined }
+      admin_generate_support_otp: {
+        Args: { _email: string; _purpose?: string }
+        Returns: Json
+      }
+      admin_grant_multi_code: {
+        Args: { _email: string; _ttl_minutes: number }
+        Returns: Json
+      }
       admin_record_bill_payment: {
         Args: { _bill_id: string; _method?: string; _reference?: string }
         Returns: undefined
@@ -1957,6 +2012,10 @@ export type Database = {
           _resident_id: string
         }
         Returns: string
+      }
+      admin_waive_payments: {
+        Args: { _email: string; _end_date: string; _start_date?: string }
+        Returns: Json
       }
       assign_estate_admin: {
         Args: { _estate_id: string; _user_id: string }
@@ -2118,7 +2177,7 @@ export type Database = {
         | "estate_admin"
         | "super_admin"
         | "event_organizer"
-      bill_status: "unpaid" | "paid" | "overdue"
+      bill_status: "unpaid" | "paid" | "overdue" | "waived"
       estate_status: "active" | "suspended"
       invite_status: "active" | "used" | "expired" | "revoked"
       issue_severity: "low" | "medium" | "high" | "critical"
@@ -2265,7 +2324,7 @@ export const Constants = {
         "super_admin",
         "event_organizer",
       ],
-      bill_status: ["unpaid", "paid", "overdue"],
+      bill_status: ["unpaid", "paid", "overdue", "waived"],
       estate_status: ["active", "suspended"],
       invite_status: ["active", "used", "expired", "revoked"],
       issue_severity: ["low", "medium", "high", "critical"],
