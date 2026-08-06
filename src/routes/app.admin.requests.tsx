@@ -10,6 +10,23 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/admin/requests")({
   component: AdminRequests,
+  head: () => ({
+    meta: [
+      { title: "Resident Requests — Estate Guard" },
+      {
+        name: "description",
+        content:
+          "Review and resolve resident service requests, from maintenance to access enrolment.",
+      },
+      { property: "og:title", content: "Resident Requests — Estate Guard" },
+      {
+        property: "og:description",
+        content: "Review and resolve resident service requests for your estate.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
 });
 
 const STATUSES = [

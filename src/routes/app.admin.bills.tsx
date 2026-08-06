@@ -10,6 +10,22 @@ import { format, isBefore } from "date-fns";
 
 export const Route = createFileRoute("/app/admin/bills")({
   component: AdminBills,
+  head: () => ({
+    meta: [
+      { title: "Resident Bills — Estate Guard" },
+      {
+        name: "description",
+        content: "Create resident bills, track dues and monitor payment status across the estate.",
+      },
+      { property: "og:title", content: "Resident Bills — Estate Guard" },
+      {
+        property: "og:description",
+        content: "Create resident bills and track estate payment status.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
 });
 
 function AdminBills() {

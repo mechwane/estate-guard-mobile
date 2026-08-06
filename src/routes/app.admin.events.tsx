@@ -9,6 +9,22 @@ import { CalendarDays } from "lucide-react";
 
 export const Route = createFileRoute("/app/admin/events")({
   component: AdminEvents,
+  head: () => ({
+    meta: [
+      { title: "Estate Events — Estate Guard" },
+      {
+        name: "description",
+        content: "Approve, publish and monitor community events happening inside your estate.",
+      },
+      { property: "og:title", content: "Estate Events — Estate Guard" },
+      {
+        property: "og:description",
+        content: "Approve, publish and monitor estate community events.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
 });
 
 function AdminEvents() {
