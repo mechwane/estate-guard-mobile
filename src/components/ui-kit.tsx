@@ -255,35 +255,38 @@ export function ConfirmActionDialog({
       ? "bg-destructive text-destructive-foreground hover:opacity-90"
       : "bg-primary text-primary-foreground hover:bg-primary-dark";
   return (
-    <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4"
-      onClick={busy ? undefined : onCancel}
-    >
+    <Overlay>
       <div
-        className="w-full max-w-sm rounded-t-2xl bg-background p-5 shadow-xl sm:rounded-2xl"
-        onClick={(e) => e.stopPropagation()}
+        className="fixed inset-0 z-[80] flex items-end justify-center overflow-y-auto bg-black/50 p-0 sm:items-center sm:p-4"
+        onClick={busy ? undefined : onCancel}
       >
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-        {description && <div className="mt-2 text-sm text-muted-foreground">{description}</div>}
-        <div className="mt-5 grid grid-cols-2 gap-2">
-          <button
-            onClick={onCancel}
-            disabled={busy}
-            className="rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-60"
-          >
-            {cancelLabel}
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={busy}
-            className={cn("rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-60", btn)}
-          >
-            {busy ? "Working…" : confirmLabel}
-          </button>
+        <div
+          className="my-auto w-full max-w-sm rounded-t-2xl bg-background p-5 shadow-xl sm:rounded-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+          {description && <div className="mt-2 text-sm text-muted-foreground">{description}</div>}
+          <div className="mt-5 grid grid-cols-2 gap-2">
+            <button
+              onClick={onCancel}
+              disabled={busy}
+              className="rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-60"
+            >
+              {cancelLabel}
+            </button>
+            <button
+              onClick={onConfirm}
+              disabled={busy}
+              className={cn("rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-60", btn)}
+            >
+              {busy ? "Working…" : confirmLabel}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </Overlay>
   );
+
 }
 
 /**
