@@ -116,11 +116,11 @@ function AdminRequests() {
       ) : rows.length === 0 ? (
         <EmptyState title="No requests match" icon={<InboxIcon className="h-6 w-6" />} />
       ) : (
-        <div className="space-y-2">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {rows.map((r) => {
             const open = openId === r.id;
             return (
-              <Card key={r.id} className="p-3">
+              <Card key={r.id} className={`p-3 ${open ? "sm:col-span-2 xl:col-span-3" : ""}`}>
                 <button
                   onClick={() => setOpenId(open ? null : r.id)}
                   className="flex w-full items-start justify-between gap-3 text-left"

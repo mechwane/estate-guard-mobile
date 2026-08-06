@@ -163,7 +163,7 @@ function Residents() {
 
   return (
     <div className="space-y-3">
-      <div className="space-y-2">
+      <div className="space-y-2 sm:max-w-xl">
         <SearchInput value={q} onChange={setQ} placeholder="Search by name, phone, or unit" />
         <div className="flex gap-2">
           {(["all", "pending", "approved"] as const).map((k) => (
@@ -192,7 +192,7 @@ function Residents() {
           icon={<Users className="h-6 w-6" />}
         />
       ) : (
-        <div className="space-y-2">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((r) => {
             const isOpen = expanded === r.id;
             const bio = bioByResident.get(r.id) ?? {};
@@ -201,19 +201,29 @@ function Residents() {
               (v) => v.resident_id === r.id && v.active,
             ).length;
             return (
-              <Card key={r.id} className="p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-medium text-foreground">
-                      {r.full_name || "—"}
-                    </div>
-                    <div className="mt-0.5 text-xs text-muted-foreground">
-                      {r.unit ? `Unit ${r.unit}` : "—"} · {r.phone ?? "no phone"}
+              <Card
+                key={r.id}
+                className={`p-3 ${isOpen ? "sm:col-span-2 xl:col-span-3" : ""}`}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-[11px] font-semibold text-primary">
+                      {(r.full_name || "?").slice(0, 1).toUpperCase()}
+                    </span>
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-medium text-foreground">
+                        {r.full_name || "—"}
+                      </div>
+                      <div className="truncate text-xs text-muted-foreground">
+                        {r.unit ? `Unit ${r.unit}` : "—"} · {r.phone ?? "no phone"}
+                      </div>
                     </div>
                   </div>
-                  <StatusBadge tone={r.approved ? "success" : "warning"}>
-                    {r.approved ? "approved" : "pending"}
-                  </StatusBadge>
+                  <span className="shrink-0">
+                    <StatusBadge tone={r.approved ? "success" : "warning"}>
+                      {r.approved ? "approved" : "pending"}
+                    </StatusBadge>
+                  </span>
                 </div>
 
                 <div className="mt-2 flex flex-wrap gap-1.5">

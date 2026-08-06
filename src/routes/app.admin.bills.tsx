@@ -107,12 +107,12 @@ function AdminBills() {
       {!open ? (
         <button
           onClick={() => setOpen(true)}
-          className="card-surface flex w-full items-center justify-center gap-2 py-3 text-sm font-medium text-primary hover:bg-muted/40"
+          className="card-surface inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-primary hover:bg-muted/40"
         >
           <Plus className="h-4 w-4" /> Create bill
         </button>
       ) : (
-        <Card>
+        <Card className="max-w-2xl">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -187,11 +187,11 @@ function AdminBills() {
       {(bills ?? []).length === 0 ? (
         <EmptyState title="No bills yet" icon={<Receipt className="h-6 w-6" />} />
       ) : (
-        <div className="space-y-2">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {bills!.map((b) => {
             const overdue = b.status === "unpaid" && isBefore(new Date(b.due_date), new Date());
             return (
-              <Card key={b.id} className="p-4">
+              <Card key={b.id} className="p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="truncate text-sm font-medium text-foreground">{b.title}</div>

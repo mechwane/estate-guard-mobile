@@ -67,7 +67,7 @@ function AdminEvents() {
     );
 
   return (
-    <div className="space-y-2">
+    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
       {q.data!.map((e) => (
         <Card key={e.id}>
           <div className="flex items-start justify-between gap-3">

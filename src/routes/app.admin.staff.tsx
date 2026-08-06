@@ -175,11 +175,11 @@ function AdminStaff() {
           icon={<Shield className="h-6 w-6" />}
         />
       ) : (
-        <div className="space-y-2">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {rows.map((g) => {
             const open = openId === g.id;
             return (
-              <Card key={g.id} className="p-4">
+              <Card key={g.id} className={`p-3 ${open ? "sm:col-span-2 xl:col-span-3" : ""}`}>
                 <button
                   onClick={() => setOpenId(open ? null : g.id)}
                   className="flex w-full items-start justify-between gap-3 text-left"
