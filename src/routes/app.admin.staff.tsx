@@ -18,6 +18,22 @@ import {
 
 export const Route = createFileRoute("/app/admin/staff")({
   component: AdminStaff,
+  head: () => ({
+    meta: [
+      { title: "Security Staff — Estate Guard" },
+      {
+        name: "description",
+        content: "Manage estate guards and security staff: assignments, access and duty status.",
+      },
+      { property: "og:title", content: "Security Staff — Estate Guard" },
+      {
+        property: "og:description",
+        content: "Manage estate guards, assignments and duty status.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
 });
 
 function AdminStaff() {
