@@ -19,7 +19,7 @@ import {
   StatusBadge,
 } from "@/components/ui-kit";
 import { Stagger, StaggerItem } from "@/components/motion-kit";
-import { initials } from "@/lib/avatar";
+import { initialsFor } from "@/lib/avatar";
 
 export const Route = createFileRoute("/app/admin/cards")({
   component: AccessCards,
@@ -277,7 +277,7 @@ function AccessCards() {
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex min-w-0 items-center gap-2.5">
                     <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-                      {initials(residentName(c.resident_id))}
+                      {initialsFor(residentName(c.resident_id))}
                     </div>
                     <div className="min-w-0">
                       <div className="truncate text-sm font-semibold text-foreground">
