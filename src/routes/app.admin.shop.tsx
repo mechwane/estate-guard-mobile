@@ -345,7 +345,7 @@ function AdminShop() {
                       </StatusBadge>
                     </div>
                     <div className="text-sm font-semibold text-foreground">
-                      ₦{Number(o.total_ngn ?? 0).toLocaleString()}
+                      ₦{Number(o.amount_ngn ?? 0).toLocaleString()}
                     </div>
                     <select
                       value={o.status}
