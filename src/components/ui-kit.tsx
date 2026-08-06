@@ -9,17 +9,23 @@ import { cn } from "@/lib/utils";
  */
 export function ModalPortal({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+  return createPortal(children, document.body);
+}
+
+/** Locks background scroll while a modal is open. */
+function useScrollLock(active: boolean) {
   useEffect(() => {
-    setMounted(true);
+    if (!active) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = prev;
     };
-  }, []);
-  if (!mounted) return null;
-  return createPortal(children, document.body);
+  }, [active]);
 }
+
 
 
 export function Card({
