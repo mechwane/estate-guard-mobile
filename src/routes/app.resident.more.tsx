@@ -383,6 +383,7 @@ function UpgradeModal({
   ];
 
   return (
+    <ModalPortal>
     <div
       role="dialog"
       aria-modal="true"
@@ -458,5 +459,6 @@ function UpgradeModal({
         </div>
       </div>
     </div>
+  </ModalPortal>
   );
 }

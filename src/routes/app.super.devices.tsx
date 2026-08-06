@@ -419,6 +419,7 @@ function RegisterDeviceDialog({
   });
 
   return (
+    <ModalPortal>
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4">
       <div className="w-full max-w-md rounded-2xl border border-border bg-card p-4">
         <h3 className="text-base font-semibold">Register access device</h3>
@@ -475,6 +476,7 @@ function RegisterDeviceDialog({
         </div>
       </div>
     </div>
+  </ModalPortal>
   );
 }
 
