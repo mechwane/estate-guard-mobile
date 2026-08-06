@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
  * Renders overlay content into document.body so animated (transformed)
  * ancestors cannot clip or offset a `fixed` overlay. Returns null during SSR.
  */
-function Overlay({ children }: { children: ReactNode }) {
+export function ModalPortal({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
@@ -255,7 +255,7 @@ export function ConfirmActionDialog({
       ? "bg-destructive text-destructive-foreground hover:opacity-90"
       : "bg-primary text-primary-foreground hover:bg-primary-dark";
   return (
-    <Overlay>
+    <ModalPortal>
       <div
         className="fixed inset-0 z-[80] flex items-end justify-center overflow-y-auto bg-black/50 p-0 sm:items-center sm:p-4"
         onClick={busy ? undefined : onCancel}
@@ -284,7 +284,7 @@ export function ConfirmActionDialog({
           </div>
         </div>
       </div>
-    </Overlay>
+    </ModalPortal>
   );
 
 }
@@ -313,7 +313,7 @@ export function SheetModal({
   if (!open) return null;
   const maxW = { sm: "sm:max-w-sm", md: "sm:max-w-md", lg: "sm:max-w-lg" }[width];
   return (
-    <Overlay>
+    <ModalPortal>
       <div
         className="fixed inset-0 z-[80] flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4"
         onClick={onClose}
@@ -349,7 +349,7 @@ export function SheetModal({
           )}
         </div>
       </div>
-    </Overlay>
+    </ModalPortal>
   );
 
 }
