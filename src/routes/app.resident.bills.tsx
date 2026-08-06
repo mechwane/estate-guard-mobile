@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { Card, EmptyState, StatusBadge } from "@/components/ui-kit";
+import { Card, EmptyState, StatusBadge, ModalPortal } from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
 import {
   Receipt,
@@ -377,6 +377,7 @@ function Bills() {
       )}
 
       {/* Update Info modal */}
+      <ModalPortal>
       <AnimatePresence>
         {confirmEdit && (
           <motion.div
@@ -422,6 +423,7 @@ function Bills() {
           </motion.div>
         )}
       </AnimatePresence>
+      </ModalPortal>
     </div>
   );
 }

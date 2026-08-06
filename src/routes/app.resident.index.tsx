@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { useAvatarUrl, initialsFor } from "@/lib/avatar";
-import { Card } from "@/components/ui-kit";
+import { Card, ModalPortal } from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem, Pressable } from "@/components/motion-kit";
 import {
   UserPlus,
@@ -256,11 +256,12 @@ function EstateSheet({
   };
 
   return (
+    <ModalPortal>
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50"
+      className="fixed inset-0 z-[80] flex items-end justify-center bg-black/50"
       onClick={onClose}
     >
       <motion.div
@@ -313,6 +314,7 @@ function EstateSheet({
         )}
       </motion.div>
     </motion.div>
+    </ModalPortal>
   );
 }
 
@@ -341,11 +343,12 @@ function ActiveInvitesSheet({
   });
 
   return (
+    <ModalPortal>
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50"
+      className="fixed inset-0 z-[80] flex items-end justify-center bg-black/50"
       onClick={onClose}
     >
       <motion.div
@@ -396,6 +399,7 @@ function ActiveInvitesSheet({
         </div>
       </motion.div>
     </motion.div>
+    </ModalPortal>
   );
 }
 

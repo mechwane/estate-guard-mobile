@@ -10,6 +10,7 @@ import {
   ListSkeleton,
   ErrorState,
   SearchInput,
+  ModalPortal,
 } from "@/components/ui-kit";
 import { ShieldCheck, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
@@ -189,8 +190,9 @@ function Verifications() {
       )}
 
       {selected && (
+        <ModalPortal>
         <div
-          className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 sm:items-center"
+          className="fixed inset-0 z-[80] flex items-end justify-center bg-black/40 sm:items-center"
           onClick={() => setSelected(null)}
         >
           <div
@@ -261,7 +263,9 @@ function Verifications() {
             </div>
           </div>
         </div>
+        </ModalPortal>
       )}
+
     </div>
   );
 }

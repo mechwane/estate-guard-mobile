@@ -1,5 +1,32 @@
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
+
+/**
+ * Renders overlay content into document.body so animated (transformed)
+ * ancestors cannot clip or offset a `fixed` overlay. Returns null during SSR.
+ */
+export function ModalPortal({ children }: { children: ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+  return createPortal(children, document.body);
+}
+
+/** Locks background scroll while a modal is open. */
+function useScrollLock(active: boolean) {
+  useEffect(() => {
+    if (!active) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [active]);
+}
+
+
 
 export function Card({
   className,
@@ -228,41 +255,45 @@ export function ConfirmActionDialog({
   onConfirm: () => void;
   onCancel: () => void;
 }) {
+  useScrollLock(open);
   if (!open) return null;
   const btn =
     tone === "destructive"
       ? "bg-destructive text-destructive-foreground hover:opacity-90"
       : "bg-primary text-primary-foreground hover:bg-primary-dark";
   return (
-    <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4"
-      onClick={busy ? undefined : onCancel}
-    >
+    <ModalPortal>
       <div
-        className="w-full max-w-sm rounded-t-2xl bg-background p-5 shadow-xl sm:rounded-2xl"
-        onClick={(e) => e.stopPropagation()}
+        className="fixed inset-0 z-[80] flex items-end justify-center overflow-y-auto bg-black/50 p-0 sm:items-center sm:p-4"
+        onClick={busy ? undefined : onCancel}
       >
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-        {description && <div className="mt-2 text-sm text-muted-foreground">{description}</div>}
-        <div className="mt-5 grid grid-cols-2 gap-2">
-          <button
-            onClick={onCancel}
-            disabled={busy}
-            className="rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-60"
-          >
-            {cancelLabel}
-          </button>
-          <button
-            onClick={onConfirm}
-            disabled={busy}
-            className={cn("rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-60", btn)}
-          >
-            {busy ? "Working…" : confirmLabel}
-          </button>
+        <div
+          className="my-auto w-full max-w-sm rounded-t-2xl bg-background p-5 shadow-xl sm:rounded-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+          {description && <div className="mt-2 text-sm text-muted-foreground">{description}</div>}
+          <div className="mt-5 grid grid-cols-2 gap-2">
+            <button
+              onClick={onCancel}
+              disabled={busy}
+              className="rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-60"
+            >
+              {cancelLabel}
+            </button>
+            <button
+              onClick={onConfirm}
+              disabled={busy}
+              className={cn("rounded-lg px-3 py-2 text-sm font-medium disabled:opacity-60", btn)}
+            >
+              {busy ? "Working…" : confirmLabel}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </ModalPortal>
   );
+
 }
 
 /**
@@ -286,43 +317,47 @@ export function SheetModal({
   footer?: ReactNode;
   width?: "sm" | "md" | "lg";
 }) {
+  useScrollLock(open);
   if (!open) return null;
   const maxW = { sm: "sm:max-w-sm", md: "sm:max-w-md", lg: "sm:max-w-lg" }[width];
   return (
-    <div
-      className="fixed inset-0 z-[70] flex items-end justify-center overflow-y-auto bg-black/50 p-0 sm:items-center sm:p-4"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-label={title}
-    >
+    <ModalPortal>
       <div
-        onClick={(e) => e.stopPropagation()}
-        className={cn(
-          "flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-2xl border border-border bg-card shadow-xl sm:max-h-[88dvh] sm:rounded-2xl",
-          maxW,
-        )}
+        className="fixed inset-0 z-[80] flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4"
+        onClick={onClose}
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
       >
-        <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-3">
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            className="rounded-full border border-border p-1.5 text-muted-foreground hover:bg-muted"
-          >
-            <span aria-hidden className="block h-3.5 w-3.5 leading-none">
-              ✕
-            </span>
-          </button>
-          <h3 className="flex-1 text-center text-sm font-semibold text-foreground">{title}</h3>
-          <span className="w-7 shrink-0" />
-        </div>
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">{children}</div>
-        {footer && (
-          <div className="shrink-0 border-t border-border bg-card px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-            {footer}
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className={cn(
+            "flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-2xl border border-border bg-card shadow-xl sm:max-h-[88dvh] sm:rounded-2xl",
+            maxW,
+          )}
+        >
+          <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-3">
+            <button
+              onClick={onClose}
+              aria-label="Close"
+              className="rounded-full border border-border p-1.5 text-muted-foreground hover:bg-muted"
+            >
+              <span aria-hidden className="block h-3.5 w-3.5 leading-none">
+                ✕
+              </span>
+            </button>
+            <h3 className="flex-1 text-center text-sm font-semibold text-foreground">{title}</h3>
+            <span className="w-7 shrink-0" />
           </div>
-        )}
+          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">{children}</div>
+          {footer && (
+            <div className="shrink-0 border-t border-border bg-card px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+              {footer}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </ModalPortal>
   );
+
 }

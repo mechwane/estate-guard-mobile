@@ -9,6 +9,7 @@ import {
   ListSkeleton,
   ErrorState,
   ConfirmActionDialog,
+  ModalPortal,
 } from "@/components/ui-kit";
 import { format } from "date-fns";
 import { ArrowLeft, Pencil, UserCog, Power, PowerOff, Loader2 } from "lucide-react";
@@ -413,6 +414,7 @@ function Sheet({
   children: ReactNode;
 }) {
   return (
+    <ModalPortal>
     <div
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4"
       onClick={onClose}
@@ -430,6 +432,7 @@ function Sheet({
         {children}
       </div>
     </div>
+  </ModalPortal>
   );
 }
 

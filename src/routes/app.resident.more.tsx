@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useSession } from "@/lib/session";
-import { Card } from "@/components/ui-kit";
+import { Card, ModalPortal } from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
 import {
   ChevronRight,
@@ -383,6 +383,7 @@ function UpgradeModal({
   ];
 
   return (
+    <ModalPortal>
     <div
       role="dialog"
       aria-modal="true"
@@ -458,5 +459,6 @@ function UpgradeModal({
         </div>
       </div>
     </div>
+  </ModalPortal>
   );
 }
