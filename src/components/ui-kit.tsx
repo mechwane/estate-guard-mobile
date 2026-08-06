@@ -1,5 +1,26 @@
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
+
+/**
+ * Renders overlay content into document.body so animated (transformed)
+ * ancestors cannot clip or offset a `fixed` overlay. Returns null during SSR.
+ */
+function Overlay({ children }: { children: ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, []);
+  if (!mounted) return null;
+  return createPortal(children, document.body);
+}
+
 
 export function Card({
   className,
