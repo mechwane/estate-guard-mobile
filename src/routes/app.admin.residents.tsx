@@ -163,7 +163,7 @@ function Residents() {
 
   return (
     <div className="space-y-3">
-      <div className="space-y-2">
+      <div className="space-y-2 sm:max-w-xl">
         <SearchInput value={q} onChange={setQ} placeholder="Search by name, phone, or unit" />
         <div className="flex gap-2">
           {(["all", "pending", "approved"] as const).map((k) => (
