@@ -187,11 +187,11 @@ function AdminBills() {
       {(bills ?? []).length === 0 ? (
         <EmptyState title="No bills yet" icon={<Receipt className="h-6 w-6" />} />
       ) : (
-        <div className="space-y-2">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {bills!.map((b) => {
             const overdue = b.status === "unpaid" && isBefore(new Date(b.due_date), new Date());
             return (
-              <Card key={b.id} className="p-4">
+              <Card key={b.id} className="p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="truncate text-sm font-medium text-foreground">{b.title}</div>
