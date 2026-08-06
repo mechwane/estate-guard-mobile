@@ -107,12 +107,12 @@ function AdminBills() {
       {!open ? (
         <button
           onClick={() => setOpen(true)}
-          className="card-surface flex w-full items-center justify-center gap-2 py-3 text-sm font-medium text-primary hover:bg-muted/40"
+          className="card-surface inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-primary hover:bg-muted/40"
         >
           <Plus className="h-4 w-4" /> Create bill
         </button>
       ) : (
-        <Card>
+        <Card className="max-w-2xl">
           <form
             onSubmit={(e) => {
               e.preventDefault();
