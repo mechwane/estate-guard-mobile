@@ -97,9 +97,11 @@ function AdminInvoices() {
     return m;
   }, [data.data]);
 
+  const settled = (st: string) => st === "paid" || st === "waived";
+
   const rows = useMemo(() => {
     const list = (data.data?.bills ?? []).map((b) => {
-      const overdue = b.status !== "paid" && isBefore(new Date(b.due_date), new Date());
+      const overdue = !settled(b.status) && isBefore(new Date(b.due_date), new Date());
       const r = residentMap.get(b.resident_id);
       return {
         ...b,
@@ -115,10 +117,10 @@ function AdminInvoices() {
         tab === "all"
           ? true
           : tab === "paid"
-            ? b.status === "paid"
+            ? settled(b.status)
             : tab === "overdue"
               ? b.overdue
-              : b.status !== "paid",
+              : !settled(b.status),
       )
       .filter(
         (b) =>
@@ -132,9 +134,9 @@ function AdminInvoices() {
   const totals = useMemo(() => {
     const all = data.data?.bills ?? [];
     const billed = all.reduce((s, b) => s + Number(b.amount ?? 0), 0);
-    const paid = all.filter((b) => b.status === "paid").reduce((s, b) => s + Number(b.amount ?? 0), 0);
+    const paid = all.filter((b) => settled(b.status)).reduce((s, b) => s + Number(b.amount ?? 0), 0);
     const overdue = all
-      .filter((b) => b.status !== "paid" && isBefore(new Date(b.due_date), new Date()))
+      .filter((b) => !settled(b.status) && isBefore(new Date(b.due_date), new Date()))
       .reduce((s, b) => s + Number(b.amount ?? 0), 0);
     return { count: all.length, billed, paid, outstanding: billed - paid, overdue };
   }, [data.data]);
@@ -163,7 +165,7 @@ function AdminInvoices() {
       r.residentName,
       r.residentUnit,
       String(r.amount),
-      r.status === "paid" ? "paid" : r.overdue ? "overdue" : "unpaid",
+      settled(r.status) ? r.status : r.overdue ? "overdue" : "unpaid",
       r.due_date,
       r.payment?.method ?? "",
     ]);
@@ -260,13 +262,13 @@ function AdminInvoices() {
                     </td>
                     <td className="py-2.5 pr-3">
                       <StatusBadge
-                        tone={r.status === "paid" ? "success" : r.overdue ? "error" : "warning"}
+                        tone={settled(r.status) ? "success" : r.overdue ? "error" : "warning"}
                       >
-                        {r.status === "paid" ? "paid" : r.overdue ? "overdue" : "unpaid"}
+                        {settled(r.status) ? r.status : r.overdue ? "overdue" : "unpaid"}
                       </StatusBadge>
                     </td>
                     <td className="py-2.5 text-right">
-                      {r.status === "paid" ? (
+                      {settled(r.status) ? (
                         <span className="text-xs text-muted-foreground">
                           {r.payment ? `via ${r.payment.method}` : "settled"}
                         </span>
@@ -304,13 +306,13 @@ function AdminInvoices() {
                   <div className="shrink-0 text-right">
                     <div className="text-sm font-semibold tabular-nums">{ngn(Number(r.amount))}</div>
                     <StatusBadge
-                      tone={r.status === "paid" ? "success" : r.overdue ? "error" : "warning"}
+                      tone={settled(r.status) ? "success" : r.overdue ? "error" : "warning"}
                     >
-                      {r.status === "paid" ? "paid" : r.overdue ? "overdue" : "unpaid"}
+                      {settled(r.status) ? r.status : r.overdue ? "overdue" : "unpaid"}
                     </StatusBadge>
                   </div>
                 </div>
-                {r.status !== "paid" && (
+                {!settled(r.status) && (
                   <button
                     onClick={() => markPaid.mutate({ id: r.id, method: "cash" })}
                     disabled={markPaid.isPending}
