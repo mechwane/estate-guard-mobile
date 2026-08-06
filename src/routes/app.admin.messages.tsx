@@ -299,7 +299,7 @@ function Messages() {
         <StaggerItem className="space-y-4">
           <Card>
             <h2 className="mb-3 text-sm font-semibold">Quick templates</h2>
-            <div className="grid gap-2">
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
               {TEMPLATES.map((t) => (
                 <button
                   key={t.label}
@@ -307,10 +307,12 @@ function Messages() {
                     setTitle(t.title);
                     setBody(t.body);
                   }}
-                  className="rounded-lg border border-border/60 bg-card px-3 py-2 text-left text-sm hover:border-primary/60 hover:bg-muted"
+                  className="block w-full min-w-0 rounded-lg border border-border/60 bg-card px-3 py-2 text-left hover:border-primary/60 hover:bg-muted"
                 >
-                  <div className="font-medium">{t.label}</div>
-                  <div className="truncate text-xs text-muted-foreground">{t.body}</div>
+                  <div className="truncate text-sm font-medium">{t.label}</div>
+                  <div className="mt-0.5 line-clamp-2 break-words text-xs leading-snug text-muted-foreground">
+                    {t.body}
+                  </div>
                 </button>
               ))}
             </div>
