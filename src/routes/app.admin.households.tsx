@@ -151,7 +151,9 @@ function Households() {
                         <Home className="h-4 w-4" />
                       </span>
                       <div className="min-w-0">
-                        <div className="truncate text-sm font-medium">{h.address}</div>
+                        <div className="line-clamp-2 break-words text-sm font-medium leading-snug">
+                          {h.address}
+                        </div>
                         <div className="truncate text-xs text-muted-foreground">
                           {h.members.length} occupant{h.members.length === 1 ? "" : "s"}
                         </div>
