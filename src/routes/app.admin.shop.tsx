@@ -366,28 +366,29 @@ function AdminShop() {
         </>
       )}
 
-      {editing && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center sm:p-4">
-          <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-2xl border border-border bg-card p-4 shadow-xl sm:rounded-2xl">
-            <div className="mb-3 flex items-center justify-between gap-2">
-              <button
-                onClick={() => setEditing(null)}
-                aria-label="Close"
-                className="rounded-full border border-border p-1.5 text-muted-foreground hover:bg-muted"
-              >
-                <X className="h-4 w-4" />
-              </button>
-              <h3 className="flex-1 text-center text-sm font-semibold">
-                {editing.id ? "Edit product" : "Add product"}
-              </h3>
-              <span className="w-7" />
-            </div>
+      <SheetModal
+        open={!!editing}
+        title={editing?.id ? "Edit product" : "Add product"}
+        onClose={() => setEditing(null)}
+        footer={
+          <button
+            type="submit"
+            form="product-form"
+            disabled={save.isPending}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
+          >
+            {save.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Save product
+          </button>
+        }
+      >
+        {editing && (
+          <form
+            id="product-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              save.mutate(editing);
+            }}
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                save.mutate(editing);
-              }}
               className="space-y-3"
             >
               <div className="flex flex-col items-center gap-2">
