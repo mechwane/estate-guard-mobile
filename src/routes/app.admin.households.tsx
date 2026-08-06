@@ -142,7 +142,7 @@ function Households() {
           ) : visible.length === 0 ? (
             <EmptyState title="No households" icon={<Home className="h-6 w-6" />} />
           ) : (
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3">
               {visible.map((h) => (
                 <Card key={h.address} className="flex flex-col gap-2 p-3">
                   <div className="flex items-start justify-between gap-2">
