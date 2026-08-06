@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { useAvatarUrl, initialsFor } from "@/lib/avatar";
-import { Card } from "@/components/ui-kit";
+import { Card, ModalPortal } from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem, Pressable } from "@/components/motion-kit";
 import {
   UserPlus,
@@ -314,6 +314,7 @@ function EstateSheet({
         )}
       </motion.div>
     </motion.div>
+    </ModalPortal>
   );
 }
 
@@ -398,6 +399,7 @@ function ActiveInvitesSheet({
         </div>
       </motion.div>
     </motion.div>
+    </ModalPortal>
   );
 }
 
