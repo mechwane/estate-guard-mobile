@@ -474,18 +474,10 @@ function AdminShop() {
                 />
                 Active (visible to residents)
               </label>
-
-              <button
-                type="submit"
-                disabled={save.isPending}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
-              >
-                {save.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Save product
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+          </form>
+        )}
+      </SheetModal>
     </div>
   );
+
 }
