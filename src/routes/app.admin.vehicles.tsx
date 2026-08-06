@@ -45,6 +45,12 @@ type Tag = {
 
 type Tab = "all" | "active" | "inactive";
 
+function maskValue(value: string) {
+  const v = value.trim();
+  if (v.length <= 3) return v;
+  return `${"•".repeat(Math.min(6, v.length - 3))}${v.slice(-3)}`;
+}
+
 function VehicleTags() {
   const { data: session } = useSession();
   const estateId = session?.estate?.id;
@@ -52,7 +58,9 @@ function VehicleTags() {
   const [q, setQ] = useState("");
   const [tab, setTab] = useState<Tab>("all");
   const [adding, setAdding] = useState(false);
+  const [reveal, setReveal] = useState<Record<string, boolean>>({});
   const [toDelete, setToDelete] = useState<Tag | null>(null);
+
 
   const tagsQ = useQuery({
     queryKey: ["admin-vehicle-tags", estateId],
