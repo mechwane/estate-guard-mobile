@@ -3,9 +3,10 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { Card, EmptyState, StatusBadge, SearchInput, StatCard } from "@/components/ui-kit";
+import { Card, EmptyState, StatusBadge, SearchInput, StatCard, SheetModal } from "@/components/ui-kit";
 import { Stagger, StaggerItem } from "@/components/motion-kit";
-import { Store, Plus, Loader2, Pencil, Trash2, ImagePlus, X, ShoppingBag } from "lucide-react";
+import { Store, Plus, Loader2, Pencil, Trash2, ImagePlus, ShoppingBag } from "lucide-react";
+
 import { format } from "date-fns";
 import { toast } from "sonner";
 
