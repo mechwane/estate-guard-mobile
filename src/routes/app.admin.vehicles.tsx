@@ -360,13 +360,27 @@ function AddVehicleDialog({
   });
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4">
-      <div className="w-full max-w-md rounded-2xl border border-border bg-card p-4">
-        <h3 className="text-base font-semibold">Register vehicle</h3>
-        <p className="mt-1 text-xs text-muted-foreground">
+    <SheetModal
+      open
+      title="Register vehicle"
+      onClose={onClose}
+      footer={
+        <button
+          onClick={() => submit.mutate()}
+          disabled={submit.isPending}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
+        >
+          {submit.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+          Register
+        </button>
+      }
+    >
+      <div>
+        <p className="mb-3 text-xs text-muted-foreground">
           Attach a plate to a resident so guards can verify entry at the gate.
         </p>
-        <div className="mt-3 space-y-3">
+        <div className="space-y-3">
+
           <Labeled label="Resident">
             <select
               value={residentId}
