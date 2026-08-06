@@ -219,9 +219,11 @@ function Residents() {
                       </div>
                     </div>
                   </div>
-                  <StatusBadge tone={r.approved ? "success" : "warning"}>
-                    {r.approved ? "approved" : "pending"}
-                  </StatusBadge>
+                  <span className="shrink-0">
+                    <StatusBadge tone={r.approved ? "success" : "warning"}>
+                      {r.approved ? "approved" : "pending"}
+                    </StatusBadge>
+                  </span>
                 </div>
 
                 <div className="mt-2 flex flex-wrap gap-1.5">
