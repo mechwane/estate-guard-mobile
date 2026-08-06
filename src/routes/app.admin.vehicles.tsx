@@ -430,25 +430,10 @@ function AddVehicleDialog({
             />
           </Labeled>
         </div>
-        <div className="mt-4 flex justify-end gap-2">
-          <button
-            onClick={onClose}
-            className="rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => submit.mutate()}
-            disabled={submit.isPending}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-60"
-          >
-            {submit.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-            Register
-          </button>
-        </div>
       </div>
-    </div>
+    </SheetModal>
   );
+
 }
 
 function Labeled({ label, children }: { label: string; children: React.ReactNode }) {
