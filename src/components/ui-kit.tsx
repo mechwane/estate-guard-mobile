@@ -255,6 +255,7 @@ export function ConfirmActionDialog({
   onConfirm: () => void;
   onCancel: () => void;
 }) {
+  useScrollLock(open);
   if (!open) return null;
   const btn =
     tone === "destructive"
@@ -316,6 +317,7 @@ export function SheetModal({
   footer?: ReactNode;
   width?: "sm" | "md" | "lg";
 }) {
+  useScrollLock(open);
   if (!open) return null;
   const maxW = { sm: "sm:max-w-sm", md: "sm:max-w-md", lg: "sm:max-w-lg" }[width];
   return (
