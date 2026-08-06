@@ -142,21 +142,45 @@ function Households() {
           ) : visible.length === 0 ? (
             <EmptyState title="No households" icon={<Home className="h-6 w-6" />} />
           ) : (
-            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {visible.map((h) => (
-                <Card key={h.address} className="p-3">
-                  <div className="flex items-start gap-2">
-                    <Home className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-medium">{h.address}</div>
-                      <div className="mt-0.5 truncate text-xs text-muted-foreground">
-                        {h.members.length} occupant{h.members.length === 1 ? "" : "s"} ·{" "}
-                        {h.members
-                          .map((m) => m.occupant_type ?? "resident")
-                          .filter((v, i, a) => a.indexOf(v) === i)
-                          .join(", ")}
+                <Card key={h.address} className="flex flex-col gap-2 p-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+                        <Home className="h-4 w-4" />
+                      </span>
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium">{h.address}</div>
+                        <div className="truncate text-xs text-muted-foreground">
+                          {h.members.length} occupant{h.members.length === 1 ? "" : "s"}
+                        </div>
                       </div>
                     </div>
+                    <span
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${
+                        h.status === "active"
+                          ? "bg-emerald-500/15 text-emerald-500"
+                          : h.status === "pending"
+                            ? "bg-amber-500/15 text-amber-600"
+                            : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {h.status}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {[...new Set(h.members.map((m) => m.occupant_type ?? "resident"))].map((t) => (
+                      <span
+                        key={t}
+                        className="rounded-full bg-muted px-2 py-0.5 text-[11px] capitalize text-muted-foreground"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-auto truncate border-t border-border/60 pt-2 text-[11px] text-muted-foreground">
+                    {h.members.map((m) => m.full_name).join(", ")}
                   </div>
                 </Card>
               ))}
