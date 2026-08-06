@@ -452,33 +452,63 @@ export type Database = {
       discounts: {
         Row: {
           active: boolean
+          code: string | null
+          code_type: string
           created_at: string
           created_by: string | null
+          ends_at: string | null
           estate_id: string
           id: string
+          min_payment_count: number | null
+          min_purchase_amount: number | null
           name: string
           percent: number
+          starts_at: string | null
           updated_at: string
+          usage_limit: number | null
+          usage_type: string
+          used_count: number
+          value: number
         }
         Insert: {
           active?: boolean
+          code?: string | null
+          code_type?: string
           created_at?: string
           created_by?: string | null
+          ends_at?: string | null
           estate_id: string
           id?: string
+          min_payment_count?: number | null
+          min_purchase_amount?: number | null
           name: string
           percent: number
+          starts_at?: string | null
           updated_at?: string
+          usage_limit?: number | null
+          usage_type?: string
+          used_count?: number
+          value?: number
         }
         Update: {
           active?: boolean
+          code?: string | null
+          code_type?: string
           created_at?: string
           created_by?: string | null
+          ends_at?: string | null
           estate_id?: string
           id?: string
+          min_payment_count?: number | null
+          min_purchase_amount?: number | null
           name?: string
           percent?: number
+          starts_at?: string | null
           updated_at?: string
+          usage_limit?: number | null
+          usage_type?: string
+          used_count?: number
+          value?: number
         }
         Relationships: [
           {

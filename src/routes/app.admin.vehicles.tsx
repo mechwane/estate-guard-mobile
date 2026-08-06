@@ -13,6 +13,7 @@ import {
   ListSkeleton,
   ScrollTabs,
   SearchInput,
+  SheetModal,
   StatCard,
   StatusBadge,
 } from "@/components/ui-kit";
@@ -45,6 +46,12 @@ type Tag = {
 
 type Tab = "all" | "active" | "inactive";
 
+function maskValue(value: string) {
+  const v = value.trim();
+  if (v.length <= 3) return v;
+  return `${"•".repeat(Math.min(6, v.length - 3))}${v.slice(-3)}`;
+}
+
 function VehicleTags() {
   const { data: session } = useSession();
   const estateId = session?.estate?.id;
@@ -52,7 +59,9 @@ function VehicleTags() {
   const [q, setQ] = useState("");
   const [tab, setTab] = useState<Tab>("all");
   const [adding, setAdding] = useState(false);
+  const [reveal, setReveal] = useState<Record<string, boolean>>({});
   const [toDelete, setToDelete] = useState<Tag | null>(null);
+
 
   const tagsQ = useQuery({
     queryKey: ["admin-vehicle-tags", estateId],
@@ -142,7 +151,22 @@ function VehicleTags() {
   if (!estateId) return <EmptyState title="No estate assigned" />;
 
   return (
-    <Stagger className="space-y-4">
+    <Stagger className="mx-auto w-full max-w-6xl space-y-4">
+      <StaggerItem>
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:justify-between">
+          <h1 className="flex min-w-0 items-center gap-2 text-lg font-semibold">
+            <Car className="h-5 w-5 shrink-0 text-primary" />
+            <span className="truncate">Vehicle tags</span>
+          </h1>
+          <button
+            onClick={() => setAdding(true)}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-semibold uppercase tracking-wide text-primary-foreground hover:bg-primary-dark"
+          >
+            <Plus className="h-4 w-4" /> Register vehicle
+          </button>
+        </div>
+      </StaggerItem>
+
       <StaggerItem>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           <StatCard label="Vehicles" value={counts.total} />
@@ -157,80 +181,89 @@ function VehicleTags() {
       </StaggerItem>
 
       <StaggerItem>
-        <Card className="space-y-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="min-w-0 flex-1">
-              <SearchInput
-                value={q}
-                onChange={setQ}
-                placeholder="Search plate, tag, resident…"
-              />
-            </div>
-            <button
-              onClick={() => setAdding(true)}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground hover:bg-primary-dark"
-            >
-              <Plus className="h-3.5 w-3.5" /> Register vehicle
-            </button>
-          </div>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <ScrollTabs
             value={tab}
             onChange={setTab}
+            className="sm:flex-1"
             tabs={[
-              { key: "all", label: "All" },
-              { key: "active", label: "Active" },
-              { key: "inactive", label: "Deactivated" },
+              { key: "all", label: `All (${counts.total})` },
+              { key: "active", label: `Active (${counts.active})` },
+              { key: "inactive", label: `Deactivated (${counts.inactive})` },
             ]}
           />
+          <div className="sm:w-64">
+            <SearchInput value={q} onChange={setQ} placeholder="Plate, tag or resident" />
+          </div>
+        </div>
+      </StaggerItem>
 
-          {tagsQ.isLoading ? (
-            <ListSkeleton rows={4} />
-          ) : tagsQ.isError ? (
-            <ErrorState onRetry={() => tagsQ.refetch()} />
-          ) : filtered.length === 0 ? (
-            <EmptyState
-              title="No vehicles registered"
-              description="Register a resident vehicle so guards can match plates at the gate."
-              icon={<Car className="h-6 w-6" />}
-            />
-          ) : (
-            <ul className="divide-y divide-border/60">
-              {filtered.map((v) => {
-                const r = residentMap.get(v.resident_id);
-                return (
-                  <li
-                    key={v.id}
-                    className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 py-3 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1.4fr)_minmax(0,1fr)_auto]"
-                  >
+      <StaggerItem>
+        {tagsQ.isLoading ? (
+          <ListSkeleton rows={4} />
+        ) : tagsQ.isError ? (
+          <ErrorState onRetry={() => tagsQ.refetch()} />
+        ) : filtered.length === 0 ? (
+          <EmptyState
+            title="No vehicles registered"
+            description="Register a resident vehicle so guards can match plates at the gate."
+            icon={<Car className="h-6 w-6" />}
+          />
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {filtered.map((v) => {
+              const r = residentMap.get(v.resident_id);
+              return (
+                <Card key={v.id} className="space-y-2.5 p-3.5">
+                  <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <div className="font-mono text-sm font-semibold uppercase">
-                        {v.plate}
+                      <div className="truncate font-mono text-sm font-semibold uppercase text-foreground">
+                        {reveal[v.id] ? v.plate : maskValue(v.plate)}
                       </div>
-                      <div className="mt-0.5 truncate text-xs text-muted-foreground">
+                      <div className="truncate text-xs text-muted-foreground">
                         {v.make_model || "Vehicle"}
                         {v.color ? ` · ${v.color}` : ""}
                       </div>
                     </div>
-                    <div className="hidden min-w-0 md:block">
-                      <div className="text-xs text-muted-foreground">Resident</div>
-                      <div className="truncate text-sm">
-                        {r?.full_name ?? "—"}
-                        {r?.house_number || r?.unit ? (
-                          <span className="text-xs text-muted-foreground">
-                            {" "}
-                            · {r.house_number ?? r.unit}
-                          </span>
-                        ) : null}
-                      </div>
+                    <StatusBadge tone={v.active ? "success" : "neutral"}>
+                      {v.active ? "Active" : "Inactive"}
+                    </StatusBadge>
+                  </div>
+
+                  <dl className="grid grid-cols-2 gap-1 text-xs">
+                    <div className="min-w-0">
+                      <dt className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                        Resident
+                      </dt>
+                      <dd className="truncate text-foreground">{r?.full_name ?? "—"}</dd>
                     </div>
-                    <div className="hidden min-w-0 md:block">
-                      <div className="text-xs text-muted-foreground">Gate tag</div>
-                      <div className="truncate text-sm">{v.tag_number || "—"}</div>
+                    <div className="min-w-0">
+                      <dt className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                        Unit
+                      </dt>
+                      <dd className="truncate text-foreground">
+                        {r?.house_number ?? r?.unit ?? "—"}
+                      </dd>
                     </div>
+                    <div className="col-span-2 min-w-0">
+                      <dt className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                        Gate tag
+                      </dt>
+                      <dd className="truncate font-mono text-foreground">
+                        {v.tag_number ? (reveal[v.id] ? v.tag_number : maskValue(v.tag_number)) : "—"}
+                      </dd>
+                    </div>
+                  </dl>
+
+                  <div className="flex items-center justify-between gap-2 pt-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setReveal((s) => ({ ...s, [v.id]: !s[v.id] }))}
+                      className="rounded-md border border-border px-2 py-1 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+                    >
+                      {reveal[v.id] ? "Hide details" : "Reveal details"}
+                    </button>
                     <div className="flex shrink-0 items-center gap-1.5">
-                      <StatusBadge tone={v.active ? "success" : "neutral"}>
-                        {v.active ? "Active" : "Inactive"}
-                      </StatusBadge>
                       <button
                         title={v.active ? "Deactivate" : "Activate"}
                         aria-label={v.active ? "Deactivate" : "Activate"}
@@ -249,13 +282,14 @@ function VehicleTags() {
                         <Trash2 className="h-3.5 w-3.5" />
                       </button>
                     </div>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </Card>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        )}
       </StaggerItem>
+
 
       {adding && (
         <AddVehicleDialog
@@ -327,13 +361,27 @@ function AddVehicleDialog({
   });
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4">
-      <div className="w-full max-w-md rounded-2xl border border-border bg-card p-4">
-        <h3 className="text-base font-semibold">Register vehicle</h3>
-        <p className="mt-1 text-xs text-muted-foreground">
+    <SheetModal
+      open
+      title="Register vehicle"
+      onClose={onClose}
+      footer={
+        <button
+          onClick={() => submit.mutate()}
+          disabled={submit.isPending}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
+        >
+          {submit.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+          Register
+        </button>
+      }
+    >
+      <div>
+        <p className="mb-3 text-xs text-muted-foreground">
           Attach a plate to a resident so guards can verify entry at the gate.
         </p>
-        <div className="mt-3 space-y-3">
+        <div className="space-y-3">
+
           <Labeled label="Resident">
             <select
               value={residentId}
@@ -383,25 +431,10 @@ function AddVehicleDialog({
             />
           </Labeled>
         </div>
-        <div className="mt-4 flex justify-end gap-2">
-          <button
-            onClick={onClose}
-            className="rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => submit.mutate()}
-            disabled={submit.isPending}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-60"
-          >
-            {submit.isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-            Register
-          </button>
-        </div>
       </div>
-    </div>
+    </SheetModal>
   );
+
 }
 
 function Labeled({ label, children }: { label: string; children: React.ReactNode }) {

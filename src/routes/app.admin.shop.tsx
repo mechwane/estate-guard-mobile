@@ -3,9 +3,10 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { Card, EmptyState, StatusBadge, SearchInput, StatCard } from "@/components/ui-kit";
+import { Card, EmptyState, StatusBadge, SearchInput, StatCard, SheetModal } from "@/components/ui-kit";
 import { Stagger, StaggerItem } from "@/components/motion-kit";
-import { Store, Plus, Loader2, Pencil, Trash2, ImagePlus, X, ShoppingBag } from "lucide-react";
+import { Store, Plus, Loader2, Pencil, Trash2, ImagePlus, ShoppingBag } from "lucide-react";
+
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -366,30 +367,31 @@ function AdminShop() {
         </>
       )}
 
-      {editing && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center sm:p-4">
-          <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-t-2xl border border-border bg-card p-4 shadow-xl sm:rounded-2xl">
-            <div className="mb-3 flex items-center justify-between gap-2">
-              <button
-                onClick={() => setEditing(null)}
-                aria-label="Close"
-                className="rounded-full border border-border p-1.5 text-muted-foreground hover:bg-muted"
-              >
-                <X className="h-4 w-4" />
-              </button>
-              <h3 className="flex-1 text-center text-sm font-semibold">
-                {editing.id ? "Edit product" : "Add product"}
-              </h3>
-              <span className="w-7" />
-            </div>
+      <SheetModal
+        open={!!editing}
+        title={editing?.id ? "Edit product" : "Add product"}
+        onClose={() => setEditing(null)}
+        footer={
+          <button
+            type="submit"
+            form="product-form"
+            disabled={save.isPending}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
+          >
+            {save.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Save product
+          </button>
+        }
+      >
+        {editing && (
+          <form
+            id="product-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              save.mutate(editing);
+            }}
+            className="space-y-3"
+          >
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                save.mutate(editing);
-              }}
-              className="space-y-3"
-            >
               <div className="flex flex-col items-center gap-2">
                 <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-xl border border-dashed border-border bg-muted">
                   {editing.image_url ? (
@@ -473,18 +475,10 @@ function AdminShop() {
                 />
                 Active (visible to residents)
               </label>
-
-              <button
-                type="submit"
-                disabled={save.isPending}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
-              >
-                {save.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Save product
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+          </form>
+        )}
+      </SheetModal>
     </div>
   );
+
 }

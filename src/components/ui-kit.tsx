@@ -264,3 +264,65 @@ export function ConfirmActionDialog({
     </div>
   );
 }
+
+/**
+ * Responsive modal used across admin dialogs.
+ * Bottom sheet on phones, centred panel from `sm:` up. The panel never
+ * exceeds the viewport: it caps its height and scrolls its own body, so
+ * long forms stay fully visible instead of spilling off screen.
+ */
+export function SheetModal({
+  open,
+  title,
+  onClose,
+  children,
+  footer,
+  width = "md",
+}: {
+  open: boolean;
+  title: string;
+  onClose: () => void;
+  children: ReactNode;
+  footer?: ReactNode;
+  width?: "sm" | "md" | "lg";
+}) {
+  if (!open) return null;
+  const maxW = { sm: "sm:max-w-sm", md: "sm:max-w-md", lg: "sm:max-w-lg" }[width];
+  return (
+    <div
+      className="fixed inset-0 z-[70] flex items-end justify-center overflow-y-auto bg-black/50 p-0 sm:items-center sm:p-4"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className={cn(
+          "flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-2xl border border-border bg-card shadow-xl sm:max-h-[88dvh] sm:rounded-2xl",
+          maxW,
+        )}
+      >
+        <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-3">
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="rounded-full border border-border p-1.5 text-muted-foreground hover:bg-muted"
+          >
+            <span aria-hidden className="block h-3.5 w-3.5 leading-none">
+              ✕
+            </span>
+          </button>
+          <h3 className="flex-1 text-center text-sm font-semibold text-foreground">{title}</h3>
+          <span className="w-7 shrink-0" />
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">{children}</div>
+        {footer && (
+          <div className="shrink-0 border-t border-border bg-card px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            {footer}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
