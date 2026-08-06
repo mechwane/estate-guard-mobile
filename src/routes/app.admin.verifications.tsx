@@ -128,9 +128,9 @@ function Verifications() {
       ) : filtered.length === 0 ? (
         <EmptyState title="No requests" icon={<ShieldCheck className="h-6 w-6" />} />
       ) : (
-        <div className="space-y-2">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((r: any) => (
-            <Card key={r.id} className="p-4">
+            <Card key={r.id} className="p-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="truncate text-sm font-medium">{r.full_name || "—"}</div>
