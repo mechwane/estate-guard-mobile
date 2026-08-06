@@ -388,9 +388,9 @@ function AdminShop() {
               e.preventDefault();
               save.mutate(editing);
             }}
+            className="space-y-3"
+          >
 
-              className="space-y-3"
-            >
               <div className="flex flex-col items-center gap-2">
                 <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-xl border border-dashed border-border bg-muted">
                   {editing.image_url ? (
