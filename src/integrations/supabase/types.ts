@@ -155,6 +155,7 @@ export type Database = {
       bills: {
         Row: {
           amount: number
+          collection_id: string | null
           created_at: string
           created_by: string | null
           description: string | null
@@ -168,6 +169,7 @@ export type Database = {
         }
         Insert: {
           amount: number
+          collection_id?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -181,6 +183,7 @@ export type Database = {
         }
         Update: {
           amount?: number
+          collection_id?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -193,6 +196,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "bills_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "bills_estate_id_fkey"
             columns: ["estate_id"]
@@ -363,6 +373,92 @@ export type Database = {
             columns: ["resident_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collections: {
+        Row: {
+          amount: number
+          cover_image_url: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          due_date: string
+          estate_id: string
+          exclude_from_waiver: boolean
+          id: string
+          is_optional: boolean
+          is_periodic: boolean
+          is_utility: boolean
+          payment_cycle: string | null
+          payment_type: string
+          priority: number
+          scope: string
+          status: string
+          sub_account: string | null
+          tag: string | null
+          target_address: string | null
+          title: string
+          topup_allowed: boolean
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date: string
+          estate_id: string
+          exclude_from_waiver?: boolean
+          id?: string
+          is_optional?: boolean
+          is_periodic?: boolean
+          is_utility?: boolean
+          payment_cycle?: string | null
+          payment_type?: string
+          priority?: number
+          scope?: string
+          status?: string
+          sub_account?: string | null
+          tag?: string | null
+          target_address?: string | null
+          title: string
+          topup_allowed?: boolean
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          due_date?: string
+          estate_id?: string
+          exclude_from_waiver?: boolean
+          id?: string
+          is_optional?: boolean
+          is_periodic?: boolean
+          is_utility?: boolean
+          payment_cycle?: string | null
+          payment_type?: string
+          priority?: number
+          scope?: string
+          status?: string
+          sub_account?: string | null
+          tag?: string | null
+          target_address?: string | null
+          title?: string
+          topup_allowed?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collections_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
             referencedColumns: ["id"]
           },
         ]
