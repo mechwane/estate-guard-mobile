@@ -9,7 +9,9 @@ import { initialsFor, useAvatarUrls } from "@/lib/avatar";
 import {
   ChartCard,
   DonutChart,
+  InteractiveTrendChart,
   LineBarChart,
+  ProgressRing,
   RangeTabs,
   VerticalBarChart,
   type AdminRangeKey,
