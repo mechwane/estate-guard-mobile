@@ -457,3 +457,28 @@ export function ImagePicker({
     </div>
   );
 }
+
+/**
+ * Image that accepts either a storage path (private media bucket) or a
+ * legacy absolute URL and resolves it before rendering.
+ */
+export function MediaImage({
+  value,
+  alt,
+  className,
+  fallback,
+}: {
+  value: string | null | undefined;
+  alt: string;
+  className?: string;
+  fallback?: ReactNode;
+}) {
+  const url = useMediaUrl(value);
+  if (!url)
+    return (
+      <div className={cn("grid h-full w-full place-items-center text-muted-foreground", className)}>
+        {fallback ?? <ImagePlus className="h-6 w-6" />}
+      </div>
+    );
+  return <img src={url} alt={alt} loading="lazy" className={className} />;
+}
