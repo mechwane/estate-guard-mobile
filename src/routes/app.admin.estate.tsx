@@ -770,7 +770,7 @@ function EstateProfile() {
 
       <ConfirmActionDialog
         open={warn !== null}
-        tone="danger"
+        tone="destructive"
         title="Warning"
         description={
           warn === "address"
