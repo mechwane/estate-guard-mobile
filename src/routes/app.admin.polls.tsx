@@ -106,17 +106,23 @@ function AdminPolls() {
           .eq("estate_id", estateId!)
           .order("created_at", { ascending: false }),
         supabase.from("poll_items").select("*").order("position", { ascending: true }),
-        supabase.from("poll_votes").select("poll_id,item_id,option_key"),
+        supabase.rpc("poll_vote_tallies" as never),
       ]);
       const error = [polls.error, items.error, votes.error].find(Boolean);
       if (error) throw error;
       return {
         polls: polls.data ?? [],
         items: items.data ?? [],
-        votes: votes.data ?? [],
+        votes: ((votes.data ?? []) as unknown as {
+          poll_id: string;
+          item_id: string | null;
+          option_key: string;
+          votes: number;
+        }[]).map((v) => ({ ...v, votes: Number(v.votes) })),
       };
     },
   });
+
 
   const rows = useMemo(() => {
     const data = list.data;
