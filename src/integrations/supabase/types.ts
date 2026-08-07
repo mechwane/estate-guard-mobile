@@ -2359,6 +2359,22 @@ export type Database = {
         Returns: string
       }
       platform_rollup: { Args: never; Returns: Json }
+      poll_vote_tallies: {
+        Args: never
+        Returns: {
+          item_id: string
+          option_key: string
+          poll_id: string
+          votes: number
+        }[]
+      }
+      post_like_counts: {
+        Args: never
+        Returns: {
+          likes: number
+          post_id: string
+        }[]
+      }
       reassign_estate_admin: {
         Args: { _estate_id: string; _new_admin_user_id: string }
         Returns: undefined
