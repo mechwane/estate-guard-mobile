@@ -29,6 +29,7 @@ import {
   UsersRound,
   Wrench,
   Wallet,
+  Vote,
 } from "lucide-react";
 import type { AppRole } from "@/lib/session";
 import type { ReactNode } from "react";
@@ -57,7 +58,7 @@ export const navByRole: Record<AppRole, NavLink[]> = {
     { to: "/app/admin/verifications", label: "Verify", icon: <ShieldCheck /> },
     { to: "/app/admin/requests", label: "Requests", icon: <Inbox /> },
     { to: "/app/admin/shop", label: "Shop", icon: <Store /> },
-    { to: "/app/admin/community", label: "Community", icon: <Megaphone /> },
+    { to: "/app/admin/announcements", label: "Notices", icon: <Megaphone /> },
   ],
   super_admin: [
     { to: "/app/super", label: "Overview", icon: <Building2 /> },
@@ -167,7 +168,9 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
       label: "Community",
       items: [
         { to: "/app/admin/blog", label: "Blog", icon: <Newspaper /> },
-        { to: "/app/admin/community", label: "Polls & announcements", icon: <Megaphone /> },
+        { to: "/app/admin/announcements", label: "Announcements", icon: <Megaphone /> },
+        { to: "/app/admin/polls", label: "Polls & elections", icon: <Vote /> },
+        { to: "/app/admin/community", label: "Meetings", icon: <Users /> },
         { to: "/app/admin/events", label: "Events", icon: <Calendar /> },
         { to: "/app/admin/issues", label: "Issues", icon: <AlertTriangle /> },
       ],
