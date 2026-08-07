@@ -70,7 +70,9 @@ function Messages() {
   const { data: session } = useSession();
   const estateId = session?.estate?.id;
   const qc = useQueryClient();
+  const [view, setView] = useState<"chat" | "broadcast">("chat");
   const [mode, setMode] = useState<Mode>("broadcast");
+
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [link, setLink] = useState("");
