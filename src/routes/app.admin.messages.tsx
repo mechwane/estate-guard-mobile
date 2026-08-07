@@ -385,6 +385,9 @@ function Messages() {
           </Card>
         </StaggerItem>
       </div>
+        </>
+      )}
     </Stagger>
+
   );
 }
