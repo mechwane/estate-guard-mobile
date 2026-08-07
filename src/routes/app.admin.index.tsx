@@ -765,3 +765,55 @@ function requestCategoryRows(values: string[]) {
   });
   return Object.entries(rows).map(([name, count]) => ({ name, count }));
 }
+
+type GuestTimelineRow = {
+  created_at: string;
+  checked_in_at: string | null;
+  checked_out_at: string | null;
+};
+
+/**
+ * Builds a daily (or hourly for "today") access timeline so the dashboard can
+ * plot invite / check-in / check-out movement as a continuous trend line.
+ */
+function buildTimeline(rows: GuestTimelineRow[], range: AdminRangeKey) {
+  const now = new Date();
+  if (range === "today") {
+    const start = startOfDay(now);
+    return Array.from({ length: 24 }, (_, hour) => {
+      const from = new Date(start.getTime() + hour * 3600_000);
+      const to = new Date(from.getTime() + 3600_000);
+      return {
+        name: `${String(hour).padStart(2, "0")}:00`,
+        invites: countBetween(rows, (row) => row.created_at, from, to),
+        checkIns: countBetween(rows, (row) => row.checked_in_at, from, to),
+        checkOuts: countBetween(rows, (row) => row.checked_out_at, from, to),
+      };
+    });
+  }
+  const days = range === "7d" ? 7 : 30;
+  return Array.from({ length: days }, (_, index) => {
+    const from = startOfDay(subDays(now, days - 1 - index));
+    const to = new Date(from.getTime() + 86_400_000);
+    return {
+      name: `${from.getDate()}/${from.getMonth() + 1}`,
+      invites: countBetween(rows, (row) => row.created_at, from, to),
+      checkIns: countBetween(rows, (row) => row.checked_in_at, from, to),
+      checkOuts: countBetween(rows, (row) => row.checked_out_at, from, to),
+    };
+  });
+}
+
+function countBetween(
+  rows: GuestTimelineRow[],
+  pick: (row: GuestTimelineRow) => string | null,
+  from: Date,
+  to: Date,
+) {
+  return rows.filter((row) => {
+    const raw = pick(row);
+    if (!raw) return false;
+    const at = new Date(raw).getTime();
+    return at >= from.getTime() && at < to.getTime();
+  }).length;
+}
