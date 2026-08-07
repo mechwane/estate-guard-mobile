@@ -870,3 +870,7 @@ function countBetween(
     return at >= from.getTime() && at < to.getTime();
   }).length;
 }
+
+function share(part: number, total: number) {
+  return total > 0 ? (part / total) * 100 : 0;
+}
