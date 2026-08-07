@@ -7,11 +7,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import {
   Card,
+  ConfirmActionDialog,
   EmptyState,
   ErrorState,
+  ImagePicker,
   ListSkeleton,
+  MediaImage,
   SheetModal,
-  ConfirmActionDialog,
 } from "@/components/ui-kit";
 import { Stagger, StaggerItem } from "@/components/motion-kit";
 import { initialsFor } from "@/lib/avatar";
@@ -213,7 +215,11 @@ function EstateProfile() {
     contact_email: "",
     contact_phone: "",
   });
-  const [addressForm, setAddressForm] = useState({ streets: "", house_numbers: "", unit_numbers: "" });
+  const [addressForm, setAddressForm] = useState({
+    streets: "",
+    house_numbers: "",
+    unit_numbers: "",
+  });
   const [validity, setValidity] = useState("");
 
   useEffect(() => {
@@ -307,17 +313,16 @@ function EstateProfile() {
         <Card className="overflow-hidden p-0">
           <div className="relative flex min-h-40 flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-primary/25 via-primary/10 to-transparent px-6 py-9 text-center">
             {e?.logo_url && (
-              <img
-                src={e.logo_url}
+              <MediaImage
+                value={e.logo_url}
                 alt=""
-                aria-hidden
                 className="absolute inset-0 h-full w-full scale-105 object-cover opacity-25 blur-[1px]"
               />
             )}
             <div className="relative">
               {e?.logo_url ? (
-                <img
-                  src={e.logo_url}
+                <MediaImage
+                  value={e.logo_url}
                   alt={`${e?.name ?? "Estate"} logo`}
                   className="mx-auto mb-2 h-14 w-14 rounded-xl border border-border/60 bg-card object-contain p-1"
                 />
@@ -530,7 +535,9 @@ function EstateProfile() {
                           <div className="truncate text-xs text-muted-foreground">
                             {a.guest_name}
                           </div>
-                          <div className="text-[11px] italic text-muted-foreground/80">{a.code}</div>
+                          <div className="text-[11px] italic text-muted-foreground/80">
+                            {a.code}
+                          </div>
                         </div>
                         <span className="shrink-0 text-[11px] text-muted-foreground">
                           {formatDistanceToNow(new Date(at), { addSuffix: true })}
@@ -576,19 +583,13 @@ function EstateProfile() {
         <div className="space-y-4">
           <div className="text-center">
             <div className="text-xs font-medium text-muted-foreground">Estate Logo</div>
-            <div className="mx-auto mt-2 grid h-20 w-20 place-items-center overflow-hidden rounded-xl border border-border bg-muted/40">
-              {form.logo_url ? (
-                <img src={form.logo_url} alt="Estate logo preview" className="h-full w-full object-contain" />
-              ) : (
-                <ImageIcon className="h-6 w-6 text-muted-foreground" />
-              )}
-            </div>
           </div>
-          <Field
-            label="Logo image URL"
-            value={form.logo_url}
-            onChange={(v) => setForm({ ...form, logo_url: v })}
-            placeholder="https://…"
+          <ImagePicker
+            label="Estate logo"
+            folder="estate"
+            aspect="square"
+            value={form.logo_url || null}
+            onChange={(v) => setForm({ ...form, logo_url: v ?? "" })}
           />
 
           <button

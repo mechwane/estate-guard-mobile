@@ -164,9 +164,7 @@ function More() {
                   : "Unlock priority requests, faster support & premium perks."}
               </div>
             </div>
-            <span
-              className="shrink-0 rounded-lg bg-white/25 px-3 py-1.5 text-xs font-medium backdrop-blur-sm"
-            >
+            <span className="shrink-0 rounded-lg bg-white/25 px-3 py-1.5 text-xs font-medium backdrop-blur-sm">
               {isPremium ? "Manage" : "Upgrade"}
             </span>
           </div>
@@ -219,11 +217,7 @@ function More() {
             icon={<Settings className="h-4 w-4" />}
             label="App Settings"
           />
-          <Row
-            to="/app/resident/faqs"
-            icon={<HelpCircle className="h-4 w-4" />}
-            label="FAQs"
-          />
+          <Row to="/app/resident/faqs" icon={<HelpCircle className="h-4 w-4" />} label="FAQs" />
           <Row
             to="/app/resident/feedback"
             icon={<MessageSquareHeart className="h-4 w-4" />}
@@ -232,16 +226,8 @@ function More() {
         </Section>
 
         <Section title="App Usage">
-          <ActionRow
-            icon={<Star className="h-4 w-4" />}
-            label="Rate app"
-            onClick={rateApp}
-          />
-          <ActionRow
-            icon={<Share2 className="h-4 w-4" />}
-            label="Share app"
-            onClick={shareApp}
-          />
+          <ActionRow icon={<Star className="h-4 w-4" />} label="Rate app" onClick={rateApp} />
+          <ActionRow icon={<Share2 className="h-4 w-4" />} label="Share app" onClick={shareApp} />
           <Row
             to="/app/resident/privacy"
             icon={<Shield className="h-4 w-4" />}
@@ -264,12 +250,7 @@ function More() {
         </button>
       </FadeIn>
 
-      {showUpgrade && (
-        <UpgradeModal
-          onClose={() => setShowUpgrade(false)}
-          currentPlan={plan}
-        />
-      )}
+      {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} currentPlan={plan} />}
     </div>
   );
 }
@@ -284,7 +265,9 @@ function VerifBadge({ status }: { status: string }) {
   };
   const s = map[status] ?? map.not_submitted;
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium ${s.className}`}>
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium ${s.className}`}
+    >
       <ShieldCheck className="h-3 w-3" /> {s.label}
     </span>
   );
@@ -366,13 +349,7 @@ const PLANS = [
   },
 ];
 
-function UpgradeModal({
-  onClose,
-  currentPlan,
-}: {
-  onClose: () => void;
-  currentPlan: string;
-}) {
+function UpgradeModal({ onClose, currentPlan }: { onClose: () => void; currentPlan: string }) {
   const [selected, setSelected] = useState("yearly");
 
   const perks = [
@@ -384,81 +361,82 @@ function UpgradeModal({
 
   return (
     <ModalPortal>
-    <div
-      role="dialog"
-      aria-modal="true"
-      onClick={onClose}
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
-    >
       <div
-        onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md animate-[scale-in_0.2s_ease-out] overflow-hidden rounded-t-2xl bg-card shadow-2xl sm:rounded-2xl"
+        role="dialog"
+        aria-modal="true"
+        onClick={onClose}
+        className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
       >
-        <div className="relative bg-gradient-to-br from-primary via-primary-dark to-amber-600 p-5 text-white">
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 hover:bg-white/30"
-          >
-            <X className="h-4 w-4" />
-          </button>
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <Sparkles className="h-4 w-4" /> Estate Premium
-          </div>
-          <div className="mt-1 text-xs opacity-90">
-            Current plan: <span className="font-medium">{currentPlan === "premium" ? "Premium" : "Free"}</span>
-          </div>
-        </div>
-
-        <div className="space-y-4 p-5">
-          <ul className="space-y-2">
-            {perks.map((p) => (
-              <li key={p} className="flex items-start gap-2 text-sm text-foreground">
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> {p}
-              </li>
-            ))}
-          </ul>
-
-          <div className="grid grid-cols-2 gap-2">
-            {PLANS.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => setSelected(p.id)}
-                className={`relative rounded-xl border-2 p-3 text-left transition-all ${
-                  selected === p.id
-                    ? "border-primary bg-primary/5"
-                    : "border-border hover:border-primary/40"
-                }`}
-              >
-                {p.tag && (
-                  <span className="absolute -top-2 right-2 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-medium text-white">
-                    {p.tag}
-                  </span>
-                )}
-                <div className="text-xs font-medium text-muted-foreground">{p.label}</div>
-                <div className="mt-1 text-base font-semibold text-foreground">
-                  {p.price}
-                  <span className="text-xs font-normal text-muted-foreground">{p.per}</span>
-                </div>
-              </button>
-            ))}
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="w-full max-w-md animate-[scale-in_0.2s_ease-out] overflow-hidden rounded-t-2xl bg-card shadow-2xl sm:rounded-2xl"
+        >
+          <div className="relative bg-gradient-to-br from-primary via-primary-dark to-amber-600 p-5 text-white">
+            <button
+              onClick={onClose}
+              aria-label="Close"
+              className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 hover:bg-white/30"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <div className="flex items-center gap-2 text-sm font-semibold">
+              <Sparkles className="h-4 w-4" /> Estate Premium
+            </div>
+            <div className="mt-1 text-xs opacity-90">
+              Current plan:{" "}
+              <span className="font-medium">{currentPlan === "premium" ? "Premium" : "Free"}</span>
+            </div>
           </div>
 
-          <button
-            disabled
-            aria-disabled="true"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-muted px-4 py-3 text-sm font-medium text-muted-foreground"
-          >
-            Upgrade — Coming soon
-          </button>
+          <div className="space-y-4 p-5">
+            <ul className="space-y-2">
+              {perks.map((p) => (
+                <li key={p} className="flex items-start gap-2 text-sm text-foreground">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> {p}
+                </li>
+              ))}
+            </ul>
 
-          <p className="text-center text-[11px] text-muted-foreground">
-            Secure payment integration is not yet configured. Upgrades will be enabled
-            once payments are live.
-          </p>
+            <div className="grid grid-cols-2 gap-2">
+              {PLANS.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => setSelected(p.id)}
+                  className={`relative rounded-xl border-2 p-3 text-left transition-all ${
+                    selected === p.id
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/40"
+                  }`}
+                >
+                  {p.tag && (
+                    <span className="absolute -top-2 right-2 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-medium text-white">
+                      {p.tag}
+                    </span>
+                  )}
+                  <div className="text-xs font-medium text-muted-foreground">{p.label}</div>
+                  <div className="mt-1 text-base font-semibold text-foreground">
+                    {p.price}
+                    <span className="text-xs font-normal text-muted-foreground">{p.per}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <button
+              disabled
+              aria-disabled="true"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-muted px-4 py-3 text-sm font-medium text-muted-foreground"
+            >
+              Upgrade — Coming soon
+            </button>
+
+            <p className="text-center text-[11px] text-muted-foreground">
+              Secure payment integration is not yet configured. Upgrades will be enabled once
+              payments are live.
+            </p>
+          </div>
         </div>
       </div>
-    </div>
-  </ModalPortal>
+    </ModalPortal>
   );
 }

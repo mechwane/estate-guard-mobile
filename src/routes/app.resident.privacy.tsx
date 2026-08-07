@@ -25,16 +25,16 @@ function Privacy() {
       <FadeIn delay={0.05}>
         <Card className="prose prose-sm max-w-none space-y-4 p-5 text-sm leading-relaxed text-foreground">
           <p className="text-muted-foreground">
-            This page is maintained by the Estate Guard team. It describes how the app handles
-            your information. It is not legal advice.
+            This page is maintained by the Estate Guard team. It describes how the app handles your
+            information. It is not legal advice.
           </p>
 
           <Section title="Information we collect">
             <p>
               We collect the information you provide directly — your name, phone number, email,
-              address details, dependents, IDs and any documents you upload for verification.
-              We also collect activity data such as visitor invites, bill payments, service
-              requests and support tickets.
+              address details, dependents, IDs and any documents you upload for verification. We
+              also collect activity data such as visitor invites, bill payments, service requests
+              and support tickets.
             </p>
           </Section>
 
@@ -49,32 +49,32 @@ function Privacy() {
 
           <Section title="Who can see your information">
             <p>
-              Your estate admins and assigned guards can see the information they need to run
-              the estate — invites, bills, requests and verification status. Other residents
-              cannot see your personal information. Payment providers process payments but do
-              not receive your address code.
+              Your estate admins and assigned guards can see the information they need to run the
+              estate — invites, bills, requests and verification status. Other residents cannot see
+              your personal information. Payment providers process payments but do not receive your
+              address code.
             </p>
           </Section>
 
           <Section title="Data retention">
             <p>
-              We keep your account data for as long as your estate membership is active. When
-              you leave an estate or delete your account, we remove personal data within 90 days
-              except where retention is required by law.
+              We keep your account data for as long as your estate membership is active. When you
+              leave an estate or delete your account, we remove personal data within 90 days except
+              where retention is required by law.
             </p>
           </Section>
 
           <Section title="Your rights">
             <p>
-              You can update your profile at any time under More → Edit Profile. To export or
-              delete your data, contact support from the Support Tickets screen.
+              You can update your profile at any time under More → Edit Profile. To export or delete
+              your data, contact support from the Support Tickets screen.
             </p>
           </Section>
 
           <Section title="Contact">
             <p>
-              For privacy questions, open a support ticket or reach the estate contacts listed
-              under More → Estate Contacts.
+              For privacy questions, open a support ticket or reach the estate contacts listed under
+              More → Estate Contacts.
             </p>
           </Section>
         </Card>

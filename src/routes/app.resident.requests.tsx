@@ -81,10 +81,7 @@ function Requests() {
             const Icon = c.icon;
             return (
               <StaggerItem key={c.key}>
-                <Pressable
-                  onClick={() => setCategory(c.key)}
-                  className="w-full text-left"
-                >
+                <Pressable onClick={() => setCategory(c.key)} className="w-full text-left">
                   <Card className="flex items-center justify-between p-4">
                     <div className="flex items-center gap-3">
                       <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">

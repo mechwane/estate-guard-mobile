@@ -40,7 +40,6 @@ function AdminDashboard() {
   );
   const [visitorRange, setVisitorRange] = useState<AdminRangeKey>("7d");
 
-
   const metrics = useQuery({
     queryKey: ["admin-control-center", estateId],
     enabled: !!estateId,
@@ -375,7 +374,6 @@ function AdminDashboard() {
     [],
   );
 
-
   const [residentSearch, setResidentSearch] = useState("");
   const [showInactive, setShowInactive] = useState(false);
 
@@ -423,12 +421,14 @@ function AdminDashboard() {
       <ScrollTabs
         value={section}
         onChange={setSection}
-        tabs={[
-          { key: "overview", label: "Overview" },
-          { key: "residents", label: "Residents" },
-          { key: "operations", label: "Operations" },
-          { key: "activity", label: "Activity" },
-        ] as const}
+        tabs={
+          [
+            { key: "overview", label: "Overview" },
+            { key: "residents", label: "Residents" },
+            { key: "operations", label: "Operations" },
+            { key: "activity", label: "Activity" },
+          ] as const
+        }
       />
 
       {section === "residents" && (
@@ -531,9 +531,6 @@ function AdminDashboard() {
           )}
         </div>
       )}
-
-
-
 
       {section === "overview" &&
         (metrics.isLoading ? (
@@ -650,66 +647,66 @@ function AdminDashboard() {
               </Card>
             </div>
 
-          <div className="grid gap-3 lg:grid-cols-2">
-            <ChartCard title="Resident verification">
-              <DonutChart data={charts.data.verification} />
-            </ChartCard>
+            <div className="grid gap-3 lg:grid-cols-2">
+              <ChartCard title="Resident verification">
+                <DonutChart data={charts.data.verification} />
+              </ChartCard>
 
-            <ChartCard
-              title="Visitor activity"
-              action={
-                <RangeTabs
-                  value={visitorRange}
-                  onChange={setVisitorRange}
-                  options={adminRangeOptions}
+              <ChartCard
+                title="Visitor activity"
+                action={
+                  <RangeTabs
+                    value={visitorRange}
+                    onChange={setVisitorRange}
+                    options={adminRangeOptions}
+                  />
+                }
+              >
+                <VerticalBarChart
+                  data={charts.data.visitorActivity}
+                  bars={[{ key: "count", label: "Records" }]}
                 />
-              }
-            >
-              <VerticalBarChart
-                data={charts.data.visitorActivity}
-                bars={[{ key: "count", label: "Records" }]}
-              />
-            </ChartCard>
-            <ChartCard title="Requests by category">
-              <VerticalBarChart
-                data={charts.data.requestCategories}
-                bars={[{ key: "count", label: "Requests" }]}
-              />
-            </ChartCard>
-            <ChartCard title="Issues by status and severity">
-              <VerticalBarChart
-                data={charts.data.issueBreakdown}
-                bars={[{ key: "count", label: "Issues" }]}
-              />
-            </ChartCard>
-            <ChartCard title="Bills">
-              <VerticalBarChart
-                data={charts.data.bills}
-                bars={[
-                  { key: "count", label: "Bills" },
-                  { key: "amount", label: "Amount" },
-                ]}
-                currencyKeys={["amount", "Amount"]}
-              />
-            </ChartCard>
-            <ChartCard title="Shop orders">
-              <VerticalBarChart
-                data={charts.data.orders}
-                bars={[{ key: "count", label: "Orders" }]}
-              />
-            </ChartCard>
-            <ChartCard title="Guard activity">
-              <LineBarChart
-                data={charts.data.guardActivity}
-                bars={[
-                  { key: "validations", label: "Validations" },
-                  { key: "checkIns", label: "Check-ins" },
-                  { key: "checkOuts", label: "Check-outs" },
-                  { key: "incidents", label: "Incidents" },
-                ]}
-              />
-            </ChartCard>
-          </div>
+              </ChartCard>
+              <ChartCard title="Requests by category">
+                <VerticalBarChart
+                  data={charts.data.requestCategories}
+                  bars={[{ key: "count", label: "Requests" }]}
+                />
+              </ChartCard>
+              <ChartCard title="Issues by status and severity">
+                <VerticalBarChart
+                  data={charts.data.issueBreakdown}
+                  bars={[{ key: "count", label: "Issues" }]}
+                />
+              </ChartCard>
+              <ChartCard title="Bills">
+                <VerticalBarChart
+                  data={charts.data.bills}
+                  bars={[
+                    { key: "count", label: "Bills" },
+                    { key: "amount", label: "Amount" },
+                  ]}
+                  currencyKeys={["amount", "Amount"]}
+                />
+              </ChartCard>
+              <ChartCard title="Shop orders">
+                <VerticalBarChart
+                  data={charts.data.orders}
+                  bars={[{ key: "count", label: "Orders" }]}
+                />
+              </ChartCard>
+              <ChartCard title="Guard activity">
+                <LineBarChart
+                  data={charts.data.guardActivity}
+                  bars={[
+                    { key: "validations", label: "Validations" },
+                    { key: "checkIns", label: "Check-ins" },
+                    { key: "checkOuts", label: "Check-outs" },
+                    { key: "incidents", label: "Incidents" },
+                  ]}
+                />
+              </ChartCard>
+            </div>
           </div>
         ))}
 

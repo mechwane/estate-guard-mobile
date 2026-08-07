@@ -25,15 +25,14 @@ function Terms() {
       <FadeIn delay={0.05}>
         <Card className="space-y-4 p-5 text-sm leading-relaxed text-foreground">
           <p className="text-muted-foreground">
-            These terms govern your use of the Estate Guard app. By creating an account or
-            using the app you agree to them.
+            These terms govern your use of the Estate Guard app. By creating an account or using the
+            app you agree to them.
           </p>
 
           <Section title="1. Your account">
             <p>
-              You must provide accurate information and keep your login secure. You are
-              responsible for actions taken from your account, including visitor invites you
-              create.
+              You must provide accurate information and keep your login secure. You are responsible
+              for actions taken from your account, including visitor invites you create.
             </p>
           </Section>
 
@@ -47,36 +46,36 @@ function Terms() {
 
           <Section title="3. Estate rules">
             <p>
-              Each estate sets its own rules for entry, dues and shop items. Your estate admin
-              may suspend or remove your access if you breach those rules.
+              Each estate sets its own rules for entry, dues and shop items. Your estate admin may
+              suspend or remove your access if you breach those rules.
             </p>
           </Section>
 
           <Section title="4. Payments">
             <p>
-              Bills, dues and shop purchases are payable through the payment methods listed in
-              the app. Refunds follow your estate's stated policy.
+              Bills, dues and shop purchases are payable through the payment methods listed in the
+              app. Refunds follow your estate's stated policy.
             </p>
           </Section>
 
           <Section title="5. Premium">
             <p>
-              Premium is billed monthly or yearly and renews automatically until cancelled. You
-              can cancel anytime from More → Estate Premium.
+              Premium is billed monthly or yearly and renews automatically until cancelled. You can
+              cancel anytime from More → Estate Premium.
             </p>
           </Section>
 
           <Section title="6. Termination">
             <p>
-              You may close your account at any time by contacting support. We may suspend
-              accounts that breach these terms or that pose a security risk to the estate.
+              You may close your account at any time by contacting support. We may suspend accounts
+              that breach these terms or that pose a security risk to the estate.
             </p>
           </Section>
 
           <Section title="7. Changes">
             <p>
-              We may update these terms as the service evolves. Material changes will be
-              announced in the app.
+              We may update these terms as the service evolves. Material changes will be announced
+              in the app.
             </p>
           </Section>
         </Card>

@@ -3,7 +3,16 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { Card, EmptyState, StatusBadge, SearchInput, StatCard, SheetModal } from "@/components/ui-kit";
+import {
+  Card,
+  EmptyState,
+  ImagePicker,
+  MediaImage,
+  SearchInput,
+  SheetModal,
+  StatCard,
+  StatusBadge,
+} from "@/components/ui-kit";
 import { Stagger, StaggerItem } from "@/components/motion-kit";
 import { Store, Plus, Loader2, Pencil, Trash2, ImagePlus, ShoppingBag } from "lucide-react";
 
@@ -184,7 +193,9 @@ function AdminShop() {
                 key={t}
                 onClick={() => setTab(t)}
                 className={`rounded-md px-3 py-1.5 text-xs font-medium capitalize ${
-                  tab === t ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"
+                  tab === t
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-muted"
                 }`}
               >
                 {t}
@@ -243,16 +254,12 @@ function AdminShop() {
                 <StaggerItem key={i.id}>
                   <Card className="flex h-full flex-col overflow-hidden p-0">
                     <div className="flex h-32 items-center justify-center bg-muted">
-                      {i.image_url ? (
-                        <img
-                          src={i.image_url}
-                          alt={i.name}
-                          loading="lazy"
-                          className="h-32 w-full object-cover"
-                        />
-                      ) : (
-                        <Store className="h-8 w-8 text-muted-foreground" />
-                      )}
+                      <MediaImage
+                        value={i.image_url}
+                        alt={i.name}
+                        className="h-32 w-full object-cover"
+                        fallback={<Store className="h-8 w-8" />}
+                      />
                     </div>
                     <div className="flex flex-1 flex-col gap-2 p-3.5">
                       <div className="flex items-start justify-between gap-2">
@@ -260,7 +267,9 @@ function AdminShop() {
                           <div className="truncate text-sm font-semibold text-foreground">
                             {i.name}
                           </div>
-                          <div className="text-xs text-muted-foreground">{catLabel(i.category)}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {catLabel(i.category)}
+                          </div>
                         </div>
                         <StatusBadge tone={i.active ? "success" : "neutral"}>
                           {i.active ? "active" : "inactive"}
@@ -391,94 +400,84 @@ function AdminShop() {
             }}
             className="space-y-3"
           >
+            <ImagePicker
+              label="Product photo"
+              folder="products"
+              aspect="square"
+              value={editing.image_url || null}
+              onChange={(v) => setEditing({ ...editing, image_url: v ?? "" })}
+            />
 
-              <div className="flex flex-col items-center gap-2">
-                <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-xl border border-dashed border-border bg-muted">
-                  {editing.image_url ? (
-                    <img src={editing.image_url} alt="" className="h-full w-full object-cover" />
-                  ) : (
-                    <ImagePlus className="h-6 w-6 text-muted-foreground" />
-                  )}
-                </div>
-                <input
-                  value={editing.image_url}
-                  onChange={(e) => setEditing({ ...editing, image_url: e.target.value })}
-                  placeholder="Paste product image URL"
-                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-xs outline-none focus:border-primary"
-                />
+            <label className="block">
+              <span className="mb-1 block text-xs font-medium text-muted-foreground">Title</span>
+              <input
+                required
+                value={editing.name}
+                onChange={(e) => setEditing({ ...editing, name: e.target.value })}
+                placeholder="Product title"
+                className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              />
+            </label>
+
+            <div>
+              <span className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                Category
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {CATEGORIES.map((c) => (
+                  <button
+                    key={c.value}
+                    type="button"
+                    onClick={() => setEditing({ ...editing, category: c.value })}
+                    className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
+                      editing.category === c.value
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-card text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                ))}
               </div>
+            </div>
 
-              <label className="block">
-                <span className="mb-1 block text-xs font-medium text-muted-foreground">Title</span>
-                <input
-                  required
-                  value={editing.name}
-                  onChange={(e) => setEditing({ ...editing, name: e.target.value })}
-                  placeholder="Product title"
-                  className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                />
-              </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-medium text-muted-foreground">
+                Description <span className="italic">optional</span>
+              </span>
+              <textarea
+                rows={3}
+                value={editing.description}
+                onChange={(e) => setEditing({ ...editing, description: e.target.value })}
+                placeholder="Add a brief description"
+                className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              />
+            </label>
 
-              <div>
-                <span className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                  Category
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {CATEGORIES.map((c) => (
-                    <button
-                      key={c.value}
-                      type="button"
-                      onClick={() => setEditing({ ...editing, category: c.value })}
-                      className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
-                        editing.category === c.value
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-border bg-card text-foreground hover:bg-muted"
-                      }`}
-                    >
-                      {c.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
+            <label className="block">
+              <span className="mb-1 block text-xs font-medium text-muted-foreground">
+                Item cost (₦)
+              </span>
+              <input
+                type="number"
+                min="0"
+                value={editing.price_ngn}
+                onChange={(e) => setEditing({ ...editing, price_ngn: e.target.value })}
+                className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              />
+            </label>
 
-              <label className="block">
-                <span className="mb-1 block text-xs font-medium text-muted-foreground">
-                  Description <span className="italic">optional</span>
-                </span>
-                <textarea
-                  rows={3}
-                  value={editing.description}
-                  onChange={(e) => setEditing({ ...editing, description: e.target.value })}
-                  placeholder="Add a brief description"
-                  className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                />
-              </label>
-
-              <label className="block">
-                <span className="mb-1 block text-xs font-medium text-muted-foreground">
-                  Item cost (₦)
-                </span>
-                <input
-                  type="number"
-                  min="0"
-                  value={editing.price_ngn}
-                  onChange={(e) => setEditing({ ...editing, price_ngn: e.target.value })}
-                  className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                />
-              </label>
-
-              <label className="flex items-center gap-2 text-sm text-foreground">
-                <input
-                  type="checkbox"
-                  checked={editing.active}
-                  onChange={(e) => setEditing({ ...editing, active: e.target.checked })}
-                />
-                Active (visible to residents)
-              </label>
+            <label className="flex items-center gap-2 text-sm text-foreground">
+              <input
+                type="checkbox"
+                checked={editing.active}
+                onChange={(e) => setEditing({ ...editing, active: e.target.checked })}
+              />
+              Active (visible to residents)
+            </label>
           </form>
         )}
       </SheetModal>
     </div>
   );
-
 }

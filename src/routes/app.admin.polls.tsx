@@ -12,7 +12,9 @@ import {
   ConfirmActionDialog,
   EmptyState,
   ErrorState,
+  ImagePicker,
   ListSkeleton,
+  MediaImage,
   ScrollTabs,
   SearchInput,
   SheetModal,
@@ -113,16 +115,17 @@ function AdminPolls() {
       return {
         polls: polls.data ?? [],
         items: items.data ?? [],
-        votes: ((votes.data ?? []) as unknown as {
-          poll_id: string;
-          item_id: string | null;
-          option_key: string;
-          votes: number;
-        }[]).map((v) => ({ ...v, votes: Number(v.votes) })),
+        votes: (
+          (votes.data ?? []) as unknown as {
+            poll_id: string;
+            item_id: string | null;
+            option_key: string;
+            votes: number;
+          }[]
+        ).map((v) => ({ ...v, votes: Number(v.votes) })),
       };
     },
   });
-
 
   const rows = useMemo(() => {
     const data = list.data;
@@ -137,7 +140,6 @@ function AdminPolls() {
         voteCount: data.votes
           .filter((v) => v.poll_id === p.id)
           .reduce((sum, v) => sum + v.votes, 0),
-
       }));
   }, [list.data, kind, search]);
 
@@ -159,7 +161,9 @@ function AdminPolls() {
         }))
         .filter((i) => i.title);
       if (items.length === 0)
-        throw new Error(f.kind === "election" ? "Add at least one post" : "Add at least one question");
+        throw new Error(
+          f.kind === "election" ? "Add at least one post" : "Add at least one question",
+        );
       if (items.some((i) => i.options.length < 2))
         throw new Error("Every entry needs at least two options");
 
@@ -253,7 +257,11 @@ function AdminPolls() {
         <StatCard label={`Total ${noun}s`} value={stats.total} />
         <StatCard label="Active" value={stats.active} tone={stats.active ? "success" : "default"} />
         <StatCard label="Closed" value={stats.closed} />
-        <StatCard label="Votes cast" value={stats.votes} tone={stats.votes ? "primary" : "default"} />
+        <StatCard
+          label="Votes cast"
+          value={stats.votes}
+          tone={stats.votes ? "primary" : "default"}
+        />
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
@@ -291,10 +299,9 @@ function AdminPolls() {
                 <Card className="flex h-full flex-col overflow-hidden">
                   <div className="relative h-32 w-full bg-muted">
                     {row.promo_image_url ? (
-                      <img
-                        src={row.promo_image_url}
+                      <MediaImage
+                        value={row.promo_image_url}
                         alt={`${row.title} promotional banner`}
-                        loading="lazy"
                         className="h-full w-full object-cover"
                       />
                     ) : (
@@ -327,7 +334,9 @@ function AdminPolls() {
                       </div>
                     </div>
                     {row.description && (
-                      <p className="line-clamp-2 text-xs text-muted-foreground">{row.description}</p>
+                      <p className="line-clamp-2 text-xs text-muted-foreground">
+                        {row.description}
+                      </p>
                     )}
                     <div className="flex flex-wrap gap-1.5 text-[11px]">
                       <StatusBadge>
@@ -428,7 +437,9 @@ function AdminPolls() {
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 placeholder={
-                  form.kind === "election" ? "2026 Estate Exco Election" : "Estate gate closing time"
+                  form.kind === "election"
+                    ? "2026 Estate Exco Election"
+                    : "Estate gate closing time"
                 }
                 className={inputClass}
               />
@@ -441,14 +452,12 @@ function AdminPolls() {
                 className={inputClass}
               />
             </Field>
-            <Field label="Promo image URL (optional)">
-              <input
-                value={form.promo_image_url}
-                onChange={(e) => setForm({ ...form, promo_image_url: e.target.value })}
-                placeholder="https://…"
-                className={inputClass}
-              />
-            </Field>
+            <ImagePicker
+              label="Promo image (optional)"
+              folder="polls"
+              value={form.promo_image_url || null}
+              onChange={(v) => setForm({ ...form, promo_image_url: v ?? "" })}
+            />
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Starts at">
                 <input
@@ -609,7 +618,6 @@ function AdminPolls() {
                         .reduce((sum, v) => sum + v.votes, 0);
                       const pct = total ? Math.round((count / total) * 100) : 0;
                       return (
-
                         <div key={option} className="space-y-1">
                           <div className="flex justify-between text-xs text-muted-foreground">
                             <span className="truncate">{option}</span>

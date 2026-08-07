@@ -196,15 +196,17 @@ function BulkInvite() {
   const [hours, setHours] = useState(6);
   const [mode, setMode] = useState<"group" | "separate">("separate");
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<
-    { name: string; code?: string; error?: string }[] | null
-  >(null);
+  const [results, setResults] = useState<{ name: string; code?: string; error?: string }[] | null>(
+    null,
+  );
 
   const update = (i: number, patch: Partial<Row>) =>
     setRows((rs) => rs.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
   const add = () =>
     setRows((rs) =>
-      rs.length >= MAX_GUESTS_BULK ? rs : [...rs, { guest_name: "", phone: "", vehicle_number: "" }],
+      rs.length >= MAX_GUESTS_BULK
+        ? rs
+        : [...rs, { guest_name: "", phone: "", vehicle_number: "" }],
     );
   const remove = (i: number) =>
     setRows((rs) => (rs.length <= 1 ? rs : rs.filter((_, idx) => idx !== i)));
@@ -429,7 +431,10 @@ function BulkInvite() {
         className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
       >
         {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-        Generate {mode === "group" ? "shared invite" : `${rows.filter((r) => r.guest_name.trim()).length} invites`}
+        Generate{" "}
+        {mode === "group"
+          ? "shared invite"
+          : `${rows.filter((r) => r.guest_name.trim()).length} invites`}
       </button>
     </div>
   );

@@ -3,7 +3,14 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { Card, EmptyState, ErrorState, ListSkeleton, ScrollTabs, SearchInput } from "@/components/ui-kit";
+import {
+  Card,
+  EmptyState,
+  ErrorState,
+  ListSkeleton,
+  ScrollTabs,
+  SearchInput,
+} from "@/components/ui-kit";
 import { ChartCard, DonutChart } from "@/components/dashboard-charts";
 import { Home } from "lucide-react";
 
@@ -12,9 +19,15 @@ export const Route = createFileRoute("/app/admin/households")({
   head: () => ({
     meta: [
       { title: "Households — Estate Guard" },
-      { name: "description", content: "Estate households grouped by address with occupancy breakdown." },
+      {
+        name: "description",
+        content: "Estate households grouped by address with occupancy breakdown.",
+      },
       { property: "og:title", content: "Households — Estate Guard" },
-      { property: "og:description", content: "Estate households grouped by address with occupancy breakdown." },
+      {
+        property: "og:description",
+        content: "Estate households grouped by address with occupancy breakdown.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -41,7 +54,11 @@ type Row = {
 };
 
 const addressOf = (p: Row) =>
-  [p.street || p.block, p.house_number ? `No ${p.house_number}` : null, p.unit ? `Unit ${p.unit}` : null]
+  [
+    p.street || p.block,
+    p.house_number ? `No ${p.house_number}` : null,
+    p.unit ? `Unit ${p.unit}` : null,
+  ]
     .filter(Boolean)
     .join(", ") || "Unassigned address";
 
@@ -57,7 +74,9 @@ function Households() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id,full_name,approved,verification_status,occupant_type,block,street,house_number,unit")
+        .select(
+          "id,full_name,approved,verification_status,occupant_type,block,street,house_number,unit",
+        )
         .eq("estate_id", estateId!)
         .order("street", { ascending: true });
       if (error) throw error;

@@ -1,7 +1,10 @@
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
+import { ImagePlus, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { uploadMedia, useMediaUrl } from "@/lib/media";
 
 /**
  * Renders overlay content into document.body so animated (transformed)
@@ -25,8 +28,6 @@ function useScrollLock(active: boolean) {
     };
   }, [active]);
 }
-
-
 
 export function Card({
   className,
@@ -293,7 +294,6 @@ export function ConfirmActionDialog({
       </div>
     </ModalPortal>
   );
-
 }
 
 /**
@@ -359,5 +359,122 @@ export function SheetModal({
       </div>
     </ModalPortal>
   );
+}
 
+/**
+ * Native image picker used everywhere an image is needed.
+ * Opens the device gallery / file browser, uploads to the shared media
+ * bucket and hands back the stored path. Never asks for a URL.
+ */
+export function ImagePicker({
+  value,
+  onChange,
+  label = "Image",
+  hint = "PNG or JPG, up to 5 MB",
+  folder = "uploads",
+  aspect = "wide",
+}: {
+  value: string | null;
+  onChange: (next: string | null) => void;
+  label?: string;
+  hint?: string;
+  folder?: string;
+  aspect?: "wide" | "square";
+}) {
+  const inputId = useId();
+  const [busy, setBusy] = useState(false);
+  const preview = useMediaUrl(value);
+
+  const pick = async (file?: File | null) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return toast.error("Please choose an image file.");
+    if (file.size > 5 * 1024 * 1024) return toast.error("Image is larger than 5 MB.");
+    setBusy(true);
+    try {
+      onChange(await uploadMedia(file, folder));
+      toast.success("Image uploaded");
+    } catch (e) {
+      toast.error((e as Error).message ?? "Upload failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="space-y-1.5">
+      <span className="block text-xs font-medium text-muted-foreground">{label}</span>
+      <div className="flex items-center gap-3">
+        <label
+          htmlFor={inputId}
+          className={cn(
+            "grid cursor-pointer shrink-0 place-items-center overflow-hidden rounded-xl border border-dashed border-border bg-muted/40 transition-colors hover:border-primary hover:bg-primary/5",
+            aspect === "square" ? "h-20 w-20" : "h-20 w-32",
+          )}
+        >
+          {busy ? (
+            <Loader2 className="h-4 w-4 animate-spin text-primary" />
+          ) : preview ? (
+            <img src={preview} alt="" className="h-full w-full object-cover" />
+          ) : (
+            <ImagePlus className="h-5 w-5 text-muted-foreground" />
+          )}
+        </label>
+        <div className="min-w-0 space-y-1">
+          <div className="flex flex-wrap gap-2">
+            <label
+              htmlFor={inputId}
+              className="cursor-pointer rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90"
+            >
+              {value ? "Change image" : "Upload image"}
+            </label>
+            {value && (
+              <button
+                type="button"
+                onClick={() => onChange(null)}
+                className="rounded-lg border border-border px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted"
+              >
+                Remove
+              </button>
+            )}
+          </div>
+          <p className="text-[11px] text-muted-foreground">{hint}</p>
+        </div>
+      </div>
+      <input
+        id={inputId}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          void pick(e.target.files?.[0]);
+          e.target.value = "";
+        }}
+      />
+    </div>
+  );
+}
+
+/**
+ * Image that accepts either a storage path (private media bucket) or a
+ * legacy absolute URL and resolves it before rendering.
+ */
+export function MediaImage({
+  value,
+  alt,
+  className,
+  fallback,
+}: {
+  value: string | null | undefined;
+  alt: string;
+  className?: string;
+  fallback?: ReactNode;
+}) {
+  const url = useMediaUrl(value);
+  if (!url)
+    return (
+      <div className={cn("grid h-full w-full place-items-center text-muted-foreground", className)}>
+        {fallback ?? <ImagePlus className="h-6 w-6" />}
+      </div>
+    );
+  return <img src={url} alt={alt} loading="lazy" className={className} />;
 }

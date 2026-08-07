@@ -66,9 +66,7 @@ function AdminGuestLogs() {
   const qc = useQueryClient();
   const [tab, setTab] = useState<Tab>("all");
   const [q, setQ] = useState("");
-  const [confirm, setConfirm] = useState<
-    { kind: "exit" | "revoke"; invite: Invite } | null
-  >(null);
+  const [confirm, setConfirm] = useState<{ kind: "exit" | "revoke"; invite: Invite } | null>(null);
 
   const invitesQ = useQuery({
     queryKey: ["admin-guests", estateId],
@@ -114,10 +112,7 @@ function AdminGuestLogs() {
       total: rows.length,
       inside: rows.filter((r) => r.checked_in_at && !r.checked_out_at).length,
       expected: rows.filter(
-        (r) =>
-          !r.checked_in_at &&
-          r.status === "active" &&
-          new Date(r.expires_at).getTime() > now,
+        (r) => !r.checked_in_at && r.status === "active" && new Date(r.expires_at).getTime() > now,
       ).length,
       completed: rows.filter((r) => !!r.checked_out_at).length,
       revoked: rows.filter((r) => r.status === "revoked").length,
@@ -131,11 +126,7 @@ function AdminGuestLogs() {
       if (tab === "inside" && !(r.checked_in_at && !r.checked_out_at)) return false;
       if (
         tab === "expected" &&
-        !(
-          !r.checked_in_at &&
-          r.status === "active" &&
-          new Date(r.expires_at).getTime() > now
-        )
+        !(!r.checked_in_at && r.status === "active" && new Date(r.expires_at).getTime() > now)
       )
         return false;
       if (tab === "completed" && !r.checked_out_at) return false;
@@ -158,10 +149,7 @@ function AdminGuestLogs() {
         kind === "exit"
           ? { checked_out_at: new Date().toISOString(), status: "used" as const }
           : { status: "revoked" as const };
-      const { error } = await supabase
-        .from("guest_invites")
-        .update(patch)
-        .eq("id", invite.id);
+      const { error } = await supabase.from("guest_invites").update(patch).eq("id", invite.id);
       if (error) throw error;
     },
     onSuccess: (_d, v) => {

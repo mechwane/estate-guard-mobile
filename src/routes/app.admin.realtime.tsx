@@ -285,7 +285,11 @@ function RealtimeAccess() {
       </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-        <StatCard label="Inside now" value={inside.length} tone={inside.length ? "primary" : "default"} />
+        <StatCard
+          label="Inside now"
+          value={inside.length}
+          tone={inside.length ? "primary" : "default"}
+        />
         <StatCard label="Entries today" value={entriesToday} tone="success" />
         <StatCard label="Exits today" value={exitsToday} />
         <StatCard label="Pedestrian traffic" value={pedIn.length + pedOut.length} />

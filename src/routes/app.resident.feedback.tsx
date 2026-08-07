@@ -80,9 +80,7 @@ function Feedback() {
                 >
                   <Star
                     className={`h-7 w-7 ${
-                      n <= rating
-                        ? "fill-amber-400 text-amber-400"
-                        : "text-muted-foreground/40"
+                      n <= rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/40"
                     }`}
                   />
                 </button>

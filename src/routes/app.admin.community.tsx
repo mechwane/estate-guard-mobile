@@ -3,17 +3,9 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { Card, EmptyState } from "@/components/ui-kit";
+import { Card, EmptyState, ImagePicker } from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
-import {
-  Plus,
-  Loader2,
-  Pencil,
-  Trash2,
-  Megaphone,
-  CalendarDays,
-  Send,
-} from "lucide-react";
+import { Plus, Loader2, Pencil, Trash2, Megaphone, CalendarDays, Send } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -143,17 +135,12 @@ function PostsPanel() {
                 className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
             </label>
-            <label className="block">
-              <span className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                Cover image URL (optional)
-              </span>
-              <input
-                value={editing.cover_url}
-                onChange={(e) => setEditing({ ...editing, cover_url: e.target.value })}
-                placeholder="https://…"
-                className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
-            </label>
+            <ImagePicker
+              label="Cover image (optional)"
+              folder="community"
+              value={editing.cover_url || null}
+              onChange={(v) => setEditing({ ...editing, cover_url: v ?? "" })}
+            />
             <div className="flex gap-2">
               <button
                 onClick={() => setEditing(null)}
@@ -268,13 +255,16 @@ function MeetingsPanel() {
     mutationFn: async (f: MeetingForm) => {
       if (!f.title.trim()) throw new Error("Title is required");
       if (!f.starts_at) throw new Error("Start time is required");
-      const { error } = await supabase.rpc("create_meeting_and_notify" as any, {
-        _title: f.title,
-        _description: f.description || null,
-        _starts_at: new Date(f.starts_at).toISOString(),
-        _location: f.location || null,
-        _join_url: f.join_url || null,
-      } as any);
+      const { error } = await supabase.rpc(
+        "create_meeting_and_notify" as any,
+        {
+          _title: f.title,
+          _description: f.description || null,
+          _starts_at: new Date(f.starts_at).toISOString(),
+          _location: f.location || null,
+          _join_url: f.join_url || null,
+        } as any,
+      );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -289,7 +279,10 @@ function MeetingsPanel() {
 
   const remove = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("meetings" as any).delete().eq("id", id);
+      const { error } = await supabase
+        .from("meetings" as any)
+        .delete()
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-meetings"] }),

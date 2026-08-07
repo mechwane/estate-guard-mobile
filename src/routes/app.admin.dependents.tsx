@@ -3,7 +3,14 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { Card, EmptyState, ErrorState, ListSkeleton, ScrollTabs, SearchInput } from "@/components/ui-kit";
+import {
+  Card,
+  EmptyState,
+  ErrorState,
+  ListSkeleton,
+  ScrollTabs,
+  SearchInput,
+} from "@/components/ui-kit";
 import { UsersRound } from "lucide-react";
 
 export const Route = createFileRoute("/app/admin/dependents")({
@@ -11,9 +18,15 @@ export const Route = createFileRoute("/app/admin/dependents")({
   head: () => ({
     meta: [
       { title: "Dependants — Estate Guard" },
-      { name: "description", content: "All dependants and household staff registered by residents." },
+      {
+        name: "description",
+        content: "All dependants and household staff registered by residents.",
+      },
       { property: "og:title", content: "Dependants — Estate Guard" },
-      { property: "og:description", content: "All dependants and household staff registered by residents." },
+      {
+        property: "og:description",
+        content: "All dependants and household staff registered by residents.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -27,7 +40,8 @@ const TABS = [
   { key: "staff", label: "Domestic staff" },
 ] as const;
 
-const isStaff = (rel?: string | null) => /staff|maid|driver|help|cleaner|nanny|cook|security/i.test(rel ?? "");
+const isStaff = (rel?: string | null) =>
+  /staff|maid|driver|help|cleaner|nanny|cook|security/i.test(rel ?? "");
 
 function Dependents() {
   const { data: session } = useSession();
@@ -53,13 +67,17 @@ function Dependents() {
     queryKey: ["profiles-for-deps", estateId],
     enabled: !!estateId,
     queryFn: async () => {
-      const { data, error } = await supabase.from("profiles").select("id,full_name,unit").eq("estate_id", estateId!);
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("id,full_name,unit")
+        .eq("estate_id", estateId!);
       if (error) throw error;
       return data ?? [];
     },
   });
 
-  const nameOf = (id: string) => residents.data?.find((r) => r.id === id)?.full_name ?? id.slice(0, 8);
+  const nameOf = (id: string) =>
+    residents.data?.find((r) => r.id === id)?.full_name ?? id.slice(0, 8);
 
   const counts = useMemo(() => {
     const all = rows.data ?? [];
@@ -73,7 +91,9 @@ function Dependents() {
   const visible = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return (rows.data ?? [])
-      .filter((d) => (tab === "all" ? true : tab === "staff" ? isStaff(d.relationship) : !isStaff(d.relationship)))
+      .filter((d) =>
+        tab === "all" ? true : tab === "staff" ? isStaff(d.relationship) : !isStaff(d.relationship),
+      )
       .filter(
         (d) =>
           !needle ||

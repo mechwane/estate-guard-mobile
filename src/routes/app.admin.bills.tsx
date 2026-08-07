@@ -204,7 +204,13 @@ function AdminBills() {
                       ₦{Number(b.amount).toLocaleString()}
                     </div>
                     <StatusBadge
-                      tone={b.status === "paid" || b.status === "waived" ? "success" : overdue ? "error" : "warning"}
+                      tone={
+                        b.status === "paid" || b.status === "waived"
+                          ? "success"
+                          : overdue
+                            ? "error"
+                            : "warning"
+                      }
                     >
                       {overdue ? "overdue" : b.status}
                     </StatusBadge>

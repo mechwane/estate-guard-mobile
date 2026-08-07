@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { EmptyState, ModalPortal } from "@/components/ui-kit";
+import { EmptyState, MediaImage, ModalPortal } from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
 import {
   Heart,
@@ -69,9 +69,7 @@ function Community() {
           {tab === "announcement" && (
             <PostsList estateId={session?.estate?.id} type="announcement" />
           )}
-          {tab === "polls" && (
-            <PollsList estateId={session?.estate?.id} userId={session?.userId} />
-          )}
+          {tab === "polls" && <PollsList estateId={session?.estate?.id} userId={session?.userId} />}
           {tab === "meetings" && <MeetingsList estateId={session?.estate?.id} />}
         </motion.div>
       </AnimatePresence>
@@ -167,9 +165,7 @@ function MeetingCard({ m, highlight }: { m: any; highlight?: boolean }) {
         </div>
         <div className="min-w-0 flex-1">
           <div className="text-sm font-semibold text-foreground">{m.title}</div>
-          <div className="mt-0.5 text-xs text-muted-foreground">
-            {format(dt, "EEEE, p")}
-          </div>
+          <div className="mt-0.5 text-xs text-muted-foreground">{format(dt, "EEEE, p")}</div>
           {m.description && (
             <p className="mt-2 whitespace-pre-line text-xs text-muted-foreground">
               {m.description}
@@ -291,11 +287,7 @@ function PostsList({ estateId, type }: { estateId?: string; type: "blog" | "anno
       <EmptyState
         title={type === "blog" ? "No posts yet" : "No announcements"}
         icon={
-          type === "blog" ? (
-            <Newspaper className="h-6 w-6" />
-          ) : (
-            <Megaphone className="h-6 w-6" />
-          )
+          type === "blog" ? <Newspaper className="h-6 w-6" /> : <Megaphone className="h-6 w-6" />
         }
       />
     );
@@ -318,10 +310,7 @@ function PostsList({ estateId, type }: { estateId?: string; type: "blog" | "anno
         ))}
       </Stagger>
 
-      <CommentsSheet
-        postId={openComments}
-        onClose={() => setOpenComments(null)}
-      />
+      <CommentsSheet postId={openComments} onClose={() => setOpenComments(null)} />
     </>
   );
 }
@@ -376,9 +365,7 @@ function PostCard({
       </div>
 
       <div className="space-y-2 px-4 pt-3">
-        {post.title && (
-          <h3 className="text-sm font-semibold text-foreground">{post.title}</h3>
-        )}
+        {post.title && <h3 className="text-sm font-semibold text-foreground">{post.title}</h3>}
         <p className="whitespace-pre-line text-sm text-muted-foreground">
           {shown}
           {long && (
@@ -394,12 +381,7 @@ function PostCard({
 
       {post.cover_url && (
         <div className="mt-3 aspect-[16/9] w-full overflow-hidden bg-muted">
-          <img
-            src={post.cover_url}
-            alt=""
-            loading="lazy"
-            className="h-full w-full object-cover"
-          />
+          <MediaImage value={post.cover_url} alt="" className="h-full w-full object-cover" />
         </div>
       )}
 
@@ -433,13 +415,7 @@ function PostCard({
   );
 }
 
-function CommentsSheet({
-  postId,
-  onClose,
-}: {
-  postId: string | null;
-  onClose: () => void;
-}) {
+function CommentsSheet({ postId, onClose }: { postId: string | null; onClose: () => void }) {
   const { data: session } = useSession();
   const qc = useQueryClient();
   const [text, setText] = useState("");
@@ -478,99 +454,99 @@ function CommentsSheet({
 
   return (
     <ModalPortal>
-    <AnimatePresence>
-      {postId && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/50"
-          onClick={onClose}
-        >
+      <AnimatePresence>
+        {postId && (
           <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", stiffness: 320, damping: 32 }}
-            onClick={(e) => e.stopPropagation()}
-            className="flex max-h-[80vh] w-full max-w-md flex-col rounded-t-2xl bg-card shadow-2xl ring-1 ring-border"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/50"
+            onClick={onClose}
           >
-            <div className="flex items-center justify-between border-b border-border px-4 py-3">
-              <h4 className="text-sm font-semibold text-foreground">Comments</h4>
-              <button
-                onClick={onClose}
-                className="rounded-full p-1 text-muted-foreground hover:bg-muted"
-                aria-label="Close"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
-              {comments.isLoading ? (
-                <div className="flex justify-center py-8">
-                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                </div>
-              ) : !comments.data || comments.data.length === 0 ? (
-                <p className="py-8 text-center text-xs text-muted-foreground">
-                  Be the first to comment.
-                </p>
-              ) : (
-                comments.data.map((c: any) => (
-                  <div key={c.id} className="flex items-start gap-2.5">
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-[10px] font-semibold uppercase text-muted-foreground">
-                      {(c.profiles?.full_name ?? "?").slice(0, 2)}
-                    </div>
-                    <div className="min-w-0 flex-1 rounded-2xl bg-muted/50 px-3 py-2">
-                      <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                        <span className="font-medium text-foreground">
-                          {c.profiles?.full_name ?? "Resident"}
-                        </span>
-                        <span>·</span>
-                        <span>
-                          {formatDistanceToNowStrict(new Date(c.created_at), {
-                            addSuffix: true,
-                          })}
-                        </span>
-                      </div>
-                      <p className="mt-0.5 whitespace-pre-line text-sm text-foreground">
-                        {c.body}
-                      </p>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                add.mutate();
-              }}
-              className="flex items-center gap-2 border-t border-border px-3 py-2"
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              onClick={(e) => e.stopPropagation()}
+              className="flex max-h-[80vh] w-full max-w-md flex-col rounded-t-2xl bg-card shadow-2xl ring-1 ring-border"
             >
-              <input
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder="Write a comment…"
-                className="flex-1 rounded-full border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                disabled={add.isPending || !text.trim()}
-                type="submit"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary-dark disabled:opacity-50"
-                aria-label="Send"
-              >
-                {add.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+              <div className="flex items-center justify-between border-b border-border px-4 py-3">
+                <h4 className="text-sm font-semibold text-foreground">Comments</h4>
+                <button
+                  onClick={onClose}
+                  className="rounded-full p-1 text-muted-foreground hover:bg-muted"
+                  aria-label="Close"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
+                {comments.isLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                  </div>
+                ) : !comments.data || comments.data.length === 0 ? (
+                  <p className="py-8 text-center text-xs text-muted-foreground">
+                    Be the first to comment.
+                  </p>
                 ) : (
-                  <Send className="h-4 w-4" />
+                  comments.data.map((c: any) => (
+                    <div key={c.id} className="flex items-start gap-2.5">
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-[10px] font-semibold uppercase text-muted-foreground">
+                        {(c.profiles?.full_name ?? "?").slice(0, 2)}
+                      </div>
+                      <div className="min-w-0 flex-1 rounded-2xl bg-muted/50 px-3 py-2">
+                        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                          <span className="font-medium text-foreground">
+                            {c.profiles?.full_name ?? "Resident"}
+                          </span>
+                          <span>·</span>
+                          <span>
+                            {formatDistanceToNowStrict(new Date(c.created_at), {
+                              addSuffix: true,
+                            })}
+                          </span>
+                        </div>
+                        <p className="mt-0.5 whitespace-pre-line text-sm text-foreground">
+                          {c.body}
+                        </p>
+                      </div>
+                    </div>
+                  ))
                 )}
-              </motion.button>
-            </form>
+              </div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  add.mutate();
+                }}
+                className="flex items-center gap-2 border-t border-border px-3 py-2"
+              >
+                <input
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  placeholder="Write a comment…"
+                  className="flex-1 rounded-full border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                />
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  disabled={add.isPending || !text.trim()}
+                  type="submit"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary-dark disabled:opacity-50"
+                  aria-label="Send"
+                >
+                  {add.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                </motion.button>
+              </form>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>
     </ModalPortal>
   );
 }
@@ -612,8 +588,7 @@ function PollsList({ estateId, userId }: { estateId?: string; userId?: string | 
       ).forEach((v) => {
         if (!idSet.has(v.poll_id)) return;
         totals[v.poll_id] = totals[v.poll_id] ?? {};
-        totals[v.poll_id][v.option_key] =
-          (totals[v.poll_id][v.option_key] ?? 0) + Number(v.votes);
+        totals[v.poll_id][v.option_key] = (totals[v.poll_id][v.option_key] ?? 0) + Number(v.votes);
       });
 
       const mineMap: Record<string, string> = {};
@@ -654,10 +629,7 @@ function PollsList({ estateId, userId }: { estateId?: string; userId?: string | 
         const options = ((p.options as any[]) ?? []) as { key: string; label: string }[];
         const totals = votes.data?.totals[p.id] ?? {};
         const my = votes.data?.mine[p.id];
-        const totalVotes = Object.values(totals).reduce(
-          (s: number, n: any) => s + Number(n),
-          0,
-        );
+        const totalVotes = Object.values(totals).reduce((s: number, n: any) => s + Number(n), 0);
         return (
           <StaggerItem key={p.id}>
             <div className="card-surface space-y-3 p-4">

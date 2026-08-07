@@ -35,7 +35,8 @@ function Support() {
 
   const create = useMutation({
     mutationFn: async () => {
-      if (!form.subject.trim() || !form.body.trim()) throw new Error("Subject and message required");
+      if (!form.subject.trim() || !form.body.trim())
+        throw new Error("Subject and message required");
       const { error } = await supabase.from("support_tickets").insert({
         estate_id: session!.estate!.id,
         resident_id: session!.userId!,
@@ -108,9 +109,7 @@ function Support() {
               <Card className="p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="truncate text-sm font-medium text-foreground">
-                      {t.subject}
-                    </div>
+                    <div className="truncate text-sm font-medium text-foreground">{t.subject}</div>
                     <div className="mt-0.5 text-xs text-muted-foreground line-clamp-2">
                       {t.body}
                     </div>
