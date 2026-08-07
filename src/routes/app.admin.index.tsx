@@ -710,6 +710,7 @@ function AdminDashboard() {
               />
             </ChartCard>
           </div>
+          </div>
         ))}
 
       {section === "operations" && (
