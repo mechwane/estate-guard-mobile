@@ -67,6 +67,7 @@ import { Route as AppAdminResidentsRouteImport } from './routes/app.admin.reside
 import { Route as AppAdminRequestsRouteImport } from './routes/app.admin.requests'
 import { Route as AppAdminRealtimeRouteImport } from './routes/app.admin.realtime'
 import { Route as AppAdminProfileRouteImport } from './routes/app.admin.profile'
+import { Route as AppAdminPollsRouteImport } from './routes/app.admin.polls'
 import { Route as AppAdminPaymentsRouteImport } from './routes/app.admin.payments'
 import { Route as AppAdminPassesRouteImport } from './routes/app.admin.passes'
 import { Route as AppAdminMessagesRouteImport } from './routes/app.admin.messages'
@@ -380,6 +381,11 @@ const AppAdminProfileRoute = AppAdminProfileRouteImport.update({
   path: '/admin/profile',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminPollsRoute = AppAdminPollsRouteImport.update({
+  id: '/admin/polls',
+  path: '/admin/polls',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminPaymentsRoute = AppAdminPaymentsRouteImport.update({
   id: '/admin/payments',
   path: '/admin/payments',
@@ -517,6 +523,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/messages': typeof AppAdminMessagesRoute
   '/app/admin/passes': typeof AppAdminPassesRoute
   '/app/admin/payments': typeof AppAdminPaymentsRoute
+  '/app/admin/polls': typeof AppAdminPollsRoute
   '/app/admin/profile': typeof AppAdminProfileRoute
   '/app/admin/realtime': typeof AppAdminRealtimeRoute
   '/app/admin/requests': typeof AppAdminRequestsRoute
@@ -599,6 +606,7 @@ export interface FileRoutesByTo {
   '/app/admin/messages': typeof AppAdminMessagesRoute
   '/app/admin/passes': typeof AppAdminPassesRoute
   '/app/admin/payments': typeof AppAdminPaymentsRoute
+  '/app/admin/polls': typeof AppAdminPollsRoute
   '/app/admin/profile': typeof AppAdminProfileRoute
   '/app/admin/realtime': typeof AppAdminRealtimeRoute
   '/app/admin/requests': typeof AppAdminRequestsRoute
@@ -682,6 +690,7 @@ export interface FileRoutesById {
   '/app/admin/messages': typeof AppAdminMessagesRoute
   '/app/admin/passes': typeof AppAdminPassesRoute
   '/app/admin/payments': typeof AppAdminPaymentsRoute
+  '/app/admin/polls': typeof AppAdminPollsRoute
   '/app/admin/profile': typeof AppAdminProfileRoute
   '/app/admin/realtime': typeof AppAdminRealtimeRoute
   '/app/admin/requests': typeof AppAdminRequestsRoute
@@ -766,6 +775,7 @@ export interface FileRouteTypes {
     | '/app/admin/messages'
     | '/app/admin/passes'
     | '/app/admin/payments'
+    | '/app/admin/polls'
     | '/app/admin/profile'
     | '/app/admin/realtime'
     | '/app/admin/requests'
@@ -848,6 +858,7 @@ export interface FileRouteTypes {
     | '/app/admin/messages'
     | '/app/admin/passes'
     | '/app/admin/payments'
+    | '/app/admin/polls'
     | '/app/admin/profile'
     | '/app/admin/realtime'
     | '/app/admin/requests'
@@ -930,6 +941,7 @@ export interface FileRouteTypes {
     | '/app/admin/messages'
     | '/app/admin/passes'
     | '/app/admin/payments'
+    | '/app/admin/polls'
     | '/app/admin/profile'
     | '/app/admin/realtime'
     | '/app/admin/requests'
@@ -1401,6 +1413,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminProfileRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/polls': {
+      id: '/app/admin/polls'
+      path: '/admin/polls'
+      fullPath: '/app/admin/polls'
+      preLoaderRoute: typeof AppAdminPollsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/payments': {
       id: '/app/admin/payments'
       path: '/admin/payments'
@@ -1577,6 +1596,7 @@ interface AppRouteChildren {
   AppAdminMessagesRoute: typeof AppAdminMessagesRoute
   AppAdminPassesRoute: typeof AppAdminPassesRoute
   AppAdminPaymentsRoute: typeof AppAdminPaymentsRoute
+  AppAdminPollsRoute: typeof AppAdminPollsRoute
   AppAdminProfileRoute: typeof AppAdminProfileRoute
   AppAdminRealtimeRoute: typeof AppAdminRealtimeRoute
   AppAdminRequestsRoute: typeof AppAdminRequestsRoute
@@ -1653,6 +1673,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminMessagesRoute: AppAdminMessagesRoute,
   AppAdminPassesRoute: AppAdminPassesRoute,
   AppAdminPaymentsRoute: AppAdminPaymentsRoute,
+  AppAdminPollsRoute: AppAdminPollsRoute,
   AppAdminProfileRoute: AppAdminProfileRoute,
   AppAdminRealtimeRoute: AppAdminRealtimeRoute,
   AppAdminRequestsRoute: AppAdminRequestsRoute,

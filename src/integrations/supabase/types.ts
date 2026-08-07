@@ -1169,26 +1169,71 @@ export type Database = {
         }
         Relationships: []
       }
+      poll_items: {
+        Row: {
+          created_at: string
+          id: string
+          options: Json
+          poll_id: string
+          position: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          options?: Json
+          poll_id: string
+          position?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          options?: Json
+          poll_id?: string
+          position?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "poll_items_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       poll_votes: {
         Row: {
           created_at: string
+          item_id: string | null
           option_key: string
           poll_id: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          item_id?: string | null
           option_key: string
           poll_id: string
           user_id: string
         }
         Update: {
           created_at?: string
+          item_id?: string | null
           option_key?: string
           poll_id?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "poll_votes_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "poll_items"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "poll_votes_poll_id_fkey"
             columns: ["poll_id"]
@@ -1200,30 +1245,48 @@ export type Database = {
       }
       polls: {
         Row: {
+          allow_anonymous: boolean
           closes_at: string | null
           created_at: string
+          created_by: string | null
           description: string | null
           estate_id: string
+          how_to_win: string
           id: string
+          kind: string
           options: Json
+          promo_image_url: string | null
+          starts_at: string | null
           title: string
         }
         Insert: {
+          allow_anonymous?: boolean
           closes_at?: string | null
           created_at?: string
+          created_by?: string | null
           description?: string | null
           estate_id: string
+          how_to_win?: string
           id?: string
+          kind?: string
           options?: Json
+          promo_image_url?: string | null
+          starts_at?: string | null
           title: string
         }
         Update: {
+          allow_anonymous?: boolean
           closes_at?: string | null
           created_at?: string
+          created_by?: string | null
           description?: string | null
           estate_id?: string
+          how_to_win?: string
           id?: string
+          kind?: string
           options?: Json
+          promo_image_url?: string | null
+          starts_at?: string | null
           title?: string
         }
         Relationships: [
