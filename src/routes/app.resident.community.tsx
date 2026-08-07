@@ -230,8 +230,8 @@ function PostsList({ estateId, type }: { estateId?: string; type: "blog" | "anno
           mine: new Set<string>(),
           comments: {} as Record<string, number>,
         };
-      const [{ data: allLikes }, { data: myLikes }, { data: allComments }] = await Promise.all([
-        supabase.from("post_likes").select("post_id").in("post_id", ids),
+      const [{ data: likeCounts }, { data: myLikes }, { data: allComments }] = await Promise.all([
+        supabase.rpc("post_like_counts" as never),
         supabase
           .from("post_likes")
           .select("post_id")
@@ -239,12 +239,16 @@ function PostsList({ estateId, type }: { estateId?: string; type: "blog" | "anno
           .eq("user_id", session!.userId!),
         supabase.from("post_comments").select("post_id").in("post_id", ids),
       ]);
+      const idSet = new Set(ids);
       const likes: Record<string, number> = {};
-      (allLikes ?? []).forEach((r: any) => (likes[r.post_id] = (likes[r.post_id] ?? 0) + 1));
+      ((likeCounts ?? []) as unknown as { post_id: string; likes: number }[]).forEach((r) => {
+        if (idSet.has(r.post_id)) likes[r.post_id] = Number(r.likes);
+      });
       const comments: Record<string, number> = {};
       (allComments ?? []).forEach(
         (r: any) => (comments[r.post_id] = (comments[r.post_id] ?? 0) + 1),
       );
+
       return {
         likes,
         comments,
@@ -593,19 +597,25 @@ function PollsList({ estateId, userId }: { estateId?: string; userId?: string | 
     queryFn: async () => {
       const ids = (polls.data ?? []).map((p) => p.id);
       if (ids.length === 0) return { totals: {}, mine: {} } as any;
-      const [{ data: all }, { data: mine }] = await Promise.all([
-        supabase.from("poll_votes").select("poll_id, option_key").in("poll_id", ids),
+      const [{ data: tallies }, { data: mine }] = await Promise.all([
+        supabase.rpc("poll_vote_tallies" as never),
         supabase
           .from("poll_votes")
           .select("poll_id, option_key")
           .in("poll_id", ids)
           .eq("user_id", userId!),
       ]);
+      const idSet = new Set(ids);
       const totals: Record<string, Record<string, number>> = {};
-      (all ?? []).forEach((v: any) => {
+      (
+        (tallies ?? []) as unknown as { poll_id: string; option_key: string; votes: number }[]
+      ).forEach((v) => {
+        if (!idSet.has(v.poll_id)) return;
         totals[v.poll_id] = totals[v.poll_id] ?? {};
-        totals[v.poll_id][v.option_key] = (totals[v.poll_id][v.option_key] ?? 0) + 1;
+        totals[v.poll_id][v.option_key] =
+          (totals[v.poll_id][v.option_key] ?? 0) + Number(v.votes);
       });
+
       const mineMap: Record<string, string> = {};
       (mine ?? []).forEach((v: any) => (mineMap[v.poll_id] = v.option_key));
       return { totals, mine: mineMap };

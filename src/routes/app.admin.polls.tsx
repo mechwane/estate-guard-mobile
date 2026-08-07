@@ -106,17 +106,23 @@ function AdminPolls() {
           .eq("estate_id", estateId!)
           .order("created_at", { ascending: false }),
         supabase.from("poll_items").select("*").order("position", { ascending: true }),
-        supabase.from("poll_votes").select("poll_id,item_id,option_key"),
+        supabase.rpc("poll_vote_tallies" as never),
       ]);
       const error = [polls.error, items.error, votes.error].find(Boolean);
       if (error) throw error;
       return {
         polls: polls.data ?? [],
         items: items.data ?? [],
-        votes: votes.data ?? [],
+        votes: ((votes.data ?? []) as unknown as {
+          poll_id: string;
+          item_id: string | null;
+          option_key: string;
+          votes: number;
+        }[]).map((v) => ({ ...v, votes: Number(v.votes) })),
       };
     },
   });
+
 
   const rows = useMemo(() => {
     const data = list.data;
@@ -128,7 +134,10 @@ function AdminPolls() {
       .map((p) => ({
         ...p,
         items: data.items.filter((i) => i.poll_id === p.id),
-        voteCount: data.votes.filter((v) => v.poll_id === p.id).length,
+        voteCount: data.votes
+          .filter((v) => v.poll_id === p.id)
+          .reduce((sum, v) => sum + v.votes, 0),
+
       }));
   }, [list.data, kind, search]);
 
@@ -587,7 +596,7 @@ function AdminPolls() {
                   (v) => v.poll_id === resultsRow.id && v.item_id === item.id,
                 );
                 const options = ((item.options as string[] | null) ?? []).map(String);
-                const total = votes.length;
+                const total = votes.reduce((sum, v) => sum + v.votes, 0);
                 return (
                   <div key={item.id} className="space-y-2">
                     <div className="flex items-center justify-between text-sm font-medium text-foreground">
@@ -595,9 +604,12 @@ function AdminPolls() {
                       <span className="text-xs text-muted-foreground">{total} vote(s)</span>
                     </div>
                     {options.map((option) => {
-                      const count = votes.filter((v) => v.option_key === option).length;
+                      const count = votes
+                        .filter((v) => v.option_key === option)
+                        .reduce((sum, v) => sum + v.votes, 0);
                       const pct = total ? Math.round((count / total) * 100) : 0;
                       return (
+
                         <div key={option} className="space-y-1">
                           <div className="flex justify-between text-xs text-muted-foreground">
                             <span className="truncate">{option}</span>
