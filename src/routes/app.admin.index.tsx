@@ -599,10 +599,62 @@ function AdminDashboard() {
         ) : charts.isError || !charts.data ? (
           <ErrorState onRetry={() => charts.refetch()} />
         ) : (
+          <div className="space-y-3">
+            <ChartCard
+              title="Estate access trend"
+              subtitle="Invites, check-ins and check-outs over time — tap a metric to focus it"
+              action={
+                <RangeTabs
+                  value={visitorRange}
+                  onChange={setVisitorRange}
+                  options={adminRangeOptions}
+                />
+              }
+            >
+              <InteractiveTrendChart
+                data={charts.data.timeline}
+                series={[
+                  { key: "invites", label: "Codes", color: "var(--color-primary)" },
+                  { key: "checkIns", label: "Check-ins", color: "var(--color-success)" },
+                  { key: "checkOuts", label: "Check-outs", color: "var(--color-warning)" },
+                ]}
+              />
+            </ChartCard>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              <Card className="p-4">
+                <ProgressRing
+                  value={share(
+                    charts.data.verificationShare.verified,
+                    charts.data.verificationShare.total,
+                  )}
+                  label="Verified residents"
+                  caption={`${charts.data.verificationShare.verified} of ${charts.data.verificationShare.total}`}
+                />
+              </Card>
+              <Card className="p-4">
+                <ProgressRing
+                  value={share(charts.data.billShare.paid, charts.data.billShare.total)}
+                  label="Bills settled"
+                  caption={`${charts.data.billShare.paid} of ${charts.data.billShare.total}`}
+                  color="var(--color-success)"
+                />
+              </Card>
+              <Card className="p-4">
+                <ProgressRing
+                  value={share(charts.data.insideShare.inside, charts.data.insideShare.total)}
+                  label="Visitors still inside"
+                  caption={`${charts.data.insideShare.inside} of ${charts.data.insideShare.total} check-ins`}
+                  color="var(--color-warning)"
+                />
+              </Card>
+            </div>
+
           <div className="grid gap-3 lg:grid-cols-2">
             <ChartCard title="Resident verification">
               <DonutChart data={charts.data.verification} />
             </ChartCard>
+
             <ChartCard
               title="Visitor activity"
               action={
