@@ -300,7 +300,7 @@ function AdminPolls() {
                             ? "success"
                             : status === "Scheduled"
                               ? "warning"
-                              : "default"
+                              : "neutral"
                         }
                       >
                         {status}
@@ -628,7 +628,7 @@ function AdminPolls() {
         description="Votes recorded for this session will also be removed."
         confirmLabel="Delete"
         tone="destructive"
-        loading={remove.isPending}
+        busy={remove.isPending}
         onCancel={() => setDeleting(null)}
         onConfirm={() => deleting && remove.mutate(deleting.id)}
       />
