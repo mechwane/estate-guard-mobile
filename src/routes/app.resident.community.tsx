@@ -394,12 +394,7 @@ function PostCard({
 
       {post.cover_url && (
         <div className="mt-3 aspect-[16/9] w-full overflow-hidden bg-muted">
-          <img
-            value={post.cover_url}
-            alt=""
-            loading="lazy"
-            className="h-full w-full object-cover"
-          />
+          <MediaImage value={post.cover_url} alt="" className="h-full w-full object-cover" />
         </div>
       )}
 

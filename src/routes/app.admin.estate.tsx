@@ -307,17 +307,16 @@ function EstateProfile() {
         <Card className="overflow-hidden p-0">
           <div className="relative flex min-h-40 flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-primary/25 via-primary/10 to-transparent px-6 py-9 text-center">
             {e?.logo_url && (
-              <img
-                src={e.logo_url}
+              <MediaImage
+                value={e.logo_url}
                 alt=""
-                aria-hidden
                 className="absolute inset-0 h-full w-full scale-105 object-cover opacity-25 blur-[1px]"
               />
             )}
             <div className="relative">
               {e?.logo_url ? (
-                <img
-                  src={e.logo_url}
+                <MediaImage
+                  value={e.logo_url}
                   alt={`${e?.name ?? "Estate"} logo`}
                   className="mx-auto mb-2 h-14 w-14 rounded-xl border border-border/60 bg-card object-contain p-1"
                 />
