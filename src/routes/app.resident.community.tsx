@@ -597,19 +597,25 @@ function PollsList({ estateId, userId }: { estateId?: string; userId?: string | 
     queryFn: async () => {
       const ids = (polls.data ?? []).map((p) => p.id);
       if (ids.length === 0) return { totals: {}, mine: {} } as any;
-      const [{ data: all }, { data: mine }] = await Promise.all([
-        supabase.from("poll_votes").select("poll_id, option_key").in("poll_id", ids),
+      const [{ data: tallies }, { data: mine }] = await Promise.all([
+        supabase.rpc("poll_vote_tallies" as never),
         supabase
           .from("poll_votes")
           .select("poll_id, option_key")
           .in("poll_id", ids)
           .eq("user_id", userId!),
       ]);
+      const idSet = new Set(ids);
       const totals: Record<string, Record<string, number>> = {};
-      (all ?? []).forEach((v: any) => {
+      (
+        (tallies ?? []) as unknown as { poll_id: string; option_key: string; votes: number }[]
+      ).forEach((v) => {
+        if (!idSet.has(v.poll_id)) return;
         totals[v.poll_id] = totals[v.poll_id] ?? {};
-        totals[v.poll_id][v.option_key] = (totals[v.poll_id][v.option_key] ?? 0) + 1;
+        totals[v.poll_id][v.option_key] =
+          (totals[v.poll_id][v.option_key] ?? 0) + Number(v.votes);
       });
+
       const mineMap: Record<string, string> = {};
       (mine ?? []).forEach((v: any) => (mineMap[v.poll_id] = v.option_key));
       return { totals, mine: mineMap };
