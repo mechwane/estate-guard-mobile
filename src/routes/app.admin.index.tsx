@@ -5,6 +5,7 @@ import { formatDistanceToNow, startOfDay, subDays } from "date-fns";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
+import { initialsFor, useAvatarUrls } from "@/lib/avatar";
 import {
   ChartCard,
   DonutChart,
@@ -19,9 +20,11 @@ import {
   ErrorState,
   ListSkeleton,
   ScrollTabs,
+  SearchInput,
   StatCard,
   StatusBadge,
 } from "@/components/ui-kit";
+import { Stagger, StaggerItem } from "@/components/motion-kit";
 
 export const Route = createFileRoute("/app/admin/")({
   component: AdminDashboard,
@@ -30,8 +33,11 @@ export const Route = createFileRoute("/app/admin/")({
 function AdminDashboard() {
   const { data: session } = useSession();
   const estateId = session?.estate?.id;
-  const [section, setSection] = useState<"overview" | "operations" | "activity">("overview");
+  const [section, setSection] = useState<"overview" | "residents" | "operations" | "activity">(
+    "overview",
+  );
   const [visitorRange, setVisitorRange] = useState<AdminRangeKey>("7d");
+
 
   const metrics = useQuery({
     queryKey: ["admin-control-center", estateId],
@@ -355,6 +361,40 @@ function AdminDashboard() {
   );
 
 
+  const [residentSearch, setResidentSearch] = useState("");
+  const [showInactive, setShowInactive] = useState(false);
+
+  const residents = useQuery({
+    queryKey: ["admin-home-residents", estateId],
+    enabled: !!estateId && section === "residents",
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select(
+          "id,full_name,email,phone,avatar_url,approved,verification_status,house_number,block,street,unit,occupant_type,created_at",
+        )
+        .eq("estate_id", estateId!)
+        .order("full_name", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const residentRows = useMemo(() => {
+    const term = residentSearch.trim().toLowerCase();
+    return (residents.data ?? [])
+      .filter((r) => (showInactive ? !r.approved : r.approved))
+      .filter(
+        (r) =>
+          !term ||
+          (r.full_name ?? "").toLowerCase().includes(term) ||
+          (r.email ?? "").toLowerCase().includes(term) ||
+          (r.phone ?? "").toLowerCase().includes(term),
+      );
+  }, [residents.data, residentSearch, showInactive]);
+
+  const avatarMap = useAvatarUrls((residents.data ?? []).map((r) => r.avatar_url));
+
   if (!estateId)
     return (
       <EmptyState
@@ -370,10 +410,114 @@ function AdminDashboard() {
         onChange={setSection}
         tabs={[
           { key: "overview", label: "Overview" },
+          { key: "residents", label: "Residents" },
           { key: "operations", label: "Operations" },
           { key: "activity", label: "Activity" },
         ] as const}
       />
+
+      {section === "residents" && (
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="min-w-0 flex-1 sm:max-w-xs">
+              <SearchInput
+                value={residentSearch}
+                onChange={setResidentSearch}
+                placeholder="Search residents…"
+              />
+            </div>
+            <div className="flex rounded-xl bg-muted p-1 text-sm">
+              <button
+                onClick={() => setShowInactive(false)}
+                className={`rounded-lg px-3 py-1.5 font-medium transition-colors ${
+                  showInactive ? "text-muted-foreground" : "bg-card text-foreground shadow"
+                }`}
+              >
+                Active
+              </button>
+              <button
+                onClick={() => setShowInactive(true)}
+                className={`rounded-lg px-3 py-1.5 font-medium transition-colors ${
+                  showInactive ? "bg-card text-foreground shadow" : "text-muted-foreground"
+                }`}
+              >
+                Inactive
+              </button>
+            </div>
+          </div>
+
+          {residents.isLoading ? (
+            <ListSkeleton rows={4} />
+          ) : residents.isError ? (
+            <ErrorState onRetry={() => residents.refetch()} />
+          ) : residentRows.length === 0 ? (
+            <EmptyState
+              title={showInactive ? "No inactive residents" : "No active residents"}
+              description="Residents appear here once they register and are approved."
+            />
+          ) : (
+            <Stagger className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              {residentRows.map((resident) => {
+                const address =
+                  [resident.house_number, resident.block, resident.street]
+                    .filter(Boolean)
+                    .join(", ") ||
+                  resident.unit ||
+                  "No address on file";
+                const signed = resident.avatar_url ? avatarMap[resident.avatar_url] : null;
+                return (
+                  <StaggerItem key={resident.id}>
+                    <Link
+                      to="/app/admin/residents"
+                      className="card-surface flex items-center gap-3 p-3 hover:bg-muted/50"
+                    >
+                      {signed ? (
+                        <img
+                          src={signed}
+                          alt={`${resident.full_name ?? "Resident"} profile photo`}
+                          loading="lazy"
+                          className="h-12 w-12 shrink-0 rounded-full object-cover"
+                        />
+                      ) : (
+                        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                          {initialsFor(resident.full_name ?? resident.email)}
+                        </span>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-semibold text-foreground">
+                          {resident.full_name ?? resident.email ?? "Unnamed resident"}
+                        </div>
+                        <div className="truncate text-[11px] text-muted-foreground">{address}</div>
+                        <div className="mt-1 flex flex-wrap gap-1.5">
+                          <StatusBadge tone={resident.approved ? "success" : "warning"}>
+                            {resident.approved ? "Active" : "Inactive"}
+                          </StatusBadge>
+                          <StatusBadge
+                            tone={
+                              resident.verification_status === "approved"
+                                ? "primary"
+                                : resident.verification_status === "rejected"
+                                  ? "error"
+                                  : "neutral"
+                            }
+                          >
+                            {(resident.verification_status ?? "not submitted").replace(/_/g, " ")}
+                          </StatusBadge>
+                          {resident.occupant_type && (
+                            <StatusBadge>{resident.occupant_type}</StatusBadge>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  </StaggerItem>
+                );
+              })}
+            </Stagger>
+          )}
+        </div>
+      )}
+
+
 
 
       {section === "overview" &&
