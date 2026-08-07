@@ -84,6 +84,7 @@ import { Route as AppAdminCollectionsRouteImport } from './routes/app.admin.coll
 import { Route as AppAdminCardsRouteImport } from './routes/app.admin.cards'
 import { Route as AppAdminBlogRouteImport } from './routes/app.admin.blog'
 import { Route as AppAdminBillsRouteImport } from './routes/app.admin.bills'
+import { Route as AppAdminAnnouncementsRouteImport } from './routes/app.admin.announcements'
 import { Route as AppAdminAlertsRouteImport } from './routes/app.admin.alerts'
 import { Route as AppResidentEventsIndexRouteImport } from './routes/app.resident.events.index'
 import { Route as AppSuperEstatesEstateIdRouteImport } from './routes/app.super.estates.$estateId'
@@ -466,6 +467,11 @@ const AppAdminBillsRoute = AppAdminBillsRouteImport.update({
   path: '/admin/bills',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminAnnouncementsRoute = AppAdminAnnouncementsRouteImport.update({
+  id: '/admin/announcements',
+  path: '/admin/announcements',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminAlertsRoute = AppAdminAlertsRouteImport.update({
   id: '/admin/alerts',
   path: '/admin/alerts',
@@ -507,6 +513,7 @@ export interface FileRoutesByFullPath {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/app/admin/alerts': typeof AppAdminAlertsRoute
+  '/app/admin/announcements': typeof AppAdminAnnouncementsRoute
   '/app/admin/bills': typeof AppAdminBillsRoute
   '/app/admin/blog': typeof AppAdminBlogRoute
   '/app/admin/cards': typeof AppAdminCardsRoute
@@ -590,6 +597,7 @@ export interface FileRoutesByTo {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/app/admin/alerts': typeof AppAdminAlertsRoute
+  '/app/admin/announcements': typeof AppAdminAnnouncementsRoute
   '/app/admin/bills': typeof AppAdminBillsRoute
   '/app/admin/blog': typeof AppAdminBlogRoute
   '/app/admin/cards': typeof AppAdminCardsRoute
@@ -674,6 +682,7 @@ export interface FileRoutesById {
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
   '/app/admin/alerts': typeof AppAdminAlertsRoute
+  '/app/admin/announcements': typeof AppAdminAnnouncementsRoute
   '/app/admin/bills': typeof AppAdminBillsRoute
   '/app/admin/blog': typeof AppAdminBlogRoute
   '/app/admin/cards': typeof AppAdminCardsRoute
@@ -759,6 +768,7 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/app/admin/alerts'
+    | '/app/admin/announcements'
     | '/app/admin/bills'
     | '/app/admin/blog'
     | '/app/admin/cards'
@@ -842,6 +852,7 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/app/admin/alerts'
+    | '/app/admin/announcements'
     | '/app/admin/bills'
     | '/app/admin/blog'
     | '/app/admin/cards'
@@ -925,6 +936,7 @@ export interface FileRouteTypes {
     | '/auth/sign-in'
     | '/auth/sign-up'
     | '/app/admin/alerts'
+    | '/app/admin/announcements'
     | '/app/admin/bills'
     | '/app/admin/blog'
     | '/app/admin/cards'
@@ -1532,6 +1544,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminBillsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/announcements': {
+      id: '/app/admin/announcements'
+      path: '/admin/announcements'
+      fullPath: '/app/admin/announcements'
+      preLoaderRoute: typeof AppAdminAnnouncementsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/alerts': {
       id: '/app/admin/alerts'
       path: '/admin/alerts'
@@ -1580,6 +1599,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppDeniedRoute: typeof AppDeniedRoute
   AppAdminAlertsRoute: typeof AppAdminAlertsRoute
+  AppAdminAnnouncementsRoute: typeof AppAdminAnnouncementsRoute
   AppAdminBillsRoute: typeof AppAdminBillsRoute
   AppAdminBlogRoute: typeof AppAdminBlogRoute
   AppAdminCardsRoute: typeof AppAdminCardsRoute
@@ -1657,6 +1677,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppDeniedRoute: AppDeniedRoute,
   AppAdminAlertsRoute: AppAdminAlertsRoute,
+  AppAdminAnnouncementsRoute: AppAdminAnnouncementsRoute,
   AppAdminBillsRoute: AppAdminBillsRoute,
   AppAdminBlogRoute: AppAdminBlogRoute,
   AppAdminCardsRoute: AppAdminCardsRoute,
