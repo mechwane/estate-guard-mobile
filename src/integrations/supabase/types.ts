@@ -377,6 +377,44 @@ export type Database = {
           },
         ]
       }
+      chat_messages: {
+        Row: {
+          body: string
+          created_at: string
+          estate_id: string
+          id: string
+          read_at: string | null
+          resident_id: string
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          estate_id: string
+          id?: string
+          read_at?: string | null
+          resident_id: string
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          estate_id?: string
+          id?: string
+          read_at?: string | null
+          resident_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       collections: {
         Row: {
           amount: number
@@ -773,41 +811,62 @@ export type Database = {
         Row: {
           address: string | null
           admin_user_id: string | null
+          automatic_billing: boolean
           city: string | null
           code: string
+          code_validity: string[]
           contact_email: string | null
           contact_phone: string | null
           created_at: string
+          house_numbers: string[]
           id: string
+          logo_url: string | null
           name: string
+          short_name: string | null
           state: string | null
           status: Database["public"]["Enums"]["estate_status"]
+          streets: string[]
+          unit_numbers: string[]
         }
         Insert: {
           address?: string | null
           admin_user_id?: string | null
+          automatic_billing?: boolean
           city?: string | null
           code: string
+          code_validity?: string[]
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
+          house_numbers?: string[]
           id?: string
+          logo_url?: string | null
           name: string
+          short_name?: string | null
           state?: string | null
           status?: Database["public"]["Enums"]["estate_status"]
+          streets?: string[]
+          unit_numbers?: string[]
         }
         Update: {
           address?: string | null
           admin_user_id?: string | null
+          automatic_billing?: boolean
           city?: string | null
           code?: string
+          code_validity?: string[]
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
+          house_numbers?: string[]
           id?: string
+          logo_url?: string | null
           name?: string
+          short_name?: string | null
           state?: string | null
           status?: Database["public"]["Enums"]["estate_status"]
+          streets?: string[]
+          unit_numbers?: string[]
         }
         Relationships: []
       }
