@@ -6,7 +6,13 @@ import { Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { Card, EmptyState, ErrorState, ListSkeleton } from "@/components/ui-kit";
+import {
+  Card,
+  EmptyState,
+  ErrorState,
+  ImagePicker,
+  ListSkeleton,
+} from "@/components/ui-kit";
 
 export const Route = createFileRoute("/app/admin/blog")({
   component: BlogAdmin,

@@ -4,7 +4,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { EmptyState, ModalPortal } from "@/components/ui-kit";
+import {
+  EmptyState,
+  MediaImage,
+  ModalPortal,
+} from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
 import {
   Heart,

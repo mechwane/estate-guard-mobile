@@ -3,7 +3,11 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { Card, EmptyState } from "@/components/ui-kit";
+import {
+  Card,
+  EmptyState,
+  ImagePicker,
+} from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
 import {
   Plus,

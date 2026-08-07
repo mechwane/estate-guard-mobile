@@ -7,11 +7,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import {
   Card,
+  ConfirmActionDialog,
   EmptyState,
   ErrorState,
+  ImagePicker,
   ListSkeleton,
+  MediaImage,
   SheetModal,
-  ConfirmActionDialog,
 } from "@/components/ui-kit";
 import { Stagger, StaggerItem } from "@/components/motion-kit";
 import { initialsFor } from "@/lib/avatar";

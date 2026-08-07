@@ -3,7 +3,16 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { Card, EmptyState, StatusBadge, SearchInput, StatCard, SheetModal } from "@/components/ui-kit";
+import {
+  Card,
+  EmptyState,
+  ImagePicker,
+  MediaImage,
+  SearchInput,
+  SheetModal,
+  StatCard,
+  StatusBadge,
+} from "@/components/ui-kit";
 import { Stagger, StaggerItem } from "@/components/motion-kit";
 import { Store, Plus, Loader2, Pencil, Trash2, ImagePlus, ShoppingBag } from "lucide-react";
 

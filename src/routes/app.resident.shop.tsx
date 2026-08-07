@@ -3,7 +3,12 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { Card, EmptyState, SearchInput } from "@/components/ui-kit";
+import {
+  Card,
+  EmptyState,
+  MediaImage,
+  SearchInput,
+} from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
 import { Store, Loader2 } from "lucide-react";
 import { toast } from "sonner";
