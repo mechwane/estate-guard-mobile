@@ -17,22 +17,31 @@ import {
 } from "@/components/ui-kit";
 import { Stagger, StaggerItem } from "@/components/motion-kit";
 import { biometricConfirm } from "@/lib/biometric-confirm";
+import { AdminChat } from "@/components/estate-chat";
 
 export const Route = createFileRoute("/app/admin/messages")({
   component: Messages,
   head: () => ({
     meta: [
-      { title: "Broadcast & Messages — Estate Guard" },
+      { title: "Messages & Broadcast — Estate Guard" },
       {
         name: "description",
         content:
-          "Send estate-wide announcements or direct notices to a single resident, and review delivery history.",
+          "Chat with residents in real time, send estate-wide announcements or direct notices, and review delivery history.",
       },
+      { property: "og:title", content: "Messages & Broadcast — Estate Guard" },
+      {
+        property: "og:description",
+        content: "Real-time resident chat plus estate-wide broadcasts for estate administrators.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
 });
 
 type Mode = "broadcast" | "direct";
+
 
 const TEMPLATES: { label: string; title: string; body: string }[] = [
   {
@@ -61,7 +70,9 @@ function Messages() {
   const { data: session } = useSession();
   const estateId = session?.estate?.id;
   const qc = useQueryClient();
+  const [view, setView] = useState<"chat" | "broadcast">("chat");
   const [mode, setMode] = useState<Mode>("broadcast");
+
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [link, setLink] = useState("");
@@ -172,6 +183,25 @@ function Messages() {
   return (
     <Stagger className="space-y-4">
       <StaggerItem>
+        <div className="max-w-md">
+          <ScrollTabs
+            value={view}
+            onChange={setView}
+            tabs={[
+              { key: "chat", label: "Live chat" },
+              { key: "broadcast", label: "Broadcast & notices" },
+            ]}
+          />
+        </div>
+      </StaggerItem>
+
+      {view === "chat" ? (
+        <StaggerItem>
+          <AdminChat />
+        </StaggerItem>
+      ) : (
+        <>
+      <StaggerItem>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           <StatCard label="Residents reachable" value={residentCount} tone="primary" />
           <StatCard label="Recent broadcasts" value={broadcastCount} />
@@ -182,6 +212,7 @@ function Messages() {
           />
         </div>
       </StaggerItem>
+
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <StaggerItem>
@@ -354,6 +385,9 @@ function Messages() {
           </Card>
         </StaggerItem>
       </div>
+        </>
+      )}
     </Stagger>
+
   );
 }

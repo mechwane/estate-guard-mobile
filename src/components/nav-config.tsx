@@ -82,6 +82,8 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
       items: [
         { to: "/app/resident", label: "Home", icon: <Home /> },
         { to: "/app/resident/inbox", label: "Inbox", icon: <Inbox /> },
+        { to: "/app/resident/chat", label: "Chat with admin", icon: <MessageSquare /> },
+
         { to: "/app/resident/community", label: "Community", icon: <Users /> },
       ],
     },
