@@ -395,7 +395,7 @@ function PostCard({
       {post.cover_url && (
         <div className="mt-3 aspect-[16/9] w-full overflow-hidden bg-muted">
           <img
-            src={post.cover_url}
+            value={post.cover_url}
             alt=""
             loading="lazy"
             className="h-full w-full object-cover"

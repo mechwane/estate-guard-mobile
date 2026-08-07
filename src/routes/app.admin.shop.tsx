@@ -243,16 +243,12 @@ function AdminShop() {
                 <StaggerItem key={i.id}>
                   <Card className="flex h-full flex-col overflow-hidden p-0">
                     <div className="flex h-32 items-center justify-center bg-muted">
-                      {i.image_url ? (
-                        <img
-                          src={i.image_url}
-                          alt={i.name}
-                          loading="lazy"
-                          className="h-32 w-full object-cover"
-                        />
-                      ) : (
-                        <Store className="h-8 w-8 text-muted-foreground" />
-                      )}
+                      <MediaImage
+                        value={i.image_url}
+                        alt={i.name}
+                        className="h-32 w-full object-cover"
+                        fallback={<Store className="h-8 w-8" />}
+                      />
                     </div>
                     <div className="flex flex-1 flex-col gap-2 p-3.5">
                       <div className="flex items-start justify-between gap-2">
@@ -392,21 +388,13 @@ function AdminShop() {
             className="space-y-3"
           >
 
-              <div className="flex flex-col items-center gap-2">
-                <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-xl border border-dashed border-border bg-muted">
-                  {editing.image_url ? (
-                    <img src={editing.image_url} alt="" className="h-full w-full object-cover" />
-                  ) : (
-                    <ImagePlus className="h-6 w-6 text-muted-foreground" />
-                  )}
-                </div>
-                <input
-                  value={editing.image_url}
-                  onChange={(e) => setEditing({ ...editing, image_url: e.target.value })}
-                  placeholder="Paste product image URL"
-                  className="w-full rounded-lg border border-border bg-card px-3 py-2 text-xs outline-none focus:border-primary"
-                />
-              </div>
+              <ImagePicker
+                label="Product photo"
+                folder="products"
+                aspect="square"
+                value={editing.image_url || null}
+                onChange={(v) => setEditing({ ...editing, image_url: v ?? "" })}
+              />
 
               <label className="block">
                 <span className="mb-1 block text-xs font-medium text-muted-foreground">Title</span>

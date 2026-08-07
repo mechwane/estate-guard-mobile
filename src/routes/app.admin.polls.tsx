@@ -291,10 +291,9 @@ function AdminPolls() {
                 <Card className="flex h-full flex-col overflow-hidden">
                   <div className="relative h-32 w-full bg-muted">
                     {row.promo_image_url ? (
-                      <img
-                        src={row.promo_image_url}
+                      <MediaImage
+                        value={row.promo_image_url}
                         alt={`${row.title} promotional banner`}
-                        loading="lazy"
                         className="h-full w-full object-cover"
                       />
                     ) : (
@@ -441,14 +440,12 @@ function AdminPolls() {
                 className={inputClass}
               />
             </Field>
-            <Field label="Promo image URL (optional)">
-              <input
-                value={form.promo_image_url}
-                onChange={(e) => setForm({ ...form, promo_image_url: e.target.value })}
-                placeholder="https://…"
-                className={inputClass}
-              />
-            </Field>
+            <ImagePicker
+              label="Promo image (optional)"
+              folder="polls"
+              value={form.promo_image_url || null}
+              onChange={(v) => setForm({ ...form, promo_image_url: v ?? "" })}
+            />
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Starts at">
                 <input

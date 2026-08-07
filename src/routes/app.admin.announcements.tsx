@@ -170,18 +170,12 @@ function AdminAnnouncements() {
             <StaggerItem key={row.id}>
               <Card className="flex h-full flex-col overflow-hidden">
                 <div className="h-28 w-full bg-muted">
-                  {row.cover_url ? (
-                    <img
-                      src={row.cover_url}
-                      alt={`${row.title} cover`}
-                      loading="lazy"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-muted-foreground">
-                      <ImageIcon className="h-6 w-6" />
-                    </div>
-                  )}
+                  <MediaImage
+                    value={row.cover_url}
+                    alt={`${row.title} cover`}
+                    className="h-full w-full object-cover"
+                    fallback={<ImageIcon className="h-6 w-6" />}
+                  />
                 </div>
                 <div className="flex flex-1 flex-col gap-1.5 p-3">
                   <div className="truncate text-sm font-semibold text-foreground">{row.title}</div>
@@ -264,17 +258,12 @@ function AdminAnnouncements() {
                 className={inputClass}
               />
             </label>
-            <label className="block">
-              <span className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                Cover image URL (optional)
-              </span>
-              <input
-                value={form.cover_url}
-                onChange={(e) => setForm({ ...form, cover_url: e.target.value })}
-                placeholder="https://…"
-                className={inputClass}
-              />
-            </label>
+            <ImagePicker
+              label="Cover image (optional)"
+              folder="announcements"
+              value={form.cover_url || null}
+              onChange={(v) => setForm({ ...form, cover_url: v ?? "" })}
+            />
           </div>
         )}
       </SheetModal>

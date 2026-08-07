@@ -576,19 +576,13 @@ function EstateProfile() {
         <div className="space-y-4">
           <div className="text-center">
             <div className="text-xs font-medium text-muted-foreground">Estate Logo</div>
-            <div className="mx-auto mt-2 grid h-20 w-20 place-items-center overflow-hidden rounded-xl border border-border bg-muted/40">
-              {form.logo_url ? (
-                <img src={form.logo_url} alt="Estate logo preview" className="h-full w-full object-contain" />
-              ) : (
-                <ImageIcon className="h-6 w-6 text-muted-foreground" />
-              )}
-            </div>
           </div>
-          <Field
-            label="Logo image URL"
-            value={form.logo_url}
-            onChange={(v) => setForm({ ...form, logo_url: v })}
-            placeholder="https://…"
+          <ImagePicker
+            label="Estate logo"
+            folder="estate"
+            aspect="square"
+            value={form.logo_url || null}
+            onChange={(v) => setForm({ ...form, logo_url: v ?? "" })}
           />
 
           <button

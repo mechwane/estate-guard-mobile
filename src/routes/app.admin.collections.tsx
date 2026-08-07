@@ -524,10 +524,9 @@ function EstateCollections() {
               <Card className="flex h-full flex-col">
                 <div className="mb-3 h-28 w-full overflow-hidden rounded-xl bg-muted">
                   {c.collection.cover_image_url ? (
-                    <img
-                      src={c.collection.cover_image_url}
+                    <MediaImage
+                      value={c.collection.cover_image_url}
                       alt={`${c.collection.title} cover`}
-                      loading="lazy"
                       className="h-full w-full object-cover"
                     />
                   ) : (
@@ -665,24 +664,11 @@ function EstateCollections() {
         }
       >
         <div className="space-y-3">
-          <div className="h-32 w-full overflow-hidden rounded-xl bg-muted">
-            {form.cover_image_url ? (
-              <img
-                src={form.cover_image_url}
-                alt="Collection cover preview"
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="grid h-full w-full place-items-center text-muted-foreground">
-                <ImageIcon className="h-7 w-7" />
-              </div>
-            )}
-          </div>
-          <input
-            placeholder="Cover image URL (optional)"
-            value={form.cover_image_url}
-            onChange={(e) => setForm({ ...form, cover_image_url: e.target.value })}
-            className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary"
+          <ImagePicker
+            label="Cover image (optional)"
+            folder="collections"
+            value={form.cover_image_url || null}
+            onChange={(v) => setForm({ ...form, cover_image_url: v ?? "" })}
           />
 
           <input
