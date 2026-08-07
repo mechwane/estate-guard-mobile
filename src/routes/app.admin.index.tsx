@@ -9,7 +9,9 @@ import { initialsFor, useAvatarUrls } from "@/lib/avatar";
 import {
   ChartCard,
   DonutChart,
+  InteractiveTrendChart,
   LineBarChart,
+  ProgressRing,
   RangeTabs,
   VerticalBarChart,
   type AdminRangeKey,
@@ -256,6 +258,19 @@ function AdminDashboard() {
         .reduce((sum, bill) => sum + Number(bill.amount ?? 0), 0);
 
       return {
+        timeline: buildTimeline(guestRows, visitorRange),
+        verificationShare: {
+          verified: verificationCounts.approved ?? 0,
+          total: profileRows.length,
+        },
+        billShare: {
+          paid: billRows.filter((bill) => String(bill.status) === "paid").length,
+          total: billRows.length,
+        },
+        insideShare: {
+          inside: guestRows.filter((guest) => guest.checked_in_at && !guest.checked_out_at).length,
+          total: guestRows.filter((guest) => guest.checked_in_at).length,
+        },
         verification: [
           { name: "Verified", value: verificationCounts.approved ?? 0 },
           { name: "Pending", value: verificationCounts.pending ?? 0 },
@@ -584,10 +599,62 @@ function AdminDashboard() {
         ) : charts.isError || !charts.data ? (
           <ErrorState onRetry={() => charts.refetch()} />
         ) : (
+          <div className="space-y-3">
+            <ChartCard
+              title="Estate access trend"
+              subtitle="Invites, check-ins and check-outs over time — tap a metric to focus it"
+              action={
+                <RangeTabs
+                  value={visitorRange}
+                  onChange={setVisitorRange}
+                  options={adminRangeOptions}
+                />
+              }
+            >
+              <InteractiveTrendChart
+                data={charts.data.timeline}
+                series={[
+                  { key: "invites", label: "Codes", color: "var(--color-primary)" },
+                  { key: "checkIns", label: "Check-ins", color: "var(--color-success)" },
+                  { key: "checkOuts", label: "Check-outs", color: "var(--color-warning)" },
+                ]}
+              />
+            </ChartCard>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              <Card className="p-4">
+                <ProgressRing
+                  value={share(
+                    charts.data.verificationShare.verified,
+                    charts.data.verificationShare.total,
+                  )}
+                  label="Verified residents"
+                  caption={`${charts.data.verificationShare.verified} of ${charts.data.verificationShare.total}`}
+                />
+              </Card>
+              <Card className="p-4">
+                <ProgressRing
+                  value={share(charts.data.billShare.paid, charts.data.billShare.total)}
+                  label="Bills settled"
+                  caption={`${charts.data.billShare.paid} of ${charts.data.billShare.total}`}
+                  color="var(--color-success)"
+                />
+              </Card>
+              <Card className="p-4">
+                <ProgressRing
+                  value={share(charts.data.insideShare.inside, charts.data.insideShare.total)}
+                  label="Visitors still inside"
+                  caption={`${charts.data.insideShare.inside} of ${charts.data.insideShare.total} check-ins`}
+                  color="var(--color-warning)"
+                />
+              </Card>
+            </div>
+
           <div className="grid gap-3 lg:grid-cols-2">
             <ChartCard title="Resident verification">
               <DonutChart data={charts.data.verification} />
             </ChartCard>
+
             <ChartCard
               title="Visitor activity"
               action={
@@ -642,6 +709,7 @@ function AdminDashboard() {
                 ]}
               />
             </ChartCard>
+          </div>
           </div>
         ))}
 
@@ -749,4 +817,60 @@ function requestCategoryRows(values: string[]) {
     else rows.Others += 1;
   });
   return Object.entries(rows).map(([name, count]) => ({ name, count }));
+}
+
+type GuestTimelineRow = {
+  created_at: string;
+  checked_in_at: string | null;
+  checked_out_at: string | null;
+};
+
+/**
+ * Builds a daily (or hourly for "today") access timeline so the dashboard can
+ * plot invite / check-in / check-out movement as a continuous trend line.
+ */
+function buildTimeline(rows: GuestTimelineRow[], range: AdminRangeKey) {
+  const now = new Date();
+  if (range === "today") {
+    const start = startOfDay(now);
+    return Array.from({ length: 24 }, (_, hour) => {
+      const from = new Date(start.getTime() + hour * 3600_000);
+      const to = new Date(from.getTime() + 3600_000);
+      return {
+        name: `${String(hour).padStart(2, "0")}:00`,
+        invites: countBetween(rows, (row) => row.created_at, from, to),
+        checkIns: countBetween(rows, (row) => row.checked_in_at, from, to),
+        checkOuts: countBetween(rows, (row) => row.checked_out_at, from, to),
+      };
+    });
+  }
+  const days = range === "7d" ? 7 : 30;
+  return Array.from({ length: days }, (_, index) => {
+    const from = startOfDay(subDays(now, days - 1 - index));
+    const to = new Date(from.getTime() + 86_400_000);
+    return {
+      name: `${from.getDate()}/${from.getMonth() + 1}`,
+      invites: countBetween(rows, (row) => row.created_at, from, to),
+      checkIns: countBetween(rows, (row) => row.checked_in_at, from, to),
+      checkOuts: countBetween(rows, (row) => row.checked_out_at, from, to),
+    };
+  });
+}
+
+function countBetween(
+  rows: GuestTimelineRow[],
+  pick: (row: GuestTimelineRow) => string | null,
+  from: Date,
+  to: Date,
+) {
+  return rows.filter((row) => {
+    const raw = pick(row);
+    if (!raw) return false;
+    const at = new Date(raw).getTime();
+    return at >= from.getTime() && at < to.getTime();
+  }).length;
+}
+
+function share(part: number, total: number) {
+  return total > 0 ? (part / total) * 100 : 0;
 }
