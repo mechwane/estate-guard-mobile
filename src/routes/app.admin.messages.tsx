@@ -183,6 +183,25 @@ function Messages() {
   return (
     <Stagger className="space-y-4">
       <StaggerItem>
+        <div className="max-w-md">
+          <ScrollTabs
+            value={view}
+            onChange={setView}
+            tabs={[
+              { key: "chat", label: "Live chat" },
+              { key: "broadcast", label: "Broadcast & notices" },
+            ]}
+          />
+        </div>
+      </StaggerItem>
+
+      {view === "chat" ? (
+        <StaggerItem>
+          <AdminChat />
+        </StaggerItem>
+      ) : (
+        <>
+      <StaggerItem>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           <StatCard label="Residents reachable" value={residentCount} tone="primary" />
           <StatCard label="Recent broadcasts" value={broadcastCount} />
@@ -193,6 +212,7 @@ function Messages() {
           />
         </div>
       </StaggerItem>
+
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <StaggerItem>
