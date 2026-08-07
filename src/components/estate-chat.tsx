@@ -20,7 +20,7 @@ import { useSession } from "@/lib/session";
 import { EmptyState, ListSkeleton, ModalPortal } from "@/components/ui-kit";
 import { initialsFor, useAvatarUrl, useAvatarUrls } from "@/lib/avatar";
 import { uploadMedia, useMediaUrl } from "@/lib/media";
-import { formatNaira } from "@/lib/format";
+import { ngn } from "@/lib/format";
 
 export interface ChatMessage {
   id: string;
@@ -494,7 +494,7 @@ function ResidentProfilePanel({
                 <div className="grid grid-cols-2 gap-2">
                   <div className="rounded-xl border border-border p-3">
                     <div className="text-[11px] text-muted-foreground">Outstanding</div>
-                    <div className="text-sm font-semibold">{formatNaira(outstanding)}</div>
+                    <div className="text-sm font-semibold">{ngn(outstanding)}</div>
                   </div>
                   <div className="rounded-xl border border-border p-3">
                     <div className="text-[11px] text-muted-foreground">Bills</div>
