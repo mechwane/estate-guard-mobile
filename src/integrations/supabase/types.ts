@@ -379,7 +379,10 @@ export type Database = {
       }
       chat_messages: {
         Row: {
-          body: string
+          attachment_name: string | null
+          attachment_type: string | null
+          attachment_url: string | null
+          body: string | null
           created_at: string
           estate_id: string
           id: string
@@ -388,7 +391,10 @@ export type Database = {
           sender_id: string
         }
         Insert: {
-          body: string
+          attachment_name?: string | null
+          attachment_type?: string | null
+          attachment_url?: string | null
+          body?: string | null
           created_at?: string
           estate_id: string
           id?: string
@@ -397,7 +403,10 @@ export type Database = {
           sender_id: string
         }
         Update: {
-          body?: string
+          attachment_name?: string | null
+          attachment_type?: string | null
+          attachment_url?: string | null
+          body?: string | null
           created_at?: string
           estate_id?: string
           id?: string
