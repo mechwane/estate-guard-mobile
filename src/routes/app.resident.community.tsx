@@ -230,8 +230,8 @@ function PostsList({ estateId, type }: { estateId?: string; type: "blog" | "anno
           mine: new Set<string>(),
           comments: {} as Record<string, number>,
         };
-      const [{ data: allLikes }, { data: myLikes }, { data: allComments }] = await Promise.all([
-        supabase.from("post_likes").select("post_id").in("post_id", ids),
+      const [{ data: likeCounts }, { data: myLikes }, { data: allComments }] = await Promise.all([
+        supabase.rpc("post_like_counts" as never),
         supabase
           .from("post_likes")
           .select("post_id")
@@ -239,12 +239,16 @@ function PostsList({ estateId, type }: { estateId?: string; type: "blog" | "anno
           .eq("user_id", session!.userId!),
         supabase.from("post_comments").select("post_id").in("post_id", ids),
       ]);
+      const idSet = new Set(ids);
       const likes: Record<string, number> = {};
-      (allLikes ?? []).forEach((r: any) => (likes[r.post_id] = (likes[r.post_id] ?? 0) + 1));
+      ((likeCounts ?? []) as unknown as { post_id: string; likes: number }[]).forEach((r) => {
+        if (idSet.has(r.post_id)) likes[r.post_id] = Number(r.likes);
+      });
       const comments: Record<string, number> = {};
       (allComments ?? []).forEach(
         (r: any) => (comments[r.post_id] = (comments[r.post_id] ?? 0) + 1),
       );
+
       return {
         likes,
         comments,
