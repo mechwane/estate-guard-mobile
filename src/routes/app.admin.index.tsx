@@ -258,6 +258,19 @@ function AdminDashboard() {
         .reduce((sum, bill) => sum + Number(bill.amount ?? 0), 0);
 
       return {
+        timeline: buildTimeline(guestRows, visitorRange),
+        verificationShare: {
+          verified: verificationCounts.approved ?? 0,
+          total: profileRows.length,
+        },
+        billShare: {
+          paid: billRows.filter((bill) => String(bill.status) === "paid").length,
+          total: billRows.length,
+        },
+        insideShare: {
+          inside: guestRows.filter((guest) => guest.checked_in_at && !guest.checked_out_at).length,
+          total: guestRows.filter((guest) => guest.checked_in_at).length,
+        },
         verification: [
           { name: "Verified", value: verificationCounts.approved ?? 0 },
           { name: "Pending", value: verificationCounts.pending ?? 0 },
