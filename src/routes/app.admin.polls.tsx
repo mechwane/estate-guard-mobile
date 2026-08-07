@@ -134,7 +134,10 @@ function AdminPolls() {
       .map((p) => ({
         ...p,
         items: data.items.filter((i) => i.poll_id === p.id),
-        voteCount: data.votes.filter((v) => v.poll_id === p.id).length,
+        voteCount: data.votes
+          .filter((v) => v.poll_id === p.id)
+          .reduce((sum, v) => sum + v.votes, 0),
+
       }));
   }, [list.data, kind, search]);
 
