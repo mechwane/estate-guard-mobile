@@ -29,8 +29,6 @@ function useScrollLock(active: boolean) {
   }, [active]);
 }
 
-
-
 export function Card({
   className,
   children,
@@ -296,7 +294,6 @@ export function ConfirmActionDialog({
       </div>
     </ModalPortal>
   );
-
 }
 
 /**
@@ -362,7 +359,6 @@ export function SheetModal({
       </div>
     </ModalPortal>
   );
-
 }
 
 /**

@@ -63,7 +63,9 @@ function Residents() {
       const [bio, cards, vehs, devs] = await Promise.all([
         supabase
           .from("biometric_access")
-          .select("id,resident_id,biometric_type,enrollment_status,access_status,device_id,last_used_at,updated_at")
+          .select(
+            "id,resident_id,biometric_type,enrollment_status,access_status,device_id,last_used_at,updated_at",
+          )
           .eq("estate_id", estateId!),
         supabase
           .from("access_cards")
@@ -73,10 +75,7 @@ function Residents() {
           .from("vehicle_tags")
           .select("id,resident_id,active,plate")
           .eq("estate_id", estateId!),
-        supabase
-          .from("access_devices")
-          .select("id,name,device_type")
-          .eq("estate_id", estateId!),
+        supabase.from("access_devices").select("id,name,device_type").eq("estate_id", estateId!),
       ]);
       const err = [bio.error, cards.error, vehs.error, devs.error].find(Boolean);
       if (err) throw err;
@@ -116,15 +115,18 @@ function Residents() {
       access_status: string;
       device_id: string | null;
     }) => {
-      const { error } = await supabase.rpc("admin_upsert_biometric_access" as never, {
-        _resident_id: args.residentId,
-        _dependent_id: null,
-        _biometric_type: args.biometricType,
-        _device_id: args.device_id,
-        _enrollment_status: args.enrollment_status,
-        _access_status: args.access_status,
-        _notes: null,
-      } as never);
+      const { error } = await supabase.rpc(
+        "admin_upsert_biometric_access" as never,
+        {
+          _resident_id: args.residentId,
+          _dependent_id: null,
+          _biometric_type: args.biometricType,
+          _device_id: args.device_id,
+          _enrollment_status: args.enrollment_status,
+          _access_status: args.access_status,
+          _notes: null,
+        } as never,
+      );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -196,15 +198,14 @@ function Residents() {
           {filtered.map((r) => {
             const isOpen = expanded === r.id;
             const bio = bioByResident.get(r.id) ?? {};
-            const hasCard = (access.data?.cards ?? []).some((c) => c.resident_id === r.id && c.active);
+            const hasCard = (access.data?.cards ?? []).some(
+              (c) => c.resident_id === r.id && c.active,
+            );
             const vehicleCount = (access.data?.vehicles ?? []).filter(
               (v) => v.resident_id === r.id && v.active,
             ).length;
             return (
-              <Card
-                key={r.id}
-                className={`p-3 ${isOpen ? "sm:col-span-2 xl:col-span-3" : ""}`}
-              >
+              <Card key={r.id} className={`p-3 ${isOpen ? "sm:col-span-2 xl:col-span-3" : ""}`}>
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex min-w-0 items-center gap-2">
                     <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-[11px] font-semibold text-primary">
@@ -239,7 +240,11 @@ function Residents() {
                   />
                   <MiniBadge label={hasCard ? "Card active" : "No card"} active={hasCard} />
                   <MiniBadge
-                    label={vehicleCount ? `${vehicleCount} vehicle${vehicleCount > 1 ? "s" : ""}` : "No vehicle"}
+                    label={
+                      vehicleCount
+                        ? `${vehicleCount} vehicle${vehicleCount > 1 ? "s" : ""}`
+                        : "No vehicle"
+                    }
                     active={vehicleCount > 0}
                   />
                 </div>
@@ -264,7 +269,12 @@ function Residents() {
                     onClick={() => setExpanded(isOpen ? null : r.id)}
                     className="flex items-center gap-1 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-muted"
                   >
-                    Access {isOpen ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                    Access{" "}
+                    {isOpen ? (
+                      <ChevronUp className="h-3 w-3" />
+                    ) : (
+                      <ChevronDown className="h-3 w-3" />
+                    )}
                   </button>
                 </div>
 
@@ -278,7 +288,11 @@ function Residents() {
                         (d) => d.device_type === "fingerprint" || d.device_type === "gate_scanner",
                       )}
                       onSave={(args) =>
-                        updateBio.mutate({ residentId: r.id, biometricType: "fingerprint", ...args })
+                        updateBio.mutate({
+                          residentId: r.id,
+                          biometricType: "fingerprint",
+                          ...args,
+                        })
                       }
                       pending={updateBio.isPending}
                     />
@@ -308,7 +322,15 @@ function Residents() {
   );
 }
 
-function MiniBadge({ icon, label, active }: { icon?: React.ReactNode; label: string; active: boolean }) {
+function MiniBadge({
+  icon,
+  label,
+  active,
+}: {
+  icon?: React.ReactNode;
+  label: string;
+  active: boolean;
+}) {
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${
@@ -333,7 +355,11 @@ function BiometricRowEditor({
   icon: React.ReactNode;
   row?: BiometricRow;
   devices: DeviceRow[];
-  onSave: (args: { enrollment_status: string; access_status: string; device_id: string | null }) => void;
+  onSave: (args: {
+    enrollment_status: string;
+    access_status: string;
+    device_id: string | null;
+  }) => void;
   pending: boolean;
 }) {
   const [enrollment, setEnrollment] = useState(row?.enrollment_status ?? "pending");
@@ -343,7 +369,9 @@ function BiometricRowEditor({
   return (
     <div className="rounded-lg border border-border/60 bg-card p-3">
       <div className="mb-2 flex items-center gap-2">
-        <span className="grid h-7 w-7 place-items-center rounded-md bg-primary/10 text-primary">{icon}</span>
+        <span className="grid h-7 w-7 place-items-center rounded-md bg-primary/10 text-primary">
+          {icon}
+        </span>
         <div className="text-sm font-medium text-foreground">{title}</div>
         {row?.last_used_at && (
           <span className="ml-auto text-[11px] text-muted-foreground">

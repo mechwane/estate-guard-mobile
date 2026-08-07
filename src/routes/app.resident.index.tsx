@@ -153,16 +153,10 @@ function ResidentHome() {
 
       <AnimatePresence>
         {estateOpen && (
-          <EstateSheet
-            estate={session?.estate ?? null}
-            onClose={() => setEstateOpen(false)}
-          />
+          <EstateSheet estate={session?.estate ?? null} onClose={() => setEstateOpen(false)} />
         )}
         {fabOpen && (
-          <ActiveInvitesSheet
-            userId={session?.userId ?? null}
-            onClose={() => setFabOpen(false)}
-          />
+          <ActiveInvitesSheet userId={session?.userId ?? null} onClose={() => setFabOpen(false)} />
         )}
       </AnimatePresence>
     </div>
@@ -194,15 +188,7 @@ function QuickCircle({
   );
 }
 
-function ActionRow({
-  to,
-  icon,
-  label,
-}: {
-  to: string;
-  icon: React.ReactNode;
-  label: string;
-}) {
+function ActionRow({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
   return (
     <Link to={to}>
       <Card className="flex items-center justify-between p-4 transition-colors hover:bg-muted/40">
@@ -257,74 +243,68 @@ function EstateSheet({
 
   return (
     <ModalPortal>
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[80] flex items-end justify-center bg-black/50"
-      onClick={onClose}
-    >
       <motion.div
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", stiffness: 320, damping: 32 }}
-        onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md rounded-t-2xl bg-card p-5 shadow-2xl ring-1 ring-border"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[80] flex items-end justify-center bg-black/50"
+        onClick={onClose}
       >
-        <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-base font-semibold text-foreground">Select estate</h3>
-          <button
-            onClick={onClose}
-            className="rounded-full p-1 text-muted-foreground hover:bg-muted"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-        {estate ? (
-          <div className="space-y-2">
-            <div className="flex items-center justify-between rounded-xl border border-primary/30 bg-primary/5 p-3">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
-                  <Building2 className="h-5 w-5" />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-foreground">{estate.name}</div>
-                  <div className="text-xs text-muted-foreground">Code · {estate.code}</div>
-                </div>
-              </div>
-              <span className="inline-flex items-center gap-1 text-xs font-medium text-primary">
-                <Check className="h-3.5 w-3.5" /> Active
-              </span>
-            </div>
+        <motion.div
+          initial={{ y: "100%" }}
+          animate={{ y: 0 }}
+          exit={{ y: "100%" }}
+          transition={{ type: "spring", stiffness: 320, damping: 32 }}
+          onClick={(e) => e.stopPropagation()}
+          className="w-full max-w-md rounded-t-2xl bg-card p-5 shadow-2xl ring-1 ring-border"
+        >
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-base font-semibold text-foreground">Select estate</h3>
             <button
-              onClick={copy}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
+              onClick={onClose}
+              className="rounded-full p-1 text-muted-foreground hover:bg-muted"
             >
-              <Copy className="h-3.5 w-3.5" /> Copy estate code
+              <X className="h-4 w-4" />
             </button>
-            <p className="pt-2 text-center text-[11px] text-muted-foreground">
-              You are only a member of one estate. Ask an admin for another estate code to switch.
-            </p>
           </div>
-        ) : (
-          <p className="py-6 text-center text-sm text-muted-foreground">
-            You are not linked to any estate yet.
-          </p>
-        )}
+          {estate ? (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between rounded-xl border border-primary/30 bg-primary/5 p-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                    <Building2 className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-foreground">{estate.name}</div>
+                    <div className="text-xs text-muted-foreground">Code · {estate.code}</div>
+                  </div>
+                </div>
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-primary">
+                  <Check className="h-3.5 w-3.5" /> Active
+                </span>
+              </div>
+              <button
+                onClick={copy}
+                className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
+              >
+                <Copy className="h-3.5 w-3.5" /> Copy estate code
+              </button>
+              <p className="pt-2 text-center text-[11px] text-muted-foreground">
+                You are only a member of one estate. Ask an admin for another estate code to switch.
+              </p>
+            </div>
+          ) : (
+            <p className="py-6 text-center text-sm text-muted-foreground">
+              You are not linked to any estate yet.
+            </p>
+          )}
+        </motion.div>
       </motion.div>
-    </motion.div>
     </ModalPortal>
   );
 }
 
-function ActiveInvitesSheet({
-  userId,
-  onClose,
-}: {
-  userId: string | null;
-  onClose: () => void;
-}) {
+function ActiveInvitesSheet({ userId, onClose }: { userId: string | null; onClose: () => void }) {
   const q = useQuery({
     queryKey: ["active-invites", userId],
     enabled: !!userId,
@@ -344,61 +324,61 @@ function ActiveInvitesSheet({
 
   return (
     <ModalPortal>
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[80] flex items-end justify-center bg-black/50"
-      onClick={onClose}
-    >
       <motion.div
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", stiffness: 320, damping: 32 }}
-        onClick={(e) => e.stopPropagation()}
-        className="flex max-h-[75vh] w-full max-w-md flex-col rounded-t-2xl bg-card shadow-2xl ring-1 ring-border"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[80] flex items-end justify-center bg-black/50"
+        onClick={onClose}
       >
-        <div className="flex items-center justify-between border-b border-border px-5 py-3">
-          <div>
-            <h3 className="text-sm font-semibold text-foreground">Active invites</h3>
-            <p className="text-[11px] text-muted-foreground">
-              Codes your guests can present at the gate
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="rounded-full p-1 text-muted-foreground hover:bg-muted"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-        <div className="flex-1 space-y-2 overflow-y-auto px-5 py-4">
-          {q.isLoading ? (
-            <p className="py-8 text-center text-xs text-muted-foreground">Loading…</p>
-          ) : !q.data || q.data.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border p-6 text-center">
-              <Ticket className="mx-auto mb-2 h-6 w-6 text-muted-foreground" />
-              <p className="text-sm font-medium text-foreground">No active invites</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Create one and your guests can use it at the gate.
+        <motion.div
+          initial={{ y: "100%" }}
+          animate={{ y: 0 }}
+          exit={{ y: "100%" }}
+          transition={{ type: "spring", stiffness: 320, damping: 32 }}
+          onClick={(e) => e.stopPropagation()}
+          className="flex max-h-[75vh] w-full max-w-md flex-col rounded-t-2xl bg-card shadow-2xl ring-1 ring-border"
+        >
+          <div className="flex items-center justify-between border-b border-border px-5 py-3">
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">Active invites</h3>
+              <p className="text-[11px] text-muted-foreground">
+                Codes your guests can present at the gate
               </p>
             </div>
-          ) : (
-            q.data.map((inv: any) => <InviteRow key={inv.id} inv={inv} />)
-          )}
-        </div>
-        <div className="border-t border-border p-3">
-          <Link
-            to="/app/resident/invite"
-            onClick={onClose}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark"
-          >
-            <UserPlus className="h-4 w-4" /> Create new invite
-          </Link>
-        </div>
+            <button
+              onClick={onClose}
+              className="rounded-full p-1 text-muted-foreground hover:bg-muted"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="flex-1 space-y-2 overflow-y-auto px-5 py-4">
+            {q.isLoading ? (
+              <p className="py-8 text-center text-xs text-muted-foreground">Loading…</p>
+            ) : !q.data || q.data.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-border p-6 text-center">
+                <Ticket className="mx-auto mb-2 h-6 w-6 text-muted-foreground" />
+                <p className="text-sm font-medium text-foreground">No active invites</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Create one and your guests can use it at the gate.
+                </p>
+              </div>
+            ) : (
+              q.data.map((inv: any) => <InviteRow key={inv.id} inv={inv} />)
+            )}
+          </div>
+          <div className="border-t border-border p-3">
+            <Link
+              to="/app/resident/invite"
+              onClick={onClose}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark"
+            >
+              <UserPlus className="h-4 w-4" /> Create new invite
+            </Link>
+          </div>
+        </motion.div>
       </motion.div>
-    </motion.div>
     </ModalPortal>
   );
 }
@@ -416,8 +396,7 @@ function InviteRow({ inv }: { inv: any }) {
       <div className="min-w-0">
         <div className="truncate text-sm font-medium text-foreground">{inv.guest_name}</div>
         <div className="text-[11px] text-muted-foreground">
-          Expires{" "}
-          {formatDistanceToNowStrict(new Date(inv.expires_at), { addSuffix: true })}
+          Expires {formatDistanceToNowStrict(new Date(inv.expires_at), { addSuffix: true })}
         </div>
       </div>
       <div className="ml-3 shrink-0 rounded-md bg-primary/10 px-2.5 py-1 font-mono text-sm font-semibold tracking-widest text-primary">

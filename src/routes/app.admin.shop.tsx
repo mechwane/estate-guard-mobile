@@ -193,7 +193,9 @@ function AdminShop() {
                 key={t}
                 onClick={() => setTab(t)}
                 className={`rounded-md px-3 py-1.5 text-xs font-medium capitalize ${
-                  tab === t ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-muted"
+                  tab === t
+                    ? "bg-primary text-primary-foreground"
+                    : "text-foreground hover:bg-muted"
                 }`}
               >
                 {t}
@@ -265,7 +267,9 @@ function AdminShop() {
                           <div className="truncate text-sm font-semibold text-foreground">
                             {i.name}
                           </div>
-                          <div className="text-xs text-muted-foreground">{catLabel(i.category)}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {catLabel(i.category)}
+                          </div>
                         </div>
                         <StatusBadge tone={i.active ? "success" : "neutral"}>
                           {i.active ? "active" : "inactive"}
@@ -396,86 +400,84 @@ function AdminShop() {
             }}
             className="space-y-3"
           >
+            <ImagePicker
+              label="Product photo"
+              folder="products"
+              aspect="square"
+              value={editing.image_url || null}
+              onChange={(v) => setEditing({ ...editing, image_url: v ?? "" })}
+            />
 
-              <ImagePicker
-                label="Product photo"
-                folder="products"
-                aspect="square"
-                value={editing.image_url || null}
-                onChange={(v) => setEditing({ ...editing, image_url: v ?? "" })}
+            <label className="block">
+              <span className="mb-1 block text-xs font-medium text-muted-foreground">Title</span>
+              <input
+                required
+                value={editing.name}
+                onChange={(e) => setEditing({ ...editing, name: e.target.value })}
+                placeholder="Product title"
+                className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
+            </label>
 
-              <label className="block">
-                <span className="mb-1 block text-xs font-medium text-muted-foreground">Title</span>
-                <input
-                  required
-                  value={editing.name}
-                  onChange={(e) => setEditing({ ...editing, name: e.target.value })}
-                  placeholder="Product title"
-                  className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                />
-              </label>
-
-              <div>
-                <span className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                  Category
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {CATEGORIES.map((c) => (
-                    <button
-                      key={c.value}
-                      type="button"
-                      onClick={() => setEditing({ ...editing, category: c.value })}
-                      className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
-                        editing.category === c.value
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-border bg-card text-foreground hover:bg-muted"
-                      }`}
-                    >
-                      {c.label}
-                    </button>
-                  ))}
-                </div>
+            <div>
+              <span className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                Category
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {CATEGORIES.map((c) => (
+                  <button
+                    key={c.value}
+                    type="button"
+                    onClick={() => setEditing({ ...editing, category: c.value })}
+                    className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
+                      editing.category === c.value
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-card text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                ))}
               </div>
+            </div>
 
-              <label className="block">
-                <span className="mb-1 block text-xs font-medium text-muted-foreground">
-                  Description <span className="italic">optional</span>
-                </span>
-                <textarea
-                  rows={3}
-                  value={editing.description}
-                  onChange={(e) => setEditing({ ...editing, description: e.target.value })}
-                  placeholder="Add a brief description"
-                  className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                />
-              </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-medium text-muted-foreground">
+                Description <span className="italic">optional</span>
+              </span>
+              <textarea
+                rows={3}
+                value={editing.description}
+                onChange={(e) => setEditing({ ...editing, description: e.target.value })}
+                placeholder="Add a brief description"
+                className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              />
+            </label>
 
-              <label className="block">
-                <span className="mb-1 block text-xs font-medium text-muted-foreground">
-                  Item cost (₦)
-                </span>
-                <input
-                  type="number"
-                  min="0"
-                  value={editing.price_ngn}
-                  onChange={(e) => setEditing({ ...editing, price_ngn: e.target.value })}
-                  className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                />
-              </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-medium text-muted-foreground">
+                Item cost (₦)
+              </span>
+              <input
+                type="number"
+                min="0"
+                value={editing.price_ngn}
+                onChange={(e) => setEditing({ ...editing, price_ngn: e.target.value })}
+                className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              />
+            </label>
 
-              <label className="flex items-center gap-2 text-sm text-foreground">
-                <input
-                  type="checkbox"
-                  checked={editing.active}
-                  onChange={(e) => setEditing({ ...editing, active: e.target.checked })}
-                />
-                Active (visible to residents)
-              </label>
+            <label className="flex items-center gap-2 text-sm text-foreground">
+              <input
+                type="checkbox"
+                checked={editing.active}
+                onChange={(e) => setEditing({ ...editing, active: e.target.checked })}
+              />
+              Active (visible to residents)
+            </label>
           </form>
         )}
       </SheetModal>
     </div>
   );
-
 }

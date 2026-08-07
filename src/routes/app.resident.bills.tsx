@@ -88,10 +88,7 @@ function Bills() {
       );
       if ((main === "utility") !== isUtility) return false;
       if (!q) return true;
-      return (
-        b.title.toLowerCase().includes(q) ||
-        (b.description ?? "").toLowerCase().includes(q)
-      );
+      return b.title.toLowerCase().includes(q) || (b.description ?? "").toLowerCase().includes(q);
     });
     const now = new Date();
     return {
@@ -176,9 +173,7 @@ function Bills() {
             </div>
             <div className="mt-0.5 flex items-center gap-1.5 text-lg font-semibold tabular-nums text-foreground">
               {totals.overdueCount}
-              {totals.overdueCount > 0 && (
-                <AlertTriangle className="h-4 w-4 text-destructive" />
-              )}
+              {totals.overdueCount > 0 && <AlertTriangle className="h-4 w-4 text-destructive" />}
             </div>
           </div>
         </div>
@@ -349,7 +344,11 @@ function Bills() {
                         <div className="mt-1">
                           <StatusBadge
                             tone={
-                              b.status === "paid" || b.status === "waived" ? "success" : overdue ? "error" : "warning"
+                              b.status === "paid" || b.status === "waived"
+                                ? "success"
+                                : overdue
+                                  ? "error"
+                                  : "warning"
                             }
                           >
                             {overdue ? "overdue" : b.status}
@@ -378,51 +377,51 @@ function Bills() {
 
       {/* Update Info modal */}
       <ModalPortal>
-      <AnimatePresence>
-        {confirmEdit && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
-            onClick={() => setConfirmEdit(false)}
-          >
+        <AnimatePresence>
+          {confirmEdit && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.92, y: 8 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.94 }}
-              transition={{ type: "spring", stiffness: 360, damping: 26 }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-xs rounded-2xl bg-card p-6 text-center shadow-xl ring-1 ring-border"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+              onClick={() => setConfirmEdit(false)}
             >
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-                <AlertTriangle className="h-6 w-6 text-destructive" />
-              </div>
-              <h3 className="mt-3 text-base font-semibold text-foreground">Update Info</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Updating your address info will require another approval.
-              </p>
-              <div className="mt-5 space-y-2">
-                <button
-                  onClick={() => {
-                    setConfirmEdit(false);
-                    navigate({ to: "/app/resident/profile" });
-                  }}
-                  className="w-full rounded-lg bg-primary py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark"
-                >
-                  Proceed
-                </button>
-                <button
-                  onClick={() => setConfirmEdit(false)}
-                  className="w-full rounded-lg py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted"
-                >
-                  Cancel
-                </button>
-              </div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.92, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.94 }}
+                transition={{ type: "spring", stiffness: 360, damping: 26 }}
+                onClick={(e) => e.stopPropagation()}
+                className="w-full max-w-xs rounded-2xl bg-card p-6 text-center shadow-xl ring-1 ring-border"
+              >
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+                  <AlertTriangle className="h-6 w-6 text-destructive" />
+                </div>
+                <h3 className="mt-3 text-base font-semibold text-foreground">Update Info</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Updating your address info will require another approval.
+                </p>
+                <div className="mt-5 space-y-2">
+                  <button
+                    onClick={() => {
+                      setConfirmEdit(false);
+                      navigate({ to: "/app/resident/profile" });
+                    }}
+                    className="w-full rounded-lg bg-primary py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark"
+                  >
+                    Proceed
+                  </button>
+                  <button
+                    onClick={() => setConfirmEdit(false)}
+                    className="w-full rounded-lg py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>
       </ModalPortal>
     </div>
   );

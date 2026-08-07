@@ -48,15 +48,7 @@ const stamp = (iso: string) => {
   return isToday(d) ? format(d, "h:mm a") : format(d, "d MMM, h:mm a");
 };
 
-function Avatar({
-  name,
-  url,
-  size = 40,
-}: {
-  name: string;
-  url?: string | null;
-  size?: number;
-}) {
+function Avatar({ name, url, size = 40 }: { name: string; url?: string | null; size?: number }) {
   return url ? (
     <img
       src={url}
@@ -560,7 +552,12 @@ function useChatRealtime(estateId: string | undefined) {
       .channel(`chat-${estateId}`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "chat_messages", filter: `estate_id=eq.${estateId}` },
+        {
+          event: "*",
+          schema: "public",
+          table: "chat_messages",
+          filter: `estate_id=eq.${estateId}`,
+        },
         () => {
           qc.invalidateQueries({ queryKey: ["chat-list", estateId] });
           qc.invalidateQueries({ queryKey: ["chat-thread", estateId] });
@@ -648,7 +645,12 @@ export function AdminChat() {
                 (p.house_number ?? "").toLowerCase().includes(needle)),
           )
           .slice(0, 15)
-          .map((p) => ({ residentId: p.id, person: p, last: null as ChatMessage | null, unread: 0 }))
+          .map((p) => ({
+            residentId: p.id,
+            person: p,
+            last: null as ChatMessage | null,
+            unread: 0,
+          }))
       : [];
     return [...withMessages, ...extra];
   }, [messages.data, residents.data, meId, q]);

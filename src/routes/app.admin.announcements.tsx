@@ -74,15 +74,15 @@ function AdminAnnouncements() {
   const rows = useMemo(() => {
     const term = search.trim().toLowerCase();
     return (list.data ?? []).filter(
-      (row) => !term || row.title.toLowerCase().includes(term) || row.body.toLowerCase().includes(term),
+      (row) =>
+        !term || row.title.toLowerCase().includes(term) || row.body.toLowerCase().includes(term),
     );
   }, [list.data, search]);
 
   const thisMonth = useMemo(
     () =>
-      (list.data ?? []).filter(
-        (row) => new Date(row.created_at) >= new Date(new Date().setDate(1)),
-      ).length,
+      (list.data ?? []).filter((row) => new Date(row.created_at) >= new Date(new Date().setDate(1)))
+        .length,
     [list.data],
   );
 

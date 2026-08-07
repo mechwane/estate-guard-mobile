@@ -1,27 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
-import {
-  Fingerprint,
-  ScanFace,
-  IdCard,
-  Car,
-  KeyRound,
-  Ticket,
-  ExternalLink,
-} from "lucide-react";
+import { Fingerprint, ScanFace, IdCard, Car, KeyRound, Ticket, ExternalLink } from "lucide-react";
 import type { ReactNode } from "react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import {
-  Card,
-  EmptyState,
-  ErrorState,
-  ListSkeleton,
-  StatusBadge,
-} from "@/components/ui-kit";
+import { Card, EmptyState, ErrorState, ListSkeleton, StatusBadge } from "@/components/ui-kit";
 import { FadeIn } from "@/components/motion-kit";
 
 export const Route = createFileRoute("/app/resident/access")({
@@ -79,7 +65,9 @@ function MyAccessMethods() {
       const [bio, cards, tags, devs] = await Promise.all([
         supabase
           .from("biometric_access")
-          .select("id,biometric_type,enrollment_status,access_status,device_id,last_used_at,updated_at")
+          .select(
+            "id,biometric_type,enrollment_status,access_status,device_id,last_used_at,updated_at",
+          )
           .eq("resident_id", userId!),
         supabase
           .from("access_cards")
@@ -139,8 +127,8 @@ function MyAccessMethods() {
         <div>
           <h1 className="text-lg font-semibold text-foreground">My access methods</h1>
           <p className="text-xs text-muted-foreground">
-            Status of your credentials at the estate gate. Fingerprint and face
-            recognition are enrolled at estate access devices, not your phone.
+            Status of your credentials at the estate gate. Fingerprint and face recognition are
+            enrolled at estate access devices, not your phone.
           </p>
         </div>
 
@@ -262,9 +250,9 @@ function MyAccessMethods() {
           <div className="flex items-start gap-3">
             <ExternalLink className="mt-0.5 h-4 w-4 text-muted-foreground" />
             <p className="text-xs text-muted-foreground">
-              Fingerprint and face recognition require enrollment at an estate access
-              device. Your admin will schedule you once you submit a request; no
-              biometric images or templates are stored in the app.
+              Fingerprint and face recognition require enrollment at an estate access device. Your
+              admin will schedule you once you submit a request; no biometric images or templates
+              are stored in the app.
             </p>
           </div>
         </Card>

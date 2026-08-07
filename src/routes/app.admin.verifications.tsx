@@ -191,81 +191,80 @@ function Verifications() {
 
       {selected && (
         <ModalPortal>
-        <div
-          className="fixed inset-0 z-[80] flex items-end justify-center bg-black/40 sm:items-center"
-          onClick={() => setSelected(null)}
-        >
           <div
-            className="w-full max-w-lg rounded-t-2xl bg-card p-5 sm:rounded-2xl"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-[80] flex items-end justify-center bg-black/40 sm:items-center"
+            onClick={() => setSelected(null)}
           >
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-base font-semibold">Review verification</h2>
-              <button
-                onClick={() => setSelected(null)}
-                className="rounded-md p-1 text-muted-foreground hover:bg-muted"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="space-y-2 text-sm">
-              <Row label="Name" value={selected.full_name} />
-              <Row label="Phone" value={selected.phone ?? "—"} />
-              <Row label="Occupant" value={selected.occupant_type ?? "—"} />
-              <Row
-                label="Address"
-                value={`${selected.house_number ? "#" + selected.house_number + " " : ""}${selected.block ? "Blk " + selected.block + " " : ""}${selected.street ?? ""}`}
-              />
-              <Row
-                label="Submitted"
-                value={
-                  selected.verification_submitted_at
-                    ? new Date(selected.verification_submitted_at).toLocaleString()
-                    : "—"
-                }
-              />
-              {selected.verification_doc_path && (
+            <div
+              className="w-full max-w-lg rounded-t-2xl bg-card p-5 sm:rounded-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="mb-3 flex items-center justify-between">
+                <h2 className="text-base font-semibold">Review verification</h2>
                 <button
-                  onClick={() => openDoc(selected.verification_doc_path)}
-                  className="mt-1 text-xs text-primary underline"
+                  onClick={() => setSelected(null)}
+                  className="rounded-md p-1 text-muted-foreground hover:bg-muted"
                 >
-                  View uploaded document
+                  <X className="h-4 w-4" />
                 </button>
-              )}
-            </div>
-            <label className="mt-3 block">
-              <span className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                Notes / rejection reason
-              </span>
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows={3}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
-            </label>
-            <div className="mt-4 flex gap-2">
-              <button
-                onClick={() => review.mutate({ id: selected.id, approve: false, notes })}
-                disabled={review.isPending}
-                className="flex-1 rounded-lg border border-destructive/40 bg-card px-3 py-2 text-xs font-medium text-destructive hover:bg-destructive/5 disabled:opacity-60"
-              >
-                Reject
-              </button>
-              <button
-                onClick={() => review.mutate({ id: selected.id, approve: true, notes })}
-                disabled={review.isPending}
-                className="flex-1 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
-              >
-                {review.isPending && <Loader2 className="mr-1 inline h-3 w-3 animate-spin" />}{" "}
-                Approve
-              </button>
+              </div>
+              <div className="space-y-2 text-sm">
+                <Row label="Name" value={selected.full_name} />
+                <Row label="Phone" value={selected.phone ?? "—"} />
+                <Row label="Occupant" value={selected.occupant_type ?? "—"} />
+                <Row
+                  label="Address"
+                  value={`${selected.house_number ? "#" + selected.house_number + " " : ""}${selected.block ? "Blk " + selected.block + " " : ""}${selected.street ?? ""}`}
+                />
+                <Row
+                  label="Submitted"
+                  value={
+                    selected.verification_submitted_at
+                      ? new Date(selected.verification_submitted_at).toLocaleString()
+                      : "—"
+                  }
+                />
+                {selected.verification_doc_path && (
+                  <button
+                    onClick={() => openDoc(selected.verification_doc_path)}
+                    className="mt-1 text-xs text-primary underline"
+                  >
+                    View uploaded document
+                  </button>
+                )}
+              </div>
+              <label className="mt-3 block">
+                <span className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                  Notes / rejection reason
+                </span>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={3}
+                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                />
+              </label>
+              <div className="mt-4 flex gap-2">
+                <button
+                  onClick={() => review.mutate({ id: selected.id, approve: false, notes })}
+                  disabled={review.isPending}
+                  className="flex-1 rounded-lg border border-destructive/40 bg-card px-3 py-2 text-xs font-medium text-destructive hover:bg-destructive/5 disabled:opacity-60"
+                >
+                  Reject
+                </button>
+                <button
+                  onClick={() => review.mutate({ id: selected.id, approve: true, notes })}
+                  disabled={review.isPending}
+                  className="flex-1 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
+                >
+                  {review.isPending && <Loader2 className="mr-1 inline h-3 w-3 animate-spin" />}{" "}
+                  Approve
+                </button>
+              </div>
             </div>
           </div>
-        </div>
         </ModalPortal>
       )}
-
     </div>
   );
 }

@@ -42,7 +42,6 @@ export const Route = createFileRoute("/app/admin/messages")({
 
 type Mode = "broadcast" | "direct";
 
-
 const TEMPLATES: { label: string; title: string; body: string }[] = [
   {
     label: "Power outage",
@@ -135,11 +134,14 @@ function Messages() {
       if (mode === "broadcast") {
         if (!(await biometricConfirm(`Send "${title}" to all residents?`)))
           throw new Error("Cancelled");
-        const { data, error } = await supabase.rpc("broadcast_message" as never, {
-          _title: title.trim(),
-          _body: body.trim(),
-          _link: link.trim() || null,
-        } as never);
+        const { data, error } = await supabase.rpc(
+          "broadcast_message" as never,
+          {
+            _title: title.trim(),
+            _body: body.trim(),
+            _link: link.trim() || null,
+          } as never,
+        );
         if (error) throw error;
         return { count: data as unknown as number };
       }
@@ -171,14 +173,9 @@ function Messages() {
   if (!estateId) return <EmptyState title="No estate assigned" />;
 
   const residentCount = (residentsQ.data ?? []).length;
-  const broadcastCount = (recent.data ?? []).filter(
-    (r) => r.action === "broadcast.sent",
-  ).length;
+  const broadcastCount = (recent.data ?? []).filter((r) => r.action === "broadcast.sent").length;
   const canSend =
-    !!title.trim() &&
-    !!body.trim() &&
-    (mode === "broadcast" || !!recipient) &&
-    !send.isPending;
+    !!title.trim() && !!body.trim() && (mode === "broadcast" || !!recipient) && !send.isPending;
 
   return (
     <Stagger className="space-y-4">
@@ -201,193 +198,191 @@ function Messages() {
         </StaggerItem>
       ) : (
         <>
-      <StaggerItem>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          <StatCard label="Residents reachable" value={residentCount} tone="primary" />
-          <StatCard label="Recent broadcasts" value={broadcastCount} />
-          <StatCard label="Templates" value={TEMPLATES.length} />
-          <StatCard
-            label="Channel"
-            value={mode === "broadcast" ? "Estate-wide" : "Single resident"}
-          />
-        </div>
-      </StaggerItem>
+          <StaggerItem>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <StatCard label="Residents reachable" value={residentCount} tone="primary" />
+              <StatCard label="Recent broadcasts" value={broadcastCount} />
+              <StatCard label="Templates" value={TEMPLATES.length} />
+              <StatCard
+                label="Channel"
+                value={mode === "broadcast" ? "Estate-wide" : "Single resident"}
+              />
+            </div>
+          </StaggerItem>
 
-
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-        <StaggerItem>
-          <Card className="space-y-3">
-            <h2 className="flex items-center gap-2 text-sm font-semibold">
-              <Megaphone className="h-4 w-4 text-primary" /> Compose
-            </h2>
-            <ScrollTabs
-              value={mode}
-              onChange={(m) => {
-                setMode(m);
-                setRecipient("");
-              }}
-              tabs={[
-                { key: "broadcast", label: "Broadcast to estate" },
-                { key: "direct", label: "Direct to resident" },
-              ]}
-            />
-
-            {mode === "direct" && (
-              <div className="space-y-2">
-                <SearchInput
-                  value={q}
-                  onChange={setQ}
-                  placeholder="Search resident by name or house…"
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+            <StaggerItem>
+              <Card className="space-y-3">
+                <h2 className="flex items-center gap-2 text-sm font-semibold">
+                  <Megaphone className="h-4 w-4 text-primary" /> Compose
+                </h2>
+                <ScrollTabs
+                  value={mode}
+                  onChange={(m) => {
+                    setMode(m);
+                    setRecipient("");
+                  }}
+                  tabs={[
+                    { key: "broadcast", label: "Broadcast to estate" },
+                    { key: "direct", label: "Direct to resident" },
+                  ]}
                 />
-                {residentsQ.isLoading ? (
-                  <ListSkeleton rows={3} />
-                ) : (
-                  <div className="max-h-56 overflow-y-auto rounded-lg border border-border/60">
-                    {filteredResidents.length === 0 ? (
-                      <p className="p-3 text-xs text-muted-foreground">
-                        No resident matches that search.
-                      </p>
+
+                {mode === "direct" && (
+                  <div className="space-y-2">
+                    <SearchInput
+                      value={q}
+                      onChange={setQ}
+                      placeholder="Search resident by name or house…"
+                    />
+                    {residentsQ.isLoading ? (
+                      <ListSkeleton rows={3} />
                     ) : (
-                      <ul className="divide-y divide-border/60">
-                        {filteredResidents.map((r) => (
-                          <li key={r.id}>
-                            <button
-                              onClick={() => setRecipient(r.id)}
-                              className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted ${
-                                recipient === r.id ? "bg-primary/10 text-primary" : ""
-                              }`}
-                            >
-                              <User className="h-3.5 w-3.5 shrink-0" />
-                              <span className="truncate">{r.full_name}</span>
-                              {(r.house_number || r.unit) && (
-                                <span className="ml-auto shrink-0 text-xs text-muted-foreground">
-                                  {r.house_number ?? r.unit}
-                                </span>
-                              )}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
+                      <div className="max-h-56 overflow-y-auto rounded-lg border border-border/60">
+                        {filteredResidents.length === 0 ? (
+                          <p className="p-3 text-xs text-muted-foreground">
+                            No resident matches that search.
+                          </p>
+                        ) : (
+                          <ul className="divide-y divide-border/60">
+                            {filteredResidents.map((r) => (
+                              <li key={r.id}>
+                                <button
+                                  onClick={() => setRecipient(r.id)}
+                                  className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted ${
+                                    recipient === r.id ? "bg-primary/10 text-primary" : ""
+                                  }`}
+                                >
+                                  <User className="h-3.5 w-3.5 shrink-0" />
+                                  <span className="truncate">{r.full_name}</span>
+                                  {(r.house_number || r.unit) && (
+                                    <span className="ml-auto shrink-0 text-xs text-muted-foreground">
+                                      {r.house_number ?? r.unit}
+                                    </span>
+                                  )}
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                     )}
                   </div>
                 )}
-              </div>
-            )}
 
-            <div className="space-y-2">
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Title"
-                className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm"
-              />
-              <textarea
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                placeholder="Message body"
-                rows={5}
-                className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm"
-              />
-              <input
-                value={link}
-                onChange={(e) => setLink(e.target.value)}
-                placeholder="Optional deep link (e.g. /app/resident/bills)"
-                className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm"
-              />
-            </div>
+                <div className="space-y-2">
+                  <input
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Title"
+                    className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm"
+                  />
+                  <textarea
+                    value={body}
+                    onChange={(e) => setBody(e.target.value)}
+                    placeholder="Message body"
+                    rows={5}
+                    className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm"
+                  />
+                  <input
+                    value={link}
+                    onChange={(e) => setLink(e.target.value)}
+                    placeholder="Optional deep link (e.g. /app/resident/bills)"
+                    className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm"
+                  />
+                </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                onClick={() => send.mutate()}
-                disabled={!canSend}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-60"
-              >
-                {send.isPending ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Send className="h-3.5 w-3.5" />
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => send.mutate()}
+                    disabled={!canSend}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-60"
+                  >
+                    {send.isPending ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Send className="h-3.5 w-3.5" />
+                    )}
+                    {mode === "broadcast" ? "Verify & broadcast" : "Send message"}
+                  </button>
+                  <button
+                    onClick={reset}
+                    className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted"
+                  >
+                    Clear
+                  </button>
+                  <span className="text-[11px] text-muted-foreground">
+                    {body.trim().length} characters
+                  </span>
+                </div>
+                {mode === "broadcast" && (
+                  <p className="text-[11px] text-muted-foreground">
+                    Broadcasts ask for your device confirmation before delivery.
+                  </p>
                 )}
-                {mode === "broadcast" ? "Verify & broadcast" : "Send message"}
-              </button>
-              <button
-                onClick={reset}
-                className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted"
-              >
-                Clear
-              </button>
-              <span className="text-[11px] text-muted-foreground">
-                {body.trim().length} characters
-              </span>
-            </div>
-            {mode === "broadcast" && (
-              <p className="text-[11px] text-muted-foreground">
-                Broadcasts ask for your device confirmation before delivery.
-              </p>
-            )}
-          </Card>
-        </StaggerItem>
+              </Card>
+            </StaggerItem>
 
-        <StaggerItem className="space-y-4">
-          <Card>
-            <h2 className="mb-3 text-sm font-semibold">Quick templates</h2>
-            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
-              {TEMPLATES.map((t) => (
-                <button
-                  key={t.label}
-                  onClick={() => {
-                    setTitle(t.title);
-                    setBody(t.body);
-                  }}
-                  className="block w-full min-w-0 rounded-lg border border-border/60 bg-card px-3 py-2 text-left hover:border-primary/60 hover:bg-muted"
-                >
-                  <div className="truncate text-sm font-medium">{t.label}</div>
-                  <div className="mt-0.5 line-clamp-2 break-words text-xs leading-snug text-muted-foreground">
-                    {t.body}
-                  </div>
-                </button>
-              ))}
-            </div>
-          </Card>
-
-          <Card>
-            <h2 className="mb-3 text-sm font-semibold">Delivery history</h2>
-            {recent.isLoading ? (
-              <ListSkeleton rows={3} />
-            ) : recent.isError ? (
-              <ErrorState onRetry={() => recent.refetch()} />
-            ) : (recent.data ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground">Nothing sent yet.</p>
-            ) : (
-              <ul className="space-y-2">
-                {(recent.data ?? []).map((r) => {
-                  const meta = (r.metadata ?? {}) as Record<string, unknown>;
-                  return (
-                    <li
-                      key={r.id}
-                      className="rounded-lg border border-border/60 bg-card px-3 py-2 text-sm"
+            <StaggerItem className="space-y-4">
+              <Card>
+                <h2 className="mb-3 text-sm font-semibold">Quick templates</h2>
+                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+                  {TEMPLATES.map((t) => (
+                    <button
+                      key={t.label}
+                      onClick={() => {
+                        setTitle(t.title);
+                        setBody(t.body);
+                      }}
+                      className="block w-full min-w-0 rounded-lg border border-border/60 bg-card px-3 py-2 text-left hover:border-primary/60 hover:bg-muted"
                     >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="truncate font-medium">
-                          {(meta.title as string) ?? "Broadcast"}
-                        </div>
-                        <div className="shrink-0 text-xs text-muted-foreground">
-                          {formatDistanceToNow(new Date(r.created_at), { addSuffix: true })}
-                        </div>
+                      <div className="truncate text-sm font-medium">{t.label}</div>
+                      <div className="mt-0.5 line-clamp-2 break-words text-xs leading-snug text-muted-foreground">
+                        {t.body}
                       </div>
-                      <div className="text-xs text-muted-foreground">
-                        {Number(meta.recipients ?? 0)} recipients
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </Card>
-        </StaggerItem>
-      </div>
+                    </button>
+                  ))}
+                </div>
+              </Card>
+
+              <Card>
+                <h2 className="mb-3 text-sm font-semibold">Delivery history</h2>
+                {recent.isLoading ? (
+                  <ListSkeleton rows={3} />
+                ) : recent.isError ? (
+                  <ErrorState onRetry={() => recent.refetch()} />
+                ) : (recent.data ?? []).length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Nothing sent yet.</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {(recent.data ?? []).map((r) => {
+                      const meta = (r.metadata ?? {}) as Record<string, unknown>;
+                      return (
+                        <li
+                          key={r.id}
+                          className="rounded-lg border border-border/60 bg-card px-3 py-2 text-sm"
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="truncate font-medium">
+                              {(meta.title as string) ?? "Broadcast"}
+                            </div>
+                            <div className="shrink-0 text-xs text-muted-foreground">
+                              {formatDistanceToNow(new Date(r.created_at), { addSuffix: true })}
+                            </div>
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {Number(meta.recipients ?? 0)} recipients
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </Card>
+            </StaggerItem>
+          </div>
         </>
       )}
     </Stagger>
-
   );
 }

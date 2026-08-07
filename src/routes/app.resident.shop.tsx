@@ -3,12 +3,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import {
-  Card,
-  EmptyState,
-  MediaImage,
-  SearchInput,
-} from "@/components/ui-kit";
+import { Card, EmptyState, MediaImage, SearchInput } from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
 import { Store, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -91,7 +86,11 @@ function Shop() {
               <Card className="flex h-full flex-col gap-2 p-3">
                 <div className="aspect-square overflow-hidden rounded-lg bg-gradient-to-br from-muted to-muted/50">
                   {i.image_url && (
-                    <MediaImage value={i.image_url} alt={i.name} className="h-full w-full object-cover" />
+                    <MediaImage
+                      value={i.image_url}
+                      alt={i.name}
+                      className="h-full w-full object-cover"
+                    />
                   )}
                 </div>
                 <div className="text-sm font-medium text-foreground">{i.name}</div>

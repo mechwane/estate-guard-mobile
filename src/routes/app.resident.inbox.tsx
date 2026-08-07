@@ -80,14 +80,10 @@ function Inbox() {
         <Stagger className="space-y-2">
           {items.map((n) => (
             <StaggerItem key={n.id}>
-              <Card
-                className={`p-4 ${!n.read_at ? "border-primary/30 bg-primary/5" : ""}`}
-              >
+              <Card className={`p-4 ${!n.read_at ? "border-primary/30 bg-primary/5" : ""}`}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="truncate text-sm font-medium text-foreground">
-                      {n.title}
-                    </div>
+                    <div className="truncate text-sm font-medium text-foreground">{n.title}</div>
                     {n.body && (
                       <div className="mt-0.5 text-xs text-muted-foreground line-clamp-2">
                         {n.body}

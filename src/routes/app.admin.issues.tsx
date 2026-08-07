@@ -245,9 +245,7 @@ function AdminIssues() {
           <StaggerItem key={issue.id}>
             <IssueCard
               issue={issue}
-              reporter={
-                issue.resident_id ? residents.data?.get(issue.resident_id) ?? null : null
-              }
+              reporter={issue.resident_id ? (residents.data?.get(issue.resident_id) ?? null) : null}
               onDone={() => qc.invalidateQueries({ queryKey: ["admin-issues", estateId] })}
             />
           </StaggerItem>
@@ -372,7 +370,8 @@ function IssueCard({
           </div>
           {issue.responded_at && (
             <p className="text-xs text-muted-foreground">
-              Last responded {formatDistanceToNow(new Date(issue.responded_at), { addSuffix: true })}
+              Last responded{" "}
+              {formatDistanceToNow(new Date(issue.responded_at), { addSuffix: true })}
             </p>
           )}
         </div>

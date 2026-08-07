@@ -266,7 +266,8 @@ function EstateCollections() {
 
   const billsFor = (collection: CollectionRow) =>
     (data.data?.bills ?? []).filter(
-      (b) => b.collection_id === collection.id || (!b.collection_id && b.title === collection.title),
+      (b) =>
+        b.collection_id === collection.id || (!b.collection_id && b.title === collection.title),
     );
 
   const campaigns = useMemo(() => {
@@ -437,10 +438,13 @@ function EstateCollections() {
 
   const markPaid = useMutation({
     mutationFn: async (billId: string) => {
-      const { error } = await supabase.rpc("admin_record_bill_payment" as never, {
-        _bill_id: billId,
-        _method: "cash",
-      } as never);
+      const { error } = await supabase.rpc(
+        "admin_record_bill_payment" as never,
+        {
+          _bill_id: billId,
+          _method: "cash",
+        } as never,
+      );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -918,7 +922,10 @@ function EstateCollections() {
                 {(data.data?.payments ?? []).filter((p) =>
                   billsFor(detail.collection).some((b) => b.id === p.bill_id),
                 ).length === 0 && (
-                  <EmptyState title="No payments yet" description="Recorded payments appear here." />
+                  <EmptyState
+                    title="No payments yet"
+                    description="Recorded payments appear here."
+                  />
                 )}
               </div>
             )}

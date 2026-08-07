@@ -217,7 +217,8 @@ function Troubleshoot() {
       label: "Accounts awaiting approval",
       count: h.pendingApprovals,
       ok: "No accounts waiting for estate access.",
-      problem: (n) => `${n} account${n > 1 ? "s" : ""} cannot use the app until you grant estate access.`,
+      problem: (n) =>
+        `${n} account${n > 1 ? "s" : ""} cannot use the app until you grant estate access.`,
       to: "/app/admin/residents",
       action: "Review residents",
     },
@@ -249,7 +250,8 @@ function Troubleshoot() {
       label: "Gate devices unavailable",
       count: h.offlineDevices,
       ok: "All access devices are reporting online.",
-      problem: (n) => `${n} device${n > 1 ? "s are" : " is"} offline or in maintenance — biometric entry may fail at the gate.`,
+      problem: (n) =>
+        `${n} device${n > 1 ? "s are" : " is"} offline or in maintenance — biometric entry may fail at the gate.`,
       to: "/app/admin/realtime",
       action: "Check access activity",
     },
@@ -257,7 +259,8 @@ function Troubleshoot() {
       label: "Overdue bills",
       count: h.overdueBills,
       ok: "No overdue invoices.",
-      problem: (n) => `${n} invoice${n > 1 ? "s are" : " is"} past the due date and need a reminder.`,
+      problem: (n) =>
+        `${n} invoice${n > 1 ? "s are" : " is"} past the due date and need a reminder.`,
       to: "/app/admin/invoices",
       action: "Open invoices",
     },
@@ -265,7 +268,8 @@ function Troubleshoot() {
       label: "Biometric enrolments pending",
       count: h.unenrolledBiometrics,
       ok: "No pending biometric enrolments.",
-      problem: (n) => `${n} resident biometric enrolment${n > 1 ? "s" : ""} still need to be captured on a gate device.`,
+      problem: (n) =>
+        `${n} resident biometric enrolment${n > 1 ? "s" : ""} still need to be captured on a gate device.`,
       to: "/app/admin/residents",
       action: "Manage access",
     },
@@ -274,11 +278,31 @@ function Troubleshoot() {
   const failing = checks.filter((c) => c.count > 0);
 
   const tools: { id: ToolId; title: string; desc: string; icon: typeof KeyRound }[] = [
-    { id: "otp", title: "OTP", desc: "Generate a one-time code for a resident", icon: TerminalSquare },
+    {
+      id: "otp",
+      title: "OTP",
+      desc: "Generate a one-time code for a resident",
+      icon: TerminalSquare,
+    },
     { id: "reset", title: "Reset password", desc: "Trigger a password reset email", icon: Lock },
-    { id: "waive", title: "Waive payment", desc: "Waive outstanding charges for a resident", icon: ReceiptText },
-    { id: "multi", title: "Multiple code", desc: "Grant timed multi-use gate access", icon: KeyRound },
-    { id: "email", title: "Email change", desc: "Update the sign-in email of a user", icon: AtSign },
+    {
+      id: "waive",
+      title: "Waive payment",
+      desc: "Waive outstanding charges for a resident",
+      icon: ReceiptText,
+    },
+    {
+      id: "multi",
+      title: "Multiple code",
+      desc: "Grant timed multi-use gate access",
+      icon: KeyRound,
+    },
+    {
+      id: "email",
+      title: "Email change",
+      desc: "Update the sign-in email of a user",
+      icon: AtSign,
+    },
   ];
 
   return (
@@ -404,7 +428,9 @@ function Troubleshoot() {
                 <li
                   key={c.label}
                   className={`rounded-lg border px-3 py-2.5 text-sm ${
-                    bad ? "border-[color:var(--color-warning)]/40 bg-warning/5" : "border-border/60 bg-card"
+                    bad
+                      ? "border-[color:var(--color-warning)]/40 bg-warning/5"
+                      : "border-border/60 bg-card"
                   }`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -460,23 +486,23 @@ function Modal({
 }) {
   return (
     <ModalPortal>
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4">
-      <div className="w-full max-w-md rounded-t-2xl border border-border bg-card p-4 shadow-xl sm:rounded-2xl">
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            className="rounded-full border border-border p-1.5 text-muted-foreground hover:bg-muted"
-          >
-            <X className="h-4 w-4" />
-          </button>
-          <h3 className="flex-1 text-center text-sm font-semibold">{title}</h3>
-          <span className="w-7" />
+      <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4">
+        <div className="w-full max-w-md rounded-t-2xl border border-border bg-card p-4 shadow-xl sm:rounded-2xl">
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <button
+              onClick={onClose}
+              aria-label="Close"
+              className="rounded-full border border-border p-1.5 text-muted-foreground hover:bg-muted"
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <h3 className="flex-1 text-center text-sm font-semibold">{title}</h3>
+            <span className="w-7" />
+          </div>
+          {children}
         </div>
-        {children}
       </div>
-    </div>
-  </ModalPortal>
+    </ModalPortal>
   );
 }
 
@@ -597,7 +623,11 @@ function ToolDialog({
         {tool === "otp" && (
           <label className="block">
             <span className="mb-1 block text-xs font-medium text-muted-foreground">Purpose</span>
-            <select value={purpose} onChange={(e) => setPurpose(e.target.value)} className={inputCls}>
+            <select
+              value={purpose}
+              onChange={(e) => setPurpose(e.target.value)}
+              className={inputCls}
+            >
               <option value="sign_in">Sign in</option>
               <option value="update_profile">Update profile</option>
               <option value="gate_access">Gate access</option>

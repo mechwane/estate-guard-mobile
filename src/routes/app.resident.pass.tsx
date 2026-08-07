@@ -37,7 +37,10 @@ async function enrollWebAuthn(displayName: string) {
       challenge: randomChallenge(),
       rp: { name: "Estate Guard" },
       user: { id: userId, name: displayName, displayName },
-      pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
+      pubKeyCredParams: [
+        { type: "public-key", alg: -7 },
+        { type: "public-key", alg: -257 },
+      ],
       authenticatorSelection: { userVerification: "required", residentKey: "preferred" },
       timeout: 60_000,
     },
@@ -55,8 +58,13 @@ async function performAssertion(credentialId: string, challenge: string) {
   if (typeof window === "undefined" || !window.PublicKeyCredential) {
     throw new Error("Biometric not supported on this device");
   }
-  const idBytes = Uint8Array.from(atob(credentialId.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
-  const challengeBytes = Uint8Array.from(atob(challenge.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
+  const idBytes = Uint8Array.from(atob(credentialId.replace(/-/g, "+").replace(/_/g, "/")), (c) =>
+    c.charCodeAt(0),
+  );
+  const challengeBytes = Uint8Array.from(
+    atob(challenge.replace(/-/g, "+").replace(/_/g, "/")),
+    (c) => c.charCodeAt(0),
+  );
   const cred = (await navigator.credentials.get({
     publicKey: {
       challenge: challengeBytes,
@@ -74,7 +82,6 @@ async function performAssertion(credentialId: string, challenge: string) {
   };
 }
 
-
 function BiometricPass() {
   const qc = useQueryClient();
   const [deviceName, setDeviceName] = useState("");
@@ -85,7 +92,10 @@ function BiometricPass() {
   const creds = useQuery({
     queryKey: ["my-biometric-credentials"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("resident_biometric_credentials").select("*").order("created_at", { ascending: false });
+      const { data, error } = await supabase
+        .from("resident_biometric_credentials")
+        .select("*")
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return data ?? [];
     },
@@ -94,7 +104,11 @@ function BiometricPass() {
   const passes = useQuery({
     queryKey: ["my-passes"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("resident_passes").select("*").order("created_at", { ascending: false }).limit(20);
+      const { data, error } = await supabase
+        .from("resident_passes")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(20);
       if (error) throw error;
       return data ?? [];
     },
@@ -102,14 +116,21 @@ function BiometricPass() {
 
   const enroll = useMutation({
     mutationFn: async () => {
-      const label = deviceName.trim() || (typeof navigator !== "undefined" ? navigator.userAgent.split(" ").slice(-1)[0] : "This device");
+      const label =
+        deviceName.trim() ||
+        (typeof navigator !== "undefined"
+          ? navigator.userAgent.split(" ").slice(-1)[0]
+          : "This device");
       const cred = await enrollWebAuthn(label);
-      const { error } = await supabase.rpc("enroll_biometric_credential" as never, {
-        _credential_id: cred.credential_id,
-        _public_key: cred.public_key,
-        _device_name: label,
-        _transports: cred.transports,
-      } as never);
+      const { error } = await supabase.rpc(
+        "enroll_biometric_credential" as never,
+        {
+          _credential_id: cred.credential_id,
+          _public_key: cred.public_key,
+          _device_name: label,
+          _transports: cred.transports,
+        } as never,
+      );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -166,26 +187,40 @@ function BiometricPass() {
     <div className="space-y-4">
       <div>
         <h1 className="text-xl font-semibold">My pass</h1>
-        <p className="text-xs text-muted-foreground">Unlock a gate pass with your fingerprint or face — no typed code needed.</p>
+        <p className="text-xs text-muted-foreground">
+          Unlock a gate pass with your fingerprint or face — no typed code needed.
+        </p>
       </div>
 
       <Card>
         <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold">
           <Fingerprint className="h-4 w-4 text-primary" /> Biometric devices
         </h2>
-        {creds.isLoading ? <ListSkeleton rows={2} /> : creds.isError ? <ErrorState onRetry={() => creds.refetch()} /> : (
+        {creds.isLoading ? (
+          <ListSkeleton rows={2} />
+        ) : creds.isError ? (
+          <ErrorState onRetry={() => creds.refetch()} />
+        ) : (
           <>
             {(creds.data ?? []).length === 0 ? (
               <p className="text-sm text-muted-foreground">No devices enrolled yet.</p>
             ) : (
               <ul className="space-y-2">
                 {(creds.data ?? []).map((c: any) => (
-                  <li key={c.id} className="flex items-center justify-between rounded-lg border border-border/60 bg-card px-3 py-2 text-sm">
+                  <li
+                    key={c.id}
+                    className="flex items-center justify-between rounded-lg border border-border/60 bg-card px-3 py-2 text-sm"
+                  >
                     <div>
                       <div className="font-medium">{c.device_name ?? "Enrolled device"}</div>
-                      <div className="text-xs text-muted-foreground">Added {formatDistanceToNow(new Date(c.created_at), { addSuffix: true })}</div>
+                      <div className="text-xs text-muted-foreground">
+                        Added {formatDistanceToNow(new Date(c.created_at), { addSuffix: true })}
+                      </div>
                     </div>
-                    <button onClick={() => removeCred.mutate(c.id)} className="rounded-md p-1.5 text-muted-foreground hover:text-destructive">
+                    <button
+                      onClick={() => removeCred.mutate(c.id)}
+                      className="rounded-md p-1.5 text-muted-foreground hover:text-destructive"
+                    >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </li>
@@ -193,9 +228,23 @@ function BiometricPass() {
               </ul>
             )}
             <div className="mt-3 flex gap-2">
-              <input value={deviceName} onChange={(e) => setDeviceName(e.target.value)} placeholder="Device name (optional)" className="flex-1 rounded-lg border border-border bg-card px-3 py-2 text-sm" />
-              <button onClick={() => enroll.mutate()} disabled={enroll.isPending} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-60">
-                {enroll.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Fingerprint className="h-3.5 w-3.5" />} Enrol
+              <input
+                value={deviceName}
+                onChange={(e) => setDeviceName(e.target.value)}
+                placeholder="Device name (optional)"
+                className="flex-1 rounded-lg border border-border bg-card px-3 py-2 text-sm"
+              />
+              <button
+                onClick={() => enroll.mutate()}
+                disabled={enroll.isPending}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-60"
+              >
+                {enroll.isPending ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Fingerprint className="h-3.5 w-3.5" />
+                )}{" "}
+                Enrol
               </button>
             </div>
           </>
@@ -207,15 +256,26 @@ function BiometricPass() {
           <KeyRound className="h-4 w-4 text-primary" /> Issue a pass
         </h2>
         {!hasCred ? (
-          <EmptyState title="Enrol first" description="Enrol at least one biometric device before issuing passes." />
+          <EmptyState
+            title="Enrol first"
+            description="Enrol at least one biometric device before issuing passes."
+          />
         ) : (
           <>
             <div className="grid grid-cols-2 gap-2">
-              <select value={kind} onChange={(e) => setKind(e.target.value as "self" | "guest")} className="rounded-lg border border-border bg-card px-3 py-2 text-sm">
+              <select
+                value={kind}
+                onChange={(e) => setKind(e.target.value as "self" | "guest")}
+                className="rounded-lg border border-border bg-card px-3 py-2 text-sm"
+              >
                 <option value="self">For me</option>
                 <option value="guest">For a guest</option>
               </select>
-              <select value={ttl} onChange={(e) => setTtl(Number(e.target.value))} className="rounded-lg border border-border bg-card px-3 py-2 text-sm">
+              <select
+                value={ttl}
+                onChange={(e) => setTtl(Number(e.target.value))}
+                className="rounded-lg border border-border bg-card px-3 py-2 text-sm"
+              >
                 <option value={15}>Valid 15 min</option>
                 <option value={30}>Valid 30 min</option>
                 <option value={60}>Valid 1 hour</option>
@@ -223,11 +283,25 @@ function BiometricPass() {
                 <option value={1440}>Valid 24 hours</option>
               </select>
               {kind === "guest" && (
-                <input value={guestName} onChange={(e) => setGuestName(e.target.value)} placeholder="Guest name" className="col-span-2 rounded-lg border border-border bg-card px-3 py-2 text-sm" />
+                <input
+                  value={guestName}
+                  onChange={(e) => setGuestName(e.target.value)}
+                  placeholder="Guest name"
+                  className="col-span-2 rounded-lg border border-border bg-card px-3 py-2 text-sm"
+                />
               )}
             </div>
-            <button onClick={() => issue.mutate()} disabled={issue.isPending} className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-60">
-              {issue.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Fingerprint className="h-3.5 w-3.5" />} Verify & issue
+            <button
+              onClick={() => issue.mutate()}
+              disabled={issue.isPending}
+              className="mt-3 inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground disabled:opacity-60"
+            >
+              {issue.isPending ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Fingerprint className="h-3.5 w-3.5" />
+              )}{" "}
+              Verify & issue
             </button>
           </>
         )}
@@ -235,17 +309,34 @@ function BiometricPass() {
 
       <Card>
         <h2 className="mb-3 text-sm font-semibold">Recent passes</h2>
-        {passes.isLoading ? <ListSkeleton rows={2} /> : (passes.data ?? []).length === 0 ? (
+        {passes.isLoading ? (
+          <ListSkeleton rows={2} />
+        ) : (passes.data ?? []).length === 0 ? (
           <p className="text-sm text-muted-foreground">No passes yet.</p>
         ) : (
           <ul className="space-y-2">
             {(passes.data ?? []).map((p: any) => (
-              <li key={p.id} className="flex items-center justify-between rounded-lg border border-border/60 bg-card px-3 py-2 text-sm">
+              <li
+                key={p.id}
+                className="flex items-center justify-between rounded-lg border border-border/60 bg-card px-3 py-2 text-sm"
+              >
                 <div>
                   <div className="font-mono text-base font-semibold tracking-widest">{p.code}</div>
-                  <div className="text-xs text-muted-foreground">{p.kind}{p.guest_name ? ` · ${p.guest_name}` : ""} · expires {format(new Date(p.expires_at), "MMM d, HH:mm")}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {p.kind}
+                    {p.guest_name ? ` · ${p.guest_name}` : ""} · expires{" "}
+                    {format(new Date(p.expires_at), "MMM d, HH:mm")}
+                  </div>
                 </div>
-                <StatusBadge tone={p.used_at ? "success" : new Date(p.expires_at) < new Date() ? "warning" : "primary"}>
+                <StatusBadge
+                  tone={
+                    p.used_at
+                      ? "success"
+                      : new Date(p.expires_at) < new Date()
+                        ? "warning"
+                        : "primary"
+                  }
+                >
                   {p.used_at ? "Used" : new Date(p.expires_at) < new Date() ? "Expired" : "Active"}
                 </StatusBadge>
               </li>

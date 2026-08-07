@@ -26,8 +26,7 @@ export const Route = createFileRoute("/app/admin/vehicles")({
       { title: "Vehicle Tags — Estate Guard" },
       {
         name: "description",
-        content:
-          "Register, activate and revoke resident vehicle tags used at the estate gate.",
+        content: "Register, activate and revoke resident vehicle tags used at the estate gate.",
       },
     ],
   }),
@@ -61,7 +60,6 @@ function VehicleTags() {
   const [adding, setAdding] = useState(false);
   const [reveal, setReveal] = useState<Record<string, boolean>>({});
   const [toDelete, setToDelete] = useState<Tag | null>(null);
-
 
   const tagsQ = useQuery({
     queryKey: ["admin-vehicle-tags", estateId],
@@ -250,7 +248,11 @@ function VehicleTags() {
                         Gate tag
                       </dt>
                       <dd className="truncate font-mono text-foreground">
-                        {v.tag_number ? (reveal[v.id] ? v.tag_number : maskValue(v.tag_number)) : "—"}
+                        {v.tag_number
+                          ? reveal[v.id]
+                            ? v.tag_number
+                            : maskValue(v.tag_number)
+                          : "—"}
                       </dd>
                     </div>
                   </dl>
@@ -290,7 +292,6 @@ function VehicleTags() {
         )}
       </StaggerItem>
 
-
       {adding && (
         <AddVehicleDialog
           estateId={estateId}
@@ -307,9 +308,7 @@ function VehicleTags() {
         open={!!toDelete}
         title="Remove vehicle?"
         description={
-          toDelete
-            ? `${toDelete.plate} will no longer be recognised at the gate.`
-            : undefined
+          toDelete ? `${toDelete.plate} will no longer be recognised at the gate.` : undefined
         }
         confirmLabel="Remove"
         tone="destructive"
@@ -381,7 +380,6 @@ function AddVehicleDialog({
           Attach a plate to a resident so guards can verify entry at the gate.
         </p>
         <div className="space-y-3">
-
           <Labeled label="Resident">
             <select
               value={residentId}
@@ -434,7 +432,6 @@ function AddVehicleDialog({
       </div>
     </SheetModal>
   );
-
 }
 
 function Labeled({ label, children }: { label: string; children: React.ReactNode }) {

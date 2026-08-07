@@ -215,7 +215,11 @@ function EstateProfile() {
     contact_email: "",
     contact_phone: "",
   });
-  const [addressForm, setAddressForm] = useState({ streets: "", house_numbers: "", unit_numbers: "" });
+  const [addressForm, setAddressForm] = useState({
+    streets: "",
+    house_numbers: "",
+    unit_numbers: "",
+  });
   const [validity, setValidity] = useState("");
 
   useEffect(() => {
@@ -531,7 +535,9 @@ function EstateProfile() {
                           <div className="truncate text-xs text-muted-foreground">
                             {a.guest_name}
                           </div>
-                          <div className="text-[11px] italic text-muted-foreground/80">{a.code}</div>
+                          <div className="text-[11px] italic text-muted-foreground/80">
+                            {a.code}
+                          </div>
                         </div>
                         <span className="shrink-0 text-[11px] text-muted-foreground">
                           {formatDistanceToNow(new Date(at), { addSuffix: true })}

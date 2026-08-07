@@ -136,9 +136,7 @@ function Discounts() {
       if (tab === "active" && !d.active) return false;
       if (tab === "inactive" && d.active) return false;
       if (!needle) return true;
-      return (
-        (d.code ?? "").toLowerCase().includes(needle) || d.name.toLowerCase().includes(needle)
-      );
+      return (d.code ?? "").toLowerCase().includes(needle) || d.name.toLowerCase().includes(needle);
     });
   }, [rows, q, tab]);
 
@@ -211,7 +209,9 @@ function Discounts() {
   if (!estateId) return <EmptyState title="No estate assigned" />;
 
   const valueLabel = (d: Discount) =>
-    d.code_type === "fixed" ? `₦${Number(d.value).toLocaleString()} off` : `${Number(d.value)}% off`;
+    d.code_type === "fixed"
+      ? `₦${Number(d.value).toLocaleString()} off`
+      : `${Number(d.value)}% off`;
 
   return (
     <Stagger className="mx-auto w-full max-w-6xl space-y-4">

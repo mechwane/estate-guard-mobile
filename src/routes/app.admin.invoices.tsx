@@ -93,7 +93,9 @@ function AdminInvoices() {
 
   const paymentMap = useMemo(() => {
     const m = new Map<string, { method: string; paid_at: string }>();
-    (data.data?.payments ?? []).forEach((p) => m.set(p.bill_id, { method: p.method, paid_at: p.paid_at }));
+    (data.data?.payments ?? []).forEach((p) =>
+      m.set(p.bill_id, { method: p.method, paid_at: p.paid_at }),
+    );
     return m;
   }, [data.data]);
 
@@ -134,7 +136,9 @@ function AdminInvoices() {
   const totals = useMemo(() => {
     const all = data.data?.bills ?? [];
     const billed = all.reduce((s, b) => s + Number(b.amount ?? 0), 0);
-    const paid = all.filter((b) => settled(b.status)).reduce((s, b) => s + Number(b.amount ?? 0), 0);
+    const paid = all
+      .filter((b) => settled(b.status))
+      .reduce((s, b) => s + Number(b.amount ?? 0), 0);
     const overdue = all
       .filter((b) => !settled(b.status) && isBefore(new Date(b.due_date), new Date()))
       .reduce((s, b) => s + Number(b.amount ?? 0), 0);
@@ -143,10 +147,13 @@ function AdminInvoices() {
 
   const markPaid = useMutation({
     mutationFn: async ({ id, method }: { id: string; method: string }) => {
-      const { error } = await supabase.rpc("admin_record_bill_payment" as never, {
-        _bill_id: id,
-        _method: method,
-      } as never);
+      const { error } = await supabase.rpc(
+        "admin_record_bill_payment" as never,
+        {
+          _bill_id: id,
+          _method: method,
+        } as never,
+      );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -204,7 +211,11 @@ function AdminInvoices() {
           value={ngn(totals.outstanding)}
           tone={totals.outstanding ? "warning" : "default"}
         />
-        <StatCard label="Overdue" value={ngn(totals.overdue)} tone={totals.overdue ? "error" : "default"} />
+        <StatCard
+          label="Overdue"
+          value={ngn(totals.overdue)}
+          tone={totals.overdue ? "error" : "default"}
+        />
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
@@ -221,7 +232,11 @@ function AdminInvoices() {
           }
         />
         <div className="min-w-[180px] flex-1">
-          <SearchInput value={query} onChange={setQuery} placeholder="Search resident, unit or invoice…" />
+          <SearchInput
+            value={query}
+            onChange={setQuery}
+            placeholder="Search resident, unit or invoice…"
+          />
         </div>
       </div>
 
@@ -278,8 +293,8 @@ function AdminInvoices() {
                           disabled={markPaid.isPending}
                           className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-2.5 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
                         >
-                          {markPaid.isPending && <Loader2 className="h-3 w-3 animate-spin" />} Record
-                          payment
+                          {markPaid.isPending && <Loader2 className="h-3 w-3 animate-spin" />}{" "}
+                          Record payment
                         </button>
                       )}
                     </td>
@@ -304,7 +319,9 @@ function AdminInvoices() {
                     </div>
                   </div>
                   <div className="shrink-0 text-right">
-                    <div className="text-sm font-semibold tabular-nums">{ngn(Number(r.amount))}</div>
+                    <div className="text-sm font-semibold tabular-nums">
+                      {ngn(Number(r.amount))}
+                    </div>
                     <StatusBadge
                       tone={settled(r.status) ? "success" : r.overdue ? "error" : "warning"}
                     >

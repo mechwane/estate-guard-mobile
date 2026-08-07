@@ -163,9 +163,7 @@ function Profile() {
                 )}
                 Change avatar
               </button>
-              <p className="mt-1.5 text-[11px] text-muted-foreground">
-                PNG / JPG / WEBP · max 2MB
-              </p>
+              <p className="mt-1.5 text-[11px] text-muted-foreground">PNG / JPG / WEBP · max 2MB</p>
               <input
                 ref={fileRef}
                 type="file"
@@ -274,7 +272,8 @@ function Profile() {
             disabled={changeEmail.isPending || !newEmail}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
           >
-            {changeEmail.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Send confirmation
+            {changeEmail.isPending && <Loader2 className="h-4 w-4 animate-spin" />} Send
+            confirmation
           </button>
           <p className="text-[11px] text-muted-foreground">
             You'll get a confirmation email at both your current and new address.

@@ -9,9 +9,16 @@ export const Route = createFileRoute("/app/resident/faqs")({
   head: () => ({
     meta: [
       { title: "Frequently Asked Questions — Estate Guard" },
-      { name: "description", content: "Answers to common questions about invites, dependents, verification, bills, and premium features on Estate Guard." },
+      {
+        name: "description",
+        content:
+          "Answers to common questions about invites, dependents, verification, bills, and premium features on Estate Guard.",
+      },
       { property: "og:title", content: "Frequently Asked Questions — Estate Guard" },
-      { property: "og:description", content: "Answers to common questions about Estate Guard for residents." },
+      {
+        property: "og:description",
+        content: "Answers to common questions about Estate Guard for residents.",
+      },
       { property: "og:url", content: "https://guard-estate-flow.lovable.app/app/resident/faqs" },
     ],
     links: [{ rel: "canonical", href: "https://guard-estate-flow.lovable.app/app/resident/faqs" }],
