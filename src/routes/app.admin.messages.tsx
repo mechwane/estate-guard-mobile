@@ -17,22 +17,31 @@ import {
 } from "@/components/ui-kit";
 import { Stagger, StaggerItem } from "@/components/motion-kit";
 import { biometricConfirm } from "@/lib/biometric-confirm";
+import { AdminChat } from "@/components/estate-chat";
 
 export const Route = createFileRoute("/app/admin/messages")({
   component: Messages,
   head: () => ({
     meta: [
-      { title: "Broadcast & Messages — Estate Guard" },
+      { title: "Messages & Broadcast — Estate Guard" },
       {
         name: "description",
         content:
-          "Send estate-wide announcements or direct notices to a single resident, and review delivery history.",
+          "Chat with residents in real time, send estate-wide announcements or direct notices, and review delivery history.",
       },
+      { property: "og:title", content: "Messages & Broadcast — Estate Guard" },
+      {
+        property: "og:description",
+        content: "Real-time resident chat plus estate-wide broadcasts for estate administrators.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
 });
 
 type Mode = "broadcast" | "direct";
+
 
 const TEMPLATES: { label: string; title: string; body: string }[] = [
   {
