@@ -596,7 +596,7 @@ function AdminPolls() {
                   (v) => v.poll_id === resultsRow.id && v.item_id === item.id,
                 );
                 const options = ((item.options as string[] | null) ?? []).map(String);
-                const total = votes.length;
+                const total = votes.reduce((sum, v) => sum + v.votes, 0);
                 return (
                   <div key={item.id} className="space-y-2">
                     <div className="flex items-center justify-between text-sm font-medium text-foreground">
@@ -604,9 +604,12 @@ function AdminPolls() {
                       <span className="text-xs text-muted-foreground">{total} vote(s)</span>
                     </div>
                     {options.map((option) => {
-                      const count = votes.filter((v) => v.option_key === option).length;
+                      const count = votes
+                        .filter((v) => v.option_key === option)
+                        .reduce((sum, v) => sum + v.votes, 0);
                       const pct = total ? Math.round((count / total) * 100) : 0;
                       return (
+
                         <div key={option} className="space-y-1">
                           <div className="flex justify-between text-xs text-muted-foreground">
                             <span className="truncate">{option}</span>
