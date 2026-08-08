@@ -264,9 +264,10 @@ export function AppShell({
             "mx-auto w-full px-4 pt-4 page-enter sm:px-5",
             desktopFirst
               ? "max-w-3xl pb-10 lg:max-w-[1600px] lg:px-8 lg:pt-6"
-              : "max-w-2xl pb-28 md:max-w-7xl md:px-8 md:pb-10 md:pt-8",
+              : "max-w-2xl pb-28",
           )}
         >
+
           <h1 className="sr-only">
             {title}
             {subtitle ? ` — ${subtitle}` : ""}
