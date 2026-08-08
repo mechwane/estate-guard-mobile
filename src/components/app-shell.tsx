@@ -149,9 +149,11 @@ export function AppShell({
   );
 
   // Admin / Super Admin are desktop consoles: sidebar from `lg`, and no bottom bar.
-  const sidebarVisible = desktopFirst ? "lg:flex" : "md:flex";
-  const shellFlex = desktopFirst ? "lg:flex" : "md:flex";
-  const hideOnDesktop = desktopFirst ? "lg:hidden" : "md:hidden";
+  // Resident / Guard are phone apps: never a sidebar, always the bottom tab bar.
+  const sidebarVisible = desktopFirst ? "lg:flex" : "hidden";
+  const shellFlex = desktopFirst ? "lg:flex" : "";
+  const hideOnDesktop = desktopFirst ? "lg:hidden" : "";
+
 
   return (
     <div className={cn("min-h-screen bg-background", shellFlex)}>
@@ -262,9 +264,10 @@ export function AppShell({
             "mx-auto w-full px-4 pt-4 page-enter sm:px-5",
             desktopFirst
               ? "max-w-3xl pb-10 lg:max-w-[1600px] lg:px-8 lg:pt-6"
-              : "max-w-2xl pb-28 md:max-w-7xl md:px-8 md:pb-10 md:pt-8",
+              : "max-w-2xl pb-28",
           )}
         >
+
           <h1 className="sr-only">
             {title}
             {subtitle ? ` — ${subtitle}` : ""}
@@ -317,7 +320,7 @@ export function AppShell({
 
       {/* Bottom tab bar — phone-first roles only */}
       {!desktopFirst && (
-        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur md:hidden">
+        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur">
           <div className="scroll-x mx-auto flex max-w-2xl items-stretch gap-1 px-2 pt-1.5 safe-bottom">
             {navItems.map((it) => (
               <Link
