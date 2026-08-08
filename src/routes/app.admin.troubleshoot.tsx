@@ -384,9 +384,10 @@ function Troubleshoot() {
                       {format(new Date(o.expires_at), "d MMM HH:mm")}
                     </div>
                   </div>
-                  <span className="rounded-md bg-muted px-2 py-1 font-mono text-sm tracking-widest">
-                    {o.code}
+                  <span className="rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+                    {o.used_at ? "Used" : "Sent to resident"}
                   </span>
+
                 </li>
               ))}
             </ul>
