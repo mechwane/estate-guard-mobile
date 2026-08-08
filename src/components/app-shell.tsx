@@ -320,7 +320,7 @@ export function AppShell({
 
       {/* Bottom tab bar — phone-first roles only */}
       {!desktopFirst && (
-        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur md:hidden">
+        <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur">
           <div className="scroll-x mx-auto flex max-w-2xl items-stretch gap-1 px-2 pt-1.5 safe-bottom">
             {navItems.map((it) => (
               <Link
