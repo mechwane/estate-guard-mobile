@@ -43,20 +43,93 @@ function AppLayout() {
   const role = session.role as AppRole;
   const { title, subtitle } = deriveHeader(location.pathname);
 
+  // Residents must be approved by their estate admin before they can use the app.
+  const allowedWhilePending = [
+    "/app/resident/verification",
+    "/app/resident/profile",
+    "/app/resident/support",
+    "/app/resident/faqs",
+    "/app/resident/privacy",
+    "/app/resident/terms",
+    "/app/resident/settings",
+  ];
+  const locked =
+    role === "resident" &&
+    !!session.profile &&
+    !session.profile.approved &&
+    !allowedWhilePending.includes(location.pathname);
+
   return (
     <AppShell
       role={role}
-      title={title}
-      subtitle={subtitle}
+      title={locked ? "Awaiting approval" : title}
+      subtitle={locked ? "Your estate admin must approve your account" : subtitle}
       estateName={session.estate?.name ?? null}
       navItems={navByRole[role]}
       navGroups={sidebarGroupsByRole[role]}
       desktopFirst={desktopFirstRoles.includes(role)}
     >
-      <Outlet />
+      {locked ? (
+        <PendingApproval
+          status={session.profile?.verification_status ?? "not_submitted"}
+          notes={session.profile?.verification_notes ?? null}
+          estateName={session.estate?.name ?? null}
+        />
+      ) : (
+        <Outlet />
+      )}
     </AppShell>
   );
 }
+
+function PendingApproval({
+  status,
+  notes,
+  estateName,
+}: {
+  status: string;
+  notes: string | null;
+  estateName: string | null;
+}) {
+  return (
+    <div className="mx-auto max-w-md space-y-4 py-6 text-center">
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+        <ShieldAlert className="h-7 w-7" />
+      </div>
+      <div>
+        <h2 className="text-base font-semibold">Account awaiting approval</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {estateName ? `${estateName} management` : "Your estate management"} has not granted you
+          access yet. Once approved, every feature unlocks automatically.
+        </p>
+      </div>
+      <div className="rounded-xl border border-border bg-card p-4 text-left text-sm">
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-xs text-muted-foreground">Verification</span>
+          <span className="font-medium capitalize">{status.replace("_", " ")}</span>
+        </div>
+        {notes && <p className="mt-2 text-xs text-muted-foreground">Note: {notes}</p>}
+      </div>
+      <div className="flex flex-col gap-2">
+        {status !== "pending" && status !== "approved" && (
+          <Link
+            to="/app/resident/verification"
+            className="rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-dark"
+          >
+            Submit verification
+          </Link>
+        )}
+        <Link
+          to="/app/resident/support"
+          className="rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium hover:bg-muted"
+        >
+          Contact support
+        </Link>
+      </div>
+    </div>
+  );
+}
+
 
 function deriveHeader(path: string): { title: string; subtitle?: string } {
   const map: Record<string, { title: string; subtitle?: string }> = {
