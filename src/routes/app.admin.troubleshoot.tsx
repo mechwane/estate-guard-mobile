@@ -168,16 +168,13 @@ function Troubleshoot() {
     queryKey: ["admin-support-otps", estateId],
     enabled: !!estateId,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("support_otps")
-        .select("id, email, purpose, code, expires_at, created_at")
-        .eq("estate_id", estateId!)
-        .order("created_at", { ascending: false })
-        .limit(5);
+      // Codes are never returned to admins — only delivery metadata.
+      const { data, error } = await supabase.rpc("admin_recent_support_otps", { _limit: 5 });
       if (error) throw error;
-      return data;
+      return data ?? [];
     },
   });
+
 
   async function resync(entry: (typeof RESYNC)[number]) {
     if (!estateId) return;
@@ -387,9 +384,10 @@ function Troubleshoot() {
                       {format(new Date(o.expires_at), "d MMM HH:mm")}
                     </div>
                   </div>
-                  <span className="rounded-md bg-muted px-2 py-1 font-mono text-sm tracking-widest">
-                    {o.code}
+                  <span className="rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+                    {o.used_at ? "Used" : "Sent to resident"}
                   </span>
+
                 </li>
               ))}
             </ul>
