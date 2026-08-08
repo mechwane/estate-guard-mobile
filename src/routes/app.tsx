@@ -1,9 +1,10 @@
-import { Outlet, createFileRoute, useNavigate, useLocation } from "@tanstack/react-router";
+import { Outlet, createFileRoute, useNavigate, useLocation, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useSession, roleHome, type AppRole } from "@/lib/session";
 import { AppShell } from "@/components/app-shell";
 import { navByRole, sidebarGroupsByRole, desktopFirstRoles } from "@/components/nav-config";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldAlert } from "lucide-react";
+
 
 export const Route = createFileRoute("/app")({
   ssr: false,
