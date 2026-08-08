@@ -149,9 +149,11 @@ export function AppShell({
   );
 
   // Admin / Super Admin are desktop consoles: sidebar from `lg`, and no bottom bar.
-  const sidebarVisible = desktopFirst ? "lg:flex" : "md:flex";
-  const shellFlex = desktopFirst ? "lg:flex" : "md:flex";
-  const hideOnDesktop = desktopFirst ? "lg:hidden" : "md:hidden";
+  // Resident / Guard are phone apps: never a sidebar, always the bottom tab bar.
+  const sidebarVisible = desktopFirst ? "lg:flex" : "hidden";
+  const shellFlex = desktopFirst ? "lg:flex" : "";
+  const hideOnDesktop = desktopFirst ? "lg:hidden" : "";
+
 
   return (
     <div className={cn("min-h-screen bg-background", shellFlex)}>
