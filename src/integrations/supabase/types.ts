@@ -2246,6 +2246,17 @@ export type Database = {
         Args: { _email: string; _ttl_minutes: number }
         Returns: Json
       }
+      admin_recent_support_otps: {
+        Args: { _limit?: number }
+        Returns: {
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          purpose: string
+          used_at: string
+        }[]
+      }
       admin_record_bill_payment: {
         Args: { _bill_id: string; _method?: string; _reference?: string }
         Returns: undefined
