@@ -310,10 +310,18 @@ function Thread({
                 alt=""
                 className="h-9 w-9 rounded-lg object-cover"
               />
+            ) : pending.type.startsWith("audio/") ? (
+              <audio
+                src={URL.createObjectURL(pending)}
+                controls
+                className="h-9 min-w-0 flex-1"
+              />
             ) : (
               <FileText className="h-4 w-4 text-muted-foreground" />
             )}
-            <span className="min-w-0 flex-1 truncate">{pending.name}</span>
+            {!pending.type.startsWith("audio/") && (
+              <span className="min-w-0 flex-1 truncate">{pending.name}</span>
+            )}
             <button
               type="button"
               onClick={() => setPending(null)}
@@ -324,52 +332,89 @@ function Thread({
             </button>
           </div>
         )}
-        <div className="flex items-end gap-2">
-          <input
-            ref={fileInput}
-            type="file"
-            accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.txt"
-            className="hidden"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) setPending(f);
-              e.target.value = "";
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => fileInput.current?.click()}
-            aria-label="Attach a photo or file"
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted"
-          >
-            <Paperclip className="h-4 w-4" />
-          </button>
-          <textarea
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                if (canSend) send.mutate();
-              }
-            }}
-            rows={1}
-            placeholder="Type your message…"
-            className="max-h-28 min-h-10 flex-1 resize-none rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
-          />
-          <button
-            type="submit"
-            disabled={!canSend}
-            aria-label="Send message"
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105 disabled:opacity-50"
-          >
-            {send.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+        {voice.recording ? (
+          <div className="flex items-center gap-3 rounded-2xl border border-destructive/40 bg-destructive/5 px-4 py-2.5">
+            <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-destructive" />
+            <span className="flex-1 text-sm font-medium">
+              Recording… {formatDuration(voice.seconds)}
+            </span>
+            <button
+              type="button"
+              onClick={() => void voice.stop(true)}
+              aria-label="Discard voice note"
+              className="grid h-9 w-9 place-items-center rounded-full border border-border text-muted-foreground hover:bg-muted"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={stopRecording}
+              aria-label="Stop recording"
+              className="grid h-9 w-9 place-items-center rounded-full bg-primary text-primary-foreground"
+            >
+              <Square className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-end gap-2">
+            <input
+              ref={fileInput}
+              type="file"
+              accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.txt"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) setPending(f);
+                e.target.value = "";
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => fileInput.current?.click()}
+              aria-label="Attach a photo or file"
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted"
+            >
+              <Paperclip className="h-4 w-4" />
+            </button>
+            <textarea
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  if (canSend) send.mutate();
+                }
+              }}
+              rows={1}
+              placeholder="Type your message…"
+              className="max-h-28 min-h-10 flex-1 resize-none rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
+            />
+            {voice.supported && !draft.trim() && !pending ? (
+              <button
+                type="button"
+                onClick={startRecording}
+                aria-label="Record a voice note"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105"
+              >
+                <Mic className="h-4 w-4" />
+              </button>
             ) : (
-              <Send className="h-4 w-4" />
+              <button
+                type="submit"
+                disabled={!canSend}
+                aria-label="Send message"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105 disabled:opacity-50"
+              >
+                {send.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </button>
             )}
-          </button>
-        </div>
+          </div>
+        )}
+
       </form>
     </div>
   );
