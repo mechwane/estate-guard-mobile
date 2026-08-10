@@ -289,13 +289,11 @@ function IssueCard({
       return;
     }
     setStatus(finalStatus);
-    await supabase.from("audit_logs").insert({
-      estate_id: session.estate.id,
-      actor_id: session.userId,
-      action: "issue.updated",
-      entity: "issues",
-      entity_id: issue.id,
-      metadata: { status: finalStatus },
+    await supabase.rpc("log_activity", {
+      _action: "issue.updated",
+      _entity: "issues",
+      _entity_id: issue.id,
+      _metadata: { status: finalStatus },
     });
     if (issue.resident_id) {
       await supabase.from("notifications").insert({
