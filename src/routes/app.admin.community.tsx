@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { Card, EmptyState, ImagePicker } from "@/components/ui-kit";
+import { Card, EmptyState, ImagePicker, SheetModal } from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
 import { Plus, Loader2, Pencil, Trash2, Megaphone, CalendarDays, Send } from "lucide-react";
 import { format } from "date-fns";
@@ -290,16 +290,47 @@ function MeetingsPanel() {
 
   return (
     <div className="space-y-4">
-      {!creating ? (
-        <button
-          onClick={() => setCreating(true)}
-          className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-dark"
-        >
-          <Plus className="h-4 w-4" /> Schedule meeting
-        </button>
-      ) : (
-        <FadeIn>
-          <Card className="space-y-3 p-4">
+      <button
+        onClick={() => setCreating(true)}
+        className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-dark"
+      >
+        <Plus className="h-4 w-4" /> Schedule meeting
+      </button>
+
+      <SheetModal
+        open={creating}
+        title="Schedule meeting"
+        onClose={() => {
+          setCreating(false);
+          setForm(EMPTY_MEETING);
+        }}
+        footer={
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                setCreating(false);
+                setForm(EMPTY_MEETING);
+              }}
+              className="flex-1 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => broadcast.mutate(form)}
+              disabled={broadcast.isPending}
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
+            >
+              {broadcast.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
+              Broadcast
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-3">
             <Label label="Title">
               <input
                 value={form.title}
@@ -342,32 +373,8 @@ function MeetingsPanel() {
                 className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
             </Label>
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  setCreating(false);
-                  setForm(EMPTY_MEETING);
-                }}
-                className="flex-1 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => broadcast.mutate(form)}
-                disabled={broadcast.isPending}
-                className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
-              >
-                {broadcast.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Send className="h-4 w-4" />
-                )}
-                Broadcast to residents
-              </button>
-            </div>
-          </Card>
-        </FadeIn>
-      )}
+        </div>
+      </SheetModal>
 
       {list.isLoading ? (
         <div className="flex justify-center py-8">
@@ -380,7 +387,7 @@ function MeetingsPanel() {
           icon={<CalendarDays className="h-6 w-6" />}
         />
       ) : (
-        <Stagger className="space-y-2">
+        <Stagger className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {list.data.map((m: any) => (
             <StaggerItem key={m.id}>
               <Card className="flex items-start justify-between gap-3 p-3">
