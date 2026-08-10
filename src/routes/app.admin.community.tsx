@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { Card, EmptyState, ImagePicker, SheetModal } from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
+import { CommentButton, CommentThread, useCommentCounts } from "@/components/post-comments";
 import { Plus, Loader2, Pencil, Trash2, Megaphone, CalendarDays, Send } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -206,11 +207,23 @@ function PostsPanel() {
                 <p className="mt-2 line-clamp-2 whitespace-pre-wrap text-xs text-muted-foreground">
                   {p.body}
                 </p>
+                <div className="mt-2">
+                  <CommentButton
+                    count={commentCounts.data?.[p.id] ?? 0}
+                    onClick={() => setComments({ id: p.id, title: p.title })}
+                  />
+                </div>
               </Card>
             </StaggerItem>
           ))}
         </Stagger>
       )}
+
+      <CommentThread
+        postId={comments?.id ?? null}
+        postTitle={comments?.title}
+        onClose={() => setComments(null)}
+      />
     </div>
   );
 }
