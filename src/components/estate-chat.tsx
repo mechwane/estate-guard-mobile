@@ -71,11 +71,29 @@ function Avatar({ name, url, size = 40 }: { name: string; url?: string | null; s
   );
 }
 
-/** Renders an uploaded chat attachment: inline image or a downloadable file chip. */
+/** Renders an uploaded chat attachment: image, voice note or downloadable file. */
 function Attachment({ message, mine }: { message: ChatMessage; mine: boolean }) {
   const url = useMediaUrl(message.attachment_url);
-  const isImage = (message.attachment_type ?? "").startsWith("image/");
+  const type = message.attachment_type ?? "";
+  const isImage = type.startsWith("image/");
+  const isAudio = type.startsWith("audio/");
   if (!message.attachment_url) return null;
+  if (isAudio)
+    return (
+      <div
+        className={`mb-1 flex min-w-[190px] items-center gap-2 rounded-xl px-2 py-1.5 ${
+          mine ? "bg-primary-foreground/15" : "bg-muted"
+        }`}
+      >
+        <Mic className="h-3.5 w-3.5 shrink-0 opacity-70" />
+        {url ? (
+          <audio src={url} controls preload="metadata" className="h-9 w-full min-w-0" />
+        ) : (
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        )}
+      </div>
+    );
+
   if (isImage)
     return (
       <a href={url ?? undefined} target="_blank" rel="noreferrer" className="block">
