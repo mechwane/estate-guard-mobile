@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "@/lib/session";
 import { Card, ModalPortal } from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
+import { SocialFooter } from "@/components/social-footer";
 import {
   ChevronRight,
   ShieldCheck,
@@ -18,6 +19,7 @@ import {
   Check,
   X,
   MessageSquareHeart,
+  MessageSquare,
   Star,
   Share2,
   Shield,
@@ -181,6 +183,11 @@ function More() {
             label="Estate Contacts"
           />
           <Row
+            to="/app/resident/chat"
+            icon={<MessageSquare className="h-4 w-4" />}
+            label="Chat with management"
+          />
+          <Row
             to="/app/resident/support"
             icon={<LifeBuoy className="h-4 w-4" />}
             label="Support Tickets"
@@ -249,6 +256,12 @@ function More() {
           <LogOut className="h-4 w-4" /> Sign out
         </button>
       </FadeIn>
+
+      <FadeIn delay={0.3}>
+        <SocialFooter />
+      </FadeIn>
+
+
 
       {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} currentPlan={plan} />}
     </div>

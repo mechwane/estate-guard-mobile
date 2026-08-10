@@ -59,6 +59,8 @@ import { Route as AppGuardNoticesRouteImport } from './routes/app.guard.notices'
 import { Route as AppGuardMoreRouteImport } from './routes/app.guard.more'
 import { Route as AppGuardIncidentsRouteImport } from './routes/app.guard.incidents'
 import { Route as AppGuardHistoryRouteImport } from './routes/app.guard.history'
+import { Route as AppGuardContactsRouteImport } from './routes/app.guard.contacts'
+import { Route as AppGuardChatRouteImport } from './routes/app.guard.chat'
 import { Route as AppGuardActiveRouteImport } from './routes/app.guard.active'
 import { Route as AppAdminVerificationsRouteImport } from './routes/app.admin.verifications'
 import { Route as AppAdminVehiclesRouteImport } from './routes/app.admin.vehicles'
@@ -345,6 +347,16 @@ const AppGuardHistoryRoute = AppGuardHistoryRouteImport.update({
   path: '/guard/history',
   getParentRoute: () => AppRoute,
 } as any)
+const AppGuardContactsRoute = AppGuardContactsRouteImport.update({
+  id: '/guard/contacts',
+  path: '/guard/contacts',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardChatRoute = AppGuardChatRouteImport.update({
+  id: '/guard/chat',
+  path: '/guard/chat',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppGuardActiveRoute = AppGuardActiveRouteImport.update({
   id: '/guard/active',
   path: '/guard/active',
@@ -560,6 +572,8 @@ export interface FileRoutesByFullPath {
   '/app/admin/vehicles': typeof AppAdminVehiclesRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
   '/app/guard/active': typeof AppGuardActiveRoute
+  '/app/guard/chat': typeof AppGuardChatRoute
+  '/app/guard/contacts': typeof AppGuardContactsRoute
   '/app/guard/history': typeof AppGuardHistoryRoute
   '/app/guard/incidents': typeof AppGuardIncidentsRoute
   '/app/guard/more': typeof AppGuardMoreRoute
@@ -647,6 +661,8 @@ export interface FileRoutesByTo {
   '/app/admin/vehicles': typeof AppAdminVehiclesRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
   '/app/guard/active': typeof AppGuardActiveRoute
+  '/app/guard/chat': typeof AppGuardChatRoute
+  '/app/guard/contacts': typeof AppGuardContactsRoute
   '/app/guard/history': typeof AppGuardHistoryRoute
   '/app/guard/incidents': typeof AppGuardIncidentsRoute
   '/app/guard/more': typeof AppGuardMoreRoute
@@ -735,6 +751,8 @@ export interface FileRoutesById {
   '/app/admin/vehicles': typeof AppAdminVehiclesRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
   '/app/guard/active': typeof AppGuardActiveRoute
+  '/app/guard/chat': typeof AppGuardChatRoute
+  '/app/guard/contacts': typeof AppGuardContactsRoute
   '/app/guard/history': typeof AppGuardHistoryRoute
   '/app/guard/incidents': typeof AppGuardIncidentsRoute
   '/app/guard/more': typeof AppGuardMoreRoute
@@ -824,6 +842,8 @@ export interface FileRouteTypes {
     | '/app/admin/vehicles'
     | '/app/admin/verifications'
     | '/app/guard/active'
+    | '/app/guard/chat'
+    | '/app/guard/contacts'
     | '/app/guard/history'
     | '/app/guard/incidents'
     | '/app/guard/more'
@@ -911,6 +931,8 @@ export interface FileRouteTypes {
     | '/app/admin/vehicles'
     | '/app/admin/verifications'
     | '/app/guard/active'
+    | '/app/guard/chat'
+    | '/app/guard/contacts'
     | '/app/guard/history'
     | '/app/guard/incidents'
     | '/app/guard/more'
@@ -998,6 +1020,8 @@ export interface FileRouteTypes {
     | '/app/admin/vehicles'
     | '/app/admin/verifications'
     | '/app/guard/active'
+    | '/app/guard/chat'
+    | '/app/guard/contacts'
     | '/app/guard/history'
     | '/app/guard/incidents'
     | '/app/guard/more'
@@ -1405,6 +1429,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppGuardHistoryRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/guard/contacts': {
+      id: '/app/guard/contacts'
+      path: '/guard/contacts'
+      fullPath: '/app/guard/contacts'
+      preLoaderRoute: typeof AppGuardContactsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/chat': {
+      id: '/app/guard/chat'
+      path: '/guard/chat'
+      fullPath: '/app/guard/chat'
+      preLoaderRoute: typeof AppGuardChatRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/guard/active': {
       id: '/app/guard/active'
       path: '/guard/active'
@@ -1685,6 +1723,8 @@ interface AppRouteChildren {
   AppAdminVehiclesRoute: typeof AppAdminVehiclesRoute
   AppAdminVerificationsRoute: typeof AppAdminVerificationsRoute
   AppGuardActiveRoute: typeof AppGuardActiveRoute
+  AppGuardChatRoute: typeof AppGuardChatRoute
+  AppGuardContactsRoute: typeof AppGuardContactsRoute
   AppGuardHistoryRoute: typeof AppGuardHistoryRoute
   AppGuardIncidentsRoute: typeof AppGuardIncidentsRoute
   AppGuardMoreRoute: typeof AppGuardMoreRoute
@@ -1766,6 +1806,8 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminVehiclesRoute: AppAdminVehiclesRoute,
   AppAdminVerificationsRoute: AppAdminVerificationsRoute,
   AppGuardActiveRoute: AppGuardActiveRoute,
+  AppGuardChatRoute: AppGuardChatRoute,
+  AppGuardContactsRoute: AppGuardContactsRoute,
   AppGuardHistoryRoute: AppGuardHistoryRoute,
   AppGuardIncidentsRoute: AppGuardIncidentsRoute,
   AppGuardMoreRoute: AppGuardMoreRoute,
