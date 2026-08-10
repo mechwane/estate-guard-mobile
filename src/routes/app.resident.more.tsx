@@ -181,6 +181,11 @@ function More() {
             label="Estate Contacts"
           />
           <Row
+            to="/app/resident/chat"
+            icon={<MessageSquare className="h-4 w-4" />}
+            label="Chat with management"
+          />
+          <Row
             to="/app/resident/support"
             icon={<LifeBuoy className="h-4 w-4" />}
             label="Support Tickets"
