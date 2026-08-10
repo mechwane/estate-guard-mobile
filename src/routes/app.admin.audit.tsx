@@ -86,6 +86,14 @@ const LABELS: Record<string, string> = {
   "verification.approved": "Verification approved",
   "verification.rejected": "Verification rejected",
   "verification.pending": "Verification submitted",
+  "verification.submitted": "Verification submitted",
+  "resident.approved": "Access granted",
+  "resident.revoked": "Access revoked",
+  "collection.created": "Collection created",
+  "bill.created": "Bill created",
+  "issue.created": "Issue reported",
+  "issue.updated": "Issue updated",
+  "feature_flag.set": "Feature flag changed",
 };
 
 function AdminAudit() {
