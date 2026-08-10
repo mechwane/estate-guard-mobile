@@ -150,6 +150,17 @@ function Thread({
   const [pending, setPending] = useState<File | null>(null);
   const fileInput = useRef<HTMLInputElement | null>(null);
   const bottom = useRef<HTMLDivElement | null>(null);
+  const voice = useVoiceRecorder();
+
+  const startRecording = () => {
+    voice.start().catch(() => toast.error("Microphone permission is needed for voice notes."));
+  };
+  const stopRecording = () => {
+    void voice.stop().then((file) => {
+      if (file) setPending(file);
+    });
+  };
+
 
   const thread = useQuery({
     queryKey: ["chat-thread", estateId, residentId],
