@@ -256,6 +256,12 @@ function More() {
         </button>
       </FadeIn>
 
+      <FadeIn delay={0.3}>
+        <SocialFooter />
+      </FadeIn>
+
+
+
       {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} currentPlan={plan} />}
     </div>
   );
