@@ -5,11 +5,14 @@ import {
   FileText,
   Loader2,
   MessageSquare,
+  Mic,
   Paperclip,
   Phone,
   Search,
   Send,
   ShieldCheck,
+  Square,
+  Trash2,
   Users,
   UserRound,
   X,
@@ -20,7 +23,9 @@ import { useSession } from "@/lib/session";
 import { EmptyState, ListSkeleton, ModalPortal } from "@/components/ui-kit";
 import { initialsFor, useAvatarUrl, useAvatarUrls } from "@/lib/avatar";
 import { uploadMedia, useMediaUrl } from "@/lib/media";
+import { formatDuration, useVoiceRecorder } from "@/lib/voice-recorder";
 import { ngn } from "@/lib/format";
+
 
 export interface ChatMessage {
   id: string;
@@ -66,11 +71,29 @@ function Avatar({ name, url, size = 40 }: { name: string; url?: string | null; s
   );
 }
 
-/** Renders an uploaded chat attachment: inline image or a downloadable file chip. */
+/** Renders an uploaded chat attachment: image, voice note or downloadable file. */
 function Attachment({ message, mine }: { message: ChatMessage; mine: boolean }) {
   const url = useMediaUrl(message.attachment_url);
-  const isImage = (message.attachment_type ?? "").startsWith("image/");
+  const type = message.attachment_type ?? "";
+  const isImage = type.startsWith("image/");
+  const isAudio = type.startsWith("audio/");
   if (!message.attachment_url) return null;
+  if (isAudio)
+    return (
+      <div
+        className={`mb-1 flex min-w-[190px] items-center gap-2 rounded-xl px-2 py-1.5 ${
+          mine ? "bg-primary-foreground/15" : "bg-muted"
+        }`}
+      >
+        <Mic className="h-3.5 w-3.5 shrink-0 opacity-70" />
+        {url ? (
+          <audio src={url} controls preload="metadata" className="h-9 w-full min-w-0" />
+        ) : (
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        )}
+      </div>
+    );
+
   if (isImage)
     return (
       <a href={url ?? undefined} target="_blank" rel="noreferrer" className="block">
@@ -127,6 +150,17 @@ function Thread({
   const [pending, setPending] = useState<File | null>(null);
   const fileInput = useRef<HTMLInputElement | null>(null);
   const bottom = useRef<HTMLDivElement | null>(null);
+  const voice = useVoiceRecorder();
+
+  const startRecording = () => {
+    voice.start().catch(() => toast.error("Microphone permission is needed for voice notes."));
+  };
+  const stopRecording = () => {
+    void voice.stop().then((file) => {
+      if (file) setPending(file);
+    });
+  };
+
 
   const thread = useQuery({
     queryKey: ["chat-thread", estateId, residentId],
@@ -287,10 +321,18 @@ function Thread({
                 alt=""
                 className="h-9 w-9 rounded-lg object-cover"
               />
+            ) : pending.type.startsWith("audio/") ? (
+              <audio
+                src={URL.createObjectURL(pending)}
+                controls
+                className="h-9 min-w-0 flex-1"
+              />
             ) : (
               <FileText className="h-4 w-4 text-muted-foreground" />
             )}
-            <span className="min-w-0 flex-1 truncate">{pending.name}</span>
+            {!pending.type.startsWith("audio/") && (
+              <span className="min-w-0 flex-1 truncate">{pending.name}</span>
+            )}
             <button
               type="button"
               onClick={() => setPending(null)}
@@ -301,52 +343,89 @@ function Thread({
             </button>
           </div>
         )}
-        <div className="flex items-end gap-2">
-          <input
-            ref={fileInput}
-            type="file"
-            accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.txt"
-            className="hidden"
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) setPending(f);
-              e.target.value = "";
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => fileInput.current?.click()}
-            aria-label="Attach a photo or file"
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted"
-          >
-            <Paperclip className="h-4 w-4" />
-          </button>
-          <textarea
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                if (canSend) send.mutate();
-              }
-            }}
-            rows={1}
-            placeholder="Type your message…"
-            className="max-h-28 min-h-10 flex-1 resize-none rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
-          />
-          <button
-            type="submit"
-            disabled={!canSend}
-            aria-label="Send message"
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105 disabled:opacity-50"
-          >
-            {send.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+        {voice.recording ? (
+          <div className="flex items-center gap-3 rounded-2xl border border-destructive/40 bg-destructive/5 px-4 py-2.5">
+            <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-destructive" />
+            <span className="flex-1 text-sm font-medium">
+              Recording… {formatDuration(voice.seconds)}
+            </span>
+            <button
+              type="button"
+              onClick={() => void voice.stop(true)}
+              aria-label="Discard voice note"
+              className="grid h-9 w-9 place-items-center rounded-full border border-border text-muted-foreground hover:bg-muted"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={stopRecording}
+              aria-label="Stop recording"
+              className="grid h-9 w-9 place-items-center rounded-full bg-primary text-primary-foreground"
+            >
+              <Square className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-end gap-2">
+            <input
+              ref={fileInput}
+              type="file"
+              accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx,.txt"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) setPending(f);
+                e.target.value = "";
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => fileInput.current?.click()}
+              aria-label="Attach a photo or file"
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted"
+            >
+              <Paperclip className="h-4 w-4" />
+            </button>
+            <textarea
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  if (canSend) send.mutate();
+                }
+              }}
+              rows={1}
+              placeholder="Type your message…"
+              className="max-h-28 min-h-10 flex-1 resize-none rounded-2xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary"
+            />
+            {voice.supported && !draft.trim() && !pending ? (
+              <button
+                type="button"
+                onClick={startRecording}
+                aria-label="Record a voice note"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105"
+              >
+                <Mic className="h-4 w-4" />
+              </button>
             ) : (
-              <Send className="h-4 w-4" />
+              <button
+                type="submit"
+                disabled={!canSend}
+                aria-label="Send message"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-transform hover:scale-105 disabled:opacity-50"
+              >
+                {send.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </button>
             )}
-          </button>
-        </div>
+          </div>
+        )}
+
       </form>
     </div>
   );
@@ -570,8 +649,14 @@ function useChatRealtime(estateId: string | undefined) {
   }, [estateId, qc]);
 }
 
-const preview = (m: ChatMessage) =>
-  m.body?.trim() ? m.body : m.attachment_type?.startsWith("image/") ? "📷 Photo" : "📎 File";
+const preview = (m: ChatMessage) => {
+  if (m.body?.trim()) return m.body;
+  const type = m.attachment_type ?? "";
+  if (type.startsWith("image/")) return "📷 Photo";
+  if (type.startsWith("audio/")) return "🎤 Voice note";
+  return "📎 File";
+};
+
 
 /** Admin console: WhatsApp-style conversation list beside the live thread. */
 export function AdminChat() {
