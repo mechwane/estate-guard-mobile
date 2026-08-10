@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "@/lib/session";
 import { Card, ModalPortal } from "@/components/ui-kit";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
+import { SocialFooter } from "@/components/social-footer";
 import {
   ChevronRight,
   ShieldCheck,
