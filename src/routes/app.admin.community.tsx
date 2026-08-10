@@ -46,6 +46,8 @@ function PostsPanel() {
   const { data: session } = useSession();
   const qc = useQueryClient();
   const [editing, setEditing] = useState<Form | null>(null);
+  const [comments, setComments] = useState<{ id: string; title: string } | null>(null);
+  const commentCounts = useCommentCounts(!!session?.estate?.id);
 
   const list = useQuery({
     queryKey: ["admin-community", session?.estate?.id],
