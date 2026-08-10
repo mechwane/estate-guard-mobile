@@ -395,13 +395,11 @@ function EstateCollections() {
       const { error } = await supabase.from("bills").insert(rows as never);
       if (error) throw error;
 
-      await supabase.from("audit_logs").insert({
-        estate_id: estateId,
-        actor_id: session.userId,
-        action: "collection.created",
-        entity: "collections",
-        entity_id: collectionId,
-        metadata: { title: form.title.trim(), amount, residents: targets.length },
+      await supabase.rpc("log_activity", {
+        _action: "collection.created",
+        _entity: "collections",
+        _entity_id: collectionId,
+        _metadata: { title: form.title.trim(), amount, residents: targets.length },
       });
       return { count: targets.length, updated: false };
     },

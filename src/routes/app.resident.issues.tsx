@@ -48,12 +48,10 @@ function Issues() {
         .select("id")
         .single();
       if (error) throw error;
-      await supabase.from("audit_logs").insert({
-        estate_id: session.estate.id,
-        actor_id: session.userId,
-        action: "issue.created",
-        entity: "issues",
-        entity_id: data.id,
+      await supabase.rpc("log_activity", {
+        _action: "issue.created",
+        _entity: "issues",
+        _entity_id: data.id,
       });
     },
     onSuccess: () => {

@@ -91,15 +91,12 @@ function Residents() {
 
   const setApproved = useMutation({
     mutationFn: async ({ id, approved }: { id: string; approved: boolean }) => {
-      const { error } = await supabase.from("profiles").update({ approved }).eq("id", id);
-      if (error) throw error;
-      await supabase.from("audit_logs").insert({
-        estate_id: estateId!,
-        actor_id: session?.userId ?? null,
-        action: approved ? "resident.approved" : "resident.revoked",
-        entity: "profiles",
-        entity_id: id,
+      // set_estate_access authorises the change and writes the audit entry
+      const { error } = await supabase.rpc("set_estate_access", {
+        _user_id: id,
+        _approved: approved,
       });
+      if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Updated");

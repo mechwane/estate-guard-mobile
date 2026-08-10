@@ -85,12 +85,10 @@ function AdminBills() {
         .select("id")
         .single();
       if (error) throw error;
-      await supabase.from("audit_logs").insert({
-        estate_id: estateId,
-        actor_id: session.userId,
-        action: "bill.created",
-        entity: "bills",
-        entity_id: data.id,
+      await supabase.rpc("log_activity", {
+        _action: "bill.created",
+        _entity: "bills",
+        _entity_id: data.id,
       });
     },
     onSuccess: () => {

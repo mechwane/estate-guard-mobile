@@ -2361,6 +2361,15 @@ export type Database = {
         }
         Returns: Json
       }
+      log_activity: {
+        Args: {
+          _action: string
+          _entity?: string
+          _entity_id?: string
+          _metadata?: Json
+        }
+        Returns: string
+      }
       lookup_estate_by_code: {
         Args: { _code: string }
         Returns: {

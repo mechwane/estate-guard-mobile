@@ -186,8 +186,10 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
       label: "More",
       items: [
         { to: "/app/admin/estate", label: "Estate profile", icon: <Building2 /> },
+        { to: "/app/admin/audit", label: "Change history", icon: <ScrollText /> },
       ],
     },
+
   ],
   super_admin: [
     {
