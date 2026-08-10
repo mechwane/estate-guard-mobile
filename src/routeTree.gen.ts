@@ -55,6 +55,7 @@ import { Route as AppResidentBillsRouteImport } from './routes/app.resident.bill
 import { Route as AppResidentAccessRouteImport } from './routes/app.resident.access'
 import { Route as AppGuardValidateRouteImport } from './routes/app.guard.validate'
 import { Route as AppGuardProfileRouteImport } from './routes/app.guard.profile'
+import { Route as AppGuardNoticesRouteImport } from './routes/app.guard.notices'
 import { Route as AppGuardMoreRouteImport } from './routes/app.guard.more'
 import { Route as AppGuardIncidentsRouteImport } from './routes/app.guard.incidents'
 import { Route as AppGuardHistoryRouteImport } from './routes/app.guard.history'
@@ -323,6 +324,11 @@ const AppGuardProfileRoute = AppGuardProfileRouteImport.update({
   path: '/guard/profile',
   getParentRoute: () => AppRoute,
 } as any)
+const AppGuardNoticesRoute = AppGuardNoticesRouteImport.update({
+  id: '/guard/notices',
+  path: '/guard/notices',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppGuardMoreRoute = AppGuardMoreRouteImport.update({
   id: '/guard/more',
   path: '/guard/more',
@@ -550,6 +556,7 @@ export interface FileRoutesByFullPath {
   '/app/guard/history': typeof AppGuardHistoryRoute
   '/app/guard/incidents': typeof AppGuardIncidentsRoute
   '/app/guard/more': typeof AppGuardMoreRoute
+  '/app/guard/notices': typeof AppGuardNoticesRoute
   '/app/guard/profile': typeof AppGuardProfileRoute
   '/app/guard/validate': typeof AppGuardValidateRoute
   '/app/resident/access': typeof AppResidentAccessRoute
@@ -635,6 +642,7 @@ export interface FileRoutesByTo {
   '/app/guard/history': typeof AppGuardHistoryRoute
   '/app/guard/incidents': typeof AppGuardIncidentsRoute
   '/app/guard/more': typeof AppGuardMoreRoute
+  '/app/guard/notices': typeof AppGuardNoticesRoute
   '/app/guard/profile': typeof AppGuardProfileRoute
   '/app/guard/validate': typeof AppGuardValidateRoute
   '/app/resident/access': typeof AppResidentAccessRoute
@@ -721,6 +729,7 @@ export interface FileRoutesById {
   '/app/guard/history': typeof AppGuardHistoryRoute
   '/app/guard/incidents': typeof AppGuardIncidentsRoute
   '/app/guard/more': typeof AppGuardMoreRoute
+  '/app/guard/notices': typeof AppGuardNoticesRoute
   '/app/guard/profile': typeof AppGuardProfileRoute
   '/app/guard/validate': typeof AppGuardValidateRoute
   '/app/resident/access': typeof AppResidentAccessRoute
@@ -808,6 +817,7 @@ export interface FileRouteTypes {
     | '/app/guard/history'
     | '/app/guard/incidents'
     | '/app/guard/more'
+    | '/app/guard/notices'
     | '/app/guard/profile'
     | '/app/guard/validate'
     | '/app/resident/access'
@@ -893,6 +903,7 @@ export interface FileRouteTypes {
     | '/app/guard/history'
     | '/app/guard/incidents'
     | '/app/guard/more'
+    | '/app/guard/notices'
     | '/app/guard/profile'
     | '/app/guard/validate'
     | '/app/resident/access'
@@ -978,6 +989,7 @@ export interface FileRouteTypes {
     | '/app/guard/history'
     | '/app/guard/incidents'
     | '/app/guard/more'
+    | '/app/guard/notices'
     | '/app/guard/profile'
     | '/app/guard/validate'
     | '/app/resident/access'
@@ -1353,6 +1365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppGuardProfileRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/guard/notices': {
+      id: '/app/guard/notices'
+      path: '/guard/notices'
+      fullPath: '/app/guard/notices'
+      preLoaderRoute: typeof AppGuardNoticesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/guard/more': {
       id: '/app/guard/more'
       path: '/guard/more'
@@ -1649,6 +1668,7 @@ interface AppRouteChildren {
   AppGuardHistoryRoute: typeof AppGuardHistoryRoute
   AppGuardIncidentsRoute: typeof AppGuardIncidentsRoute
   AppGuardMoreRoute: typeof AppGuardMoreRoute
+  AppGuardNoticesRoute: typeof AppGuardNoticesRoute
   AppGuardProfileRoute: typeof AppGuardProfileRoute
   AppGuardValidateRoute: typeof AppGuardValidateRoute
   AppResidentAccessRoute: typeof AppResidentAccessRoute
@@ -1728,6 +1748,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppGuardHistoryRoute: AppGuardHistoryRoute,
   AppGuardIncidentsRoute: AppGuardIncidentsRoute,
   AppGuardMoreRoute: AppGuardMoreRoute,
+  AppGuardNoticesRoute: AppGuardNoticesRoute,
   AppGuardProfileRoute: AppGuardProfileRoute,
   AppGuardValidateRoute: AppGuardValidateRoute,
   AppResidentAccessRoute: AppResidentAccessRoute,

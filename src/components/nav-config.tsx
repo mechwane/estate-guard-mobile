@@ -121,6 +121,7 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
       label: "Reports",
       items: [
         { to: "/app/guard/incidents", label: "Incidents", icon: <AlertTriangle /> },
+        { to: "/app/guard/notices", label: "Estate notices", icon: <Megaphone /> },
         { to: "/app/guard/more", label: "More", icon: <MoreHorizontal /> },
       ],
     },
