@@ -20,6 +20,7 @@ import {
   StatCard,
 } from "@/components/ui-kit";
 import { Stagger, StaggerItem } from "@/components/motion-kit";
+import { CommentButton, CommentThread, useCommentCounts } from "@/components/post-comments";
 
 export const Route = createFileRoute("/app/admin/announcements")({
   component: AdminAnnouncements,
@@ -55,6 +56,8 @@ function AdminAnnouncements() {
   const [search, setSearch] = useState("");
   const [form, setForm] = useState<Form | null>(null);
   const [deleting, setDeleting] = useState<{ id: string; title: string } | null>(null);
+  const [comments, setComments] = useState<{ id: string; title: string } | null>(null);
+  const commentCounts = useCommentCounts(!!estateId);
 
   const list = useQuery({
     queryKey: ["admin-announcements", estateId],
@@ -187,7 +190,11 @@ function AdminAnnouncements() {
                   <p className="line-clamp-3 whitespace-pre-wrap text-xs text-muted-foreground">
                     {row.body}
                   </p>
-                  <div className="mt-auto flex gap-2 pt-2">
+                  <div className="mt-auto flex flex-wrap items-center gap-2 pt-2">
+                    <CommentButton
+                      count={commentCounts.data?.[row.id] ?? 0}
+                      onClick={() => setComments({ id: row.id, title: row.title })}
+                    />
                     <button
                       onClick={() =>
                         setForm({
@@ -197,7 +204,7 @@ function AdminAnnouncements() {
                           cover_url: row.cover_url ?? "",
                         })
                       }
-                      className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-medium hover:bg-muted"
+                      className="inline-flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-medium hover:bg-muted"
                     >
                       <Pencil className="h-3.5 w-3.5" /> Edit
                     </button>
@@ -215,6 +222,12 @@ function AdminAnnouncements() {
           ))}
         </Stagger>
       )}
+
+      <CommentThread
+        postId={comments?.id ?? null}
+        postTitle={comments?.title}
+        onClose={() => setComments(null)}
+      />
 
       <SheetModal
         open={!!form}
