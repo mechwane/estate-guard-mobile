@@ -4,7 +4,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { EmptyState, MediaImage, ModalPortal } from "@/components/ui-kit";
+import { EmptyState, MediaImage } from "@/components/ui-kit";
+import { CommentThread } from "@/components/post-comments";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
 import {
   Heart,
@@ -13,8 +14,6 @@ import {
   Vote,
   Newspaper,
   Loader2,
-  Send,
-  X,
   CalendarDays,
   MapPin,
   Link as LinkIcon,
@@ -310,7 +309,7 @@ function PostsList({ estateId, type }: { estateId?: string; type: "blog" | "anno
         ))}
       </Stagger>
 
-      <CommentsSheet postId={openComments} onClose={() => setOpenComments(null)} />
+      <CommentThread postId={openComments} onClose={() => setOpenComments(null)} />
     </>
   );
 }
@@ -415,141 +414,6 @@ function PostCard({
   );
 }
 
-function CommentsSheet({ postId, onClose }: { postId: string | null; onClose: () => void }) {
-  const { data: session } = useSession();
-  const qc = useQueryClient();
-  const [text, setText] = useState("");
-
-  const comments = useQuery({
-    queryKey: ["comments", postId],
-    enabled: !!postId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("post_comments")
-        .select("id, body, author_id, created_at, profiles:author_id(full_name)")
-        .eq("post_id", postId!)
-        .order("created_at", { ascending: true });
-      if (error) throw error;
-      return data as any[];
-    },
-  });
-
-  const add = useMutation({
-    mutationFn: async () => {
-      if (!session?.userId || !postId || !text.trim()) return;
-      const { error } = await supabase.from("post_comments").insert({
-        post_id: postId,
-        author_id: session.userId,
-        body: text.trim(),
-      });
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      setText("");
-      qc.invalidateQueries({ queryKey: ["comments", postId] });
-      qc.invalidateQueries({ queryKey: ["post-stats"] });
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-  return (
-    <ModalPortal>
-      <AnimatePresence>
-        {postId && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-end justify-center bg-black/50"
-            onClick={onClose}
-          >
-            <motion.div
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", stiffness: 320, damping: 32 }}
-              onClick={(e) => e.stopPropagation()}
-              className="flex max-h-[80vh] w-full max-w-md flex-col rounded-t-2xl bg-card shadow-2xl ring-1 ring-border"
-            >
-              <div className="flex items-center justify-between border-b border-border px-4 py-3">
-                <h4 className="text-sm font-semibold text-foreground">Comments</h4>
-                <button
-                  onClick={onClose}
-                  className="rounded-full p-1 text-muted-foreground hover:bg-muted"
-                  aria-label="Close"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-              <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
-                {comments.isLoading ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                  </div>
-                ) : !comments.data || comments.data.length === 0 ? (
-                  <p className="py-8 text-center text-xs text-muted-foreground">
-                    Be the first to comment.
-                  </p>
-                ) : (
-                  comments.data.map((c: any) => (
-                    <div key={c.id} className="flex items-start gap-2.5">
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-[10px] font-semibold uppercase text-muted-foreground">
-                        {(c.profiles?.full_name ?? "?").slice(0, 2)}
-                      </div>
-                      <div className="min-w-0 flex-1 rounded-2xl bg-muted/50 px-3 py-2">
-                        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                          <span className="font-medium text-foreground">
-                            {c.profiles?.full_name ?? "Resident"}
-                          </span>
-                          <span>·</span>
-                          <span>
-                            {formatDistanceToNowStrict(new Date(c.created_at), {
-                              addSuffix: true,
-                            })}
-                          </span>
-                        </div>
-                        <p className="mt-0.5 whitespace-pre-line text-sm text-foreground">
-                          {c.body}
-                        </p>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  add.mutate();
-                }}
-                className="flex items-center gap-2 border-t border-border px-3 py-2"
-              >
-                <input
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  placeholder="Write a comment…"
-                  className="flex-1 rounded-full border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                />
-                <motion.button
-                  whileTap={{ scale: 0.9 }}
-                  disabled={add.isPending || !text.trim()}
-                  type="submit"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary-dark disabled:opacity-50"
-                  aria-label="Send"
-                >
-                  {add.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="h-4 w-4" />
-                  )}
-                </motion.button>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </ModalPortal>
-  );
-}
 
 function PollsList({ estateId, userId }: { estateId?: string; userId?: string | null }) {
   const qc = useQueryClient();

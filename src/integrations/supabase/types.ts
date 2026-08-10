@@ -2388,6 +2388,26 @@ export type Database = {
           votes: number
         }[]
       }
+      post_comment_counts: {
+        Args: never
+        Returns: {
+          comments: number
+          post_id: string
+        }[]
+      }
+      post_comment_thread: {
+        Args: { _post_id: string }
+        Returns: {
+          author_avatar_url: string
+          author_id: string
+          author_is_admin: boolean
+          author_name: string
+          body: string
+          created_at: string
+          id: string
+          post_id: string
+        }[]
+      }
       post_like_counts: {
         Args: never
         Returns: {

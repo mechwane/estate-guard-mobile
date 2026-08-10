@@ -10,8 +10,9 @@ import {
   ListSkeleton,
   ErrorState,
   SearchInput,
+  SheetModal,
 } from "@/components/ui-kit";
-import { Users, ChevronDown, ChevronUp, Fingerprint, ScanFace } from "lucide-react";
+import { Users, Fingerprint, ScanFace, SlidersHorizontal } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 
@@ -163,6 +164,15 @@ function Residents() {
     return map;
   }, [access.data]);
 
+  const openResident = useMemo(
+    () => (expanded ? (filtered.find((r) => r.id === expanded) ?? null) : null),
+    [expanded, filtered],
+  );
+  const openBio = (openResident ? (bioByResident.get(openResident.id) ?? {}) : {}) as Record<
+    string,
+    any
+  >;
+
   return (
     <div className="space-y-3">
       <div className="space-y-2 sm:max-w-xl">
@@ -196,7 +206,6 @@ function Residents() {
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((r) => {
-            const isOpen = expanded === r.id;
             const bio = bioByResident.get(r.id) ?? {};
             const hasCard = (access.data?.cards ?? []).some(
               (c) => c.resident_id === r.id && c.active,
@@ -205,7 +214,7 @@ function Residents() {
               (v) => v.resident_id === r.id && v.active,
             ).length;
             return (
-              <Card key={r.id} className={`p-3 ${isOpen ? "sm:col-span-2 xl:col-span-3" : ""}`}>
+              <Card key={r.id} className="p-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex min-w-0 items-center gap-2">
                     <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-[11px] font-semibold text-primary">
@@ -266,30 +275,37 @@ function Residents() {
                     </button>
                   )}
                   <button
-                    onClick={() => setExpanded(isOpen ? null : r.id)}
+                    onClick={() => setExpanded(r.id)}
                     className="flex items-center gap-1 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-muted"
                   >
-                    Access{" "}
-                    {isOpen ? (
-                      <ChevronUp className="h-3 w-3" />
-                    ) : (
-                      <ChevronDown className="h-3 w-3" />
-                    )}
+                    <SlidersHorizontal className="h-3 w-3" /> Access
                   </button>
                 </div>
 
-                {isOpen && (
-                  <div className="mt-3 space-y-2 border-t border-border pt-3">
+              </Card>
+            );
+          })}
+        </div>
+      )}
+
+      <SheetModal
+        open={!!openResident}
+        title={openResident ? `Access — ${openResident.full_name || "Resident"}` : "Access"}
+        onClose={() => setExpanded(null)}
+        width="lg"
+      >
+        {openResident && (
+          <div className="space-y-2">
                     <BiometricRowEditor
                       title="Fingerprint"
                       icon={<Fingerprint className="h-4 w-4" />}
-                      row={bio.fingerprint}
+                      row={openBio.fingerprint}
                       devices={(access.data?.devices ?? []).filter(
                         (d) => d.device_type === "fingerprint" || d.device_type === "gate_scanner",
                       )}
                       onSave={(args) =>
                         updateBio.mutate({
-                          residentId: r.id,
+                          residentId: openResident.id,
                           biometricType: "fingerprint",
                           ...args,
                         })
@@ -299,25 +315,21 @@ function Residents() {
                     <BiometricRowEditor
                       title="Face recognition"
                       icon={<ScanFace className="h-4 w-4" />}
-                      row={bio.face}
+                      row={openBio.face}
                       devices={(access.data?.devices ?? []).filter(
                         (d) => d.device_type === "face" || d.device_type === "gate_scanner",
                       )}
                       onSave={(args) =>
-                        updateBio.mutate({ residentId: r.id, biometricType: "face", ...args })
+                        updateBio.mutate({ residentId: openResident.id, biometricType: "face", ...args })
                       }
                       pending={updateBio.isPending}
                     />
                     <p className="text-[11px] text-muted-foreground">
                       Biometric templates live on the estate device — no images stored here.
                     </p>
-                  </div>
-                )}
-              </Card>
-            );
-          })}
-        </div>
-      )}
+          </div>
+        )}
+      </SheetModal>
     </div>
   );
 }

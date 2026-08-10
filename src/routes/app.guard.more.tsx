@@ -3,7 +3,20 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { Card } from "@/components/ui-kit";
-import { LogOut, ShieldCheck, Building2, Mail, Phone, History, ChevronRight } from "lucide-react";
+import {
+  LogOut,
+  ShieldCheck,
+  Building2,
+  Mail,
+  Phone,
+  History,
+  ChevronRight,
+  Shield,
+  Users,
+  AlertTriangle,
+  Megaphone,
+  UserCircle2,
+} from "lucide-react";
 
 export const Route = createFileRoute("/app/guard/more")({
   component: GuardMore,
@@ -48,15 +61,30 @@ function GuardMore() {
         </div>
       </Card>
 
-      <Link
-        to="/app/guard/history"
-        className="card-surface flex items-center justify-between px-4 py-3 hover:bg-muted/40"
-      >
-        <span className="flex items-center gap-3 text-sm font-medium text-foreground">
-          <History className="h-4 w-4 text-primary" /> Entry & exit history
-        </span>
-        <ChevronRight className="h-4 w-4 text-muted-foreground" />
-      </Link>
+      <div className="card-surface divide-y divide-border overflow-hidden">
+        <MoreRow to="/app/guard/validate" icon={<Shield className="h-4 w-4" />} label="Validate a code" />
+        <MoreRow to="/app/guard/active" icon={<Users className="h-4 w-4" />} label="Visitors inside" />
+        <MoreRow
+          to="/app/guard/history"
+          icon={<History className="h-4 w-4" />}
+          label="Entry & exit history"
+        />
+        <MoreRow
+          to="/app/guard/incidents"
+          icon={<AlertTriangle className="h-4 w-4" />}
+          label="Report an incident"
+        />
+        <MoreRow
+          to="/app/guard/notices"
+          icon={<Megaphone className="h-4 w-4" />}
+          label="Estate notices"
+        />
+        <MoreRow
+          to="/app/guard/profile"
+          icon={<UserCircle2 className="h-4 w-4" />}
+          label="My profile"
+        />
+      </div>
 
       <button
         onClick={signOut}
@@ -69,6 +97,23 @@ function GuardMore() {
         Guards can only see and act on records for their assigned estate.
       </p>
     </div>
+  );
+}
+
+function MoreRow({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
+  return (
+    <Link
+      to={to}
+      className="group flex items-center justify-between px-4 py-3 transition-colors hover:bg-muted/40"
+    >
+      <span className="flex min-w-0 items-center gap-3 text-sm font-medium text-foreground">
+        <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-transform group-hover:scale-110">
+          {icon}
+        </span>
+        <span className="truncate">{label}</span>
+      </span>
+      <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+    </Link>
   );
 }
 

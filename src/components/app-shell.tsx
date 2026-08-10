@@ -198,16 +198,18 @@ export function AppShell({
               desktopFirst ? "lg:h-16 lg:px-8" : "md:h-16 md:px-8",
             )}
           >
-            <button
-              onClick={() => setMenuOpen(true)}
-              aria-label="Open menu"
-              className={cn(
-                "inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/70 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
-                hideOnDesktop,
-              )}
-            >
-              <Menu className="h-4.5 w-4.5" />
-            </button>
+            {desktopFirst && (
+              <button
+                onClick={() => setMenuOpen(true)}
+                aria-label="Open menu"
+                className={cn(
+                  "inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border/70 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+                  hideOnDesktop,
+                )}
+              >
+                <Menu className="h-4.5 w-4.5" />
+              </button>
+            )}
 
             <div className="min-w-0 flex-1">
               <div className={cn("relative", desktopFirst ? "lg:max-w-md" : "md:max-w-md")}>
@@ -279,7 +281,7 @@ export function AppShell({
       </div>
 
       {/* Mobile slide-over menu with the full sectioned navigation */}
-      {menuOpen && (
+      {desktopFirst && menuOpen && (
         <div className={cn("fixed inset-0 z-50", hideOnDesktop)}>
           <button
             aria-label="Close menu"
