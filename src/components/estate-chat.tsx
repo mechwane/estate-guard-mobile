@@ -5,11 +5,14 @@ import {
   FileText,
   Loader2,
   MessageSquare,
+  Mic,
   Paperclip,
   Phone,
   Search,
   Send,
   ShieldCheck,
+  Square,
+  Trash2,
   Users,
   UserRound,
   X,
@@ -20,7 +23,9 @@ import { useSession } from "@/lib/session";
 import { EmptyState, ListSkeleton, ModalPortal } from "@/components/ui-kit";
 import { initialsFor, useAvatarUrl, useAvatarUrls } from "@/lib/avatar";
 import { uploadMedia, useMediaUrl } from "@/lib/media";
+import { formatDuration, useVoiceRecorder } from "@/lib/voice-recorder";
 import { ngn } from "@/lib/format";
+
 
 export interface ChatMessage {
   id: string;
