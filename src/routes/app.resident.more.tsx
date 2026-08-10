@@ -18,6 +18,7 @@ import {
   Check,
   X,
   MessageSquareHeart,
+  MessageSquare,
   Star,
   Share2,
   Shield,
