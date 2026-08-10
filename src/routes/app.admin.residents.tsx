@@ -164,6 +164,15 @@ function Residents() {
     return map;
   }, [access.data]);
 
+  const openResident = useMemo(
+    () => (expanded ? (filtered.find((r) => r.id === expanded) ?? null) : null),
+    [expanded, filtered],
+  );
+  const openBio = (openResident ? (bioByResident.get(openResident.id) ?? {}) : {}) as Record<
+    string,
+    any
+  >;
+
   return (
     <div className="space-y-3">
       <div className="space-y-2 sm:max-w-xl">
@@ -197,7 +206,6 @@ function Residents() {
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((r) => {
-            const isOpen = expanded === r.id;
             const bio = bioByResident.get(r.id) ?? {};
             const hasCard = (access.data?.cards ?? []).some(
               (c) => c.resident_id === r.id && c.active,
@@ -288,7 +296,6 @@ function Residents() {
       >
         {openResident && (
           <div className="space-y-2">
-                  <div className="mt-3 space-y-2 border-t border-border pt-3">
                     <BiometricRowEditor
                       title="Fingerprint"
                       icon={<Fingerprint className="h-4 w-4" />}
@@ -320,7 +327,6 @@ function Residents() {
                     <p className="text-[11px] text-muted-foreground">
                       Biometric templates live on the estate device — no images stored here.
                     </p>
-                  </div>
           </div>
         )}
       </SheetModal>
