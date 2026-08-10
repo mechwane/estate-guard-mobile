@@ -1,68 +1,41 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@/lib/session";
-import { Card, EmptyState } from "@/components/ui-kit";
-import { FadeIn, Stagger, StaggerItem } from "@/components/motion-kit";
-import { Phone, Mail, Contact } from "lucide-react";
+import { Contact } from "lucide-react";
+import { EstateContactsList } from "@/components/estate-contacts";
+import { FadeIn } from "@/components/motion-kit";
 
 export const Route = createFileRoute("/app/resident/contacts")({
   component: Contacts,
+  head: () => ({
+    meta: [
+      { title: "Estate Contacts — Estate Guard" },
+      {
+        name: "description",
+        content:
+          "Call or chat with your estate manager, security posts and management team directly from the app.",
+      },
+      { property: "og:title", content: "Estate Contacts — Estate Guard" },
+      {
+        property: "og:description",
+        content: "Reach your estate manager and security team by call or live chat.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
 });
 
 function Contacts() {
-  const { data: session } = useSession();
-  const list = useQuery({
-    queryKey: ["estate-contacts", session?.estate?.id],
-    enabled: !!session?.estate?.id,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("estate_contacts")
-        .select("*")
-        .eq("estate_id", session!.estate!.id)
-        .order("label");
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  if (!list.data || list.data.length === 0) {
-    return (
-      <FadeIn>
-        <EmptyState
-          title="No estate contacts yet"
-          description="Your estate admin will add contact numbers here."
-          icon={<Contact className="h-6 w-6" />}
-        />
-      </FadeIn>
-    );
-  }
-
   return (
-    <Stagger className="space-y-2">
-      {list.data.map((c) => (
-        <StaggerItem key={c.id}>
-          <Card className="p-4">
-            <div className="text-sm font-medium text-foreground">{c.label}</div>
-            {c.role && <div className="text-xs text-muted-foreground">{c.role}</div>}
-            <div className="mt-2 flex flex-wrap items-center gap-3 text-xs">
-              {c.phone && (
-                <a href={`tel:${c.phone}`} className="inline-flex items-center gap-1 text-primary">
-                  <Phone className="h-3.5 w-3.5" /> {c.phone}
-                </a>
-              )}
-              {c.email && (
-                <a
-                  href={`mailto:${c.email}`}
-                  className="inline-flex items-center gap-1 text-primary"
-                >
-                  <Mail className="h-3.5 w-3.5" /> {c.email}
-                </a>
-              )}
-            </div>
-          </Card>
-        </StaggerItem>
-      ))}
-    </Stagger>
+    <div className="space-y-3">
+      <FadeIn>
+        <h1 className="flex items-center gap-2 text-base font-semibold text-foreground">
+          <Contact className="h-4 w-4 text-primary" /> Estate Contacts
+        </h1>
+        <p className="text-xs text-muted-foreground">
+          Call or chat with estate management and security.
+        </p>
+      </FadeIn>
+      <EstateContactsList chatTo="/app/resident/chat" />
+    </div>
   );
 }
