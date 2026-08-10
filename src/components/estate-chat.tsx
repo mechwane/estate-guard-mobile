@@ -649,8 +649,14 @@ function useChatRealtime(estateId: string | undefined) {
   }, [estateId, qc]);
 }
 
-const preview = (m: ChatMessage) =>
-  m.body?.trim() ? m.body : m.attachment_type?.startsWith("image/") ? "📷 Photo" : "📎 File";
+const preview = (m: ChatMessage) => {
+  if (m.body?.trim()) return m.body;
+  const type = m.attachment_type ?? "";
+  if (type.startsWith("image/")) return "📷 Photo";
+  if (type.startsWith("audio/")) return "🎤 Voice note";
+  return "📎 File";
+};
+
 
 /** Admin console: WhatsApp-style conversation list beside the live thread. */
 export function AdminChat() {
