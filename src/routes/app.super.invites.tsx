@@ -40,7 +40,7 @@ function SuperInvites() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("estate_admin_invites")
-        .select("*")
+        .select("id,estate_id,email,created_at,expires_at,accepted_at,accepted_by,created_by")
         .order("created_at", { ascending: false })
         .limit(300);
       if (error) throw error;
@@ -87,8 +87,12 @@ function SuperInvites() {
     onError: (error: Error) => toast.error(error.message),
   });
 
-  const copy = async (token: string) => {
-    const link = `${window.location.origin}/auth/sign-up?admin_invite=${token}`;
+  const copy = async (inviteId: string) => {
+    const { data, error } = await supabase.rpc("super_admin_invite_link", {
+      _invite_id: inviteId,
+    });
+    if (error || !data) return toast.error("Could not fetch invite link");
+    const link = `${window.location.origin}/auth/sign-up?admin_invite=${data}`;
     await navigator.clipboard.writeText(link);
     toast.success("Invite link copied");
   };
@@ -169,7 +173,7 @@ function SuperInvites() {
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-2">
                   <button
-                    onClick={() => copy(i.token)}
+                    onClick={() => copy(i.id)}
                     className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
                   >
                     Copy link
