@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
-import { LogOut, Menu, Search, UserCircle2, X } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { LogOut, Menu, Search, Settings, UserCircle2, X } from "lucide-react";
 import { useSession, type AppRole } from "@/lib/session";
 import type { NavGroup, NavLink } from "@/components/nav-config";
 
@@ -85,8 +85,46 @@ export function AppShell({
   const results = useMemo(() => {
     const needle = query.trim().toLowerCase();
     if (!needle) return [];
-    return flatLinks.filter((l) => l.label.toLowerCase().includes(needle)).slice(0, 8);
+    return flatLinks.filter((l) => l.label.toLowerCase().includes(needle)).slice(0, 5);
   }, [query, flatLinks]);
+
+  // Admin console search also looks up people, addresses and access codes.
+  const estateId = session?.estate?.id ?? null;
+  const canSearchEstate = role === "estate_admin" && !!estateId;
+  const [debounced, setDebounced] = useState("");
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(query.trim()), 250);
+    return () => clearTimeout(t);
+  }, [query]);
+
+  const estateHits = useQuery({
+    queryKey: ["shell-search", estateId, debounced],
+    enabled: canSearchEstate && debounced.length >= 2,
+    queryFn: async () => {
+      const like = `%${debounced}%`;
+      const [people, invites] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("id,full_name,address_code,house_number,street,unit,approved")
+          .eq("estate_id", estateId!)
+          .or(
+            `full_name.ilike.${like},address_code.ilike.${like},house_number.ilike.${like},street.ilike.${like},phone.ilike.${like},email.ilike.${like}`,
+          )
+          .limit(6),
+        supabase
+          .from("guest_invites")
+          .select("id,code,guest_name,resident_id,status")
+          .eq("estate_id", estateId!)
+          .or(`code.ilike.${like},guest_name.ilike.${like}`)
+          .limit(4),
+      ]);
+      return {
+        people: people.data ?? [],
+        invites: invites.data ?? [],
+      };
+    },
+  });
+
 
   const AvatarBtn = ({ large = false }: { large?: boolean }) => (
     <Link
@@ -221,12 +259,69 @@ export function AppShell({
                     if (e.key === "Enter" && results[0]) navigate({ to: results[0].to });
                     if (e.key === "Escape") setQuery("");
                   }}
-                  placeholder="Search pages…"
-                  aria-label="Search pages"
+                  placeholder={
+                    canSearchEstate ? "Search resident, address, access code…" : "Search pages…"
+                  }
+                  aria-label="Search"
                   className="w-full rounded-full border border-border bg-card py-2 pl-9 pr-3 text-sm outline-none transition focus:border-primary"
                 />
-                {results.length > 0 && (
-                  <div className="absolute left-0 right-0 top-full z-40 mt-1.5 overflow-hidden rounded-xl border border-border bg-popover shadow-lg slide-up">
+                {(results.length > 0 ||
+                  (estateHits.data?.people.length ?? 0) > 0 ||
+                  (estateHits.data?.invites.length ?? 0) > 0) && (
+                  <div className="absolute left-0 right-0 top-full z-40 mt-1.5 max-h-[70vh] overflow-y-auto rounded-xl border border-border bg-popover shadow-lg slide-up">
+                    {(estateHits.data?.people.length ?? 0) > 0 && (
+                      <div className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        Residents & addresses
+                      </div>
+                    )}
+                    {(estateHits.data?.people ?? []).map((r) => (
+                      <button
+                        key={r.id}
+                        onClick={() => {
+                          setQuery("");
+                          navigate({ to: "/app/admin/resident/$id", params: { id: r.id } });
+                        }}
+                        className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm hover:bg-muted"
+                      >
+                        <UserCircle2 className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate">{r.full_name}</span>
+                          <span className="block truncate text-[11px] text-muted-foreground">
+                            {[r.address_code, r.street, r.house_number && `No ${r.house_number}`]
+                              .filter(Boolean)
+                              .join(" · ") || "No address"}
+                          </span>
+                        </span>
+                        {!r.approved && (
+                          <span className="shrink-0 text-[10px] text-destructive">disapproved</span>
+                        )}
+                      </button>
+                    ))}
+                    {(estateHits.data?.invites.length ?? 0) > 0 && (
+                      <div className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        Access codes
+                      </div>
+                    )}
+                    {(estateHits.data?.invites ?? []).map((g) => (
+                      <Link
+                        key={g.id}
+                        to="/app/admin/guests"
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-muted"
+                      >
+                        <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        <span className="min-w-0 flex-1 truncate">
+                          {g.code} — {g.guest_name}
+                        </span>
+                        <span className="shrink-0 text-[10px] text-muted-foreground">
+                          {g.status}
+                        </span>
+                      </Link>
+                    ))}
+                    {results.length > 0 && (
+                      <div className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        Pages
+                      </div>
+                    )}
                     {results.map((r) => (
                       <Link
                         key={r.to}
@@ -241,6 +336,7 @@ export function AppShell({
                     ))}
                   </div>
                 )}
+
               </div>
             </div>
 
@@ -248,7 +344,33 @@ export function AppShell({
               <span className="hidden text-sm font-semibold text-muted-foreground xl:inline">
                 {title}
               </span>
+              {desktopFirst && session?.estate && (
+                <span className="hidden items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-[11px] font-semibold sm:inline-flex">
+                  <span className="truncate">{session.estate.code}</span>
+                  <span
+                    className={cn(
+                      "rounded px-1.5 py-0.5 text-[10px] font-medium uppercase",
+                      session.estate.status === "active"
+                        ? "bg-[color:var(--color-success)]/15 text-[color:var(--color-success)]"
+                        : "bg-[color:var(--color-warning)]/15 text-[color:var(--color-warning)]",
+                    )}
+                  >
+                    {session.estate.status === "active" ? "Live" : "Demo"}
+                  </span>
+                </span>
+              )}
+              {role === "estate_admin" && (
+                <Link
+                  to="/app/admin/settings"
+                  aria-label="Settings"
+                  title="Settings"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                >
+                  <Settings className="h-4 w-4" />
+                </Link>
+              )}
               <AvatarBtn />
+
               <button
                 onClick={signOut}
                 aria-label="Log out"

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -277,7 +277,15 @@ function Residents() {
                   >
                     <SlidersHorizontal className="h-3 w-3" /> Access
                   </button>
+                  <Link
+                    to="/app/admin/resident/$id"
+                    params={{ id: r.id }}
+                    className="flex items-center gap-1 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-muted"
+                  >
+                    Profile
+                  </Link>
                 </div>
+
 
               </Card>
             );

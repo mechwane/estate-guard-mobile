@@ -65,8 +65,10 @@ import { Route as AppGuardActiveRouteImport } from './routes/app.guard.active'
 import { Route as AppAdminVerificationsRouteImport } from './routes/app.admin.verifications'
 import { Route as AppAdminVehiclesRouteImport } from './routes/app.admin.vehicles'
 import { Route as AppAdminTroubleshootRouteImport } from './routes/app.admin.troubleshoot'
+import { Route as AppAdminTicketsRouteImport } from './routes/app.admin.tickets'
 import { Route as AppAdminStaffRouteImport } from './routes/app.admin.staff'
 import { Route as AppAdminShopRouteImport } from './routes/app.admin.shop'
+import { Route as AppAdminSettingsRouteImport } from './routes/app.admin.settings'
 import { Route as AppAdminResidentsRouteImport } from './routes/app.admin.residents'
 import { Route as AppAdminRequestsRouteImport } from './routes/app.admin.requests'
 import { Route as AppAdminRealtimeRouteImport } from './routes/app.admin.realtime'
@@ -96,6 +98,7 @@ import { Route as AppSuperEstatesEstateIdRouteImport } from './routes/app.super.
 import { Route as AppResidentEventsNewRouteImport } from './routes/app.resident.events.new'
 import { Route as AppResidentEventsMineRouteImport } from './routes/app.resident.events.mine'
 import { Route as AppResidentEventsIdRouteImport } from './routes/app.resident.events.$id'
+import { Route as AppAdminResidentIdRouteImport } from './routes/app.admin.resident.$id'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -377,6 +380,11 @@ const AppAdminTroubleshootRoute = AppAdminTroubleshootRouteImport.update({
   path: '/admin/troubleshoot',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminTicketsRoute = AppAdminTicketsRouteImport.update({
+  id: '/admin/tickets',
+  path: '/admin/tickets',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminStaffRoute = AppAdminStaffRouteImport.update({
   id: '/admin/staff',
   path: '/admin/staff',
@@ -385,6 +393,11 @@ const AppAdminStaffRoute = AppAdminStaffRouteImport.update({
 const AppAdminShopRoute = AppAdminShopRouteImport.update({
   id: '/admin/shop',
   path: '/admin/shop',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminSettingsRoute = AppAdminSettingsRouteImport.update({
+  id: '/admin/settings',
+  path: '/admin/settings',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminResidentsRoute = AppAdminResidentsRouteImport.update({
@@ -532,6 +545,11 @@ const AppResidentEventsIdRoute = AppResidentEventsIdRouteImport.update({
   path: '/resident/events/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminResidentIdRoute = AppAdminResidentIdRouteImport.update({
+  id: '/admin/resident/$id',
+  path: '/admin/resident/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -566,8 +584,10 @@ export interface FileRoutesByFullPath {
   '/app/admin/realtime': typeof AppAdminRealtimeRoute
   '/app/admin/requests': typeof AppAdminRequestsRoute
   '/app/admin/residents': typeof AppAdminResidentsRoute
+  '/app/admin/settings': typeof AppAdminSettingsRoute
   '/app/admin/shop': typeof AppAdminShopRoute
   '/app/admin/staff': typeof AppAdminStaffRoute
+  '/app/admin/tickets': typeof AppAdminTicketsRoute
   '/app/admin/troubleshoot': typeof AppAdminTroubleshootRoute
   '/app/admin/vehicles': typeof AppAdminVehiclesRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
@@ -616,6 +636,7 @@ export interface FileRoutesByFullPath {
   '/app/guard/': typeof AppGuardIndexRoute
   '/app/resident/': typeof AppResidentIndexRoute
   '/app/super/': typeof AppSuperIndexRoute
+  '/app/admin/resident/$id': typeof AppAdminResidentIdRoute
   '/app/resident/events/$id': typeof AppResidentEventsIdRoute
   '/app/resident/events/mine': typeof AppResidentEventsMineRoute
   '/app/resident/events/new': typeof AppResidentEventsNewRoute
@@ -655,8 +676,10 @@ export interface FileRoutesByTo {
   '/app/admin/realtime': typeof AppAdminRealtimeRoute
   '/app/admin/requests': typeof AppAdminRequestsRoute
   '/app/admin/residents': typeof AppAdminResidentsRoute
+  '/app/admin/settings': typeof AppAdminSettingsRoute
   '/app/admin/shop': typeof AppAdminShopRoute
   '/app/admin/staff': typeof AppAdminStaffRoute
+  '/app/admin/tickets': typeof AppAdminTicketsRoute
   '/app/admin/troubleshoot': typeof AppAdminTroubleshootRoute
   '/app/admin/vehicles': typeof AppAdminVehiclesRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
@@ -705,6 +728,7 @@ export interface FileRoutesByTo {
   '/app/guard': typeof AppGuardIndexRoute
   '/app/resident': typeof AppResidentIndexRoute
   '/app/super': typeof AppSuperIndexRoute
+  '/app/admin/resident/$id': typeof AppAdminResidentIdRoute
   '/app/resident/events/$id': typeof AppResidentEventsIdRoute
   '/app/resident/events/mine': typeof AppResidentEventsMineRoute
   '/app/resident/events/new': typeof AppResidentEventsNewRoute
@@ -745,8 +769,10 @@ export interface FileRoutesById {
   '/app/admin/realtime': typeof AppAdminRealtimeRoute
   '/app/admin/requests': typeof AppAdminRequestsRoute
   '/app/admin/residents': typeof AppAdminResidentsRoute
+  '/app/admin/settings': typeof AppAdminSettingsRoute
   '/app/admin/shop': typeof AppAdminShopRoute
   '/app/admin/staff': typeof AppAdminStaffRoute
+  '/app/admin/tickets': typeof AppAdminTicketsRoute
   '/app/admin/troubleshoot': typeof AppAdminTroubleshootRoute
   '/app/admin/vehicles': typeof AppAdminVehiclesRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
@@ -795,6 +821,7 @@ export interface FileRoutesById {
   '/app/guard/': typeof AppGuardIndexRoute
   '/app/resident/': typeof AppResidentIndexRoute
   '/app/super/': typeof AppSuperIndexRoute
+  '/app/admin/resident/$id': typeof AppAdminResidentIdRoute
   '/app/resident/events/$id': typeof AppResidentEventsIdRoute
   '/app/resident/events/mine': typeof AppResidentEventsMineRoute
   '/app/resident/events/new': typeof AppResidentEventsNewRoute
@@ -836,8 +863,10 @@ export interface FileRouteTypes {
     | '/app/admin/realtime'
     | '/app/admin/requests'
     | '/app/admin/residents'
+    | '/app/admin/settings'
     | '/app/admin/shop'
     | '/app/admin/staff'
+    | '/app/admin/tickets'
     | '/app/admin/troubleshoot'
     | '/app/admin/vehicles'
     | '/app/admin/verifications'
@@ -886,6 +915,7 @@ export interface FileRouteTypes {
     | '/app/guard/'
     | '/app/resident/'
     | '/app/super/'
+    | '/app/admin/resident/$id'
     | '/app/resident/events/$id'
     | '/app/resident/events/mine'
     | '/app/resident/events/new'
@@ -925,8 +955,10 @@ export interface FileRouteTypes {
     | '/app/admin/realtime'
     | '/app/admin/requests'
     | '/app/admin/residents'
+    | '/app/admin/settings'
     | '/app/admin/shop'
     | '/app/admin/staff'
+    | '/app/admin/tickets'
     | '/app/admin/troubleshoot'
     | '/app/admin/vehicles'
     | '/app/admin/verifications'
@@ -975,6 +1007,7 @@ export interface FileRouteTypes {
     | '/app/guard'
     | '/app/resident'
     | '/app/super'
+    | '/app/admin/resident/$id'
     | '/app/resident/events/$id'
     | '/app/resident/events/mine'
     | '/app/resident/events/new'
@@ -1014,8 +1047,10 @@ export interface FileRouteTypes {
     | '/app/admin/realtime'
     | '/app/admin/requests'
     | '/app/admin/residents'
+    | '/app/admin/settings'
     | '/app/admin/shop'
     | '/app/admin/staff'
+    | '/app/admin/tickets'
     | '/app/admin/troubleshoot'
     | '/app/admin/vehicles'
     | '/app/admin/verifications'
@@ -1064,6 +1099,7 @@ export interface FileRouteTypes {
     | '/app/guard/'
     | '/app/resident/'
     | '/app/super/'
+    | '/app/admin/resident/$id'
     | '/app/resident/events/$id'
     | '/app/resident/events/mine'
     | '/app/resident/events/new'
@@ -1471,6 +1507,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminTroubleshootRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/tickets': {
+      id: '/app/admin/tickets'
+      path: '/admin/tickets'
+      fullPath: '/app/admin/tickets'
+      preLoaderRoute: typeof AppAdminTicketsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/staff': {
       id: '/app/admin/staff'
       path: '/admin/staff'
@@ -1483,6 +1526,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/shop'
       fullPath: '/app/admin/shop'
       preLoaderRoute: typeof AppAdminShopRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/settings': {
+      id: '/app/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/app/admin/settings'
+      preLoaderRoute: typeof AppAdminSettingsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/admin/residents': {
@@ -1688,6 +1738,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppResidentEventsIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/resident/$id': {
+      id: '/app/admin/resident/$id'
+      path: '/admin/resident/$id'
+      fullPath: '/app/admin/resident/$id'
+      preLoaderRoute: typeof AppAdminResidentIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -1717,8 +1774,10 @@ interface AppRouteChildren {
   AppAdminRealtimeRoute: typeof AppAdminRealtimeRoute
   AppAdminRequestsRoute: typeof AppAdminRequestsRoute
   AppAdminResidentsRoute: typeof AppAdminResidentsRoute
+  AppAdminSettingsRoute: typeof AppAdminSettingsRoute
   AppAdminShopRoute: typeof AppAdminShopRoute
   AppAdminStaffRoute: typeof AppAdminStaffRoute
+  AppAdminTicketsRoute: typeof AppAdminTicketsRoute
   AppAdminTroubleshootRoute: typeof AppAdminTroubleshootRoute
   AppAdminVehiclesRoute: typeof AppAdminVehiclesRoute
   AppAdminVerificationsRoute: typeof AppAdminVerificationsRoute
@@ -1767,6 +1826,7 @@ interface AppRouteChildren {
   AppGuardIndexRoute: typeof AppGuardIndexRoute
   AppResidentIndexRoute: typeof AppResidentIndexRoute
   AppSuperIndexRoute: typeof AppSuperIndexRoute
+  AppAdminResidentIdRoute: typeof AppAdminResidentIdRoute
   AppResidentEventsIdRoute: typeof AppResidentEventsIdRoute
   AppResidentEventsMineRoute: typeof AppResidentEventsMineRoute
   AppResidentEventsNewRoute: typeof AppResidentEventsNewRoute
@@ -1800,8 +1860,10 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminRealtimeRoute: AppAdminRealtimeRoute,
   AppAdminRequestsRoute: AppAdminRequestsRoute,
   AppAdminResidentsRoute: AppAdminResidentsRoute,
+  AppAdminSettingsRoute: AppAdminSettingsRoute,
   AppAdminShopRoute: AppAdminShopRoute,
   AppAdminStaffRoute: AppAdminStaffRoute,
+  AppAdminTicketsRoute: AppAdminTicketsRoute,
   AppAdminTroubleshootRoute: AppAdminTroubleshootRoute,
   AppAdminVehiclesRoute: AppAdminVehiclesRoute,
   AppAdminVerificationsRoute: AppAdminVerificationsRoute,
@@ -1850,6 +1912,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppGuardIndexRoute: AppGuardIndexRoute,
   AppResidentIndexRoute: AppResidentIndexRoute,
   AppSuperIndexRoute: AppSuperIndexRoute,
+  AppAdminResidentIdRoute: AppAdminResidentIdRoute,
   AppResidentEventsIdRoute: AppResidentEventsIdRoute,
   AppResidentEventsMineRoute: AppResidentEventsMineRoute,
   AppResidentEventsNewRoute: AppResidentEventsNewRoute,
