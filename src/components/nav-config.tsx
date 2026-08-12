@@ -132,7 +132,8 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
       items: [
         { to: "/app/admin", label: "Home", icon: <Home /> },
         { to: "/app/admin/messages", label: "Messages", icon: <MessageSquare /> },
-        { to: "/app/admin/requests", label: "Tickets", icon: <Ticket /> },
+        { to: "/app/admin/tickets", label: "Support tickets", icon: <Ticket /> },
+        { to: "/app/admin/requests", label: "Resident requests", icon: <Inbox /> },
         { to: "/app/admin/troubleshoot", label: "Troubleshoot", icon: <Wrench /> },
       ],
     },
@@ -187,6 +188,7 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
       items: [
         { to: "/app/admin/estate", label: "Estate profile", icon: <Building2 /> },
         { to: "/app/admin/audit", label: "Change history", icon: <ScrollText /> },
+        { to: "/app/admin/settings", label: "Settings", icon: <Settings /> },
       ],
     },
 

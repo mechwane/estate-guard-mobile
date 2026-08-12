@@ -65,6 +65,7 @@ import { Route as AppGuardActiveRouteImport } from './routes/app.guard.active'
 import { Route as AppAdminVerificationsRouteImport } from './routes/app.admin.verifications'
 import { Route as AppAdminVehiclesRouteImport } from './routes/app.admin.vehicles'
 import { Route as AppAdminTroubleshootRouteImport } from './routes/app.admin.troubleshoot'
+import { Route as AppAdminTicketsRouteImport } from './routes/app.admin.tickets'
 import { Route as AppAdminStaffRouteImport } from './routes/app.admin.staff'
 import { Route as AppAdminShopRouteImport } from './routes/app.admin.shop'
 import { Route as AppAdminSettingsRouteImport } from './routes/app.admin.settings'
@@ -379,6 +380,11 @@ const AppAdminTroubleshootRoute = AppAdminTroubleshootRouteImport.update({
   path: '/admin/troubleshoot',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminTicketsRoute = AppAdminTicketsRouteImport.update({
+  id: '/admin/tickets',
+  path: '/admin/tickets',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminStaffRoute = AppAdminStaffRouteImport.update({
   id: '/admin/staff',
   path: '/admin/staff',
@@ -581,6 +587,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/settings': typeof AppAdminSettingsRoute
   '/app/admin/shop': typeof AppAdminShopRoute
   '/app/admin/staff': typeof AppAdminStaffRoute
+  '/app/admin/tickets': typeof AppAdminTicketsRoute
   '/app/admin/troubleshoot': typeof AppAdminTroubleshootRoute
   '/app/admin/vehicles': typeof AppAdminVehiclesRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
@@ -672,6 +679,7 @@ export interface FileRoutesByTo {
   '/app/admin/settings': typeof AppAdminSettingsRoute
   '/app/admin/shop': typeof AppAdminShopRoute
   '/app/admin/staff': typeof AppAdminStaffRoute
+  '/app/admin/tickets': typeof AppAdminTicketsRoute
   '/app/admin/troubleshoot': typeof AppAdminTroubleshootRoute
   '/app/admin/vehicles': typeof AppAdminVehiclesRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
@@ -764,6 +772,7 @@ export interface FileRoutesById {
   '/app/admin/settings': typeof AppAdminSettingsRoute
   '/app/admin/shop': typeof AppAdminShopRoute
   '/app/admin/staff': typeof AppAdminStaffRoute
+  '/app/admin/tickets': typeof AppAdminTicketsRoute
   '/app/admin/troubleshoot': typeof AppAdminTroubleshootRoute
   '/app/admin/vehicles': typeof AppAdminVehiclesRoute
   '/app/admin/verifications': typeof AppAdminVerificationsRoute
@@ -857,6 +866,7 @@ export interface FileRouteTypes {
     | '/app/admin/settings'
     | '/app/admin/shop'
     | '/app/admin/staff'
+    | '/app/admin/tickets'
     | '/app/admin/troubleshoot'
     | '/app/admin/vehicles'
     | '/app/admin/verifications'
@@ -948,6 +958,7 @@ export interface FileRouteTypes {
     | '/app/admin/settings'
     | '/app/admin/shop'
     | '/app/admin/staff'
+    | '/app/admin/tickets'
     | '/app/admin/troubleshoot'
     | '/app/admin/vehicles'
     | '/app/admin/verifications'
@@ -1039,6 +1050,7 @@ export interface FileRouteTypes {
     | '/app/admin/settings'
     | '/app/admin/shop'
     | '/app/admin/staff'
+    | '/app/admin/tickets'
     | '/app/admin/troubleshoot'
     | '/app/admin/vehicles'
     | '/app/admin/verifications'
@@ -1495,6 +1507,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminTroubleshootRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/tickets': {
+      id: '/app/admin/tickets'
+      path: '/admin/tickets'
+      fullPath: '/app/admin/tickets'
+      preLoaderRoute: typeof AppAdminTicketsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/staff': {
       id: '/app/admin/staff'
       path: '/admin/staff'
@@ -1758,6 +1777,7 @@ interface AppRouteChildren {
   AppAdminSettingsRoute: typeof AppAdminSettingsRoute
   AppAdminShopRoute: typeof AppAdminShopRoute
   AppAdminStaffRoute: typeof AppAdminStaffRoute
+  AppAdminTicketsRoute: typeof AppAdminTicketsRoute
   AppAdminTroubleshootRoute: typeof AppAdminTroubleshootRoute
   AppAdminVehiclesRoute: typeof AppAdminVehiclesRoute
   AppAdminVerificationsRoute: typeof AppAdminVerificationsRoute
@@ -1843,6 +1863,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminSettingsRoute: AppAdminSettingsRoute,
   AppAdminShopRoute: AppAdminShopRoute,
   AppAdminStaffRoute: AppAdminStaffRoute,
+  AppAdminTicketsRoute: AppAdminTicketsRoute,
   AppAdminTroubleshootRoute: AppAdminTroubleshootRoute,
   AppAdminVehiclesRoute: AppAdminVehiclesRoute,
   AppAdminVerificationsRoute: AppAdminVerificationsRoute,
