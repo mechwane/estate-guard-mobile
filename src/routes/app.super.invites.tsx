@@ -87,8 +87,12 @@ function SuperInvites() {
     onError: (error: Error) => toast.error(error.message),
   });
 
-  const copy = async (token: string) => {
-    const link = `${window.location.origin}/auth/sign-up?admin_invite=${token}`;
+  const copy = async (inviteId: string) => {
+    const { data, error } = await supabase.rpc("super_admin_invite_link", {
+      _invite_id: inviteId,
+    });
+    if (error || !data) return toast.error("Could not fetch invite link");
+    const link = `${window.location.origin}/auth/sign-up?admin_invite=${data}`;
     await navigator.clipboard.writeText(link);
     toast.success("Invite link copied");
   };
