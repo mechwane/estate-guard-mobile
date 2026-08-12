@@ -2463,6 +2463,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      super_admin_invite_link: { Args: { _invite_id: string }; Returns: string }
       super_estate_overview: { Args: { _estate_id: string }; Returns: Json }
       suspend_estate: {
         Args: { _estate_id: string; _reason?: string }
