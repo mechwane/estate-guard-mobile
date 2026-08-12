@@ -173,7 +173,7 @@ function SuperInvites() {
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-2">
                   <button
-                    onClick={() => copy(i.token)}
+                    onClick={() => copy(i.id)}
                     className="rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium text-foreground hover:bg-muted"
                   >
                     Copy link
