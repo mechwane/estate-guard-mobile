@@ -40,7 +40,7 @@ function SuperInvites() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("estate_admin_invites")
-        .select("*")
+        .select("id,estate_id,email,created_at,expires_at,accepted_at,accepted_by,created_by")
         .order("created_at", { ascending: false })
         .limit(300);
       if (error) throw error;
