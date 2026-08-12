@@ -344,7 +344,33 @@ export function AppShell({
               <span className="hidden text-sm font-semibold text-muted-foreground xl:inline">
                 {title}
               </span>
+              {desktopFirst && session?.estate && (
+                <span className="hidden items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1 text-[11px] font-semibold sm:inline-flex">
+                  <span className="truncate">{session.estate.code}</span>
+                  <span
+                    className={cn(
+                      "rounded px-1.5 py-0.5 text-[10px] font-medium uppercase",
+                      session.estate.status === "active"
+                        ? "bg-[color:var(--color-success)]/15 text-[color:var(--color-success)]"
+                        : "bg-[color:var(--color-warning)]/15 text-[color:var(--color-warning)]",
+                    )}
+                  >
+                    {session.estate.status === "active" ? "Live" : "Demo"}
+                  </span>
+                </span>
+              )}
+              {role === "estate_admin" && (
+                <Link
+                  to="/app/admin/settings"
+                  aria-label="Settings"
+                  title="Settings"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                >
+                  <Settings className="h-4 w-4" />
+                </Link>
+              )}
               <AvatarBtn />
+
               <button
                 onClick={signOut}
                 aria-label="Log out"
