@@ -18,7 +18,6 @@ import { format, formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
 import {
   Activity,
-  BadgeCheck,
   ChevronDown,
   CreditCard,
   Fingerprint,
@@ -878,5 +877,3 @@ function Row({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
-
-export { BadgeCheck };
