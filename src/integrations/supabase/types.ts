@@ -2327,6 +2327,14 @@ export type Database = {
         Returns: string
       }
       generate_unique_estate_code: { Args: never; Returns: string }
+      guard_biometric_status: {
+        Args: { _resident_id: string }
+        Returns: {
+          access_status: string
+          biometric_type: string
+          enrollment_status: string
+        }[]
+      }
       guard_check_in: {
         Args: { _invite_id: string; _vehicle_number?: string }
         Returns: Json
