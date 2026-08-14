@@ -7,6 +7,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { LogOut, Menu, Search, Settings, UserCircle2, X } from "lucide-react";
 import { useSession, type AppRole } from "@/lib/session";
 import type { NavGroup, NavLink } from "@/components/nav-config";
+import { claimDeviceSession, releaseDeviceSession, type DeviceClaim } from "@/lib/device-session";
 
 export function AppShell({
   title,
@@ -65,7 +66,30 @@ export function AppShell({
 
   const initial = (session?.profile?.full_name ?? session?.email ?? "U").slice(0, 1).toUpperCase();
 
+  // One active device per account: claim this browser on mount and block the
+  // console until the other device signs out (or is taken over deliberately).
+  const [deviceBlock, setDeviceBlock] = useState<Extract<DeviceClaim, { ok: false }> | null>(null);
+  const [claiming, setClaiming] = useState(false);
+  useEffect(() => {
+    if (!session?.userId) return;
+    let alive = true;
+    claimDeviceSession().then((res) => {
+      if (alive) setDeviceBlock(res.ok ? null : res);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [session?.userId]);
+
+  const takeOverDevice = async () => {
+    setClaiming(true);
+    const res = await claimDeviceSession(true);
+    setClaiming(false);
+    setDeviceBlock(res.ok ? null : res);
+  };
+
   const signOut = async () => {
+    await releaseDeviceSession();
     await qc.cancelQueries();
     qc.clear();
     await supabase.auth.signOut();
@@ -397,7 +421,17 @@ export function AppShell({
             {subtitle ? ` — ${subtitle}` : ""}
           </h1>
           <div key={location.pathname} className="page-enter">
-            {children}
+            {deviceBlock ? (
+              <DeviceBlocked
+                deviceLabel={deviceBlock.deviceLabel}
+                lastSeenAt={deviceBlock.lastSeenAt}
+                onTakeOver={takeOverDevice}
+                onSignOut={signOut}
+                busy={claiming}
+              />
+            ) : (
+              children
+            )}
           </div>
         </main>
       </div>
@@ -464,6 +498,46 @@ export function AppShell({
           </div>
         </nav>
       )}
+    </div>
+  );
+}
+
+function DeviceBlocked({
+  deviceLabel,
+  lastSeenAt,
+  onTakeOver,
+  onSignOut,
+  busy,
+}: {
+  deviceLabel?: string | null;
+  lastSeenAt?: string | null;
+  onTakeOver: () => void;
+  onSignOut: () => void;
+  busy: boolean;
+}) {
+  return (
+    <div className="mx-auto max-w-md rounded-2xl border border-border bg-card p-6 text-center">
+      <h2 className="text-base font-semibold text-foreground">Already signed in elsewhere</h2>
+      <p className="mt-2 text-sm text-muted-foreground">
+        This account is active on {deviceLabel || "another device"}
+        {lastSeenAt ? ` (last used ${new Date(lastSeenAt).toLocaleString()})` : ""}. Only one device
+        can be signed in at a time — log out there, or continue here to end that session.
+      </p>
+      <div className="mt-5 space-y-2">
+        <button
+          onClick={onTakeOver}
+          disabled={busy}
+          className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-60"
+        >
+          {busy ? "Switching…" : "Continue on this device"}
+        </button>
+        <button
+          onClick={onSignOut}
+          className="w-full rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium hover:bg-muted"
+        >
+          Sign out
+        </button>
+      </div>
     </div>
   );
 }
