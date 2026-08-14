@@ -88,7 +88,7 @@ function AdminSettings() {
       },
       {
         label: "Invoice",
-        items: [{ to: "/app/admin/invoices", label: "Invoices & receipts", icon: <FileText /> }],
+        items: [{ to: "/app/admin/collections", label: "Collections & receipts", icon: <FileText /> }],
       },
       {
         label: "Support",

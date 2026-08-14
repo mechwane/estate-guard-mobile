@@ -232,8 +232,8 @@ function Troubleshoot() {
       count: h.staleRequests,
       ok: "Requests are being handled on time.",
       problem: (n) => `${n} request${n > 1 ? "s" : ""} older than 7 days are still unresolved.`,
-      to: "/app/admin/requests",
-      action: "Open requests",
+      to: "/app/admin/tickets",
+      action: "Open tickets",
     },
     {
       label: "Stale incidents",
@@ -258,8 +258,8 @@ function Troubleshoot() {
       ok: "No overdue invoices.",
       problem: (n) =>
         `${n} invoice${n > 1 ? "s are" : " is"} past the due date and need a reminder.`,
-      to: "/app/admin/invoices",
-      action: "Open invoices",
+      to: "/app/admin/collections",
+      action: "Open collections",
     },
     {
       label: "Biometric enrolments pending",

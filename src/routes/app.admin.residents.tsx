@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +15,7 @@ import {
 import { Users, Fingerprint, ScanFace, SlidersHorizontal } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "sonner";
+import { ResidentProfilePanel } from "@/components/resident-profile-panel";
 
 export const Route = createFileRoute("/app/admin/residents")({
   component: Residents,
@@ -42,6 +43,7 @@ function Residents() {
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<"all" | "pending" | "approved">("all");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [profileId, setProfileId] = useState<string | null>(null);
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["admin-residents", estateId],
@@ -213,7 +215,10 @@ function Residents() {
             return (
               <Card key={r.id} className="p-3">
                 <div className="flex items-start justify-between gap-2">
-                  <div className="flex min-w-0 items-center gap-2">
+                  <button
+                    onClick={() => setProfileId(r.id)}
+                    className="flex min-w-0 items-center gap-2 text-left"
+                  >
                     <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-[11px] font-semibold text-primary">
                       {(r.full_name || "?").slice(0, 1).toUpperCase()}
                     </span>
@@ -225,7 +230,7 @@ function Residents() {
                         {r.unit ? `Unit ${r.unit}` : "—"} · {r.phone ?? "no phone"}
                       </div>
                     </div>
-                  </div>
+                  </button>
                   <span className="shrink-0">
                     <StatusBadge tone={r.approved ? "success" : "warning"}>
                       {r.approved ? "approved" : "pending"}
@@ -277,13 +282,12 @@ function Residents() {
                   >
                     <SlidersHorizontal className="h-3 w-3" /> Access
                   </button>
-                  <Link
-                    to="/app/admin/resident/$id"
-                    params={{ id: r.id }}
+                  <button
+                    onClick={() => setProfileId(r.id)}
                     className="flex items-center gap-1 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-muted"
                   >
                     Profile
-                  </Link>
+                  </button>
                 </div>
 
 
@@ -292,6 +296,15 @@ function Residents() {
           })}
         </div>
       )}
+
+      <SheetModal
+        open={!!profileId}
+        title="Resident profile"
+        onClose={() => setProfileId(null)}
+        width="lg"
+      >
+        {profileId && <ResidentProfilePanel id={profileId} />}
+      </SheetModal>
 
       <SheetModal
         open={!!openResident}

@@ -2048,6 +2048,36 @@ export type Database = {
           },
         ]
       }
+      user_device_sessions: {
+        Row: {
+          created_at: string
+          device_id: string
+          device_label: string | null
+          last_seen_at: string
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_id: string
+          device_label?: string | null
+          last_seen_at?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_id?: string
+          device_label?: string | null
+          last_seen_at?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -2298,6 +2328,15 @@ export type Database = {
         Args: { _body: string; _link?: string; _title: string }
         Returns: number
       }
+      claim_device_session: {
+        Args: {
+          _device_id: string
+          _device_label?: string
+          _force?: boolean
+          _user_agent?: string
+        }
+        Returns: Json
+      }
       create_estate_admin_invite: {
         Args: { _email: string; _estate_id: string }
         Returns: string
@@ -2437,6 +2476,10 @@ export type Database = {
         Returns: undefined
       }
       redeem_estate_admin_invite: { Args: { _token: string }; Returns: string }
+      release_device_session: {
+        Args: { _device_id: string }
+        Returns: undefined
+      }
       remove_estate_admin: { Args: { _estate_id: string }; Returns: undefined }
       review_verification: {
         Args: { _approve: boolean; _notes: string; _user_id: string }
