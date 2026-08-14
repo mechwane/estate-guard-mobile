@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -301,7 +301,7 @@ function Residents() {
         open={!!profileId}
         title="Resident profile"
         onClose={() => setProfileId(null)}
-        width="xl"
+        width="lg"
       >
         {profileId && <ResidentProfilePanel id={profileId} />}
       </SheetModal>
