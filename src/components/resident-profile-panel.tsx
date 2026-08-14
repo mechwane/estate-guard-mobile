@@ -51,7 +51,19 @@ export function ResidentProfilePanel({ id }: { id: string }) {
   const [reasonFor, setReasonFor] = useState<"disapprove" | "disable" | null>(null);
   const [reason, setReason] = useState("");
   const [assignOpen, setAssignOpen] = useState(false);
-  const [cardNo, setCardNo] = useState("");
+  const [pass, setPass] = useState({
+    type: "Vehicle Tag",
+    plate: "",
+    make: "",
+    model: "",
+    color: "",
+    idNumber: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+  });
+
   const [editOpen, setEditOpen] = useState(false);
   const [phone, setPhone] = useState("");
   const [openBill, setOpenBill] = useState<Bill | null>(null);
