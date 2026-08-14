@@ -211,24 +211,56 @@ export function ResidentProfilePanel({ id }: { id: string }) {
 
   const assignId = useMutation({
     mutationFn: async () => {
-      if (!cardNo.trim()) throw new Error("Enter an ID / card number");
-      const { error } = await supabase.from("access_cards").insert({
-        estate_id: estateId!,
-        resident_id: id,
-        card_number: cardNo.trim(),
-        active: true,
-      });
-      if (error) throw error;
-      await logReason("resident.id_assigned", cardNo.trim());
+      const label = [pass.firstName.trim(), pass.lastName.trim()].filter(Boolean).join(" ");
+      if (pass.type === "Vehicle Tag") {
+        if (!pass.plate.trim()) throw new Error("Vehicle plate number is required");
+        const { error } = await supabase.from("vehicle_tags").insert({
+          estate_id: estateId!,
+          resident_id: id,
+          plate: pass.plate.trim().toUpperCase(),
+          tag_number: pass.idNumber.trim() || null,
+          make_model: [pass.make.trim(), pass.model.trim()].filter(Boolean).join(" ") || null,
+          color: pass.color.trim() || null,
+          active: true,
+        });
+        if (error) throw error;
+        await logReason("resident.pass_assigned", `Vehicle tag ${pass.plate.trim()} · ${label}`);
+      } else {
+        if (!pass.idNumber.trim()) throw new Error("ID number is required");
+        const { error } = await supabase.from("access_cards").insert({
+          estate_id: estateId!,
+          resident_id: id,
+          card_number: pass.idNumber.trim(),
+          active: true,
+          notes:
+            [pass.type, label, pass.email.trim(), pass.phoneNumber.trim()]
+              .filter(Boolean)
+              .join(" · ") || null,
+        });
+        if (error) throw error;
+        await logReason("resident.pass_assigned", `${pass.type} ${pass.idNumber.trim()}`);
+      }
     },
     onSuccess: () => {
-      toast.success("ID assigned");
+      toast.success("Pass assigned");
       setAssignOpen(false);
-      setCardNo("");
+      setPass({
+        type: "Vehicle Tag",
+        plate: "",
+        make: "",
+        model: "",
+        color: "",
+        idNumber: "",
+        firstName: "",
+        lastName: "",
+        email: "",
+        phoneNumber: "",
+      });
       invalidate();
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
 
   const savePhone = useMutation({
     mutationFn: async () => {
