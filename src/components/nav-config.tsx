@@ -56,7 +56,7 @@ export const navByRole: Record<AppRole, NavLink[]> = {
   estate_admin: [
     { to: "/app/admin", label: "Overview", icon: <Home /> },
     { to: "/app/admin/verifications", label: "Verify", icon: <ShieldCheck /> },
-    { to: "/app/admin/requests", label: "Requests", icon: <Inbox /> },
+    { to: "/app/admin/collections", label: "Collection", icon: <Receipt /> },
     { to: "/app/admin/shop", label: "Shop", icon: <Store /> },
     { to: "/app/admin/announcements", label: "Notices", icon: <Megaphone /> },
   ],
@@ -133,7 +133,6 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
         { to: "/app/admin", label: "Home", icon: <Home /> },
         { to: "/app/admin/messages", label: "Messages", icon: <MessageSquare /> },
         { to: "/app/admin/tickets", label: "Support tickets", icon: <Ticket /> },
-        { to: "/app/admin/requests", label: "Resident requests", icon: <Inbox /> },
         { to: "/app/admin/troubleshoot", label: "Troubleshoot", icon: <Wrench /> },
       ],
     },
@@ -163,8 +162,6 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
       items: [
         { to: "/app/admin/payments", label: "Overview", icon: <Wallet /> },
         { to: "/app/admin/collections", label: "Collections", icon: <Receipt /> },
-        { to: "/app/admin/invoices", label: "Invoices", icon: <FileText /> },
-        { to: "/app/admin/bills", label: "Create bill", icon: <Wallet /> },
         { to: "/app/admin/discounts", label: "Discounts", icon: <Percent /> },
       ],
     },
