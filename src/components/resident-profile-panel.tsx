@@ -646,32 +646,111 @@ export function ResidentProfilePanel({ id }: { id: string }) {
         />
       </SheetModal>
 
-      {/* Assign ID */}
+      {/* Assign ID — Add Pass */}
       <SheetModal
         open={assignOpen}
-        title="Assign ID"
+        title="Add Pass"
         onClose={() => setAssignOpen(false)}
+        width="lg"
         footer={
           <button
             onClick={() => assignId.mutate()}
             disabled={assignId.isPending}
             className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-60"
           >
-            Assign
+            Save
           </button>
         }
       >
-        <p className="text-xs text-muted-foreground">
-          Issues an estate access ID (card / tag number) to {name}. It becomes active at the gate
-          immediately and appears under My Devices.
-        </p>
-        <input
-          value={cardNo}
-          onChange={(e) => setCardNo(e.target.value)}
-          placeholder="e.g. LG2RA-00231"
-          className="mt-3 w-full rounded-lg border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary"
-        />
+        <div className="space-y-3">
+          <Field label="Type">
+            <select
+              value={pass.type}
+              onChange={(e) => setPass({ ...pass, type: e.target.value })}
+              className="w-full rounded-lg border border-border bg-card px-3 py-2 text-sm outline-none focus:border-primary"
+            >
+              <option>Vehicle Tag</option>
+              <option>Access Card</option>
+              <option>Resident ID</option>
+            </select>
+          </Field>
+
+          {pass.type === "Vehicle Tag" && (
+            <>
+              <div className="pt-1 text-xs font-semibold text-foreground">Vehicle Details</div>
+              <Field label="Vehicle Plate Number *">
+                <Input
+                  value={pass.plate}
+                  onChange={(v) => setPass({ ...pass, plate: v })}
+                  placeholder="eg. KJA-990H-223"
+                />
+              </Field>
+              <Field label="Vehicle Make">
+                <Input
+                  value={pass.make}
+                  onChange={(v) => setPass({ ...pass, make: v })}
+                  placeholder="eg. Camry"
+                />
+              </Field>
+              <Field label="Vehicle Model">
+                <Input
+                  value={pass.model}
+                  onChange={(v) => setPass({ ...pass, model: v })}
+                  placeholder="eg. Corolla"
+                />
+              </Field>
+              <Field label="Vehicle Color">
+                <Input
+                  value={pass.color}
+                  onChange={(v) => setPass({ ...pass, color: v })}
+                  placeholder="eg. Black"
+                />
+              </Field>
+            </>
+          )}
+
+          <Field label={pass.type === "Vehicle Tag" ? "ID Number" : "ID Number *"}>
+            <Input
+              value={pass.idNumber}
+              onChange={(v) => setPass({ ...pass, idNumber: v })}
+              placeholder="eg. LG2RA-00231"
+            />
+          </Field>
+          <Field label="First Name">
+            <Input
+              value={pass.firstName}
+              onChange={(v) => setPass({ ...pass, firstName: v })}
+              placeholder="eg. Anthony"
+            />
+          </Field>
+          <Field label="Last Name">
+            <Input
+              value={pass.lastName}
+              onChange={(v) => setPass({ ...pass, lastName: v })}
+              placeholder="eg. Awolabi"
+            />
+          </Field>
+          <Field label="Email (optional)">
+            <Input
+              value={pass.email}
+              onChange={(v) => setPass({ ...pass, email: v })}
+              placeholder="name@example.com"
+            />
+          </Field>
+          <Field label="Phone Number">
+            <Input
+              value={pass.phoneNumber}
+              onChange={(v) => setPass({ ...pass, phoneNumber: v })}
+              placeholder="+234 800 000 0000"
+            />
+          </Field>
+          <p className="text-[11px] text-muted-foreground">
+            The pass is issued to {name} and becomes active at the gate immediately — it also shows
+            under My Devices.
+          </p>
+        </div>
       </SheetModal>
+
 
       {/* Edit contact */}
       <SheetModal
