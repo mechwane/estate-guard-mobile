@@ -24,15 +24,18 @@ export type RangeKey = "7d" | "30d" | "90d" | "all";
 export type AdminRangeKey = "today" | "7d" | "30d";
 export type ChartDatum = Record<string, string | number | null | undefined>;
 
+// Vivid but harmonious series colours — bright enough to read at a glance on
+// both light and dark surfaces, and distinct from each other in a stacked bar.
 const palette = [
-  "var(--color-primary)",
-  "var(--color-accent)",
-  "var(--color-success)",
-  "var(--color-warning)",
-  "var(--color-destructive)",
-  "var(--color-primary-dark)",
-  "var(--color-muted-foreground)",
+  "oklch(0.62 0.21 264)", // indigo
+  "oklch(0.72 0.18 190)", // cyan
+  "oklch(0.75 0.17 155)", // emerald
+  "oklch(0.82 0.17 85)", // amber
+  "oklch(0.68 0.21 25)", // coral
+  "oklch(0.66 0.22 320)", // magenta
+  "oklch(0.70 0.16 230)", // azure
 ];
+
 
 const axisColor = "var(--color-muted-foreground)";
 const gridColor = "var(--color-border)";
