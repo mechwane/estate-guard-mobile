@@ -18,6 +18,7 @@ import {
   StatusBadge,
 } from "@/components/ui-kit";
 import { Stagger, StaggerItem } from "@/components/motion-kit";
+import { AccessCodeDetail, codeState } from "@/components/access-code-detail";
 
 export const Route = createFileRoute("/app/admin/guests")({
   component: AdminGuestLogs,
@@ -33,13 +34,14 @@ export const Route = createFileRoute("/app/admin/guests")({
   }),
 });
 
-type Tab = "all" | "inside" | "expected" | "completed" | "revoked";
+type Tab = "all" | "active" | "used" | "expired" | "inside" | "revoked";
 
 const TABS: readonly { key: Tab; label: string }[] = [
-  { key: "all", label: "All" },
+  { key: "all", label: "All codes" },
+  { key: "active", label: "Active codes" },
+  { key: "used", label: "Used codes" },
+  { key: "expired", label: "Expired codes" },
   { key: "inside", label: "Inside now" },
-  { key: "expected", label: "Expected" },
-  { key: "completed", label: "Completed" },
   { key: "revoked", label: "Revoked" },
 ];
 
@@ -67,6 +69,7 @@ function AdminGuestLogs() {
   const [tab, setTab] = useState<Tab>("all");
   const [q, setQ] = useState("");
   const [confirm, setConfirm] = useState<{ kind: "exit" | "revoke"; invite: Invite } | null>(null);
+  const [openCode, setOpenCode] = useState<Invite | null>(null);
 
   const invitesQ = useQuery({
     queryKey: ["admin-guests", estateId],
@@ -111,11 +114,10 @@ function AdminGuestLogs() {
     () => ({
       total: rows.length,
       inside: rows.filter((r) => r.checked_in_at && !r.checked_out_at).length,
-      expected: rows.filter(
-        (r) => !r.checked_in_at && r.status === "active" && new Date(r.expires_at).getTime() > now,
-      ).length,
-      completed: rows.filter((r) => !!r.checked_out_at).length,
-      revoked: rows.filter((r) => r.status === "revoked").length,
+      active: rows.filter((r) => codeState(r) === "active").length,
+      used: rows.filter((r) => codeState(r) === "used").length,
+      expired: rows.filter((r) => codeState(r) === "expired").length,
+      revoked: rows.filter((r) => codeState(r) === "revoked").length,
     }),
     [rows, now],
   );
@@ -124,13 +126,7 @@ function AdminGuestLogs() {
     const needle = q.trim().toLowerCase();
     return rows.filter((r) => {
       if (tab === "inside" && !(r.checked_in_at && !r.checked_out_at)) return false;
-      if (
-        tab === "expected" &&
-        !(!r.checked_in_at && r.status === "active" && new Date(r.expires_at).getTime() > now)
-      )
-        return false;
-      if (tab === "completed" && !r.checked_out_at) return false;
-      if (tab === "revoked" && r.status !== "revoked") return false;
+      if (tab !== "all" && tab !== "inside" && codeState(r) !== tab) return false;
       if (!needle) return true;
       const host = residentMap.get(r.resident_id);
       return (
@@ -191,19 +187,24 @@ function AdminGuestLogs() {
   return (
     <Stagger className="space-y-4">
       <StaggerItem>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
-          <StatCard label="Total passes" value={counts.total} />
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
+          <StatCard label="Total codes" value={counts.total} />
           <StatCard
             label="Inside now"
             value={counts.inside}
             tone={counts.inside ? "primary" : "default"}
           />
-          <StatCard label="Expected" value={counts.expected} />
-          <StatCard label="Completed" value={counts.completed} tone="success" />
+          <StatCard label="Active codes" value={counts.active} tone="success" />
+          <StatCard label="Used codes" value={counts.used} />
           <StatCard
             label="Revoked"
             value={counts.revoked}
             tone={counts.revoked ? "error" : "default"}
+          />
+          <StatCard
+            label="Expired codes"
+            value={counts.expired}
+            tone={counts.expired ? "warning" : "default"}
           />
         </div>
       </StaggerItem>
@@ -248,8 +249,12 @@ function AdminGuestLogs() {
                     key={g.id}
                     className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 py-3 md:grid-cols-[minmax(0,2fr)_minmax(0,1.2fr)_minmax(0,1.2fr)_auto]"
                   >
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-semibold">
+                    <button
+                      onClick={() => setOpenCode(g)}
+                      className="min-w-0 text-left"
+                      title="View access code"
+                    >
+                      <div className="truncate text-sm font-semibold hover:text-primary">
                         {g.guest_name}
                         {g.num_guests && g.num_guests > 1 ? (
                           <span className="ml-1 text-xs text-muted-foreground">
@@ -262,7 +267,7 @@ function AdminGuestLogs() {
                         {g.purpose ? ` · ${g.purpose}` : ""}
                         {g.vehicle_number ? ` · ${g.vehicle_number}` : ""}
                       </div>
-                    </div>
+                    </button>
                     <div className="hidden min-w-0 md:block">
                       <div className="text-xs text-muted-foreground">Host</div>
                       <div className="truncate text-sm">
@@ -344,6 +349,24 @@ function AdminGuestLogs() {
           )}
         </Card>
       </StaggerItem>
+
+      {openCode && (
+        <AccessCodeDetail
+          invite={openCode}
+          hostName={residentMap.get(openCode.resident_id)?.full_name ?? null}
+          hostAddress={
+            [
+              residentMap.get(openCode.resident_id)?.house_number &&
+                `No ${residentMap.get(openCode.resident_id)?.house_number}`,
+              residentMap.get(openCode.resident_id)?.unit &&
+                `Unit ${residentMap.get(openCode.resident_id)?.unit}`,
+            ]
+              .filter(Boolean)
+              .join(", ") || null
+          }
+          onClose={() => setOpenCode(null)}
+        />
+      )}
 
       <ConfirmActionDialog
         open={!!confirm}
