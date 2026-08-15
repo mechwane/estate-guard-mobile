@@ -140,7 +140,7 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
       label: "People",
       items: [
         { to: "/app/admin/households", label: "Households", icon: <Home /> },
-        { to: "/app/admin/households", label: "Households", icon: <Home /> },
+
         { to: "/app/admin/dependents", label: "Dependants", icon: <UsersRound /> },
         { to: "/app/admin/staff", label: "Staff & guards", icon: <Shield /> },
         { to: "/app/admin/verifications", label: "Verifications", icon: <ShieldCheck /> },
