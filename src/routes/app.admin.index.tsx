@@ -709,19 +709,6 @@ function AdminDashboard() {
           </div>
         ))}
 
-      {section === "operations" && (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {operations.map(([label, to]) => (
-            <Link
-              key={to}
-              to={to}
-              className="card-surface flex min-h-16 items-center justify-center px-3 py-3 text-center text-sm font-medium text-foreground hover:bg-muted/50"
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
-      )}
 
       {section === "activity" &&
         (activity.isLoading ? (
