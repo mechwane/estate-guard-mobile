@@ -1,470 +1,242 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
+import { Users } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
+import { initialsFor, useAvatarUrls } from "@/lib/avatar";
 import {
-  Card,
   EmptyState,
-  StatusBadge,
-  ListSkeleton,
   ErrorState,
+  ListSkeleton,
+  ScrollTabs,
   SearchInput,
   SheetModal,
+  StatusBadge,
 } from "@/components/ui-kit";
-import { Users, Fingerprint, ScanFace, SlidersHorizontal } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { toast } from "sonner";
+import { Stagger, StaggerItem } from "@/components/motion-kit";
 import { ResidentProfilePanel } from "@/components/resident-profile-panel";
 
+const VIEWS = [
+  { key: "all", label: "Total residents" },
+  { key: "verified", label: "Verified" },
+  { key: "unverified", label: "Unverified" },
+  { key: "pending", label: "Pending approval" },
+  { key: "revoked", label: "Revoked" },
+  { key: "guards", label: "Guards" },
+] as const;
+
+type View = (typeof VIEWS)[number]["key"];
+
 export const Route = createFileRoute("/app/admin/residents")({
-  component: Residents,
+  component: PeopleDirectory,
+  validateSearch: (search: Record<string, unknown>) => ({
+    view: typeof search.view === "string" ? search.view : undefined,
+  }),
+  head: () => ({
+    meta: [
+      { title: "People Directory — Estate Guard" },
+      {
+        name: "description",
+        content:
+          "Estate people directory: residents, guards, verification state and approval status with full profiles.",
+      },
+      { property: "og:title", content: "People Directory — Estate Guard" },
+      {
+        property: "og:description",
+        content: "Browse residents and guards by verification and approval state.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
 });
 
-type BiometricRow = {
-  id: string;
-  resident_id: string | null;
-  biometric_type: string;
-  enrollment_status: string;
-  access_status: string;
-  device_id: string | null;
-  last_used_at: string | null;
-  updated_at: string | null;
-};
-
-type CardRow = { id: string; resident_id: string; active: boolean; card_number: string | null };
-type VehicleRow = { id: string; resident_id: string; active: boolean; plate: string };
-type DeviceRow = { id: string; name: string; device_type: string };
-
-function Residents() {
+function PeopleDirectory() {
   const { data: session } = useSession();
   const estateId = session?.estate?.id;
-  const qc = useQueryClient();
+  const navigate = useNavigate();
+  const search = Route.useSearch();
+  const view: View = (VIEWS.some((v) => v.key === search.view) ? search.view : "all") as View;
   const [q, setQ] = useState("");
-  const [filter, setFilter] = useState<"all" | "pending" | "approved">("all");
-  const [expanded, setExpanded] = useState<string | null>(null);
   const [profileId, setProfileId] = useState<string | null>(null);
 
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["admin-residents", estateId],
+  const people = useQuery({
+    queryKey: ["admin-directory", estateId],
     enabled: !!estateId,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("estate_id", estateId!)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const access = useQuery({
-    queryKey: ["admin-residents-access", estateId],
-    enabled: !!estateId,
-    queryFn: async () => {
-      const [bio, cards, vehs, devs] = await Promise.all([
+      const [profiles, roles] = await Promise.all([
         supabase
-          .from("biometric_access")
+          .from("profiles")
           .select(
-            "id,resident_id,biometric_type,enrollment_status,access_status,device_id,last_used_at,updated_at",
+            "id,full_name,email,phone,avatar_url,approved,verification_status,house_number,block,street,unit,address_code,occupant_type,created_at,updated_at",
           )
-          .eq("estate_id", estateId!),
-        supabase
-          .from("access_cards")
-          .select("id,resident_id,active,card_number")
-          .eq("estate_id", estateId!),
-        supabase
-          .from("vehicle_tags")
-          .select("id,resident_id,active,plate")
-          .eq("estate_id", estateId!),
-        supabase.from("access_devices").select("id,name,device_type").eq("estate_id", estateId!),
+          .eq("estate_id", estateId!)
+          .order("full_name", { ascending: true }),
+        supabase.from("user_roles").select("user_id,role"),
       ]);
-      const err = [bio.error, cards.error, vehs.error, devs.error].find(Boolean);
-      if (err) throw err;
-      return {
-        bio: (bio.data ?? []) as BiometricRow[],
-        cards: (cards.data ?? []) as CardRow[],
-        vehicles: (vehs.data ?? []) as VehicleRow[],
-        devices: (devs.data ?? []) as DeviceRow[],
-      };
-    },
-  });
-
-  const setApproved = useMutation({
-    mutationFn: async ({ id, approved }: { id: string; approved: boolean }) => {
-      // set_estate_access authorises the change and writes the audit entry
-      const { error } = await supabase.rpc("set_estate_access", {
-        _user_id: id,
-        _approved: approved,
+      if (profiles.error) throw profiles.error;
+      const roleMap = new Map<string, string[]>();
+      (roles.data ?? []).forEach((r) => {
+        roleMap.set(r.user_id, [...(roleMap.get(r.user_id) ?? []), String(r.role)]);
       });
-      if (error) throw error;
+      return (profiles.data ?? []).map((p) => ({ ...p, roles: roleMap.get(p.id) ?? [] }));
     },
-    onSuccess: () => {
-      toast.success("Updated");
-      qc.invalidateQueries({ queryKey: ["admin-residents"] });
-    },
-    onError: (e: Error) => toast.error(e.message),
   });
 
-  const updateBio = useMutation({
-    mutationFn: async (args: {
-      residentId: string;
-      biometricType: "fingerprint" | "face";
-      enrollment_status: string;
-      access_status: string;
-      device_id: string | null;
-    }) => {
-      const { error } = await supabase.rpc(
-        "admin_upsert_biometric_access" as never,
-        {
-          _resident_id: args.residentId,
-          _dependent_id: null,
-          _biometric_type: args.biometricType,
-          _device_id: args.device_id,
-          _enrollment_status: args.enrollment_status,
-          _access_status: args.access_status,
-          _notes: null,
-        } as never,
-      );
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast.success("Access updated");
-      qc.invalidateQueries({ queryKey: ["admin-residents-access", estateId] });
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
+  const rows = people.data ?? [];
+  const avatarMap = useAvatarUrls(rows.map((r) => r.avatar_url));
+
+  const counts = useMemo(
+    () => ({
+      all: rows.filter((r) => !r.roles.includes("guard")).length,
+      verified: rows.filter((r) => r.verification_status === "approved").length,
+      unverified: rows.filter((r) => r.verification_status !== "approved").length,
+      pending: rows.filter((r) => r.verification_status === "pending" || !r.approved).length,
+      revoked: rows.filter((r) => !r.approved).length,
+      guards: rows.filter((r) => r.roles.includes("guard")).length,
+    }),
+    [rows],
+  );
 
   const filtered = useMemo(() => {
-    const list = data ?? [];
     const needle = q.trim().toLowerCase();
-    return list.filter((r) => {
-      if (filter === "pending" && r.approved) return false;
-      if (filter === "approved" && !r.approved) return false;
-      if (!needle) return true;
-      return (
-        (r.full_name ?? "").toLowerCase().includes(needle) ||
-        (r.phone ?? "").toLowerCase().includes(needle) ||
-        (r.unit ?? "").toLowerCase().includes(needle)
+    return rows
+      .filter((r) => {
+        const isGuard = r.roles.includes("guard");
+        switch (view) {
+          case "guards":
+            return isGuard;
+          case "verified":
+            return !isGuard && r.verification_status === "approved";
+          case "unverified":
+            return !isGuard && r.verification_status !== "approved";
+          case "pending":
+            return !isGuard && (r.verification_status === "pending" || !r.approved);
+          case "revoked":
+            return !isGuard && !r.approved;
+          default:
+            return !isGuard;
+        }
+      })
+      .filter(
+        (r) =>
+          !needle ||
+          (r.full_name ?? "").toLowerCase().includes(needle) ||
+          (r.email ?? "").toLowerCase().includes(needle) ||
+          (r.phone ?? "").toLowerCase().includes(needle) ||
+          (r.house_number ?? "").toLowerCase().includes(needle) ||
+          (r.address_code ?? "").toLowerCase().includes(needle) ||
+          (r.street ?? "").toLowerCase().includes(needle),
       );
-    });
-  }, [data, q, filter]);
+  }, [rows, view, q]);
 
-  const bioByResident = useMemo(() => {
-    const map = new Map<string, { fingerprint?: BiometricRow; face?: BiometricRow }>();
-    (access.data?.bio ?? []).forEach((row) => {
-      if (!row.resident_id) return;
-      const bucket = map.get(row.resident_id) ?? {};
-      if (row.biometric_type === "fingerprint") bucket.fingerprint = row;
-      if (row.biometric_type === "face") bucket.face = row;
-      map.set(row.resident_id, bucket);
-    });
-    return map;
-  }, [access.data]);
-
-  const openResident = useMemo(
-    () => (expanded ? (filtered.find((r) => r.id === expanded) ?? null) : null),
-    [expanded, filtered],
-  );
-  const openBio = (openResident ? (bioByResident.get(openResident.id) ?? {}) : {}) as Record<
-    string,
-    any
-  >;
+  if (!estateId)
+    return (
+      <EmptyState
+        title="No estate assigned"
+        description="Your admin account is not linked to an estate yet."
+      />
+    );
 
   return (
-    <div className="space-y-3">
-      <div className="space-y-2 sm:max-w-xl">
-        <SearchInput value={q} onChange={setQ} placeholder="Search by name, phone, or unit" />
-        <div className="flex gap-2">
-          {(["all", "pending", "approved"] as const).map((k) => (
-            <button
-              key={k}
-              onClick={() => setFilter(k)}
-              className={`flex-1 rounded-lg border px-3 py-1.5 text-xs font-medium capitalize transition-colors ${
-                filter === k
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-card text-foreground hover:bg-muted"
-              }`}
-            >
-              {k}
-            </button>
-          ))}
-        </div>
+    <div className="space-y-4">
+      <ScrollTabs
+        value={view}
+        onChange={(next) => navigate({ to: "/app/admin/residents", search: { view: next } })}
+        tabs={VIEWS.map((v) => ({ key: v.key, label: `${v.label} (${counts[v.key]})` }))}
+      />
+
+      <div className="sm:max-w-sm">
+        <SearchInput value={q} onChange={setQ} placeholder="Search name, phone, or address…" />
       </div>
 
-      {isLoading ? (
+      {people.isLoading ? (
         <ListSkeleton rows={4} />
-      ) : isError ? (
-        <ErrorState onRetry={() => refetch()} />
+      ) : people.isError ? (
+        <ErrorState onRetry={() => people.refetch()} />
       ) : filtered.length === 0 ? (
         <EmptyState
-          title={q || filter !== "all" ? "No matching residents" : "No residents yet"}
+          title="Nobody here yet"
+          description="People appear here as soon as they register on this estate."
           icon={<Users className="h-6 w-6" />}
         />
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <Stagger className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {filtered.map((r) => {
-            const bio = bioByResident.get(r.id) ?? {};
-            const hasCard = (access.data?.cards ?? []).some(
-              (c) => c.resident_id === r.id && c.active,
-            );
-            const vehicleCount = (access.data?.vehicles ?? []).filter(
-              (v) => v.resident_id === r.id && v.active,
-            ).length;
+            const signed = r.avatar_url ? avatarMap[r.avatar_url] : null;
+            const address =
+              [r.house_number && `No ${r.house_number}`, r.block, r.street, r.unit && `Unit ${r.unit}`]
+                .filter(Boolean)
+                .join(", ") ||
+              r.address_code ||
+              "No address on file";
             return (
-              <Card key={r.id} className="p-3">
-                <div className="flex items-start justify-between gap-2">
-                  <button
-                    onClick={() => setProfileId(r.id)}
-                    className="flex min-w-0 items-center gap-2 text-left"
-                  >
-                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-[11px] font-semibold text-primary">
-                      {(r.full_name || "?").slice(0, 1).toUpperCase()}
-                    </span>
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-medium text-foreground">
-                        {r.full_name || "—"}
-                      </div>
-                      <div className="truncate text-xs text-muted-foreground">
-                        {r.unit ? `Unit ${r.unit}` : "—"} · {r.phone ?? "no phone"}
-                      </div>
-                    </div>
-                  </button>
-                  <span className="shrink-0">
-                    <StatusBadge tone={r.approved ? "success" : "warning"}>
-                      {r.approved ? "approved" : "pending"}
-                    </StatusBadge>
-                  </span>
-                </div>
-
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  <MiniBadge
-                    icon={<Fingerprint className="h-3 w-3" />}
-                    label={bio.fingerprint?.enrollment_status ?? "not enrolled"}
-                    active={bio.fingerprint?.access_status === "enabled"}
-                  />
-                  <MiniBadge
-                    icon={<ScanFace className="h-3 w-3" />}
-                    label={bio.face?.enrollment_status ?? "not enrolled"}
-                    active={bio.face?.access_status === "enabled"}
-                  />
-                  <MiniBadge label={hasCard ? "Card active" : "No card"} active={hasCard} />
-                  <MiniBadge
-                    label={
-                      vehicleCount
-                        ? `${vehicleCount} vehicle${vehicleCount > 1 ? "s" : ""}`
-                        : "No vehicle"
-                    }
-                    active={vehicleCount > 0}
-                  />
-                </div>
-
-                <div className="mt-3 flex gap-2">
-                  {!r.approved ? (
-                    <button
-                      onClick={() => setApproved.mutate({ id: r.id, approved: true })}
-                      className="flex-1 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary-dark"
-                    >
-                      Approve
-                    </button>
+              <StaggerItem key={r.id}>
+                <button
+                  onClick={() => setProfileId(r.id)}
+                  className="card-surface lift-3d flex w-full items-center gap-3 p-3 text-left transition hover:bg-muted/40"
+                >
+                  {signed ? (
+                    <img
+                      src={signed}
+                      alt={`${r.full_name || "Member"} profile photo`}
+                      loading="lazy"
+                      className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-primary/20"
+                    />
                   ) : (
-                    <button
-                      onClick={() => setApproved.mutate({ id: r.id, approved: false })}
-                      className="flex-1 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted"
-                    >
-                      Revoke
-                    </button>
+                    <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-primary/10 text-sm font-semibold text-primary ring-2 ring-primary/20">
+                      {initialsFor(r.full_name || r.email)}
+                    </span>
                   )}
-                  <button
-                    onClick={() => setExpanded(r.id)}
-                    className="flex items-center gap-1 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-muted"
-                  >
-                    <SlidersHorizontal className="h-3 w-3" /> Access
-                  </button>
-                  <button
-                    onClick={() => setProfileId(r.id)}
-                    className="flex items-center gap-1 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium hover:bg-muted"
-                  >
-                    Profile
-                  </button>
-                </div>
-
-
-              </Card>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-semibold text-foreground">
+                      {r.full_name || r.email || "Unnamed"}
+                    </span>
+                    <span className="block truncate text-[11px] text-muted-foreground">
+                      {address}
+                    </span>
+                    <span className="mt-1 flex flex-wrap items-center gap-1.5">
+                      <StatusBadge tone={r.approved ? "success" : "error"}>
+                        {r.approved ? "Active" : "Disabled"}
+                      </StatusBadge>
+                      <StatusBadge
+                        tone={
+                          r.verification_status === "approved"
+                            ? "primary"
+                            : r.verification_status === "rejected"
+                              ? "error"
+                              : "warning"
+                        }
+                      >
+                        {(r.verification_status ?? "not submitted").replace(/_/g, " ")}
+                      </StatusBadge>
+                      {r.roles.includes("guard") && <StatusBadge tone="accent">guard</StatusBadge>}
+                    </span>
+                    <span className="mt-1 block text-[10px] text-muted-foreground">
+                      Last seen{" "}
+                      {formatDistanceToNow(new Date(r.updated_at ?? r.created_at), {
+                        addSuffix: true,
+                      })}
+                    </span>
+                  </span>
+                </button>
+              </StaggerItem>
             );
           })}
-        </div>
+        </Stagger>
       )}
 
       <SheetModal
         open={!!profileId}
-        title="Resident profile"
+        title="Profile"
         onClose={() => setProfileId(null)}
         width="lg"
       >
         {profileId && <ResidentProfilePanel id={profileId} />}
       </SheetModal>
-
-      <SheetModal
-        open={!!openResident}
-        title={openResident ? `Access — ${openResident.full_name || "Resident"}` : "Access"}
-        onClose={() => setExpanded(null)}
-        width="lg"
-      >
-        {openResident && (
-          <div className="space-y-2">
-                    <BiometricRowEditor
-                      title="Fingerprint"
-                      icon={<Fingerprint className="h-4 w-4" />}
-                      row={openBio.fingerprint}
-                      devices={(access.data?.devices ?? []).filter(
-                        (d) => d.device_type === "fingerprint" || d.device_type === "gate_scanner",
-                      )}
-                      onSave={(args) =>
-                        updateBio.mutate({
-                          residentId: openResident.id,
-                          biometricType: "fingerprint",
-                          ...args,
-                        })
-                      }
-                      pending={updateBio.isPending}
-                    />
-                    <BiometricRowEditor
-                      title="Face recognition"
-                      icon={<ScanFace className="h-4 w-4" />}
-                      row={openBio.face}
-                      devices={(access.data?.devices ?? []).filter(
-                        (d) => d.device_type === "face" || d.device_type === "gate_scanner",
-                      )}
-                      onSave={(args) =>
-                        updateBio.mutate({ residentId: openResident.id, biometricType: "face", ...args })
-                      }
-                      pending={updateBio.isPending}
-                    />
-                    <p className="text-[11px] text-muted-foreground">
-                      Biometric templates live on the estate device — no images stored here.
-                    </p>
-          </div>
-        )}
-      </SheetModal>
-    </div>
-  );
-}
-
-function MiniBadge({
-  icon,
-  label,
-  active,
-}: {
-  icon?: React.ReactNode;
-  label: string;
-  active: boolean;
-}) {
-  return (
-    <span
-      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${
-        active ? "bg-emerald-500/15 text-emerald-500" : "bg-muted text-muted-foreground"
-      }`}
-    >
-      {icon}
-      {label}
-    </span>
-  );
-}
-
-function BiometricRowEditor({
-  title,
-  icon,
-  row,
-  devices,
-  onSave,
-  pending,
-}: {
-  title: string;
-  icon: React.ReactNode;
-  row?: BiometricRow;
-  devices: DeviceRow[];
-  onSave: (args: {
-    enrollment_status: string;
-    access_status: string;
-    device_id: string | null;
-  }) => void;
-  pending: boolean;
-}) {
-  const [enrollment, setEnrollment] = useState(row?.enrollment_status ?? "pending");
-  const [accessStatus, setAccessStatus] = useState(row?.access_status ?? "disabled");
-  const [deviceId, setDeviceId] = useState<string>(row?.device_id ?? "");
-
-  return (
-    <div className="rounded-lg border border-border/60 bg-card p-3">
-      <div className="mb-2 flex items-center gap-2">
-        <span className="grid h-7 w-7 place-items-center rounded-md bg-primary/10 text-primary">
-          {icon}
-        </span>
-        <div className="text-sm font-medium text-foreground">{title}</div>
-        {row?.last_used_at && (
-          <span className="ml-auto text-[11px] text-muted-foreground">
-            Last used {formatDistanceToNow(new Date(row.last_used_at), { addSuffix: true })}
-          </span>
-        )}
-      </div>
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-        <label className="text-[11px] text-muted-foreground">
-          Enrollment
-          <select
-            value={enrollment}
-            onChange={(e) => setEnrollment(e.target.value)}
-            className="mt-1 w-full rounded-md border border-border bg-card px-2 py-1.5 text-xs"
-          >
-            <option value="not_enrolled">Not enrolled</option>
-            <option value="pending">Pending</option>
-            <option value="enrolled">Enrolled</option>
-            <option value="rejected">Rejected</option>
-          </select>
-        </label>
-        <label className="text-[11px] text-muted-foreground">
-          Access
-          <select
-            value={accessStatus}
-            onChange={(e) => setAccessStatus(e.target.value)}
-            className="mt-1 w-full rounded-md border border-border bg-card px-2 py-1.5 text-xs"
-          >
-            <option value="enabled">Enabled</option>
-            <option value="disabled">Disabled</option>
-          </select>
-        </label>
-        <label className="text-[11px] text-muted-foreground">
-          Device
-          <select
-            value={deviceId}
-            onChange={(e) => setDeviceId(e.target.value)}
-            className="mt-1 w-full rounded-md border border-border bg-card px-2 py-1.5 text-xs"
-          >
-            <option value="">— none —</option>
-            {devices.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.name}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-      <div className="mt-2 flex justify-end">
-        <button
-          onClick={() =>
-            onSave({
-              enrollment_status: enrollment,
-              access_status: accessStatus,
-              device_id: deviceId || null,
-            })
-          }
-          disabled={pending}
-          className="rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
-        >
-          Save
-        </button>
-      </div>
     </div>
   );
 }
