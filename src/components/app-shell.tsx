@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LogOut, Menu, Search, Settings, UserCircle2, X } from "lucide-react";
+import { LogOut, Menu, Search, UserCircle2, X } from "lucide-react";
 import { useSession, type AppRole } from "@/lib/session";
 import type { NavGroup, NavLink } from "@/components/nav-config";
 import { claimDeviceSession, releaseDeviceSession, type DeviceClaim } from "@/lib/device-session";
@@ -327,10 +327,16 @@ export function AppShell({
                       </div>
                     )}
                     {(estateHits.data?.invites ?? []).map((g) => (
-                      <Link
+                      <button
                         key={g.id}
-                        to="/app/admin/guests"
-                        className="flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-muted"
+                        onClick={() => {
+                          setQuery("");
+                          navigate({
+                            to: "/app/admin/guests",
+                            search: { code: g.code, tab: "all" },
+                          });
+                        }}
+                        className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm hover:bg-muted"
                       >
                         <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
                         <span className="min-w-0 flex-1 truncate">
@@ -339,8 +345,9 @@ export function AppShell({
                         <span className="shrink-0 text-[10px] text-muted-foreground">
                           {g.status}
                         </span>
-                      </Link>
+                      </button>
                     ))}
+
                     {results.length > 0 && (
                       <div className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                         Pages
@@ -382,16 +389,6 @@ export function AppShell({
                     {session.estate.status === "active" ? "Live" : "Demo"}
                   </span>
                 </span>
-              )}
-              {role === "estate_admin" && (
-                <Link
-                  to="/app/admin/settings"
-                  aria-label="Settings"
-                  title="Settings"
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                >
-                  <Settings className="h-4 w-4" />
-                </Link>
               )}
               <AvatarBtn />
 

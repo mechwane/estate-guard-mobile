@@ -1,11 +1,28 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow, startOfDay, subDays } from "date-fns";
+import {
+  AlertTriangle,
+  Ban,
+  CalendarClock,
+  Clock,
+  FileText,
+  LogIn,
+  Phone,
+  Receipt,
+  Shield,
+  ShieldCheck,
+  ShoppingCart,
+  Ticket,
+  TimerOff,
+  UserX,
+  Users,
+} from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { initialsFor, useAvatarUrls } from "@/lib/avatar";
+import { MetricTile } from "@/components/metric-tile";
 import {
   ChartCard,
   DonutChart,
@@ -22,11 +39,7 @@ import {
   ErrorState,
   ListSkeleton,
   ScrollTabs,
-  SearchInput,
-  StatCard,
-  StatusBadge,
 } from "@/components/ui-kit";
-import { Stagger, StaggerItem } from "@/components/motion-kit";
 
 export const Route = createFileRoute("/app/admin/")({
   component: AdminDashboard,
@@ -35,10 +48,9 @@ export const Route = createFileRoute("/app/admin/")({
 function AdminDashboard() {
   const { data: session } = useSession();
   const estateId = session?.estate?.id;
-  const [section, setSection] = useState<"overview" | "residents" | "operations" | "activity">(
-    "overview",
-  );
+  const [section, setSection] = useState<"overview" | "activity">("overview");
   const [visitorRange, setVisitorRange] = useState<AdminRangeKey>("7d");
+
 
   const metrics = useQuery({
     queryKey: ["admin-control-center", estateId],
@@ -347,65 +359,8 @@ function AdminDashboard() {
     },
   });
 
-  const operations = useMemo(
-    () =>
-      [
-        ["Realtime access", "/app/admin/realtime"],
-        ["Security alerts", "/app/admin/alerts"],
-        ["Broadcast", "/app/admin/messages"],
-        ["Payments", "/app/admin/payments"],
-        ["Access cards", "/app/admin/cards"],
-        ["Vehicle tags", "/app/admin/vehicles"],
-        ["Access passes", "/app/admin/passes"],
-        ["Residents", "/app/admin/residents"],
-        ["Dependants", "/app/admin/dependents"],
-        ["Guards", "/app/admin/staff"],
-        ["Guest logs", "/app/admin/guests"],
-        ["Issues", "/app/admin/issues"],
-        ["Collections", "/app/admin/collections"],
-        ["Discounts", "/app/admin/discounts"],
-        ["Shop", "/app/admin/shop"],
-        ["Community", "/app/admin/community"],
-        ["Blog", "/app/admin/blog"],
-        ["Verifications", "/app/admin/verifications"],
-        ["Troubleshoot", "/app/admin/troubleshoot"],
-      ] as const,
-    [],
-  );
 
-  const [residentSearch, setResidentSearch] = useState("");
-  const [showInactive, setShowInactive] = useState(false);
 
-  const residents = useQuery({
-    queryKey: ["admin-home-residents", estateId],
-    enabled: !!estateId && section === "residents",
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select(
-          "id,full_name,email,phone,avatar_url,approved,verification_status,house_number,block,street,unit,occupant_type,created_at",
-        )
-        .eq("estate_id", estateId!)
-        .order("full_name", { ascending: true });
-      if (error) throw error;
-      return data ?? [];
-    },
-  });
-
-  const residentRows = useMemo(() => {
-    const term = residentSearch.trim().toLowerCase();
-    return (residents.data ?? [])
-      .filter((r) => (showInactive ? !r.approved : r.approved))
-      .filter(
-        (r) =>
-          !term ||
-          (r.full_name ?? "").toLowerCase().includes(term) ||
-          (r.email ?? "").toLowerCase().includes(term) ||
-          (r.phone ?? "").toLowerCase().includes(term),
-      );
-  }, [residents.data, residentSearch, showInactive]);
-
-  const avatarMap = useAvatarUrls((residents.data ?? []).map((r) => r.avatar_url));
 
   if (!estateId)
     return (
@@ -423,113 +378,12 @@ function AdminDashboard() {
         tabs={
           [
             { key: "overview", label: "Overview" },
-            { key: "residents", label: "Residents" },
-            { key: "operations", label: "Operations" },
             { key: "activity", label: "Activity" },
           ] as const
         }
       />
 
-      {section === "residents" && (
-        <div className="space-y-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="min-w-0 flex-1 sm:max-w-xs">
-              <SearchInput
-                value={residentSearch}
-                onChange={setResidentSearch}
-                placeholder="Search residents…"
-              />
-            </div>
-            <div className="flex rounded-xl bg-muted p-1 text-sm">
-              <button
-                onClick={() => setShowInactive(false)}
-                className={`rounded-lg px-3 py-1.5 font-medium transition-colors ${
-                  showInactive ? "text-muted-foreground" : "bg-card text-foreground shadow"
-                }`}
-              >
-                Active
-              </button>
-              <button
-                onClick={() => setShowInactive(true)}
-                className={`rounded-lg px-3 py-1.5 font-medium transition-colors ${
-                  showInactive ? "bg-card text-foreground shadow" : "text-muted-foreground"
-                }`}
-              >
-                Inactive
-              </button>
-            </div>
-          </div>
 
-          {residents.isLoading ? (
-            <ListSkeleton rows={4} />
-          ) : residents.isError ? (
-            <ErrorState onRetry={() => residents.refetch()} />
-          ) : residentRows.length === 0 ? (
-            <EmptyState
-              title={showInactive ? "No inactive residents" : "No active residents"}
-              description="Residents appear here once they register and are approved."
-            />
-          ) : (
-            <Stagger className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              {residentRows.map((resident) => {
-                const address =
-                  [resident.house_number, resident.block, resident.street]
-                    .filter(Boolean)
-                    .join(", ") ||
-                  resident.unit ||
-                  "No address on file";
-                const signed = resident.avatar_url ? avatarMap[resident.avatar_url] : null;
-                return (
-                  <StaggerItem key={resident.id}>
-                    <Link
-                      to="/app/admin/residents"
-                      className="card-surface flex items-center gap-3 p-3 hover:bg-muted/50"
-                    >
-                      {signed ? (
-                        <img
-                          src={signed}
-                          alt={`${resident.full_name ?? "Resident"} profile photo`}
-                          loading="lazy"
-                          className="h-12 w-12 shrink-0 rounded-full object-cover"
-                        />
-                      ) : (
-                        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                          {initialsFor(resident.full_name ?? resident.email)}
-                        </span>
-                      )}
-                      <div className="min-w-0 flex-1">
-                        <div className="truncate text-sm font-semibold text-foreground">
-                          {resident.full_name ?? resident.email ?? "Unnamed resident"}
-                        </div>
-                        <div className="truncate text-[11px] text-muted-foreground">{address}</div>
-                        <div className="mt-1 flex flex-wrap gap-1.5">
-                          <StatusBadge tone={resident.approved ? "success" : "warning"}>
-                            {resident.approved ? "Active" : "Inactive"}
-                          </StatusBadge>
-                          <StatusBadge
-                            tone={
-                              resident.verification_status === "approved"
-                                ? "primary"
-                                : resident.verification_status === "rejected"
-                                  ? "error"
-                                  : "neutral"
-                            }
-                          >
-                            {(resident.verification_status ?? "not submitted").replace(/_/g, " ")}
-                          </StatusBadge>
-                          {resident.occupant_type && (
-                            <StatusBadge>{resident.occupant_type}</StatusBadge>
-                          )}
-                        </div>
-                      </div>
-                    </Link>
-                  </StaggerItem>
-                );
-              })}
-            </Stagger>
-          )}
-        </div>
-      )}
 
       {section === "overview" &&
         (metrics.isLoading ? (
@@ -537,56 +391,135 @@ function AdminDashboard() {
         ) : metrics.isError || !metrics.data ? (
           <ErrorState onRetry={() => metrics.refetch()} />
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <StatCard label="Total residents" value={metrics.data.totalResidents} />
-            <StatCard label="Verified" value={metrics.data.verifiedResidents} tone="success" />
-            <StatCard
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+            <MetricTile
+              label="Total residents"
+              value={metrics.data.totalResidents}
+              icon={<Users />}
+              tone="primary"
+              share={100}
+              hint="View everyone in this estate"
+              to="/app/admin/residents"
+              search={{ view: "all" }}
+            />
+            <MetricTile
+              label="Verified"
+              value={metrics.data.verifiedResidents}
+              icon={<ShieldCheck />}
+              tone="success"
+              share={pct(metrics.data.verifiedResidents, metrics.data.totalResidents)}
+              hint={`${Math.round(pct(metrics.data.verifiedResidents, metrics.data.totalResidents))}% of residents`}
+              to="/app/admin/residents"
+              search={{ view: "verified" }}
+            />
+            <MetricTile
               label="Unverified"
               value={metrics.data.unverifiedResidents}
+              icon={<UserX />}
               tone={metrics.data.unverifiedResidents ? "warning" : "default"}
+              share={pct(metrics.data.unverifiedResidents, metrics.data.totalResidents)}
+              to="/app/admin/residents"
+              search={{ view: "unverified" }}
             />
-            <StatCard
+            <MetricTile
               label="Pending approvals"
               value={metrics.data.pendingVerify}
+              icon={<Clock />}
               tone={metrics.data.pendingVerify ? "warning" : "default"}
+              share={pct(metrics.data.pendingVerify, metrics.data.totalResidents)}
+              hint="Awaiting verification review"
+              to="/app/admin/residents"
+              search={{ view: "pending" }}
             />
-            <StatCard
-              label="Revoked/suspended"
+            <MetricTile
+              label="Revoked / suspended"
               value={metrics.data.inactive}
+              icon={<Ban />}
               tone={metrics.data.inactive ? "error" : "default"}
+              share={pct(metrics.data.inactive, metrics.data.totalResidents)}
+              to="/app/admin/residents"
+              search={{ view: "revoked" }}
             />
-            <StatCard label="Total guards" value={metrics.data.totalGuards} />
-            <StatCard
+            <MetricTile
+              label="Total guards"
+              value={metrics.data.totalGuards}
+              icon={<Shield />}
+              tone="accent"
+              hint="Gate team on this estate"
+              to="/app/admin/residents"
+              search={{ view: "guards" }}
+            />
+            <MetricTile
               label="Visitors inside"
               value={metrics.data.visitorsInside}
+              icon={<LogIn />}
               tone={metrics.data.visitorsInside ? "primary" : "default"}
+              to="/app/admin/guests"
+              search={{ tab: "inside" }}
             />
-            <StatCard label="Invites today" value={metrics.data.invitesToday} />
-            <StatCard label="Expired invites" value={metrics.data.expiredInvites} />
-            <StatCard
+            <MetricTile
+              label="Invites today"
+              value={metrics.data.invitesToday}
+              icon={<Ticket />}
+              spark={charts.data?.timeline?.map((d) => d.invites)}
+              to="/app/admin/guests"
+              search={{ tab: "all" }}
+            />
+            <MetricTile
+              label="Expired codes"
+              value={metrics.data.expiredInvites}
+              icon={<TimerOff />}
+              to="/app/admin/guests"
+              search={{ tab: "expired" }}
+            />
+            <MetricTile
               label="Missing exits"
               value={metrics.data.missingExits}
+              icon={<AlertTriangle />}
               tone={metrics.data.missingExits ? "warning" : "default"}
+              to="/app/admin/alerts"
             />
-            <StatCard
+            <MetricTile
               label="Open incidents"
               value={metrics.data.openIncidents}
+              icon={<AlertTriangle />}
               tone={metrics.data.openIncidents ? "error" : "default"}
+              to="/app/admin/issues"
             />
-            <StatCard
-              label="Pending requests"
+            <MetricTile
+              label="Support tickets"
               value={metrics.data.pendingRequests}
+              icon={<FileText />}
               tone={metrics.data.pendingRequests ? "warning" : "default"}
+              to="/app/admin/tickets"
             />
-            <StatCard label="Pending orders" value={metrics.data.pendingOrders} />
-            <StatCard
+            <MetricTile
+              label="Pending orders"
+              value={metrics.data.pendingOrders}
+              icon={<ShoppingCart />}
+              to="/app/admin/shop"
+            />
+            <MetricTile
               label="Unpaid bills"
               value={metrics.data.unpaidBills}
+              icon={<Receipt />}
               tone={metrics.data.unpaidBills ? "warning" : "default"}
+              to="/app/admin/collections"
             />
-            <StatCard label="Upcoming meetings" value={metrics.data.upcomingMeetings} />
-            <StatCard label="Estate contacts" value={metrics.data.contacts} />
+            <MetricTile
+              label="Upcoming meetings"
+              value={metrics.data.upcomingMeetings}
+              icon={<CalendarClock />}
+              to="/app/admin/community"
+            />
+            <MetricTile
+              label="Estate contacts"
+              value={metrics.data.contacts}
+              icon={<Phone />}
+              to="/app/admin/estate"
+            />
           </div>
+
         ))}
 
       {section === "overview" &&
@@ -709,19 +642,6 @@ function AdminDashboard() {
           </div>
         ))}
 
-      {section === "operations" && (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {operations.map(([label, to]) => (
-            <Link
-              key={to}
-              to={to}
-              className="card-surface flex min-h-16 items-center justify-center px-3 py-3 text-center text-sm font-medium text-foreground hover:bg-muted/50"
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
-      )}
 
       {section === "activity" &&
         (activity.isLoading ? (
@@ -751,15 +671,6 @@ function AdminDashboard() {
           </div>
         ))}
 
-      {section === "operations" && (
-        <Card className="p-3 text-xs text-muted-foreground">
-          <StatusBadge>Scoped</StatusBadge>
-          <span className="ml-2">
-            All admin reads and actions on these pages are filtered to{" "}
-            {session?.estate?.name ?? "your estate"}.
-          </span>
-        </Card>
-      )}
     </div>
   );
 }
@@ -868,5 +779,9 @@ function countBetween(
 }
 
 function share(part: number, total: number) {
+  return total > 0 ? (part / total) * 100 : 0;
+}
+
+function pct(part: number, total: number) {
   return total > 0 ? (part / total) * 100 : 0;
 }

@@ -42,6 +42,16 @@ type Bill = {
   created_at: string;
 };
 
+type ActivityRow = {
+  id: string;
+  action: string;
+  entity: string | null;
+  entity_id: string | null;
+  metadata: unknown;
+  created_at: string;
+};
+
+
 export function ResidentProfilePanel({ id }: { id: string }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -67,6 +77,8 @@ export function ResidentProfilePanel({ id }: { id: string }) {
   const [editOpen, setEditOpen] = useState(false);
   const [phone, setPhone] = useState("");
   const [openBill, setOpenBill] = useState<Bill | null>(null);
+  const [activity, setActivity] = useState<ActivityRow | null>(null);
+
 
   const profile = useQuery({
     queryKey: ["admin-resident", id],
@@ -196,7 +208,7 @@ export function ResidentProfilePanel({ id }: { id: string }) {
         _biometric_type: type,
         _device_id: existing?.device_id ?? null,
         _enrollment_status: existing?.enrollment_status ?? (on ? "pending" : "not_enrolled"),
-        _access_status: on ? "active" : "disabled",
+        _access_status: on ? "enabled" : "disabled",
         _notes: null,
       } as never);
 
@@ -328,6 +340,27 @@ export function ResidentProfilePanel({ id }: { id: string }) {
     .filter(Boolean)
     .join(", ");
 
+  // The pass belongs to this resident, so identity fields are prefilled and only
+  // the pass-specific details have to be typed in.
+  const openAssign = () => {
+    const parts = name.split(/\s+/).filter(Boolean);
+    setPass({
+      type: "Vehicle Tag",
+      plate: "",
+      make: "",
+      model: "",
+      color: "",
+      idNumber: String(p['address_code'] ?? ""),
+      firstName: parts[0] ?? "",
+      lastName: parts.slice(1).join(" "),
+      email: String(p['email'] ?? ""),
+      phoneNumber: String(p['phone'] ?? ""),
+    });
+    setAssignOpen(true);
+  };
+
+
+
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
       <Stagger className="space-y-4">
@@ -443,7 +476,7 @@ export function ResidentProfilePanel({ id }: { id: string }) {
             <ActionBtn onClick={() => navigate({ to: "/app/admin/messages" })}>
               <MessageSquare className="h-3.5 w-3.5" /> Chat
             </ActionBtn>
-            <ActionBtn onClick={() => setAssignOpen(true)}>
+            <ActionBtn onClick={openAssign}>
               <CreditCard className="h-3.5 w-3.5" /> Assign ID
             </ActionBtn>
           </div>
@@ -590,7 +623,11 @@ export function ResidentProfilePanel({ id }: { id: string }) {
               <p className="text-xs text-muted-foreground">No recorded activity yet.</p>
             ) : (
               (extras.data?.activities ?? []).map((a) => (
-                <div key={a.id} className="rounded-lg border border-border/70 p-2.5">
+                <button
+                  key={a.id}
+                  onClick={() => setActivity(a as ActivityRow)}
+                  className="block w-full rounded-lg border border-border/70 p-2.5 text-left transition hover:bg-muted/50"
+                >
                   <div className="flex items-start justify-between gap-2">
                     <span className="text-xs font-medium text-foreground">{a.action}</span>
                     <span className="shrink-0 text-[10px] text-muted-foreground">
@@ -601,8 +638,9 @@ export function ResidentProfilePanel({ id }: { id: string }) {
                     {a.entity ?? ""}{" "}
                     {(a.metadata as { reason?: string } | null)?.reason ?? ""}
                   </p>
-                </div>
+                </button>
               ))
+
             )}
           </div>
         </Card>
@@ -783,7 +821,30 @@ export function ResidentProfilePanel({ id }: { id: string }) {
           onClose={() => setOpenBill(null)}
         />
       )}
+
+      <SheetModal
+        open={!!activity}
+        title={activity?.action ?? "Activity"}
+        onClose={() => setActivity(null)}
+      >
+        {activity && (
+          <dl className="divide-y divide-border text-sm">
+            <Row label="Action" value={activity.action} />
+            <Row label="Record" value={activity.entity ?? "—"} />
+            <Row label="Record ID" value={activity.entity_id?.slice(0, 8) ?? "—"} />
+            <Row
+              label="Reason / note"
+              value={(activity.metadata as { reason?: string } | null)?.reason ?? "—"}
+            />
+            <Row
+              label="When"
+              value={format(new Date(activity.created_at), "EEEE, d MMMM yyyy · HH:mm")}
+            />
+          </dl>
+        )}
+      </SheetModal>
     </div>
+
   );
 }
 

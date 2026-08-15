@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, formatDistanceToNow } from "date-fns";
 import { Users, LogOut, Ban, Download } from "lucide-react";
@@ -22,6 +22,10 @@ import { AccessCodeDetail, codeState } from "@/components/access-code-detail";
 
 export const Route = createFileRoute("/app/admin/guests")({
   component: AdminGuestLogs,
+  validateSearch: (search: Record<string, unknown>) => ({
+    tab: typeof search.tab === "string" ? search.tab : undefined,
+    code: typeof search.code === "string" ? search.code : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Visitor Log — Estate Guard" },
@@ -33,6 +37,7 @@ export const Route = createFileRoute("/app/admin/guests")({
     ],
   }),
 });
+
 
 type Tab = "all" | "active" | "used" | "expired" | "inside" | "revoked";
 
@@ -66,10 +71,16 @@ function AdminGuestLogs() {
   const { data: session } = useSession();
   const estateId = session?.estate?.id;
   const qc = useQueryClient();
-  const [tab, setTab] = useState<Tab>("all");
-  const [q, setQ] = useState("");
+  const search = Route.useSearch();
+  const validTabs = TABS.map((t) => t.key) as string[];
+  const [tab, setTab] = useState<Tab>(
+    search.tab && validTabs.includes(search.tab) ? (search.tab as Tab) : "all",
+  );
+  const [q, setQ] = useState(search.code ?? "");
   const [confirm, setConfirm] = useState<{ kind: "exit" | "revoke"; invite: Invite } | null>(null);
   const [openCode, setOpenCode] = useState<Invite | null>(null);
+  const [autoOpened, setAutoOpened] = useState(false);
+
 
   const invitesQ = useQuery({
     queryKey: ["admin-guests", estateId],
@@ -106,6 +117,20 @@ function AdminGuestLogs() {
     () => new Map((residentsQ.data ?? []).map((r) => [r.id, r])),
     [residentsQ.data],
   );
+
+  // Searching a code from anywhere in the console opens its pass straight away.
+  useEffect(() => {
+    if (autoOpened || !search.code) return;
+    const match = (invitesQ.data ?? []).find(
+      (i) => i.code.toLowerCase() === search.code!.trim().toLowerCase(),
+    );
+    if (match) {
+      setOpenCode(match);
+      setAutoOpened(true);
+    }
+  }, [search.code, invitesQ.data, autoOpened]);
+
+
 
   const rows = invitesQ.data ?? [];
   const now = Date.now();
