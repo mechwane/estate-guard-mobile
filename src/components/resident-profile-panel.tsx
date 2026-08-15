@@ -328,6 +328,27 @@ export function ResidentProfilePanel({ id }: { id: string }) {
     .filter(Boolean)
     .join(", ");
 
+  // The pass belongs to this resident, so identity fields are prefilled and only
+  // the pass-specific details have to be typed in.
+  const openAssign = () => {
+    const parts = name.split(/\s+/).filter(Boolean);
+    setPass({
+      type: "Vehicle Tag",
+      plate: "",
+      make: "",
+      model: "",
+      color: "",
+      idNumber: String(p['address_code'] ?? ""),
+      firstName: parts[0] ?? "",
+      lastName: parts.slice(1).join(" "),
+      email: String(p['email'] ?? ""),
+      phoneNumber: String(p['phone'] ?? ""),
+    });
+    setAssignOpen(true);
+  };
+
+
+
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
       <Stagger className="space-y-4">
