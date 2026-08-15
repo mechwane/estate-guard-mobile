@@ -67,6 +67,8 @@ export function ResidentProfilePanel({ id }: { id: string }) {
   const [editOpen, setEditOpen] = useState(false);
   const [phone, setPhone] = useState("");
   const [openBill, setOpenBill] = useState<Bill | null>(null);
+  const [activity, setActivity] = useState<ActivityRow | null>(null);
+
 
   const profile = useQuery({
     queryKey: ["admin-resident", id],
