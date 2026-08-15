@@ -751,15 +751,6 @@ function AdminDashboard() {
           </div>
         ))}
 
-      {section === "operations" && (
-        <Card className="p-3 text-xs text-muted-foreground">
-          <StatusBadge>Scoped</StatusBadge>
-          <span className="ml-2">
-            All admin reads and actions on these pages are filtered to{" "}
-            {session?.estate?.name ?? "your estate"}.
-          </span>
-        </Card>
-      )}
     </div>
   );
 }
