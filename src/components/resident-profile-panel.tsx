@@ -611,7 +611,11 @@ export function ResidentProfilePanel({ id }: { id: string }) {
               <p className="text-xs text-muted-foreground">No recorded activity yet.</p>
             ) : (
               (extras.data?.activities ?? []).map((a) => (
-                <div key={a.id} className="rounded-lg border border-border/70 p-2.5">
+                <button
+                  key={a.id}
+                  onClick={() => setActivity(a as ActivityRow)}
+                  className="block w-full rounded-lg border border-border/70 p-2.5 text-left transition hover:bg-muted/50"
+                >
                   <div className="flex items-start justify-between gap-2">
                     <span className="text-xs font-medium text-foreground">{a.action}</span>
                     <span className="shrink-0 text-[10px] text-muted-foreground">
@@ -622,8 +626,9 @@ export function ResidentProfilePanel({ id }: { id: string }) {
                     {a.entity ?? ""}{" "}
                     {(a.metadata as { reason?: string } | null)?.reason ?? ""}
                   </p>
-                </div>
+                </button>
               ))
+
             )}
           </div>
         </Card>
