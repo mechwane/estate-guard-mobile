@@ -464,7 +464,7 @@ export function ResidentProfilePanel({ id }: { id: string }) {
             <ActionBtn onClick={() => navigate({ to: "/app/admin/messages" })}>
               <MessageSquare className="h-3.5 w-3.5" /> Chat
             </ActionBtn>
-            <ActionBtn onClick={() => setAssignOpen(true)}>
+            <ActionBtn onClick={openAssign}>
               <CreditCard className="h-3.5 w-3.5" /> Assign ID
             </ActionBtn>
           </div>
