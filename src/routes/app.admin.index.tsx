@@ -537,56 +537,135 @@ function AdminDashboard() {
         ) : metrics.isError || !metrics.data ? (
           <ErrorState onRetry={() => metrics.refetch()} />
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <StatCard label="Total residents" value={metrics.data.totalResidents} />
-            <StatCard label="Verified" value={metrics.data.verifiedResidents} tone="success" />
-            <StatCard
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+            <MetricTile
+              label="Total residents"
+              value={metrics.data.totalResidents}
+              icon={<Users />}
+              tone="primary"
+              share={100}
+              hint="View everyone in this estate"
+              to="/app/admin/residents"
+              search={{ view: "all" }}
+            />
+            <MetricTile
+              label="Verified"
+              value={metrics.data.verifiedResidents}
+              icon={<ShieldCheck />}
+              tone="success"
+              share={pct(metrics.data.verifiedResidents, metrics.data.totalResidents)}
+              hint={`${Math.round(pct(metrics.data.verifiedResidents, metrics.data.totalResidents))}% of residents`}
+              to="/app/admin/residents"
+              search={{ view: "verified" }}
+            />
+            <MetricTile
               label="Unverified"
               value={metrics.data.unverifiedResidents}
+              icon={<UserX />}
               tone={metrics.data.unverifiedResidents ? "warning" : "default"}
+              share={pct(metrics.data.unverifiedResidents, metrics.data.totalResidents)}
+              to="/app/admin/residents"
+              search={{ view: "unverified" }}
             />
-            <StatCard
+            <MetricTile
               label="Pending approvals"
               value={metrics.data.pendingVerify}
+              icon={<Clock />}
               tone={metrics.data.pendingVerify ? "warning" : "default"}
+              share={pct(metrics.data.pendingVerify, metrics.data.totalResidents)}
+              hint="Awaiting verification review"
+              to="/app/admin/residents"
+              search={{ view: "pending" }}
             />
-            <StatCard
-              label="Revoked/suspended"
+            <MetricTile
+              label="Revoked / suspended"
               value={metrics.data.inactive}
+              icon={<Ban />}
               tone={metrics.data.inactive ? "error" : "default"}
+              share={pct(metrics.data.inactive, metrics.data.totalResidents)}
+              to="/app/admin/residents"
+              search={{ view: "revoked" }}
             />
-            <StatCard label="Total guards" value={metrics.data.totalGuards} />
-            <StatCard
+            <MetricTile
+              label="Total guards"
+              value={metrics.data.totalGuards}
+              icon={<Shield />}
+              tone="accent"
+              hint="Gate team on this estate"
+              to="/app/admin/residents"
+              search={{ view: "guards" }}
+            />
+            <MetricTile
               label="Visitors inside"
               value={metrics.data.visitorsInside}
+              icon={<LogIn />}
               tone={metrics.data.visitorsInside ? "primary" : "default"}
+              to="/app/admin/guests"
+              search={{ tab: "inside" }}
             />
-            <StatCard label="Invites today" value={metrics.data.invitesToday} />
-            <StatCard label="Expired invites" value={metrics.data.expiredInvites} />
-            <StatCard
+            <MetricTile
+              label="Invites today"
+              value={metrics.data.invitesToday}
+              icon={<Ticket />}
+              spark={charts.data?.timeline?.map((d) => d.invites)}
+              to="/app/admin/guests"
+              search={{ tab: "all" }}
+            />
+            <MetricTile
+              label="Expired codes"
+              value={metrics.data.expiredInvites}
+              icon={<TimerOff />}
+              to="/app/admin/guests"
+              search={{ tab: "expired" }}
+            />
+            <MetricTile
               label="Missing exits"
               value={metrics.data.missingExits}
+              icon={<AlertTriangle />}
               tone={metrics.data.missingExits ? "warning" : "default"}
+              to="/app/admin/alerts"
             />
-            <StatCard
+            <MetricTile
               label="Open incidents"
               value={metrics.data.openIncidents}
+              icon={<AlertTriangle />}
               tone={metrics.data.openIncidents ? "error" : "default"}
+              to="/app/admin/issues"
             />
-            <StatCard
-              label="Pending requests"
+            <MetricTile
+              label="Support tickets"
               value={metrics.data.pendingRequests}
+              icon={<FileText />}
               tone={metrics.data.pendingRequests ? "warning" : "default"}
+              to="/app/admin/tickets"
             />
-            <StatCard label="Pending orders" value={metrics.data.pendingOrders} />
-            <StatCard
+            <MetricTile
+              label="Pending orders"
+              value={metrics.data.pendingOrders}
+              icon={<ShoppingCart />}
+              to="/app/admin/shop"
+            />
+            <MetricTile
               label="Unpaid bills"
               value={metrics.data.unpaidBills}
+              icon={<Receipt />}
               tone={metrics.data.unpaidBills ? "warning" : "default"}
+              to="/app/admin/collections"
             />
-            <StatCard label="Upcoming meetings" value={metrics.data.upcomingMeetings} />
-            <StatCard label="Estate contacts" value={metrics.data.contacts} />
+            <MetricTile
+              label="Upcoming meetings"
+              value={metrics.data.upcomingMeetings}
+              icon={<CalendarClock />}
+              to="/app/admin/community"
+            />
+            <MetricTile
+              label="Estate contacts"
+              value={metrics.data.contacts}
+              icon={<Phone />}
+              to="/app/admin/estate"
+            />
           </div>
+
         ))}
 
       {section === "overview" &&
