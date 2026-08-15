@@ -196,7 +196,7 @@ export function ResidentProfilePanel({ id }: { id: string }) {
         _biometric_type: type,
         _device_id: existing?.device_id ?? null,
         _enrollment_status: existing?.enrollment_status ?? (on ? "pending" : "not_enrolled"),
-        _access_status: on ? "active" : "disabled",
+        _access_status: on ? "enabled" : "disabled",
         _notes: null,
       } as never);
 
