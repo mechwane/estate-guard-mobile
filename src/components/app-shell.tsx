@@ -390,16 +390,6 @@ export function AppShell({
                   </span>
                 </span>
               )}
-              {role === "estate_admin" && (
-                <Link
-                  to="/app/admin/settings"
-                  aria-label="Settings"
-                  title="Settings"
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                >
-                  <Settings className="h-4 w-4" />
-                </Link>
-              )}
               <AvatarBtn />
 
               <button
