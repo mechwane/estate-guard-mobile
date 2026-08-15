@@ -71,10 +71,16 @@ function AdminGuestLogs() {
   const { data: session } = useSession();
   const estateId = session?.estate?.id;
   const qc = useQueryClient();
-  const [tab, setTab] = useState<Tab>("all");
-  const [q, setQ] = useState("");
+  const search = Route.useSearch();
+  const validTabs = TABS.map((t) => t.key) as string[];
+  const [tab, setTab] = useState<Tab>(
+    search.tab && validTabs.includes(search.tab) ? (search.tab as Tab) : "all",
+  );
+  const [q, setQ] = useState(search.code ?? "");
   const [confirm, setConfirm] = useState<{ kind: "exit" | "revoke"; invite: Invite } | null>(null);
   const [openCode, setOpenCode] = useState<Invite | null>(null);
+  const [autoOpened, setAutoOpened] = useState(false);
+
 
   const invitesQ = useQuery({
     queryKey: ["admin-guests", estateId],
