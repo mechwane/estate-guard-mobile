@@ -347,65 +347,8 @@ function AdminDashboard() {
     },
   });
 
-  const operations = useMemo(
-    () =>
-      [
-        ["Realtime access", "/app/admin/realtime"],
-        ["Security alerts", "/app/admin/alerts"],
-        ["Broadcast", "/app/admin/messages"],
-        ["Payments", "/app/admin/payments"],
-        ["Access cards", "/app/admin/cards"],
-        ["Vehicle tags", "/app/admin/vehicles"],
-        ["Access passes", "/app/admin/passes"],
-        ["Residents", "/app/admin/residents"],
-        ["Dependants", "/app/admin/dependents"],
-        ["Guards", "/app/admin/staff"],
-        ["Guest logs", "/app/admin/guests"],
-        ["Issues", "/app/admin/issues"],
-        ["Collections", "/app/admin/collections"],
-        ["Discounts", "/app/admin/discounts"],
-        ["Shop", "/app/admin/shop"],
-        ["Community", "/app/admin/community"],
-        ["Blog", "/app/admin/blog"],
-        ["Verifications", "/app/admin/verifications"],
-        ["Troubleshoot", "/app/admin/troubleshoot"],
-      ] as const,
-    [],
-  );
 
-  const [residentSearch, setResidentSearch] = useState("");
-  const [showInactive, setShowInactive] = useState(false);
 
-  const residents = useQuery({
-    queryKey: ["admin-home-residents", estateId],
-    enabled: !!estateId && section === "residents",
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select(
-          "id,full_name,email,phone,avatar_url,approved,verification_status,house_number,block,street,unit,occupant_type,created_at",
-        )
-        .eq("estate_id", estateId!)
-        .order("full_name", { ascending: true });
-      if (error) throw error;
-      return data ?? [];
-    },
-  });
-
-  const residentRows = useMemo(() => {
-    const term = residentSearch.trim().toLowerCase();
-    return (residents.data ?? [])
-      .filter((r) => (showInactive ? !r.approved : r.approved))
-      .filter(
-        (r) =>
-          !term ||
-          (r.full_name ?? "").toLowerCase().includes(term) ||
-          (r.email ?? "").toLowerCase().includes(term) ||
-          (r.phone ?? "").toLowerCase().includes(term),
-      );
-  }, [residents.data, residentSearch, showInactive]);
-
-  const avatarMap = useAvatarUrls((residents.data ?? []).map((r) => r.avatar_url));
 
   if (!estateId)
     return (
