@@ -821,7 +821,30 @@ export function ResidentProfilePanel({ id }: { id: string }) {
           onClose={() => setOpenBill(null)}
         />
       )}
+
+      <SheetModal
+        open={!!activity}
+        title={activity?.action ?? "Activity"}
+        onClose={() => setActivity(null)}
+      >
+        {activity && (
+          <dl className="divide-y divide-border text-sm">
+            <Row label="Action" value={activity.action} />
+            <Row label="Record" value={activity.entity ?? "—"} />
+            <Row label="Record ID" value={activity.entity_id?.slice(0, 8) ?? "—"} />
+            <Row
+              label="Reason / note"
+              value={(activity.metadata as { reason?: string } | null)?.reason ?? "—"}
+            />
+            <Row
+              label="When"
+              value={format(new Date(activity.created_at), "EEEE, d MMMM yyyy · HH:mm")}
+            />
+          </dl>
+        )}
+      </SheetModal>
     </div>
+
   );
 }
 
