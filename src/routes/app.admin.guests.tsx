@@ -22,6 +22,10 @@ import { AccessCodeDetail, codeState } from "@/components/access-code-detail";
 
 export const Route = createFileRoute("/app/admin/guests")({
   component: AdminGuestLogs,
+  validateSearch: (search: Record<string, unknown>) => ({
+    tab: typeof search.tab === "string" ? search.tab : undefined,
+    code: typeof search.code === "string" ? search.code : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Visitor Log — Estate Guard" },
@@ -33,6 +37,7 @@ export const Route = createFileRoute("/app/admin/guests")({
     ],
   }),
 });
+
 
 type Tab = "all" | "active" | "used" | "expired" | "inside" | "revoked";
 
