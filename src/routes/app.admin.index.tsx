@@ -781,3 +781,7 @@ function countBetween(
 function share(part: number, total: number) {
   return total > 0 ? (part / total) * 100 : 0;
 }
+
+function pct(part: number, total: number) {
+  return total > 0 ? (part / total) * 100 : 0;
+}
