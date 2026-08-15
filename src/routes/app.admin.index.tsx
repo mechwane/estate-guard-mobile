@@ -1,11 +1,28 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow, startOfDay, subDays } from "date-fns";
+import {
+  AlertTriangle,
+  Ban,
+  CalendarClock,
+  Clock,
+  FileText,
+  LogIn,
+  Phone,
+  Receipt,
+  Shield,
+  ShieldCheck,
+  ShoppingCart,
+  Ticket,
+  TimerOff,
+  UserX,
+  Users,
+} from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
-import { initialsFor, useAvatarUrls } from "@/lib/avatar";
+import { MetricTile } from "@/components/metric-tile";
 import {
   ChartCard,
   DonutChart,
@@ -22,11 +39,7 @@ import {
   ErrorState,
   ListSkeleton,
   ScrollTabs,
-  SearchInput,
-  StatCard,
-  StatusBadge,
 } from "@/components/ui-kit";
-import { Stagger, StaggerItem } from "@/components/motion-kit";
 
 export const Route = createFileRoute("/app/admin/")({
   component: AdminDashboard,
@@ -35,10 +48,9 @@ export const Route = createFileRoute("/app/admin/")({
 function AdminDashboard() {
   const { data: session } = useSession();
   const estateId = session?.estate?.id;
-  const [section, setSection] = useState<"overview" | "residents" | "operations" | "activity">(
-    "overview",
-  );
+  const [section, setSection] = useState<"overview" | "activity">("overview");
   const [visitorRange, setVisitorRange] = useState<AdminRangeKey>("7d");
+
 
   const metrics = useQuery({
     queryKey: ["admin-control-center", estateId],
