@@ -42,6 +42,16 @@ type Bill = {
   created_at: string;
 };
 
+type ActivityRow = {
+  id: string;
+  action: string;
+  entity: string | null;
+  entity_id: string | null;
+  metadata: unknown;
+  created_at: string;
+};
+
+
 export function ResidentProfilePanel({ id }: { id: string }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
