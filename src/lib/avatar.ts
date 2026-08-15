@@ -41,9 +41,13 @@ export function useAvatarUrls(paths: (string | null | undefined)[]) {
   const [map, setMap] = useState<Record<string, string>>({});
   useEffect(() => {
     let cancelled = false;
-    const list = key ? key.split("|") : [];
+    const all = key ? key.split("|") : [];
+    const absolute = all.filter(isAbsolute);
+    const list = all.filter((p) => !isAbsolute(p));
+    const base: Record<string, string> = {};
+    absolute.forEach((p) => (base[p] = p));
     if (list.length === 0) {
-      setMap({});
+      setMap(base);
       return;
     }
     supabase.storage
@@ -51,12 +55,13 @@ export function useAvatarUrls(paths: (string | null | undefined)[]) {
       .createSignedUrls(list, 60 * 60)
       .then(({ data }) => {
         if (cancelled || !data) return;
-        const next: Record<string, string> = {};
+        const next: Record<string, string> = { ...base };
         data.forEach((entry) => {
           if (entry.path && entry.signedUrl) next[entry.path] = entry.signedUrl;
         });
         setMap(next);
       });
+
     return () => {
       cancelled = true;
     };
