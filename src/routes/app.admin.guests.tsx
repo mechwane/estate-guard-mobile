@@ -118,6 +118,20 @@ function AdminGuestLogs() {
     [residentsQ.data],
   );
 
+  // Searching a code from anywhere in the console opens its pass straight away.
+  useEffect(() => {
+    if (autoOpened || !search.code) return;
+    const match = (invitesQ.data ?? []).find(
+      (i) => i.code.toLowerCase() === search.code!.trim().toLowerCase(),
+    );
+    if (match) {
+      setOpenCode(match);
+      setAutoOpened(true);
+    }
+  }, [search.code, invitesQ.data, autoOpened]);
+
+
+
   const rows = invitesQ.data ?? [];
   const now = Date.now();
 
