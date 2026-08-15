@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+const isAbsolute = (p: string) => /^(https?:|data:|blob:)/.test(p);
+
 export function useAvatarUrl(avatarPath: string | null | undefined) {
-  const [url, setUrl] = useState<string | null>(null);
+  const [url, setUrl] = useState<string | null>(
+    avatarPath && isAbsolute(avatarPath) ? avatarPath : null,
+  );
   useEffect(() => {
     let cancelled = false;
     if (!avatarPath) {
       setUrl(null);
+      return;
+    }
+    // Some profiles store a full public URL instead of a storage path.
+    if (isAbsolute(avatarPath)) {
+      setUrl(avatarPath);
       return;
     }
     supabase.storage
@@ -21,6 +30,7 @@ export function useAvatarUrl(avatarPath: string | null | undefined) {
   }, [avatarPath]);
   return url;
 }
+
 
 /**
  * Batch variant: signs many avatar paths at once and returns a
