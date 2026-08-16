@@ -405,7 +405,7 @@ export function ResidentProfilePanel({ id }: { id: string }) {
               label="Face Recognition"
               status={face?.access_status ?? "disabled"}
               enrollment={face?.enrollment_status}
-              on={face?.access_status === "active"}
+              on={face?.access_status === "enabled"}
               onToggle={(on) => toggleBio.mutate({ type: "face", on })}
             />
             <BioTile
@@ -413,7 +413,7 @@ export function ResidentProfilePanel({ id }: { id: string }) {
               label="Fingerprint"
               status={finger?.access_status ?? "disabled"}
               enrollment={finger?.enrollment_status}
-              on={finger?.access_status === "active"}
+              on={finger?.access_status === "enabled"}
               onToggle={(on) => toggleBio.mutate({ type: "fingerprint", on })}
             />
           </div>
