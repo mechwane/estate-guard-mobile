@@ -371,8 +371,7 @@ function AdminDashboard() {
   return (
     <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-5">
       <div className="min-w-0 space-y-5">
-      {(
-        (metrics.isLoading ? (
+      {(metrics.isLoading ? (
           <ListSkeleton rows={4} />
         ) : metrics.isError || !metrics.data ? (
           <ErrorState onRetry={() => metrics.refetch()} />
