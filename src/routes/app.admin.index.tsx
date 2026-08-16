@@ -557,7 +557,11 @@ function AdminDashboard() {
                   />
                 </Card>
               </Link>
-              <Link to="/app/admin/guests" search={{ tab: "inside" }} className="block">
+              <Link
+                to="/app/admin/guests"
+                search={{ tab: "inside", code: undefined }}
+                className="block"
+              >
                 <Card className="p-4 lift-3d">
                   <ProgressRing
                     value={share(charts.data.insideShare.inside, charts.data.insideShare.total)}
