@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
@@ -13,11 +13,9 @@ import {
   ListSkeleton,
   ScrollTabs,
   SearchInput,
-  SheetModal,
   StatusBadge,
 } from "@/components/ui-kit";
 import { Stagger, StaggerItem } from "@/components/motion-kit";
-import { ResidentProfilePanel } from "@/components/resident-profile-panel";
 
 const VIEWS = [
   { key: "all", label: "Total residents" },
@@ -61,7 +59,6 @@ function PeopleDirectory() {
   const search = Route.useSearch();
   const view: View = (VIEWS.some((v) => v.key === search.view) ? search.view : "all") as View;
   const [q, setQ] = useState("");
-  const [profileId, setProfileId] = useState<string | null>(null);
 
   const people = useQuery({
     queryKey: ["admin-directory", estateId],
