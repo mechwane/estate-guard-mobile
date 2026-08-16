@@ -224,21 +224,12 @@ function PeopleDirectory() {
                       })}
                     </span>
                   </span>
-                </button>
+                </Link>
               </StaggerItem>
             );
           })}
         </Stagger>
       )}
-
-      <SheetModal
-        open={!!profileId}
-        title="Profile"
-        onClose={() => setProfileId(null)}
-        width="lg"
-      >
-        {profileId && <ResidentProfilePanel id={profileId} />}
-      </SheetModal>
     </div>
   );
 }
