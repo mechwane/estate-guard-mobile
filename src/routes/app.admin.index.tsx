@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow, startOfDay, subDays } from "date-fns";
@@ -38,7 +38,6 @@ import {
   EmptyState,
   ErrorState,
   ListSkeleton,
-  ScrollTabs,
 } from "@/components/ui-kit";
 
 export const Route = createFileRoute("/app/admin/")({
@@ -48,7 +47,6 @@ export const Route = createFileRoute("/app/admin/")({
 function AdminDashboard() {
   const { data: session } = useSession();
   const estateId = session?.estate?.id;
-  const [section, setSection] = useState<"overview" | "activity">("overview");
   const [visitorRange, setVisitorRange] = useState<AdminRangeKey>("7d");
 
 
@@ -371,21 +369,9 @@ function AdminDashboard() {
     );
 
   return (
-    <div className="space-y-5">
-      <ScrollTabs
-        value={section}
-        onChange={setSection}
-        tabs={
-          [
-            { key: "overview", label: "Overview" },
-            { key: "activity", label: "Activity" },
-          ] as const
-        }
-      />
-
-
-
-      {section === "overview" &&
+    <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-5">
+      <div className="min-w-0 space-y-5">
+      {(
         (metrics.isLoading ? (
           <ListSkeleton rows={4} />
         ) : metrics.isError || !metrics.data ? (
@@ -522,8 +508,7 @@ function AdminDashboard() {
 
         ))}
 
-      {section === "overview" &&
-        (charts.isLoading ? (
+      {(charts.isLoading ? (
           <ListSkeleton rows={4} />
         ) : charts.isError || !charts.data ? (
           <ErrorState onRetry={() => charts.refetch()} />
@@ -551,32 +536,38 @@ function AdminDashboard() {
             </ChartCard>
 
             <div className="grid gap-3 sm:grid-cols-3">
-              <Card className="p-4">
-                <ProgressRing
-                  value={share(
-                    charts.data.verificationShare.verified,
-                    charts.data.verificationShare.total,
-                  )}
-                  label="Verified residents"
-                  caption={`${charts.data.verificationShare.verified} of ${charts.data.verificationShare.total}`}
-                />
-              </Card>
-              <Card className="p-4">
-                <ProgressRing
-                  value={share(charts.data.billShare.paid, charts.data.billShare.total)}
-                  label="Bills settled"
-                  caption={`${charts.data.billShare.paid} of ${charts.data.billShare.total}`}
-                  color="var(--color-success)"
-                />
-              </Card>
-              <Card className="p-4">
-                <ProgressRing
-                  value={share(charts.data.insideShare.inside, charts.data.insideShare.total)}
-                  label="Visitors still inside"
-                  caption={`${charts.data.insideShare.inside} of ${charts.data.insideShare.total} check-ins`}
-                  color="var(--color-warning)"
-                />
-              </Card>
+              <Link to="/app/admin/residents" search={{ view: "verified" }} className="block">
+                <Card className="p-4 lift-3d">
+                  <ProgressRing
+                    value={share(
+                      charts.data.verificationShare.verified,
+                      charts.data.verificationShare.total,
+                    )}
+                    label="Verified residents"
+                    caption={`${charts.data.verificationShare.verified} of ${charts.data.verificationShare.total}`}
+                  />
+                </Card>
+              </Link>
+              <Link to="/app/admin/collections" className="block">
+                <Card className="p-4 lift-3d">
+                  <ProgressRing
+                    value={share(charts.data.billShare.paid, charts.data.billShare.total)}
+                    label="Bills settled"
+                    caption={`${charts.data.billShare.paid} of ${charts.data.billShare.total}`}
+                    color="var(--color-success)"
+                  />
+                </Card>
+              </Link>
+              <Link to="/app/admin/guests" search={{ tab: "inside" }} className="block">
+                <Card className="p-4 lift-3d">
+                  <ProgressRing
+                    value={share(charts.data.insideShare.inside, charts.data.insideShare.total)}
+                    label="Visitors still inside"
+                    caption={`${charts.data.insideShare.inside} of ${charts.data.insideShare.total} check-ins`}
+                    color="var(--color-warning)"
+                  />
+                </Card>
+              </Link>
             </div>
 
             <div className="grid gap-3 lg:grid-cols-2">
@@ -643,8 +634,16 @@ function AdminDashboard() {
         ))}
 
 
-      {section === "activity" &&
-        (activity.isLoading ? (
+      </div>
+
+      <aside className="mt-5 min-w-0 space-y-2 lg:mt-0 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6.5rem)] lg:overflow-y-auto lg:pr-1">
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-sm font-semibold text-foreground">Recent activity</h2>
+          <Link to="/app/admin/audit" className="text-[11px] font-medium text-primary hover:underline">
+            View all
+          </Link>
+        </div>
+      {(activity.isLoading ? (
           <ListSkeleton rows={5} />
         ) : activity.isError ? (
           <ErrorState onRetry={() => activity.refetch()} />
@@ -670,7 +669,7 @@ function AdminDashboard() {
             ))}
           </div>
         ))}
-
+      </aside>
     </div>
   );
 }
