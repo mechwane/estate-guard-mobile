@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
@@ -13,11 +13,9 @@ import {
   ListSkeleton,
   ScrollTabs,
   SearchInput,
-  SheetModal,
   StatusBadge,
 } from "@/components/ui-kit";
 import { Stagger, StaggerItem } from "@/components/motion-kit";
-import { ResidentProfilePanel } from "@/components/resident-profile-panel";
 
 const VIEWS = [
   { key: "all", label: "Total residents" },
@@ -61,7 +59,6 @@ function PeopleDirectory() {
   const search = Route.useSearch();
   const view: View = (VIEWS.some((v) => v.key === search.view) ? search.view : "all") as View;
   const [q, setQ] = useState("");
-  const [profileId, setProfileId] = useState<string | null>(null);
 
   const people = useQuery({
     queryKey: ["admin-directory", estateId],
@@ -175,10 +172,12 @@ function PeopleDirectory() {
               "No address on file";
             return (
               <StaggerItem key={r.id}>
-                <button
-                  onClick={() => setProfileId(r.id)}
+                <Link
+                  to="/app/admin/resident/$id"
+                  params={{ id: r.id }}
                   className="card-surface lift-3d flex w-full items-center gap-3 p-3 text-left transition hover:bg-muted/40"
                 >
+
                   {signed ? (
                     <img
                       src={signed}
@@ -222,21 +221,12 @@ function PeopleDirectory() {
                       })}
                     </span>
                   </span>
-                </button>
+                </Link>
               </StaggerItem>
             );
           })}
         </Stagger>
       )}
-
-      <SheetModal
-        open={!!profileId}
-        title="Profile"
-        onClose={() => setProfileId(null)}
-        width="lg"
-      >
-        {profileId && <ResidentProfilePanel id={profileId} />}
-      </SheetModal>
     </div>
   );
 }

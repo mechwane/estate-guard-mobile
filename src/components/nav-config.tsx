@@ -132,7 +132,6 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
       items: [
         { to: "/app/admin", label: "Home", icon: <Home /> },
         { to: "/app/admin/messages", label: "Messages", icon: <MessageSquare /> },
-        { to: "/app/admin/tickets", label: "Support tickets", icon: <Ticket /> },
         { to: "/app/admin/troubleshoot", label: "Troubleshoot", icon: <Wrench /> },
       ],
     },
@@ -150,8 +149,6 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
       label: "Entry & exit",
       items: [
         { to: "/app/admin/realtime", label: "Realtime access", icon: <Activity /> },
-        { to: "/app/admin/alerts", label: "Security alerts", icon: <AlertTriangle /> },
-        { to: "/app/admin/guests", label: "Guest logs", icon: <ScrollText /> },
         { to: "/app/admin/passes", label: "Passes", icon: <BadgeCheck /> },
         { to: "/app/admin/cards", label: "Access cards", icon: <CreditCard /> },
         { to: "/app/admin/vehicles", label: "Vehicles", icon: <Car /> },
@@ -161,7 +158,6 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
       label: "Payments",
       items: [
         { to: "/app/admin/payments", label: "Overview", icon: <Wallet /> },
-        { to: "/app/admin/collections", label: "Collections", icon: <Receipt /> },
         { to: "/app/admin/discounts", label: "Discounts", icon: <Percent /> },
       ],
     },
@@ -171,14 +167,8 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
         { to: "/app/admin/blog", label: "Blog", icon: <Newspaper /> },
         { to: "/app/admin/announcements", label: "Announcements", icon: <Megaphone /> },
         { to: "/app/admin/polls", label: "Polls & elections", icon: <Vote /> },
-        { to: "/app/admin/community", label: "Meetings", icon: <Users /> },
         { to: "/app/admin/events", label: "Events", icon: <Calendar /> },
-        { to: "/app/admin/issues", label: "Issues", icon: <AlertTriangle /> },
       ],
-    },
-    {
-      label: "Shop",
-      items: [{ to: "/app/admin/shop", label: "Products & orders", icon: <Store /> }],
     },
     {
       label: "More",

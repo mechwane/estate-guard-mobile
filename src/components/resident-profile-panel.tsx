@@ -405,7 +405,7 @@ export function ResidentProfilePanel({ id }: { id: string }) {
               label="Face Recognition"
               status={face?.access_status ?? "disabled"}
               enrollment={face?.enrollment_status}
-              on={face?.access_status === "active"}
+              on={face?.access_status === "enabled"}
               onToggle={(on) => toggleBio.mutate({ type: "face", on })}
             />
             <BioTile
@@ -413,7 +413,7 @@ export function ResidentProfilePanel({ id }: { id: string }) {
               label="Fingerprint"
               status={finger?.access_status ?? "disabled"}
               enrollment={finger?.enrollment_status}
-              on={finger?.access_status === "active"}
+              on={finger?.access_status === "enabled"}
               onToggle={(on) => toggleBio.mutate({ type: "fingerprint", on })}
             />
           </div>
@@ -947,13 +947,25 @@ function BioTile({
   onToggle: (on: boolean) => void;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3.5">
-      <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+    <div
+      className={`flex items-center gap-3 rounded-xl border bg-card p-3.5 transition-colors ${
+        on ? "border-primary/50 bg-primary/5" : "border-border"
+      }`}
+    >
+      <span
+        className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors ${
+          on ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
+        }`}
+      >
         {icon}
       </span>
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-medium">{label}</div>
-        <div className="text-[11px] uppercase tracking-wide text-muted-foreground">
+        <div
+          className={`text-[11px] uppercase tracking-wide ${
+            on ? "font-semibold text-primary" : "text-muted-foreground"
+          }`}
+        >
           {status}
           {enrollment ? ` · ${enrollment}` : ""}
         </div>
@@ -965,11 +977,11 @@ function BioTile({
         aria-label={label}
         onClick={() => onToggle(!on)}
         className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
-          on ? "bg-primary" : "bg-muted"
+          on ? "bg-primary ring-2 ring-primary/25" : "bg-muted"
         }`}
       >
         <span
-          className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+          className={`inline-block h-5 w-5 transform rounded-full bg-card shadow transition-transform ${
             on ? "translate-x-5" : "translate-x-0.5"
           }`}
         />
