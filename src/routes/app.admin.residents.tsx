@@ -175,10 +175,12 @@ function PeopleDirectory() {
               "No address on file";
             return (
               <StaggerItem key={r.id}>
-                <button
-                  onClick={() => setProfileId(r.id)}
+                <Link
+                  to="/app/admin/resident/$id"
+                  params={{ id: r.id }}
                   className="card-surface lift-3d flex w-full items-center gap-3 p-3 text-left transition hover:bg-muted/40"
                 >
+
                   {signed ? (
                     <img
                       src={signed}
