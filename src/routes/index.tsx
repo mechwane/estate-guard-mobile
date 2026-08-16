@@ -57,8 +57,12 @@ function Splash() {
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             className="absolute inset-0 rounded-3xl bg-accent/40"
           />
-          <div className="relative flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-accent to-accent/70 text-primary-dark shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)]">
-            <ShieldCheck className="h-10 w-10" strokeWidth={2.5} />
+          <div className="relative flex h-24 w-24 items-center justify-center rounded-3xl bg-card/95 ring-2 ring-accent/60 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.5)]">
+            <img
+              src="/estate-guard-icon.png"
+              alt="Estate Guard logo"
+              className="h-16 w-16 object-contain"
+            />
           </div>
         </motion.div>
 
