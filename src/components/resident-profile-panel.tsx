@@ -1000,6 +1000,7 @@ function BioTile({
   label,
   status,
   enrollment,
+  enrolled,
   on,
   onToggle,
 }: {
@@ -1007,6 +1008,7 @@ function BioTile({
   label: string;
   status: string;
   enrollment?: string;
+  enrolled: boolean;
   on: boolean;
   onToggle: (on: boolean) => void;
 }) {
@@ -1014,7 +1016,7 @@ function BioTile({
     <div
       className={`flex items-center gap-3 rounded-xl border bg-card p-3.5 transition-colors ${
         on ? "border-primary/50 bg-primary/5" : "border-border"
-      }`}
+      } ${enrolled ? "" : "opacity-80"}`}
     >
       <span
         className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors ${
@@ -1030,8 +1032,8 @@ function BioTile({
             on ? "font-semibold text-primary" : "text-muted-foreground"
           }`}
         >
-          {status}
-          {enrollment ? ` · ${enrollment}` : ""}
+          {enrolled ? status : "Awaiting hardware enrolment"}
+          {enrolled && enrollment ? ` · ${enrollment}` : ""}
         </div>
       </div>
       <button
@@ -1039,10 +1041,12 @@ function BioTile({
         role="switch"
         aria-checked={on}
         aria-label={label}
+        disabled={!enrolled}
+        title={enrolled ? label : "Capture the template on the gate device first"}
         onClick={() => onToggle(!on)}
         className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
           on ? "bg-primary ring-2 ring-primary/25" : "bg-muted"
-        }`}
+        } ${enrolled ? "" : "cursor-not-allowed opacity-50"}`}
       >
         <span
           className={`inline-block h-5 w-5 transform rounded-full bg-card shadow transition-transform ${
@@ -1053,6 +1057,7 @@ function BioTile({
     </div>
   );
 }
+
 
 function ActionBtn({
   children,
