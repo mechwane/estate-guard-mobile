@@ -449,6 +449,14 @@ export function AppShell({
                   </span>
                 </span>
               )}
+              <button
+                onClick={toggleTheme}
+                aria-label={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                title={mode === "dark" ? "Light mode" : "Dark mode"}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                {mode === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </button>
               <AvatarBtn />
 
               <button
@@ -459,6 +467,7 @@ export function AppShell({
               >
                 <LogOut className="h-4 w-4" />
               </button>
+
             </div>
           </div>
         </header>
