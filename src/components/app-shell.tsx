@@ -36,6 +36,8 @@ export function AppShell({
   const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const { mode, toggle: toggleTheme } = useTheme();
+
 
   const roleLabel = {
     resident: "Resident",
