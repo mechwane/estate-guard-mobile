@@ -546,42 +546,42 @@ export function ResidentProfilePanel({ id }: { id: string }) {
           </div>
         </StaggerItem>
 
-        {/* My devices */}
+        {/* Access passes — cards and vehicle tags, activated here */}
         <StaggerItem>
-          <Accordion icon={<Smartphone className="h-4 w-4" />} title="My Devices" defaultOpen>
-            {bio.length === 0 && (extras.data?.cards ?? []).length === 0 ? (
+          <Accordion icon={<CreditCard className="h-4 w-4" />} title="Access Passes" defaultOpen>
+            {(extras.data?.cards ?? []).length === 0 &&
+            (extras.data?.vehicles ?? []).length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                No enrolled gate devices, cards or tags yet.
+                No access card or vehicle tag issued yet — use “Assign ID” above.
               </p>
             ) : (
               <div className="grid gap-2 sm:grid-cols-2">
-                {bio.map((b) => (
-                  <div key={b.id} className="rounded-lg border border-border p-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-medium capitalize">{b.biometric_type}</span>
-                      <StatusBadge tone={b.access_status === "active" ? "success" : "neutral"}>
-                        {b.access_status}
-                      </StatusBadge>
-                    </div>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {(extras.data?.devices ?? []).find((d) => d.id === b.device_id)?.name ??
-                        "No gate device linked"}{" "}
-                      · {b.enrollment_status}
-                    </p>
-                    {b.last_used_at && (
-                      <p className="text-[11px] text-muted-foreground">
-                        Last used{" "}
-                        {formatDistanceToNow(new Date(b.last_used_at), { addSuffix: true })}
-                      </p>
-                    )}
-                  </div>
-                ))}
                 {(extras.data?.cards ?? []).map((c) => (
                   <div key={c.id} className="rounded-lg border border-border p-3">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-medium">Card {c.card_number}</span>
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium">
+                          Access card · {c.card_number}
+                        </div>
+                        <p className="truncate text-[11px] text-muted-foreground">
+                          {c.notes ?? "Issued to this resident"}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => toggleCard.mutate({ cardId: c.id, on: !c.active })}
+                        disabled={toggleCard.isPending}
+                        className={`shrink-0 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition ${
+                          c.active
+                            ? "border-destructive/40 text-destructive hover:bg-destructive/10"
+                            : "border-[color:var(--color-success)]/40 text-[color:var(--color-success)] hover:bg-[color:var(--color-success)]/10"
+                        }`}
+                      >
+                        {c.active ? "Deactivate" : "Activate"}
+                      </button>
+                    </div>
+                    <div className="mt-2">
                       <StatusBadge tone={c.active ? "success" : "neutral"}>
-                        {c.active ? "active" : "revoked"}
+                        {c.active ? "Active" : "Inactive"}
                       </StatusBadge>
                     </div>
                   </div>
@@ -589,21 +589,84 @@ export function ResidentProfilePanel({ id }: { id: string }) {
                 {(extras.data?.vehicles ?? []).map((v) => (
                   <div key={v.id} className="rounded-lg border border-border p-3">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-medium">Vehicle {v.plate}</span>
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium">Vehicle tag · {v.plate}</div>
+                        <p className="truncate text-[11px] text-muted-foreground">
+                          {[v.make_model, v.color, v.tag_number && `tag ${v.tag_number}`]
+                            .filter(Boolean)
+                            .join(" · ") || "No vehicle details"}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => toggleVehicle.mutate({ tagId: v.id, on: !v.active })}
+                        disabled={toggleVehicle.isPending}
+                        className={`shrink-0 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition ${
+                          v.active
+                            ? "border-destructive/40 text-destructive hover:bg-destructive/10"
+                            : "border-[color:var(--color-success)]/40 text-[color:var(--color-success)] hover:bg-[color:var(--color-success)]/10"
+                        }`}
+                      >
+                        {v.active ? "Deactivate" : "Activate"}
+                      </button>
+                    </div>
+                    <div className="mt-2">
                       <StatusBadge tone={v.active ? "success" : "neutral"}>
-                        {v.active ? "active" : "inactive"}
+                        {v.active ? "Active" : "Inactive"}
                       </StatusBadge>
                     </div>
                   </div>
                 ))}
               </div>
             )}
+          </Accordion>
+        </StaggerItem>
+
+        {/* Login devices — the phones the resident signs in from */}
+        <StaggerItem>
+          <Accordion icon={<Smartphone className="h-4 w-4" />} title="My Devices" defaultOpen>
+            {(extras.data?.logins ?? []).length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                This resident has not signed in from any device yet.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {(extras.data?.logins ?? []).map((d) => (
+                  <div
+                    key={d.device_id}
+                    className="flex items-center justify-between gap-3 rounded-lg border border-border p-3"
+                  >
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-medium">
+                        {d.device_label ?? "Unknown device"}
+                      </div>
+                      <p className="truncate text-[11px] text-muted-foreground">
+                        Last active{" "}
+                        {formatDistanceToNow(new Date(d.last_seen_at), { addSuffix: true })}
+                      </p>
+                      <p className="truncate text-[11px] text-muted-foreground/80">
+                        {d.user_agent ?? ""}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => removeLogin.mutate(d.device_id)}
+                      disabled={removeLogin.isPending}
+                      aria-label="Remove device"
+                      title="Remove device"
+                      className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-destructive/40 text-destructive transition hover:bg-destructive/10"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
             <p className="mt-2 text-[11px] text-muted-foreground">
-              Login sessions are limited to one device — a resident signing in elsewhere must log
-              out of the first device.
+              Sign-in is limited to one device. Remove a device here if a resident cannot log in on
+              a new phone.
             </p>
           </Accordion>
         </StaggerItem>
+
 
         {/* Payment summary */}
         <StaggerItem>
