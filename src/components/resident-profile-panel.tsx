@@ -838,7 +838,7 @@ export function ResidentProfilePanel({ id }: { id: string }) {
             >
               <option>Vehicle Tag</option>
               <option>Access Card</option>
-              <option>Resident ID</option>
+
             </select>
           </Field>
 
