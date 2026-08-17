@@ -4,10 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LogOut, Menu, Search, UserCircle2, X } from "lucide-react";
+import { LogOut, Menu, Moon, Search, Sun, UserCircle2, X } from "lucide-react";
 import { useSession, type AppRole } from "@/lib/session";
 import type { NavGroup, NavLink } from "@/components/nav-config";
 import { claimDeviceSession, releaseDeviceSession, type DeviceClaim } from "@/lib/device-session";
+import { useTheme } from "@/lib/theme";
+
 
 export function AppShell({
   title,
