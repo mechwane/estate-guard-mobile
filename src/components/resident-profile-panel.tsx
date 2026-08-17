@@ -28,6 +28,8 @@ import {
   ScanFace,
   Smartphone,
   Wallet,
+  X,
+
 } from "lucide-react";
 
 
@@ -93,7 +95,7 @@ export function ResidentProfilePanel({ id }: { id: string }) {
     queryKey: ["admin-resident-extras", id, estateId],
     enabled: !!estateId,
     queryFn: async () => {
-      const [bills, pays, bio, devices, cards, vehicles, acts] = await Promise.all([
+      const [bills, pays, bio, devices, cards, vehicles, logins, acts] = await Promise.all([
         supabase
           .from("bills")
           .select("id,title,description,amount,due_date,status,collection_id,created_at")
@@ -107,9 +109,17 @@ export function ResidentProfilePanel({ id }: { id: string }) {
         supabase.from("access_devices").select("id,name,device_type").eq("estate_id", estateId!),
         supabase
           .from("access_cards")
-          .select("id,card_number,active,issued_at")
+          .select("id,card_number,active,issued_at,notes")
           .eq("resident_id", id),
-        supabase.from("vehicle_tags").select("id,plate,active,tag_number").eq("resident_id", id),
+        supabase
+          .from("vehicle_tags")
+          .select("id,plate,active,tag_number,make_model,color")
+          .eq("resident_id", id),
+        supabase
+          .from("user_device_sessions")
+          .select("device_id,device_label,user_agent,last_seen_at,created_at")
+          .eq("user_id", id)
+          .order("last_seen_at", { ascending: false }),
         supabase
           .from("audit_logs")
           .select("id,action,entity,entity_id,metadata,created_at")
@@ -132,12 +142,14 @@ export function ResidentProfilePanel({ id }: { id: string }) {
         devices: devices.data ?? [],
         cards: cards.data ?? [],
         vehicles: vehicles.data ?? [],
+        logins: logins.data ?? [],
         activities: (acts.data ?? []).filter(
           (a) => a.entity_id === id || JSON.stringify(a.metadata ?? {}).includes(id),
         ),
       };
     },
   });
+
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["admin-resident", id] });
@@ -199,15 +211,20 @@ export function ResidentProfilePanel({ id }: { id: string }) {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  // Biometrics are enrolled at the gate hardware, never from this console. The
+  // toggle can only switch an already-enrolled template on/off.
   const toggleBio = useMutation({
     mutationFn: async ({ type, on }: { type: "face" | "fingerprint"; on: boolean }) => {
       const existing = (extras.data?.bio ?? []).find((b) => b.biometric_type === type);
+      if (!existing || existing.enrollment_status !== "enrolled") {
+        throw new Error("Not enrolled yet — capture the template on the gate device first");
+      }
       const { error } = await supabase.rpc("admin_upsert_biometric_access", {
         _resident_id: id,
         _dependent_id: null,
         _biometric_type: type,
-        _device_id: existing?.device_id ?? null,
-        _enrollment_status: existing?.enrollment_status ?? (on ? "pending" : "not_enrolled"),
+        _device_id: existing.device_id,
+        _enrollment_status: existing.enrollment_status,
         _access_status: on ? "enabled" : "disabled",
         _notes: null,
       } as never);
@@ -220,6 +237,52 @@ export function ResidentProfilePanel({ id }: { id: string }) {
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const toggleCard = useMutation({
+    mutationFn: async ({ cardId, on }: { cardId: string; on: boolean }) => {
+      const { error } = await supabase.from("access_cards").update({ active: on }).eq("id", cardId);
+      if (error) throw error;
+      await logReason(on ? "access_card.activated" : "access_card.deactivated", `Card ${cardId}`);
+    },
+    onSuccess: () => {
+      toast.success("Access card updated");
+      invalidate();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const toggleVehicle = useMutation({
+    mutationFn: async ({ tagId, on }: { tagId: string; on: boolean }) => {
+      const { error } = await supabase.from("vehicle_tags").update({ active: on }).eq("id", tagId);
+      if (error) throw error;
+      await logReason(on ? "vehicle_tag.activated" : "vehicle_tag.deactivated", `Tag ${tagId}`);
+    },
+    onSuccess: () => {
+      toast.success("Vehicle tag updated");
+      invalidate();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  // Removing a login device frees the single-device lock so the resident can
+  // sign in again on a new phone.
+  const removeLogin = useMutation({
+    mutationFn: async (deviceId: string) => {
+      const { error } = await supabase
+        .from("user_device_sessions")
+        .delete()
+        .eq("user_id", id)
+        .eq("device_id", deviceId);
+      if (error) throw error;
+      await logReason("resident.device_removed", deviceId);
+    },
+    onSuccess: () => {
+      toast.success("Device removed — resident can sign in again");
+      invalidate();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
 
   const assignId = useMutation({
     mutationFn: async () => {
@@ -350,7 +413,7 @@ export function ResidentProfilePanel({ id }: { id: string }) {
       make: "",
       model: "",
       color: "",
-      idNumber: String(p['address_code'] ?? ""),
+      idNumber: "",
       firstName: parts[0] ?? "",
       lastName: parts.slice(1).join(" "),
       email: String(p['email'] ?? ""),
@@ -397,26 +460,29 @@ export function ResidentProfilePanel({ id }: { id: string }) {
           </Card>
         </StaggerItem>
 
-        {/* Biometrics */}
+        {/* Biometrics — enrolled at the gate hardware, toggled here */}
         <StaggerItem>
           <div className="grid gap-3 sm:grid-cols-2">
             <BioTile
               icon={<ScanFace className="h-5 w-5" />}
               label="Face Recognition"
-              status={face?.access_status ?? "disabled"}
+              status={face?.access_status ?? "not enrolled"}
               enrollment={face?.enrollment_status}
-              on={face?.access_status === "enabled"}
+              enrolled={face?.enrollment_status === "enrolled"}
+              on={face?.enrollment_status === "enrolled" && face?.access_status === "enabled"}
               onToggle={(on) => toggleBio.mutate({ type: "face", on })}
             />
             <BioTile
               icon={<Fingerprint className="h-5 w-5" />}
               label="Fingerprint"
-              status={finger?.access_status ?? "disabled"}
+              status={finger?.access_status ?? "not enrolled"}
               enrollment={finger?.enrollment_status}
-              on={finger?.access_status === "enabled"}
+              enrolled={finger?.enrollment_status === "enrolled"}
+              on={finger?.enrollment_status === "enrolled" && finger?.access_status === "enabled"}
               onToggle={(on) => toggleBio.mutate({ type: "fingerprint", on })}
             />
           </div>
+
         </StaggerItem>
 
         {/* Contact rows */}
@@ -482,42 +548,42 @@ export function ResidentProfilePanel({ id }: { id: string }) {
           </div>
         </StaggerItem>
 
-        {/* My devices */}
+        {/* Access passes — cards and vehicle tags, activated here */}
         <StaggerItem>
-          <Accordion icon={<Smartphone className="h-4 w-4" />} title="My Devices" defaultOpen>
-            {bio.length === 0 && (extras.data?.cards ?? []).length === 0 ? (
+          <Accordion icon={<CreditCard className="h-4 w-4" />} title="Access Passes" defaultOpen>
+            {(extras.data?.cards ?? []).length === 0 &&
+            (extras.data?.vehicles ?? []).length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                No enrolled gate devices, cards or tags yet.
+                No access card or vehicle tag issued yet — use “Assign ID” above.
               </p>
             ) : (
               <div className="grid gap-2 sm:grid-cols-2">
-                {bio.map((b) => (
-                  <div key={b.id} className="rounded-lg border border-border p-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-medium capitalize">{b.biometric_type}</span>
-                      <StatusBadge tone={b.access_status === "active" ? "success" : "neutral"}>
-                        {b.access_status}
-                      </StatusBadge>
-                    </div>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {(extras.data?.devices ?? []).find((d) => d.id === b.device_id)?.name ??
-                        "No gate device linked"}{" "}
-                      · {b.enrollment_status}
-                    </p>
-                    {b.last_used_at && (
-                      <p className="text-[11px] text-muted-foreground">
-                        Last used{" "}
-                        {formatDistanceToNow(new Date(b.last_used_at), { addSuffix: true })}
-                      </p>
-                    )}
-                  </div>
-                ))}
                 {(extras.data?.cards ?? []).map((c) => (
                   <div key={c.id} className="rounded-lg border border-border p-3">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-medium">Card {c.card_number}</span>
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium">
+                          Access card · {c.card_number}
+                        </div>
+                        <p className="truncate text-[11px] text-muted-foreground">
+                          {c.notes ?? "Issued to this resident"}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => toggleCard.mutate({ cardId: c.id, on: !c.active })}
+                        disabled={toggleCard.isPending}
+                        className={`shrink-0 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition ${
+                          c.active
+                            ? "border-destructive/40 text-destructive hover:bg-destructive/10"
+                            : "border-[color:var(--color-success)]/40 text-[color:var(--color-success)] hover:bg-[color:var(--color-success)]/10"
+                        }`}
+                      >
+                        {c.active ? "Deactivate" : "Activate"}
+                      </button>
+                    </div>
+                    <div className="mt-2">
                       <StatusBadge tone={c.active ? "success" : "neutral"}>
-                        {c.active ? "active" : "revoked"}
+                        {c.active ? "Active" : "Inactive"}
                       </StatusBadge>
                     </div>
                   </div>
@@ -525,21 +591,84 @@ export function ResidentProfilePanel({ id }: { id: string }) {
                 {(extras.data?.vehicles ?? []).map((v) => (
                   <div key={v.id} className="rounded-lg border border-border p-3">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-medium">Vehicle {v.plate}</span>
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-medium">Vehicle tag · {v.plate}</div>
+                        <p className="truncate text-[11px] text-muted-foreground">
+                          {[v.make_model, v.color, v.tag_number && `tag ${v.tag_number}`]
+                            .filter(Boolean)
+                            .join(" · ") || "No vehicle details"}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => toggleVehicle.mutate({ tagId: v.id, on: !v.active })}
+                        disabled={toggleVehicle.isPending}
+                        className={`shrink-0 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition ${
+                          v.active
+                            ? "border-destructive/40 text-destructive hover:bg-destructive/10"
+                            : "border-[color:var(--color-success)]/40 text-[color:var(--color-success)] hover:bg-[color:var(--color-success)]/10"
+                        }`}
+                      >
+                        {v.active ? "Deactivate" : "Activate"}
+                      </button>
+                    </div>
+                    <div className="mt-2">
                       <StatusBadge tone={v.active ? "success" : "neutral"}>
-                        {v.active ? "active" : "inactive"}
+                        {v.active ? "Active" : "Inactive"}
                       </StatusBadge>
                     </div>
                   </div>
                 ))}
               </div>
             )}
+          </Accordion>
+        </StaggerItem>
+
+        {/* Login devices — the phones the resident signs in from */}
+        <StaggerItem>
+          <Accordion icon={<Smartphone className="h-4 w-4" />} title="My Devices" defaultOpen>
+            {(extras.data?.logins ?? []).length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                This resident has not signed in from any device yet.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {(extras.data?.logins ?? []).map((d) => (
+                  <div
+                    key={d.device_id}
+                    className="flex items-center justify-between gap-3 rounded-lg border border-border p-3"
+                  >
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-medium">
+                        {d.device_label ?? "Unknown device"}
+                      </div>
+                      <p className="truncate text-[11px] text-muted-foreground">
+                        Last active{" "}
+                        {formatDistanceToNow(new Date(d.last_seen_at), { addSuffix: true })}
+                      </p>
+                      <p className="truncate text-[11px] text-muted-foreground/80">
+                        {d.user_agent ?? ""}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => removeLogin.mutate(d.device_id)}
+                      disabled={removeLogin.isPending}
+                      aria-label="Remove device"
+                      title="Remove device"
+                      className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-destructive/40 text-destructive transition hover:bg-destructive/10"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
             <p className="mt-2 text-[11px] text-muted-foreground">
-              Login sessions are limited to one device — a resident signing in elsewhere must log
-              out of the first device.
+              Sign-in is limited to one device. Remove a device here if a resident cannot log in on
+              a new phone.
             </p>
           </Accordion>
         </StaggerItem>
+
 
         {/* Payment summary */}
         <StaggerItem>
@@ -709,7 +838,7 @@ export function ResidentProfilePanel({ id }: { id: string }) {
             >
               <option>Vehicle Tag</option>
               <option>Access Card</option>
-              <option>Resident ID</option>
+
             </select>
           </Field>
 
@@ -747,45 +876,48 @@ export function ResidentProfilePanel({ id }: { id: string }) {
             </>
           )}
 
-          <Field label={pass.type === "Vehicle Tag" ? "ID Number" : "ID Number *"}>
+          <Field
+            label={pass.type === "Vehicle Tag" ? "Tag Number (optional)" : "Card Number *"}
+          >
             <Input
               value={pass.idNumber}
               onChange={(v) => setPass({ ...pass, idNumber: v })}
-              placeholder="eg. LG2RA-00231"
+              placeholder={pass.type === "Vehicle Tag" ? "Tag number" : "Card number"}
             />
           </Field>
           <Field label="First Name">
             <Input
               value={pass.firstName}
               onChange={(v) => setPass({ ...pass, firstName: v })}
-              placeholder="eg. Anthony"
+              placeholder="First name"
             />
           </Field>
           <Field label="Last Name">
             <Input
               value={pass.lastName}
               onChange={(v) => setPass({ ...pass, lastName: v })}
-              placeholder="eg. Awolabi"
+              placeholder="Last name"
             />
           </Field>
           <Field label="Email (optional)">
             <Input
               value={pass.email}
               onChange={(v) => setPass({ ...pass, email: v })}
-              placeholder="name@example.com"
+              placeholder="Email address"
             />
           </Field>
           <Field label="Phone Number">
             <Input
               value={pass.phoneNumber}
               onChange={(v) => setPass({ ...pass, phoneNumber: v })}
-              placeholder="+234 800 000 0000"
+              placeholder="Phone number"
             />
           </Field>
           <p className="text-[11px] text-muted-foreground">
-            The pass is issued to {name} and becomes active at the gate immediately — it also shows
-            under My Devices.
+            The pass is issued to {name} and appears under Access Passes, where it can be activated
+            or deactivated at any time.
           </p>
+
         </div>
       </SheetModal>
 
@@ -936,6 +1068,7 @@ function BioTile({
   label,
   status,
   enrollment,
+  enrolled,
   on,
   onToggle,
 }: {
@@ -943,6 +1076,7 @@ function BioTile({
   label: string;
   status: string;
   enrollment?: string;
+  enrolled: boolean;
   on: boolean;
   onToggle: (on: boolean) => void;
 }) {
@@ -950,7 +1084,7 @@ function BioTile({
     <div
       className={`flex items-center gap-3 rounded-xl border bg-card p-3.5 transition-colors ${
         on ? "border-primary/50 bg-primary/5" : "border-border"
-      }`}
+      } ${enrolled ? "" : "opacity-80"}`}
     >
       <span
         className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors ${
@@ -966,8 +1100,8 @@ function BioTile({
             on ? "font-semibold text-primary" : "text-muted-foreground"
           }`}
         >
-          {status}
-          {enrollment ? ` · ${enrollment}` : ""}
+          {enrolled ? status : "Awaiting hardware enrolment"}
+          {enrolled && enrollment ? ` · ${enrollment}` : ""}
         </div>
       </div>
       <button
@@ -975,10 +1109,12 @@ function BioTile({
         role="switch"
         aria-checked={on}
         aria-label={label}
+        disabled={!enrolled}
+        title={enrolled ? label : "Capture the template on the gate device first"}
         onClick={() => onToggle(!on)}
         className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
           on ? "bg-primary ring-2 ring-primary/25" : "bg-muted"
-        }`}
+        } ${enrolled ? "" : "cursor-not-allowed opacity-50"}`}
       >
         <span
           className={`inline-block h-5 w-5 transform rounded-full bg-card shadow transition-transform ${
@@ -989,6 +1125,7 @@ function BioTile({
     </div>
   );
 }
+
 
 function ActionBtn({
   children,

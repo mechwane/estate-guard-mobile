@@ -4,10 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LogOut, Menu, Search, UserCircle2, X } from "lucide-react";
+import { LogOut, Menu, Moon, Search, Sun, UserCircle2, X } from "lucide-react";
 import { useSession, type AppRole } from "@/lib/session";
 import type { NavGroup, NavLink } from "@/components/nav-config";
 import { claimDeviceSession, releaseDeviceSession, type DeviceClaim } from "@/lib/device-session";
+import { useTheme } from "@/lib/theme";
+
 
 export function AppShell({
   title,
@@ -34,6 +36,8 @@ export function AppShell({
   const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const { mode, toggle: toggleTheme } = useTheme();
+
 
   const roleLabel = {
     resident: "Resident",
@@ -126,7 +130,7 @@ export function AppShell({
     enabled: canSearchEstate && debounced.length >= 2,
     queryFn: async () => {
       const like = `%${debounced}%`;
-      const [people, invites] = await Promise.all([
+      const [people, invites, plates, cards] = await Promise.all([
         supabase
           .from("profiles")
           .select("id,full_name,address_code,house_number,street,unit,approved")
@@ -141,12 +145,39 @@ export function AppShell({
           .eq("estate_id", estateId!)
           .or(`code.ilike.${like},guest_name.ilike.${like}`)
           .limit(4),
+        supabase
+          .from("vehicle_tags")
+          .select("id,plate,tag_number,active,resident_id")
+          .eq("estate_id", estateId!)
+          .or(`plate.ilike.${like},tag_number.ilike.${like}`)
+          .limit(4),
+        supabase
+          .from("access_cards")
+          .select("id,card_number,active,resident_id")
+          .eq("estate_id", estateId!)
+          .ilike("card_number", like)
+          .limit(4),
       ]);
       return {
         people: people.data ?? [],
         invites: invites.data ?? [],
+        passes: [
+          ...(plates.data ?? []).map((v) => ({
+            id: v.id,
+            label: `Vehicle ${v.plate}`,
+            active: v.active,
+            residentId: v.resident_id,
+          })),
+          ...(cards.data ?? []).map((c) => ({
+            id: c.id,
+            label: `Card ${c.card_number}`,
+            active: c.active,
+            residentId: c.resident_id,
+          })),
+        ],
       };
     },
+
   });
 
 
@@ -284,15 +315,43 @@ export function AppShell({
                     if (e.key === "Escape") setQuery("");
                   }}
                   placeholder={
-                    canSearchEstate ? "Search resident, address, access code…" : "Search pages…"
+                    canSearchEstate
+                      ? "Search resident, address, plate, access code…"
+                      : "Search pages…"
                   }
                   aria-label="Search"
                   className="w-full rounded-full border border-border bg-card py-2 pl-9 pr-3 text-sm outline-none transition focus:border-primary"
                 />
                 {(results.length > 0 ||
                   (estateHits.data?.people.length ?? 0) > 0 ||
+                  (estateHits.data?.passes.length ?? 0) > 0 ||
                   (estateHits.data?.invites.length ?? 0) > 0) && (
                   <div className="absolute left-0 right-0 top-full z-40 mt-1.5 max-h-[70vh] overflow-y-auto rounded-xl border border-border bg-popover shadow-lg slide-up">
+                    {(estateHits.data?.passes.length ?? 0) > 0 && (
+                      <div className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        Cards & vehicle tags
+                      </div>
+                    )}
+                    {(estateHits.data?.passes ?? []).map((pass) => (
+                      <button
+                        key={pass.id}
+                        onClick={() => {
+                          setQuery("");
+                          navigate({
+                            to: "/app/admin/resident/$id",
+                            params: { id: pass.residentId },
+                          });
+                        }}
+                        className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm hover:bg-muted"
+                      >
+                        <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        <span className="min-w-0 flex-1 truncate">{pass.label}</span>
+                        <span className="shrink-0 text-[10px] text-muted-foreground">
+                          {pass.active ? "active" : "inactive"}
+                        </span>
+                      </button>
+                    ))}
+
                     {(estateHits.data?.people.length ?? 0) > 0 && (
                       <div className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                         Residents & addresses
@@ -390,6 +449,14 @@ export function AppShell({
                   </span>
                 </span>
               )}
+              <button
+                onClick={toggleTheme}
+                aria-label={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                title={mode === "dark" ? "Light mode" : "Dark mode"}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                {mode === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </button>
               <AvatarBtn />
 
               <button
@@ -400,6 +467,7 @@ export function AppShell({
               >
                 <LogOut className="h-4 w-4" />
               </button>
+
             </div>
           </div>
         </header>

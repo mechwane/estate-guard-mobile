@@ -76,10 +76,11 @@ export function MetricTile({
   const body = (
     <div
       className={cn(
-        "card-surface lift-3d relative min-w-0 overflow-hidden p-3 sm:p-4",
+        "card-surface lift-3d relative flex h-full min-h-[132px] min-w-0 flex-col overflow-hidden p-3 sm:min-h-[148px] sm:p-4",
         to && "cursor-pointer transition-shadow hover:shadow-lg",
       )}
     >
+
       <div className={cn("pointer-events-none absolute inset-0 bg-gradient-to-br", t.bg)} />
       <div className="relative flex items-start justify-between gap-2">
         <div className="min-w-0">
@@ -102,38 +103,41 @@ export function MetricTile({
         )}
       </div>
 
-      {typeof share === "number" && (
-        <div className="relative mt-2.5 h-1.5 overflow-hidden rounded-full bg-muted">
-          <div
-            className={cn("h-full rounded-full transition-all", t.bar)}
-            style={{ width: `${Math.max(0, Math.min(100, share))}%` }}
-          />
-        </div>
-      )}
+      <div className="relative mt-auto">
+        {typeof share === "number" && (
+          <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-muted">
+            <div
+              className={cn("h-full rounded-full transition-all", t.bar)}
+              style={{ width: `${Math.max(0, Math.min(100, share))}%` }}
+            />
+          </div>
+        )}
 
-      {spark && spark.length > 1 && (
-        <div className="relative mt-2 flex h-6 items-end gap-[3px]">
-          {spark.slice(-12).map((n, i) => {
-            const max = Math.max(...spark.slice(-12), 1);
-            return (
-              <span
-                key={i}
-                className={cn("flex-1 rounded-sm opacity-70", t.bar)}
-                style={{ height: `${Math.max(8, (n / max) * 100)}%` }}
-              />
-            );
-          })}
-        </div>
-      )}
+        {spark && spark.length > 1 && (
+          <div className="mt-2 flex h-6 items-end gap-[3px]">
+            {spark.slice(-12).map((n, i) => {
+              const max = Math.max(...spark.slice(-12), 1);
+              return (
+                <span
+                  key={i}
+                  className={cn("flex-1 rounded-sm opacity-70", t.bar)}
+                  style={{ height: `${Math.max(8, (n / max) * 100)}%` }}
+                />
+              );
+            })}
+          </div>
+        )}
 
-      {hint && <div className="relative mt-1.5 truncate text-[11px] text-muted-foreground">{hint}</div>}
+        {hint && <div className="mt-1.5 truncate text-[11px] text-muted-foreground">{hint}</div>}
+      </div>
     </div>
   );
 
   if (!to) return body;
   return (
-    <Link to={to} search={search as never} className="block min-w-0">
+    <Link to={to} search={search as never} className="block h-full min-w-0">
       {body}
     </Link>
   );
 }
+
