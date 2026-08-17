@@ -458,26 +458,29 @@ export function ResidentProfilePanel({ id }: { id: string }) {
           </Card>
         </StaggerItem>
 
-        {/* Biometrics */}
+        {/* Biometrics — enrolled at the gate hardware, toggled here */}
         <StaggerItem>
           <div className="grid gap-3 sm:grid-cols-2">
             <BioTile
               icon={<ScanFace className="h-5 w-5" />}
               label="Face Recognition"
-              status={face?.access_status ?? "disabled"}
+              status={face?.access_status ?? "not enrolled"}
               enrollment={face?.enrollment_status}
-              on={face?.access_status === "enabled"}
+              enrolled={face?.enrollment_status === "enrolled"}
+              on={face?.enrollment_status === "enrolled" && face?.access_status === "enabled"}
               onToggle={(on) => toggleBio.mutate({ type: "face", on })}
             />
             <BioTile
               icon={<Fingerprint className="h-5 w-5" />}
               label="Fingerprint"
-              status={finger?.access_status ?? "disabled"}
+              status={finger?.access_status ?? "not enrolled"}
               enrollment={finger?.enrollment_status}
-              on={finger?.access_status === "enabled"}
+              enrolled={finger?.enrollment_status === "enrolled"}
+              on={finger?.enrollment_status === "enrolled" && finger?.access_status === "enabled"}
               onToggle={(on) => toggleBio.mutate({ type: "fingerprint", on })}
             />
           </div>
+
         </StaggerItem>
 
         {/* Contact rows */}
