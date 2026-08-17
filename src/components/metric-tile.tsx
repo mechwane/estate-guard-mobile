@@ -76,10 +76,11 @@ export function MetricTile({
   const body = (
     <div
       className={cn(
-        "card-surface lift-3d relative min-w-0 overflow-hidden p-3 sm:p-4",
+        "card-surface lift-3d relative flex h-full min-h-[132px] min-w-0 flex-col overflow-hidden p-3 sm:min-h-[148px] sm:p-4",
         to && "cursor-pointer transition-shadow hover:shadow-lg",
       )}
     >
+
       <div className={cn("pointer-events-none absolute inset-0 bg-gradient-to-br", t.bg)} />
       <div className="relative flex items-start justify-between gap-2">
         <div className="min-w-0">
