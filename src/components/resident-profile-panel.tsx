@@ -209,15 +209,20 @@ export function ResidentProfilePanel({ id }: { id: string }) {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  // Biometrics are enrolled at the gate hardware, never from this console. The
+  // toggle can only switch an already-enrolled template on/off.
   const toggleBio = useMutation({
     mutationFn: async ({ type, on }: { type: "face" | "fingerprint"; on: boolean }) => {
       const existing = (extras.data?.bio ?? []).find((b) => b.biometric_type === type);
+      if (!existing || existing.enrollment_status !== "enrolled") {
+        throw new Error("Not enrolled yet — capture the template on the gate device first");
+      }
       const { error } = await supabase.rpc("admin_upsert_biometric_access", {
         _resident_id: id,
         _dependent_id: null,
         _biometric_type: type,
-        _device_id: existing?.device_id ?? null,
-        _enrollment_status: existing?.enrollment_status ?? (on ? "pending" : "not_enrolled"),
+        _device_id: existing.device_id,
+        _enrollment_status: existing.enrollment_status,
         _access_status: on ? "enabled" : "disabled",
         _notes: null,
       } as never);
@@ -230,6 +235,52 @@ export function ResidentProfilePanel({ id }: { id: string }) {
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const toggleCard = useMutation({
+    mutationFn: async ({ cardId, on }: { cardId: string; on: boolean }) => {
+      const { error } = await supabase.from("access_cards").update({ active: on }).eq("id", cardId);
+      if (error) throw error;
+      await logReason(on ? "access_card.activated" : "access_card.deactivated", `Card ${cardId}`);
+    },
+    onSuccess: () => {
+      toast.success("Access card updated");
+      invalidate();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const toggleVehicle = useMutation({
+    mutationFn: async ({ tagId, on }: { tagId: string; on: boolean }) => {
+      const { error } = await supabase.from("vehicle_tags").update({ active: on }).eq("id", tagId);
+      if (error) throw error;
+      await logReason(on ? "vehicle_tag.activated" : "vehicle_tag.deactivated", `Tag ${tagId}`);
+    },
+    onSuccess: () => {
+      toast.success("Vehicle tag updated");
+      invalidate();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  // Removing a login device frees the single-device lock so the resident can
+  // sign in again on a new phone.
+  const removeLogin = useMutation({
+    mutationFn: async (deviceId: string) => {
+      const { error } = await supabase
+        .from("user_device_sessions")
+        .delete()
+        .eq("user_id", id)
+        .eq("device_id", deviceId);
+      if (error) throw error;
+      await logReason("resident.device_removed", deviceId);
+    },
+    onSuccess: () => {
+      toast.success("Device removed — resident can sign in again");
+      invalidate();
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
 
   const assignId = useMutation({
     mutationFn: async () => {
