@@ -130,7 +130,7 @@ export function AppShell({
     enabled: canSearchEstate && debounced.length >= 2,
     queryFn: async () => {
       const like = `%${debounced}%`;
-      const [people, invites] = await Promise.all([
+      const [people, invites, plates, cards] = await Promise.all([
         supabase
           .from("profiles")
           .select("id,full_name,address_code,house_number,street,unit,approved")
@@ -145,12 +145,39 @@ export function AppShell({
           .eq("estate_id", estateId!)
           .or(`code.ilike.${like},guest_name.ilike.${like}`)
           .limit(4),
+        supabase
+          .from("vehicle_tags")
+          .select("id,plate,tag_number,active,resident_id")
+          .eq("estate_id", estateId!)
+          .or(`plate.ilike.${like},tag_number.ilike.${like}`)
+          .limit(4),
+        supabase
+          .from("access_cards")
+          .select("id,card_number,active,resident_id")
+          .eq("estate_id", estateId!)
+          .ilike("card_number", like)
+          .limit(4),
       ]);
       return {
         people: people.data ?? [],
         invites: invites.data ?? [],
+        passes: [
+          ...(plates.data ?? []).map((v) => ({
+            id: v.id,
+            label: `Vehicle ${v.plate}`,
+            active: v.active,
+            residentId: v.resident_id,
+          })),
+          ...(cards.data ?? []).map((c) => ({
+            id: c.id,
+            label: `Card ${c.card_number}`,
+            active: c.active,
+            residentId: c.resident_id,
+          })),
+        ],
       };
     },
+
   });
 
 
