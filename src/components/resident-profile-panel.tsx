@@ -413,7 +413,7 @@ export function ResidentProfilePanel({ id }: { id: string }) {
       make: "",
       model: "",
       color: "",
-      idNumber: String(p['address_code'] ?? ""),
+      idNumber: "",
       firstName: parts[0] ?? "",
       lastName: parts.slice(1).join(" "),
       email: String(p['email'] ?? ""),
