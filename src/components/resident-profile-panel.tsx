@@ -28,6 +28,8 @@ import {
   ScanFace,
   Smartphone,
   Wallet,
+  X,
+
 } from "lucide-react";
 
 
