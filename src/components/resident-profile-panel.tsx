@@ -93,7 +93,7 @@ export function ResidentProfilePanel({ id }: { id: string }) {
     queryKey: ["admin-resident-extras", id, estateId],
     enabled: !!estateId,
     queryFn: async () => {
-      const [bills, pays, bio, devices, cards, vehicles, acts] = await Promise.all([
+      const [bills, pays, bio, devices, cards, vehicles, logins, acts] = await Promise.all([
         supabase
           .from("bills")
           .select("id,title,description,amount,due_date,status,collection_id,created_at")
@@ -107,9 +107,17 @@ export function ResidentProfilePanel({ id }: { id: string }) {
         supabase.from("access_devices").select("id,name,device_type").eq("estate_id", estateId!),
         supabase
           .from("access_cards")
-          .select("id,card_number,active,issued_at")
+          .select("id,card_number,active,issued_at,notes")
           .eq("resident_id", id),
-        supabase.from("vehicle_tags").select("id,plate,active,tag_number").eq("resident_id", id),
+        supabase
+          .from("vehicle_tags")
+          .select("id,plate,active,tag_number,make_model,color")
+          .eq("resident_id", id),
+        supabase
+          .from("user_device_sessions")
+          .select("device_id,device_label,user_agent,last_seen_at,created_at")
+          .eq("user_id", id)
+          .order("last_seen_at", { ascending: false }),
         supabase
           .from("audit_logs")
           .select("id,action,entity,entity_id,metadata,created_at")
@@ -132,12 +140,14 @@ export function ResidentProfilePanel({ id }: { id: string }) {
         devices: devices.data ?? [],
         cards: cards.data ?? [],
         vehicles: vehicles.data ?? [],
+        logins: logins.data ?? [],
         activities: (acts.data ?? []).filter(
           (a) => a.entity_id === id || JSON.stringify(a.metadata ?? {}).includes(id),
         ),
       };
     },
   });
+
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["admin-resident", id] });
