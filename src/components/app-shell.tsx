@@ -315,15 +315,43 @@ export function AppShell({
                     if (e.key === "Escape") setQuery("");
                   }}
                   placeholder={
-                    canSearchEstate ? "Search resident, address, access code…" : "Search pages…"
+                    canSearchEstate
+                      ? "Search resident, address, plate, access code…"
+                      : "Search pages…"
                   }
                   aria-label="Search"
                   className="w-full rounded-full border border-border bg-card py-2 pl-9 pr-3 text-sm outline-none transition focus:border-primary"
                 />
                 {(results.length > 0 ||
                   (estateHits.data?.people.length ?? 0) > 0 ||
+                  (estateHits.data?.passes.length ?? 0) > 0 ||
                   (estateHits.data?.invites.length ?? 0) > 0) && (
                   <div className="absolute left-0 right-0 top-full z-40 mt-1.5 max-h-[70vh] overflow-y-auto rounded-xl border border-border bg-popover shadow-lg slide-up">
+                    {(estateHits.data?.passes.length ?? 0) > 0 && (
+                      <div className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        Cards & vehicle tags
+                      </div>
+                    )}
+                    {(estateHits.data?.passes ?? []).map((pass) => (
+                      <button
+                        key={pass.id}
+                        onClick={() => {
+                          setQuery("");
+                          navigate({
+                            to: "/app/admin/resident/$id",
+                            params: { id: pass.residentId },
+                          });
+                        }}
+                        className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm hover:bg-muted"
+                      >
+                        <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+                        <span className="min-w-0 flex-1 truncate">{pass.label}</span>
+                        <span className="shrink-0 text-[10px] text-muted-foreground">
+                          {pass.active ? "active" : "inactive"}
+                        </span>
+                      </button>
+                    ))}
+
                     {(estateHits.data?.people.length ?? 0) > 0 && (
                       <div className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                         Residents & addresses
