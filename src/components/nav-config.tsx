@@ -158,9 +158,15 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
       label: "Payments",
       items: [
         { to: "/app/admin/payments", label: "Overview", icon: <Wallet /> },
+        { to: "/app/admin/collections", label: "Estate collection", icon: <Receipt /> },
         { to: "/app/admin/discounts", label: "Discounts", icon: <Percent /> },
       ],
     },
+    {
+      label: "Support",
+      items: [{ to: "/app/admin/tickets", label: "Support tickets", icon: <LifeBuoy /> }],
+    },
+
     {
       label: "Community",
       items: [
