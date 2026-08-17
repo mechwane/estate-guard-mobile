@@ -876,45 +876,48 @@ export function ResidentProfilePanel({ id }: { id: string }) {
             </>
           )}
 
-          <Field label={pass.type === "Vehicle Tag" ? "ID Number" : "ID Number *"}>
+          <Field
+            label={pass.type === "Vehicle Tag" ? "Tag Number (optional)" : "Card Number *"}
+          >
             <Input
               value={pass.idNumber}
               onChange={(v) => setPass({ ...pass, idNumber: v })}
-              placeholder="eg. LG2RA-00231"
+              placeholder={pass.type === "Vehicle Tag" ? "Tag number" : "Card number"}
             />
           </Field>
           <Field label="First Name">
             <Input
               value={pass.firstName}
               onChange={(v) => setPass({ ...pass, firstName: v })}
-              placeholder="eg. Anthony"
+              placeholder="First name"
             />
           </Field>
           <Field label="Last Name">
             <Input
               value={pass.lastName}
               onChange={(v) => setPass({ ...pass, lastName: v })}
-              placeholder="eg. Awolabi"
+              placeholder="Last name"
             />
           </Field>
           <Field label="Email (optional)">
             <Input
               value={pass.email}
               onChange={(v) => setPass({ ...pass, email: v })}
-              placeholder="name@example.com"
+              placeholder="Email address"
             />
           </Field>
           <Field label="Phone Number">
             <Input
               value={pass.phoneNumber}
               onChange={(v) => setPass({ ...pass, phoneNumber: v })}
-              placeholder="+234 800 000 0000"
+              placeholder="Phone number"
             />
           </Field>
           <p className="text-[11px] text-muted-foreground">
-            The pass is issued to {name} and becomes active at the gate immediately — it also shows
-            under My Devices.
+            The pass is issued to {name} and appears under Access Passes, where it can be activated
+            or deactivated at any time.
           </p>
+
         </div>
       </SheetModal>
 
