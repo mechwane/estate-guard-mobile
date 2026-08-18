@@ -172,17 +172,9 @@ function AdminDashboard() {
   const activity = useQuery({
     queryKey: ["admin-recent-activity", estateId],
     enabled: !!estateId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("audit_logs")
-        .select("*")
-        .eq("estate_id", estateId!)
-        .order("created_at", { ascending: false })
-        .limit(20);
-      if (error) throw error;
-      return data ?? [];
-    },
+    queryFn: () => fetchEstateActivity(estateId!, 25),
   });
+
 
   const charts = useQuery({
     queryKey: ["admin-dashboard-charts", estateId, visitorRange],
