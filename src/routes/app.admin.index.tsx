@@ -22,6 +22,8 @@ import {
 
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
+import { fetchEstateActivity } from "@/lib/activity-feed";
+
 import { MetricTile } from "@/components/metric-tile";
 import {
   ChartCard,
