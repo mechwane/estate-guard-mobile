@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,7 +12,8 @@ import {
   SearchInput,
 } from "@/components/ui-kit";
 import { ChartCard, DonutChart } from "@/components/dashboard-charts";
-import { Home } from "lucide-react";
+import { Download, Home } from "lucide-react";
+import { addressKey, addressOf, houseTypeOf, type HouseholdProfile } from "@/lib/households";
 
 export const Route = createFileRoute("/app/admin/households")({
   component: Households,
@@ -34,33 +35,12 @@ export const Route = createFileRoute("/app/admin/households")({
   }),
 });
 
-type Tab = "active" | "pending" | "disabled";
+type Tab = "active" | "disabled" | "disapproved";
 const TABS = [
   { key: "active", label: "Active" },
-  { key: "pending", label: "Pending" },
   { key: "disabled", label: "Disabled" },
+  { key: "disapproved", label: "Disapproved" },
 ] as const;
-
-type Row = {
-  id: string;
-  full_name: string;
-  approved: boolean;
-  verification_status: string;
-  occupant_type: string | null;
-  block: string | null;
-  street: string | null;
-  house_number: string | null;
-  unit: string | null;
-};
-
-const addressOf = (p: Row) =>
-  [
-    p.street || p.block,
-    p.house_number ? `No ${p.house_number}` : null,
-    p.unit ? `Unit ${p.unit}` : null,
-  ]
-    .filter(Boolean)
-    .join(", ") || "Unassigned address";
 
 function Households() {
   const { data: session } = useSession();
@@ -80,34 +60,36 @@ function Households() {
         .eq("estate_id", estateId!)
         .order("street", { ascending: true });
       if (error) throw error;
-      return (data ?? []) as Row[];
+      return (data ?? []) as HouseholdProfile[];
     },
   });
 
   const all = rows.data ?? [];
 
   const households = useMemo(() => {
-    const map = new Map<string, Row[]>();
+    const map = new Map<string, HouseholdProfile[]>();
     for (const p of all) {
       const key = addressOf(p);
       map.set(key, [...(map.get(key) ?? []), p]);
     }
-    return [...map.entries()].map(([address, members]) => ({
-      address,
-      members,
-      status: members.some((m) => m.approved)
-        ? "active"
-        : members.some((m) => m.verification_status === "pending")
-          ? "pending"
-          : "disabled",
-    }));
+    return [...map.entries()]
+      .map(([address, members]) => ({
+        address,
+        members,
+        status: members.some((m) => m.approved)
+          ? ("active" as const)
+          : members.some((m) => m.verification_status === "rejected")
+            ? ("disapproved" as const)
+            : ("disabled" as const),
+      }))
+      .sort((a, b) => a.address.localeCompare(b.address));
   }, [all]);
 
   const counts = useMemo(
     () => ({
       active: households.filter((h) => h.status === "active").length,
-      pending: households.filter((h) => h.status === "pending").length,
       disabled: households.filter((h) => h.status === "disabled").length,
+      disapproved: households.filter((h) => h.status === "disapproved").length,
     }),
     [households],
   );
@@ -116,109 +98,117 @@ function Households() {
     const needle = q.trim().toLowerCase();
     return households
       .filter((h) => h.status === tab)
-      .filter((h) => !needle || h.address.toLowerCase().includes(needle));
+      .filter(
+        (h) =>
+          !needle ||
+          h.address.toLowerCase().includes(needle) ||
+          h.members.some((m) => m.full_name.toLowerCase().includes(needle)),
+      );
   }, [households, tab, q]);
+
+  const houseTypes = useMemo(() => {
+    const acc = new Map<string, number>();
+    for (const h of households) {
+      const t = houseTypeOf(h.address);
+      acc.set(t, (acc.get(t) ?? 0) + 1);
+    }
+    return [...acc.entries()]
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value);
+  }, [households]);
 
   const occupants = useMemo(() => {
     const acc = new Map<string, number>();
     for (const p of all) {
-      const k = p.occupant_type ?? "unspecified";
+      const k = p.occupant_type === "commercial" ? "Commercial" : "Resident";
       acc.set(k, (acc.get(k) ?? 0) + 1);
     }
     return [...acc.entries()].map(([name, value]) => ({ name, value }));
   }, [all]);
 
-  const houseTypes = useMemo(
-    () => [
-      { name: "Active", value: counts.active },
-      { name: "Pending", value: counts.pending },
-      { name: "Disabled", value: counts.disabled },
-    ],
-    [counts],
-  );
+  const downloadReport = () => {
+    const header = "Address,House type,Status,Occupants,Occupant names\n";
+    const body = households
+      .map((h) =>
+        [
+          `"${h.address}"`,
+          houseTypeOf(h.address),
+          h.status,
+          h.members.length,
+          `"${h.members.map((m) => m.full_name).join("; ")}"`,
+        ].join(","),
+      )
+      .join("\n");
+    const url = URL.createObjectURL(new Blob([header + body], { type: "text/csv" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `households-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   if (!estateId) return <EmptyState title="No estate assigned" />;
 
   return (
-    <div className="space-y-4">
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="space-y-3">
-          <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:justify-between">
-            <div className="min-w-0">
-              <ScrollTabs
-                value={tab}
-                onChange={setTab}
-                tabs={TABS.map((t) => ({ key: t.key, label: `${t.label} ${counts[t.key]}` }))}
-              />
-            </div>
+    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="min-w-0 space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="min-w-0">
+            <ScrollTabs
+              value={tab}
+              onChange={setTab}
+              tabs={TABS.map((t) => ({ key: t.key, label: `${t.label} ${counts[t.key]}` }))}
+            />
           </div>
-          <div className="sm:max-w-xl">
-            <SearchInput value={q} onChange={setQ} placeholder="Search households by address" />
-          </div>
+          <button
+            onClick={downloadReport}
+            className="inline-flex shrink-0 items-center gap-1.5 text-xs font-medium text-primary hover:underline"
+          >
+            <Download className="h-3.5 w-3.5" /> Download Report
+          </button>
+        </div>
 
-          {rows.isLoading ? (
-            <ListSkeleton rows={6} />
-          ) : rows.isError ? (
-            <ErrorState onRetry={() => rows.refetch()} />
-          ) : visible.length === 0 ? (
-            <EmptyState title="No households" icon={<Home className="h-6 w-6" />} />
-          ) : (
-            <div className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3">
-              {visible.map((h) => (
-                <Card key={h.address} className="flex flex-col gap-2 p-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex min-w-0 items-center gap-2">
-                      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
-                        <Home className="h-4 w-4" />
-                      </span>
-                      <div className="min-w-0">
-                        <div className="line-clamp-2 break-words text-sm font-medium leading-snug">
-                          {h.address}
-                        </div>
-                        <div className="truncate text-xs text-muted-foreground">
-                          {h.members.length} occupant{h.members.length === 1 ? "" : "s"}
-                        </div>
-                      </div>
-                    </div>
-                    <span
-                      className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium capitalize ${
-                        h.status === "active"
-                          ? "bg-emerald-500/15 text-emerald-500"
-                          : h.status === "pending"
-                            ? "bg-amber-500/15 text-amber-600"
-                            : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {h.status}
+        <SearchInput value={q} onChange={setQ} placeholder="Search address or occupant" />
+
+        {rows.isLoading ? (
+          <ListSkeleton rows={8} />
+        ) : rows.isError ? (
+          <ErrorState onRetry={() => rows.refetch()} />
+        ) : visible.length === 0 ? (
+          <EmptyState title="No households" icon={<Home className="h-6 w-6" />} />
+        ) : (
+          <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+            {visible.map((h) => (
+              <Link
+                key={h.address}
+                to="/app/admin/household/$key"
+                params={{ key: addressKey(h.address) }}
+                className="block"
+              >
+                <Card className="flex items-center gap-2 p-3 transition hover:border-primary/40 hover:bg-muted/40">
+                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md bg-primary/10 text-primary">
+                    <Home className="h-3.5 w-3.5" />
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium">{h.address}</span>
+                  {h.members.length > 1 && (
+                    <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">
+                      {h.members.length}
                     </span>
-                  </div>
-                  <div className="flex flex-wrap gap-1">
-                    {[...new Set(h.members.map((m) => m.occupant_type ?? "resident"))].map((t) => (
-                      <span
-                        key={t}
-                        className="rounded-full bg-muted px-2 py-0.5 text-[11px] capitalize text-muted-foreground"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="mt-auto truncate border-t border-border/60 pt-2 text-[11px] text-muted-foreground">
-                    {h.members.map((m) => m.full_name).join(", ")}
-                  </div>
+                  )}
                 </Card>
-              ))}
-            </div>
-          )}
-        </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
 
-        <div className="space-y-4">
-          <ChartCard title="Households">
-            <DonutChart data={houseTypes} />
-          </ChartCard>
-          <ChartCard title="Occupants">
-            <DonutChart data={occupants} />
-          </ChartCard>
-        </div>
+      <div className="space-y-4">
+        <ChartCard title="Houses">
+          <DonutChart data={houseTypes} />
+        </ChartCard>
+        <ChartCard title="Occupants">
+          <DonutChart data={occupants} />
+        </ChartCard>
       </div>
     </div>
   );
