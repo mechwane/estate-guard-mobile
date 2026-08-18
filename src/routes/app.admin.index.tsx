@@ -650,19 +650,22 @@ function AdminDashboard() {
               <Card key={a.id} className="p-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <div className="truncate text-sm font-medium text-foreground">{a.action}</div>
-                    <div className="mt-0.5 text-[11px] text-muted-foreground">
-                      {a.entity ?? "record"}
-                      {a.entity_id ? ` · ${a.entity_id.slice(0, 8)}` : ""}
-                    </div>
+                    <div className="truncate text-sm font-semibold text-foreground">{a.title}</div>
+                    <div className="mt-0.5 text-xs text-muted-foreground">{a.description}</div>
+                    {a.code && (
+                      <div className="mt-1 inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 font-mono text-[11px] italic text-muted-foreground">
+                        {a.code}
+                      </div>
+                    )}
                   </div>
                   <div className="whitespace-nowrap text-[11px] text-muted-foreground">
-                    {formatDistanceToNow(new Date(a.created_at), { addSuffix: true })}
+                    {formatDistanceToNow(new Date(a.at), { addSuffix: true })}
                   </div>
                 </div>
               </Card>
             ))}
           </div>
+
         ))}
       </aside>
     </div>
