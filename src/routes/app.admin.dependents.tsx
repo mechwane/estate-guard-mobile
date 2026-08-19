@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,15 +33,34 @@ export const Route = createFileRoute("/app/admin/dependents")({
   }),
 });
 
-type Tab = "all" | "relative" | "staff";
+type Tab = "all" | "pending" | "active" | "disapproved" | "disabled";
 const TABS = [
   { key: "all", label: "All" },
-  { key: "relative", label: "Relatives" },
-  { key: "staff", label: "Domestic staff" },
+  { key: "pending", label: "Pending" },
+  { key: "active", label: "Active" },
+  { key: "disapproved", label: "Disapproved" },
+  { key: "disabled", label: "Disabled" },
 ] as const;
 
 const isStaff = (rel?: string | null) =>
   /staff|maid|driver|help|cleaner|nanny|cook|security/i.test(rel ?? "");
+
+type HostRow = {
+  id: string;
+  full_name: string;
+  approved: boolean | null;
+  verification_status: string | null;
+};
+
+const statusOfHost = (h?: HostRow): Exclude<Tab, "all"> =>
+  h?.approved
+    ? "active"
+    : h?.verification_status === "rejected"
+      ? "disapproved"
+      : h?.verification_status === "pending"
+        ? "pending"
+        : "disabled";
+
 
 function Dependents() {
   const { data: session } = useSession();
@@ -69,38 +88,42 @@ function Dependents() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id,full_name,unit")
+        .select("id,full_name,approved,verification_status")
         .eq("estate_id", estateId!);
       if (error) throw error;
-      return data ?? [];
+      return (data ?? []) as HostRow[];
     },
   });
 
-  const nameOf = (id: string) =>
-    residents.data?.find((r) => r.id === id)?.full_name ?? id.slice(0, 8);
+  const hostOf = (id: string) => residents.data?.find((r) => r.id === id);
+  const nameOf = (id: string) => hostOf(id)?.full_name ?? id.slice(0, 8);
 
   const counts = useMemo(() => {
     const all = rows.data ?? [];
+    const by = (t: Exclude<Tab, "all">) =>
+      all.filter((d) => statusOfHost(hostOf(d.resident_id)) === t).length;
     return {
       all: all.length,
-      staff: all.filter((d) => isStaff(d.relationship)).length,
-      relative: all.filter((d) => !isStaff(d.relationship)).length,
+      pending: by("pending"),
+      active: by("active"),
+      disapproved: by("disapproved"),
+      disabled: by("disabled"),
     };
-  }, [rows.data]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows.data, residents.data]);
 
   const visible = useMemo(() => {
     const needle = q.trim().toLowerCase();
     return (rows.data ?? [])
-      .filter((d) =>
-        tab === "all" ? true : tab === "staff" ? isStaff(d.relationship) : !isStaff(d.relationship),
-      )
+      .filter((d) => tab === "all" || statusOfHost(hostOf(d.resident_id)) === tab)
       .filter(
         (d) =>
           !needle ||
           d.full_name.toLowerCase().includes(needle) ||
           (d.relationship ?? "").toLowerCase().includes(needle),
       );
-  }, [rows.data, tab, q]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows.data, residents.data, tab, q]);
 
   if (!estateId) return <EmptyState title="No estate assigned" />;
 
@@ -128,28 +151,31 @@ function Dependents() {
       ) : (
         <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
           {visible.map((d) => (
-            <Card key={d.id} className="p-3">
-              <div className="flex items-start gap-3">
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/15 text-xs font-semibold text-primary">
-                  {d.full_name.slice(0, 1).toUpperCase()}
-                </span>
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-medium">{d.full_name}</div>
-                  <div className="truncate text-xs text-muted-foreground">
-                    {isStaff(d.relationship) ? "Domestic staff" : "Relative"}
-                    {d.relationship ? `(${d.relationship})` : ""} of {nameOf(d.resident_id)}
-                  </div>
-                  <div className="mt-0.5 text-[11px] text-muted-foreground/80">
-                    {d.age ? `${d.age}y` : ""}
-                    {d.age && d.phone ? " · " : ""}
-                    {d.phone ?? ""}
+            <Link key={d.id} to="/app/admin/dependent/$id" params={{ id: d.id }} className="block">
+              <Card className="p-3 transition hover:border-primary/40 hover:bg-muted/40">
+                <div className="flex items-start gap-3">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/15 text-xs font-semibold text-primary">
+                    {d.full_name.slice(0, 1).toUpperCase()}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-medium">{d.full_name}</div>
+                    <div className="truncate text-xs text-muted-foreground">
+                      {isStaff(d.relationship) ? "Domestic staff" : "Relative"}
+                      {d.relationship ? `(${d.relationship})` : ""} of {nameOf(d.resident_id)}
+                    </div>
+                    <div className="mt-0.5 text-[11px] text-muted-foreground/80">
+                      {d.age ? `${d.age}y` : ""}
+                      {d.age && d.phone ? " · " : ""}
+                      {d.phone ?? ""}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Card>
+              </Card>
+            </Link>
           ))}
         </div>
       )}
+
     </div>
   );
 }
