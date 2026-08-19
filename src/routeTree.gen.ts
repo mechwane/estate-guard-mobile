@@ -97,6 +97,7 @@ import { Route as AppResidentEventsMineRouteImport } from './routes/app.resident
 import { Route as AppResidentEventsIdRouteImport } from './routes/app.resident.events.$id'
 import { Route as AppAdminResidentIdRouteImport } from './routes/app.admin.resident.$id'
 import { Route as AppAdminHouseholdKeyRouteImport } from './routes/app.admin.household.$key'
+import { Route as AppAdminDependentIdRouteImport } from './routes/app.admin.dependent.$id'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -538,6 +539,11 @@ const AppAdminHouseholdKeyRoute = AppAdminHouseholdKeyRouteImport.update({
   path: '/admin/household/$key',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminDependentIdRoute = AppAdminDependentIdRouteImport.update({
+  id: '/admin/dependent/$id',
+  path: '/admin/dependent/$id',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -621,6 +627,7 @@ export interface FileRoutesByFullPath {
   '/app/guard/': typeof AppGuardIndexRoute
   '/app/resident/': typeof AppResidentIndexRoute
   '/app/super/': typeof AppSuperIndexRoute
+  '/app/admin/dependent/$id': typeof AppAdminDependentIdRoute
   '/app/admin/household/$key': typeof AppAdminHouseholdKeyRoute
   '/app/admin/resident/$id': typeof AppAdminResidentIdRoute
   '/app/resident/events/$id': typeof AppResidentEventsIdRoute
@@ -711,6 +718,7 @@ export interface FileRoutesByTo {
   '/app/guard': typeof AppGuardIndexRoute
   '/app/resident': typeof AppResidentIndexRoute
   '/app/super': typeof AppSuperIndexRoute
+  '/app/admin/dependent/$id': typeof AppAdminDependentIdRoute
   '/app/admin/household/$key': typeof AppAdminHouseholdKeyRoute
   '/app/admin/resident/$id': typeof AppAdminResidentIdRoute
   '/app/resident/events/$id': typeof AppResidentEventsIdRoute
@@ -802,6 +810,7 @@ export interface FileRoutesById {
   '/app/guard/': typeof AppGuardIndexRoute
   '/app/resident/': typeof AppResidentIndexRoute
   '/app/super/': typeof AppSuperIndexRoute
+  '/app/admin/dependent/$id': typeof AppAdminDependentIdRoute
   '/app/admin/household/$key': typeof AppAdminHouseholdKeyRoute
   '/app/admin/resident/$id': typeof AppAdminResidentIdRoute
   '/app/resident/events/$id': typeof AppResidentEventsIdRoute
@@ -894,6 +903,7 @@ export interface FileRouteTypes {
     | '/app/guard/'
     | '/app/resident/'
     | '/app/super/'
+    | '/app/admin/dependent/$id'
     | '/app/admin/household/$key'
     | '/app/admin/resident/$id'
     | '/app/resident/events/$id'
@@ -984,6 +994,7 @@ export interface FileRouteTypes {
     | '/app/guard'
     | '/app/resident'
     | '/app/super'
+    | '/app/admin/dependent/$id'
     | '/app/admin/household/$key'
     | '/app/admin/resident/$id'
     | '/app/resident/events/$id'
@@ -1074,6 +1085,7 @@ export interface FileRouteTypes {
     | '/app/guard/'
     | '/app/resident/'
     | '/app/super/'
+    | '/app/admin/dependent/$id'
     | '/app/admin/household/$key'
     | '/app/admin/resident/$id'
     | '/app/resident/events/$id'
@@ -1707,6 +1719,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminHouseholdKeyRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/dependent/$id': {
+      id: '/app/admin/dependent/$id'
+      path: '/admin/dependent/$id'
+      fullPath: '/app/admin/dependent/$id'
+      preLoaderRoute: typeof AppAdminDependentIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -1785,6 +1804,7 @@ interface AppRouteChildren {
   AppGuardIndexRoute: typeof AppGuardIndexRoute
   AppResidentIndexRoute: typeof AppResidentIndexRoute
   AppSuperIndexRoute: typeof AppSuperIndexRoute
+  AppAdminDependentIdRoute: typeof AppAdminDependentIdRoute
   AppAdminHouseholdKeyRoute: typeof AppAdminHouseholdKeyRoute
   AppAdminResidentIdRoute: typeof AppAdminResidentIdRoute
   AppResidentEventsIdRoute: typeof AppResidentEventsIdRoute
@@ -1869,6 +1889,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppGuardIndexRoute: AppGuardIndexRoute,
   AppResidentIndexRoute: AppResidentIndexRoute,
   AppSuperIndexRoute: AppSuperIndexRoute,
+  AppAdminDependentIdRoute: AppAdminDependentIdRoute,
   AppAdminHouseholdKeyRoute: AppAdminHouseholdKeyRoute,
   AppAdminResidentIdRoute: AppAdminResidentIdRoute,
   AppResidentEventsIdRoute: AppResidentEventsIdRoute,

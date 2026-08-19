@@ -33,15 +33,34 @@ export const Route = createFileRoute("/app/admin/dependents")({
   }),
 });
 
-type Tab = "all" | "relative" | "staff";
+type Tab = "all" | "pending" | "active" | "disapproved" | "disabled";
 const TABS = [
   { key: "all", label: "All" },
-  { key: "relative", label: "Relatives" },
-  { key: "staff", label: "Domestic staff" },
+  { key: "pending", label: "Pending" },
+  { key: "active", label: "Active" },
+  { key: "disapproved", label: "Disapproved" },
+  { key: "disabled", label: "Disabled" },
 ] as const;
 
 const isStaff = (rel?: string | null) =>
   /staff|maid|driver|help|cleaner|nanny|cook|security/i.test(rel ?? "");
+
+type HostRow = {
+  id: string;
+  full_name: string;
+  approved: boolean | null;
+  verification_status: string | null;
+};
+
+const statusOfHost = (h?: HostRow): Exclude<Tab, "all"> =>
+  h?.approved
+    ? "active"
+    : h?.verification_status === "rejected"
+      ? "disapproved"
+      : h?.verification_status === "pending"
+        ? "pending"
+        : "disabled";
+
 
 function Dependents() {
   const { data: session } = useSession();
