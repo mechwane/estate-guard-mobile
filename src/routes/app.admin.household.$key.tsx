@@ -76,7 +76,17 @@ function HouseholdDetail() {
       <Card className="space-y-3 p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h1 className="text-lg font-semibold">{household.address}</h1>
-          <StatusBadge status={household.status} />
+          <StatusBadge
+            tone={
+              household.status === "active"
+                ? "success"
+                : household.status === "disapproved"
+                  ? "error"
+                  : "neutral"
+            }
+          >
+            {household.status}
+          </StatusBadge>
         </div>
         <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[
