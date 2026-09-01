@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
 import { Card, EmptyState, ErrorState, ListSkeleton, SectionTitle, StatusBadge } from "@/components/ui-kit";
 import { addressOf, houseTypeOf, matchesAddressKey, type HouseholdProfile } from "@/lib/households";
+import { ResidentProfilePanel } from "@/components/resident-profile-panel";
 import { ArrowLeft, Home } from "lucide-react";
 
 export const Route = createFileRoute("/app/admin/household/$key")({
