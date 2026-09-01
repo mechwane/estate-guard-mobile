@@ -10,6 +10,7 @@ import {
   SectionTitle,
   StatusBadge,
 } from "@/components/ui-kit";
+import { ResidentProfilePanel } from "@/components/resident-profile-panel";
 import { ArrowLeft, Fingerprint, Phone, ScanFace, UsersRound } from "lucide-react";
 
 export const Route = createFileRoute("/app/admin/dependent/$id")({
