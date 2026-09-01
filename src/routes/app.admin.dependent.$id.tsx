@@ -11,6 +11,7 @@ import {
   StatusBadge,
 } from "@/components/ui-kit";
 import { ArrowLeft, Fingerprint, Phone, ScanFace, UsersRound } from "lucide-react";
+import { ResidentProfilePanel } from "@/components/resident-profile-panel";
 
 export const Route = createFileRoute("/app/admin/dependent/$id")({
   component: DependentDetail,
