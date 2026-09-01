@@ -105,6 +105,13 @@ function HouseholdDetail() {
         </dl>
       </Card>
 
+      {household.members.length === 1 ? (
+        <div className="space-y-2">
+          <SectionTitle>Occupant profile</SectionTitle>
+          <ResidentProfilePanel id={household.members[0].id} />
+        </div>
+      ) : null}
+
       <div className="space-y-2">
         <SectionTitle>Occupants</SectionTitle>
         <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
