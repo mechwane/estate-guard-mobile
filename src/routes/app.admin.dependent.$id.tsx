@@ -198,21 +198,9 @@ function DependentDetail() {
       </Card>
 
       <div className="space-y-2">
-        <SectionTitle>Host</SectionTitle>
-        {h ? (
-          <Link to="/app/admin/resident/$id" params={{ id: h.id }} className="block">
-            <Card className="flex items-center gap-3 p-3 transition hover:border-primary/40 hover:bg-muted/40">
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-primary/15 text-xs font-semibold text-primary">
-                {h.full_name.slice(0, 1).toUpperCase()}
-              </span>
-              <div className="min-w-0">
-                <div className="truncate text-sm font-medium">{h.full_name}</div>
-                <div className="truncate text-xs text-muted-foreground">
-                  {address} · {h.approved ? "Active" : "Inactive"}
-                </div>
-              </div>
-            </Card>
-          </Link>
+        <SectionTitle>Host resident profile</SectionTitle>
+        {d.resident_id ? (
+          <ResidentProfilePanel id={d.resident_id} />
         ) : (
           <EmptyState title="Host not found" />
         )}
