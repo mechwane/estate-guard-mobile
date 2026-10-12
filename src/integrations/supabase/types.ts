@@ -1486,6 +1486,7 @@ export type Database = {
           provider: string
           provider_reference: string | null
           recorded_by: string | null
+          refunded_amount: number
           resident_id: string | null
           status: string
           updated_at: string
@@ -1503,6 +1504,7 @@ export type Database = {
           provider?: string
           provider_reference?: string | null
           recorded_by?: string | null
+          refunded_amount?: number
           resident_id?: string | null
           status?: string
           updated_at?: string
@@ -1520,6 +1522,7 @@ export type Database = {
           provider?: string
           provider_reference?: string | null
           recorded_by?: string | null
+          refunded_amount?: number
           resident_id?: string | null
           status?: string
           updated_at?: string
@@ -2579,6 +2582,10 @@ export type Database = {
         Args: { _email: string; _ttl_minutes: number }
         Returns: Json
       }
+      admin_match_transaction: {
+        Args: { _bill: string; _tx: string }
+        Returns: undefined
+      }
       admin_recent_support_otps: {
         Args: { _limit?: number }
         Returns: {
@@ -2603,6 +2610,19 @@ export type Database = {
           _reference: string
         }
         Returns: string
+      }
+      admin_record_unmatched: {
+        Args: {
+          _amount: number
+          _channel: string
+          _note?: string
+          _reference: string
+        }
+        Returns: string
+      }
+      admin_refund_transaction: {
+        Args: { _amount: number; _reason: string; _tx: string }
+        Returns: undefined
       }
       admin_register_device: {
         Args: { _device_type: string; _location: string; _name: string }
