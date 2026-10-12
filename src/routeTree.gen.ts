@@ -9,100 +9,100 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthSignUpRouteImport } from './routes/auth.sign-up'
-import { Route as AuthSignInRouteImport } from './routes/auth.sign-in'
-import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
-import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppDeniedRouteImport } from './routes/app.denied'
-import { Route as AppSuperIndexRouteImport } from './routes/app.super.index'
-import { Route as AppResidentIndexRouteImport } from './routes/app.resident.index'
-import { Route as AppGuardIndexRouteImport } from './routes/app.guard.index'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-password'
+import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
+import { Route as AuthSignInRouteImport } from './routes/auth.sign-in'
+import { Route as AuthSignUpRouteImport } from './routes/auth.sign-up'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
-import { Route as AppSuperUsersRouteImport } from './routes/app.super.users'
-import { Route as AppSuperSupportRouteImport } from './routes/app.super.support'
-import { Route as AppSuperSettingsRouteImport } from './routes/app.super.settings'
-import { Route as AppSuperProfileRouteImport } from './routes/app.super.profile'
-import { Route as AppSuperPlansRouteImport } from './routes/app.super.plans'
-import { Route as AppSuperInvitesRouteImport } from './routes/app.super.invites'
-import { Route as AppSuperFeaturesRouteImport } from './routes/app.super.features'
-import { Route as AppSuperDevicesRouteImport } from './routes/app.super.devices'
-import { Route as AppSuperAuditRouteImport } from './routes/app.super.audit'
-import { Route as AppResidentVerificationRouteImport } from './routes/app.resident.verification'
-import { Route as AppResidentTermsRouteImport } from './routes/app.resident.terms'
-import { Route as AppResidentSupportRouteImport } from './routes/app.resident.support'
-import { Route as AppResidentShopRouteImport } from './routes/app.resident.shop'
-import { Route as AppResidentSettingsRouteImport } from './routes/app.resident.settings'
-import { Route as AppResidentRequestsRouteImport } from './routes/app.resident.requests'
-import { Route as AppResidentProfileRouteImport } from './routes/app.resident.profile'
-import { Route as AppResidentPrivacyRouteImport } from './routes/app.resident.privacy'
-import { Route as AppResidentPassRouteImport } from './routes/app.resident.pass'
-import { Route as AppResidentMoreRouteImport } from './routes/app.resident.more'
-import { Route as AppResidentIssuesRouteImport } from './routes/app.resident.issues'
-import { Route as AppResidentInviteRouteImport } from './routes/app.resident.invite'
-import { Route as AppResidentInboxRouteImport } from './routes/app.resident.inbox'
-import { Route as AppResidentIdsRouteImport } from './routes/app.resident.ids'
-import { Route as AppResidentGuestsRouteImport } from './routes/app.resident.guests'
-import { Route as AppResidentFeedbackRouteImport } from './routes/app.resident.feedback'
-import { Route as AppResidentFaqsRouteImport } from './routes/app.resident.faqs'
-import { Route as AppResidentDependentsRouteImport } from './routes/app.resident.dependents'
-import { Route as AppResidentContactsRouteImport } from './routes/app.resident.contacts'
-import { Route as AppResidentCommunityRouteImport } from './routes/app.resident.community'
-import { Route as AppResidentChatRouteImport } from './routes/app.resident.chat'
-import { Route as AppResidentBillsRouteImport } from './routes/app.resident.bills'
-import { Route as AppResidentAccessRouteImport } from './routes/app.resident.access'
-import { Route as AppGuardValidateRouteImport } from './routes/app.guard.validate'
-import { Route as AppGuardProfileRouteImport } from './routes/app.guard.profile'
-import { Route as AppGuardNoticesRouteImport } from './routes/app.guard.notices'
-import { Route as AppGuardMoreRouteImport } from './routes/app.guard.more'
-import { Route as AppGuardIncidentsRouteImport } from './routes/app.guard.incidents'
-import { Route as AppGuardHistoryRouteImport } from './routes/app.guard.history'
-import { Route as AppGuardContactsRouteImport } from './routes/app.guard.contacts'
-import { Route as AppGuardChatRouteImport } from './routes/app.guard.chat'
-import { Route as AppGuardActiveRouteImport } from './routes/app.guard.active'
-import { Route as AppAdminVerificationsRouteImport } from './routes/app.admin.verifications'
-import { Route as AppAdminVehiclesRouteImport } from './routes/app.admin.vehicles'
-import { Route as AppAdminTroubleshootRouteImport } from './routes/app.admin.troubleshoot'
-import { Route as AppAdminTicketsRouteImport } from './routes/app.admin.tickets'
-import { Route as AppAdminStaffRouteImport } from './routes/app.admin.staff'
-import { Route as AppAdminShopRouteImport } from './routes/app.admin.shop'
-import { Route as AppAdminSettingsRouteImport } from './routes/app.admin.settings'
-import { Route as AppAdminResidentsRouteImport } from './routes/app.admin.residents'
-import { Route as AppAdminRealtimeRouteImport } from './routes/app.admin.realtime'
-import { Route as AppAdminProfileRouteImport } from './routes/app.admin.profile'
-import { Route as AppAdminPollsRouteImport } from './routes/app.admin.polls'
-import { Route as AppAdminPaymentsRouteImport } from './routes/app.admin.payments'
-import { Route as AppAdminPassesRouteImport } from './routes/app.admin.passes'
-import { Route as AppAdminMessagesRouteImport } from './routes/app.admin.messages'
-import { Route as AppAdminIssuesRouteImport } from './routes/app.admin.issues'
-import { Route as AppAdminHouseholdsRouteImport } from './routes/app.admin.households'
-import { Route as AppAdminGuestsRouteImport } from './routes/app.admin.guests'
-import { Route as AppAdminEventsRouteImport } from './routes/app.admin.events'
-import { Route as AppAdminEstateRouteImport } from './routes/app.admin.estate'
-import { Route as AppAdminDiscountsRouteImport } from './routes/app.admin.discounts'
-import { Route as AppAdminDependentsRouteImport } from './routes/app.admin.dependents'
-import { Route as AppAdminCommunityRouteImport } from './routes/app.admin.community'
-import { Route as AppAdminCollectionsRouteImport } from './routes/app.admin.collections'
-import { Route as AppAdminCardsRouteImport } from './routes/app.admin.cards'
-import { Route as AppAdminBlogRouteImport } from './routes/app.admin.blog'
-import { Route as AppAdminBillingRouteImport } from './routes/app.admin.billing'
-import { Route as AppAdminAuditRouteImport } from './routes/app.admin.audit'
-import { Route as AppAdminAnnouncementsRouteImport } from './routes/app.admin.announcements'
 import { Route as AppAdminAlertsRouteImport } from './routes/app.admin.alerts'
-import { Route as AppResidentEventsIndexRouteImport } from './routes/app.resident.events.index'
-import { Route as AppSuperEstatesEstateIdRouteImport } from './routes/app.super.estates.$estateId'
-import { Route as AppResidentEventsNewRouteImport } from './routes/app.resident.events.new'
-import { Route as AppResidentEventsMineRouteImport } from './routes/app.resident.events.mine'
-import { Route as AppResidentEventsIdRouteImport } from './routes/app.resident.events.$id'
-import { Route as AppAdminResidentIdRouteImport } from './routes/app.admin.resident.$id'
-import { Route as AppAdminHouseholdKeyRouteImport } from './routes/app.admin.household.$key'
+import { Route as AppAdminAnnouncementsRouteImport } from './routes/app.admin.announcements'
+import { Route as AppAdminAuditRouteImport } from './routes/app.admin.audit'
+import { Route as AppAdminBillingRouteImport } from './routes/app.admin.billing'
+import { Route as AppAdminBlogRouteImport } from './routes/app.admin.blog'
+import { Route as AppAdminCardsRouteImport } from './routes/app.admin.cards'
+import { Route as AppAdminCollectionsRouteImport } from './routes/app.admin.collections'
+import { Route as AppAdminCommunityRouteImport } from './routes/app.admin.community'
+import { Route as AppAdminDependentsRouteImport } from './routes/app.admin.dependents'
+import { Route as AppAdminDiscountsRouteImport } from './routes/app.admin.discounts'
+import { Route as AppAdminEstateRouteImport } from './routes/app.admin.estate'
+import { Route as AppAdminEventsRouteImport } from './routes/app.admin.events'
+import { Route as AppAdminGuestsRouteImport } from './routes/app.admin.guests'
+import { Route as AppAdminHouseholdsRouteImport } from './routes/app.admin.households'
+import { Route as AppAdminIssuesRouteImport } from './routes/app.admin.issues'
+import { Route as AppAdminMessagesRouteImport } from './routes/app.admin.messages'
+import { Route as AppAdminPassesRouteImport } from './routes/app.admin.passes'
+import { Route as AppAdminPaymentsRouteImport } from './routes/app.admin.payments'
+import { Route as AppAdminPollsRouteImport } from './routes/app.admin.polls'
+import { Route as AppAdminProfileRouteImport } from './routes/app.admin.profile'
+import { Route as AppAdminRealtimeRouteImport } from './routes/app.admin.realtime'
+import { Route as AppAdminResidentsRouteImport } from './routes/app.admin.residents'
+import { Route as AppAdminSettingsRouteImport } from './routes/app.admin.settings'
+import { Route as AppAdminShopRouteImport } from './routes/app.admin.shop'
+import { Route as AppAdminStaffRouteImport } from './routes/app.admin.staff'
+import { Route as AppAdminTicketsRouteImport } from './routes/app.admin.tickets'
+import { Route as AppAdminTroubleshootRouteImport } from './routes/app.admin.troubleshoot'
+import { Route as AppAdminVehiclesRouteImport } from './routes/app.admin.vehicles'
+import { Route as AppAdminVerificationsRouteImport } from './routes/app.admin.verifications'
+import { Route as AppGuardIndexRouteImport } from './routes/app.guard.index'
+import { Route as AppGuardActiveRouteImport } from './routes/app.guard.active'
+import { Route as AppGuardChatRouteImport } from './routes/app.guard.chat'
+import { Route as AppGuardContactsRouteImport } from './routes/app.guard.contacts'
+import { Route as AppGuardHistoryRouteImport } from './routes/app.guard.history'
+import { Route as AppGuardIncidentsRouteImport } from './routes/app.guard.incidents'
+import { Route as AppGuardMoreRouteImport } from './routes/app.guard.more'
+import { Route as AppGuardNoticesRouteImport } from './routes/app.guard.notices'
+import { Route as AppGuardProfileRouteImport } from './routes/app.guard.profile'
+import { Route as AppGuardValidateRouteImport } from './routes/app.guard.validate'
+import { Route as AppResidentIndexRouteImport } from './routes/app.resident.index'
+import { Route as AppResidentAccessRouteImport } from './routes/app.resident.access'
+import { Route as AppResidentBillsRouteImport } from './routes/app.resident.bills'
+import { Route as AppResidentChatRouteImport } from './routes/app.resident.chat'
+import { Route as AppResidentCommunityRouteImport } from './routes/app.resident.community'
+import { Route as AppResidentContactsRouteImport } from './routes/app.resident.contacts'
+import { Route as AppResidentDependentsRouteImport } from './routes/app.resident.dependents'
+import { Route as AppResidentFaqsRouteImport } from './routes/app.resident.faqs'
+import { Route as AppResidentFeedbackRouteImport } from './routes/app.resident.feedback'
+import { Route as AppResidentGuestsRouteImport } from './routes/app.resident.guests'
+import { Route as AppResidentIdsRouteImport } from './routes/app.resident.ids'
+import { Route as AppResidentInboxRouteImport } from './routes/app.resident.inbox'
+import { Route as AppResidentInviteRouteImport } from './routes/app.resident.invite'
+import { Route as AppResidentIssuesRouteImport } from './routes/app.resident.issues'
+import { Route as AppResidentMoreRouteImport } from './routes/app.resident.more'
+import { Route as AppResidentPassRouteImport } from './routes/app.resident.pass'
+import { Route as AppResidentPrivacyRouteImport } from './routes/app.resident.privacy'
+import { Route as AppResidentProfileRouteImport } from './routes/app.resident.profile'
+import { Route as AppResidentRequestsRouteImport } from './routes/app.resident.requests'
+import { Route as AppResidentSettingsRouteImport } from './routes/app.resident.settings'
+import { Route as AppResidentShopRouteImport } from './routes/app.resident.shop'
+import { Route as AppResidentSupportRouteImport } from './routes/app.resident.support'
+import { Route as AppResidentTermsRouteImport } from './routes/app.resident.terms'
+import { Route as AppResidentVerificationRouteImport } from './routes/app.resident.verification'
+import { Route as AppSuperIndexRouteImport } from './routes/app.super.index'
+import { Route as AppSuperAuditRouteImport } from './routes/app.super.audit'
+import { Route as AppSuperDevicesRouteImport } from './routes/app.super.devices'
+import { Route as AppSuperFeaturesRouteImport } from './routes/app.super.features'
+import { Route as AppSuperInvitesRouteImport } from './routes/app.super.invites'
+import { Route as AppSuperPlansRouteImport } from './routes/app.super.plans'
+import { Route as AppSuperProfileRouteImport } from './routes/app.super.profile'
+import { Route as AppSuperSettingsRouteImport } from './routes/app.super.settings'
+import { Route as AppSuperSupportRouteImport } from './routes/app.super.support'
+import { Route as AppSuperUsersRouteImport } from './routes/app.super.users'
 import { Route as AppAdminDependentIdRouteImport } from './routes/app.admin.dependent.$id'
+import { Route as AppAdminHouseholdKeyRouteImport } from './routes/app.admin.household.$key'
+import { Route as AppAdminResidentIdRouteImport } from './routes/app.admin.resident.$id'
+import { Route as AppResidentEventsIndexRouteImport } from './routes/app.resident.events.index'
+import { Route as AppResidentEventsIdRouteImport } from './routes/app.resident.events.$id'
+import { Route as AppResidentEventsMineRouteImport } from './routes/app.resident.events.mine'
+import { Route as AppResidentEventsNewRouteImport } from './routes/app.resident.events.new'
+import { Route as AppSuperEstatesEstateIdRouteImport } from './routes/app.super.estates.$estateId'
 
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -110,19 +110,19 @@ const AppRoute = AppRouteImport.update({
   path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthSignUpRoute = AuthSignUpRouteImport.update({
-  id: '/sign-up',
-  path: '/sign-up',
-  getParentRoute: () => AuthRoute,
+const AppDeniedRoute = AppDeniedRouteImport.update({
+  id: '/denied',
+  path: '/denied',
+  getParentRoute: () => AppRoute,
 } as any)
-const AuthSignInRoute = AuthSignInRouteImport.update({
-  id: '/sign-in',
-  path: '/sign-in',
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
@@ -130,379 +130,19 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => AuthRoute,
 } as any)
-const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
+const AuthSignInRoute = AuthSignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
   getParentRoute: () => AuthRoute,
 } as any)
-const AppDeniedRoute = AppDeniedRouteImport.update({
-  id: '/denied',
-  path: '/denied',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSuperIndexRoute = AppSuperIndexRouteImport.update({
-  id: '/super/',
-  path: '/super/',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentIndexRoute = AppResidentIndexRouteImport.update({
-  id: '/resident/',
-  path: '/resident/',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppGuardIndexRoute = AppGuardIndexRouteImport.update({
-  id: '/guard/',
-  path: '/guard/',
-  getParentRoute: () => AppRoute,
+const AuthSignUpRoute = AuthSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSuperUsersRoute = AppSuperUsersRouteImport.update({
-  id: '/super/users',
-  path: '/super/users',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSuperSupportRoute = AppSuperSupportRouteImport.update({
-  id: '/super/support',
-  path: '/super/support',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSuperSettingsRoute = AppSuperSettingsRouteImport.update({
-  id: '/super/settings',
-  path: '/super/settings',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSuperProfileRoute = AppSuperProfileRouteImport.update({
-  id: '/super/profile',
-  path: '/super/profile',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSuperPlansRoute = AppSuperPlansRouteImport.update({
-  id: '/super/plans',
-  path: '/super/plans',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSuperInvitesRoute = AppSuperInvitesRouteImport.update({
-  id: '/super/invites',
-  path: '/super/invites',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSuperFeaturesRoute = AppSuperFeaturesRouteImport.update({
-  id: '/super/features',
-  path: '/super/features',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSuperDevicesRoute = AppSuperDevicesRouteImport.update({
-  id: '/super/devices',
-  path: '/super/devices',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSuperAuditRoute = AppSuperAuditRouteImport.update({
-  id: '/super/audit',
-  path: '/super/audit',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentVerificationRoute = AppResidentVerificationRouteImport.update({
-  id: '/resident/verification',
-  path: '/resident/verification',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentTermsRoute = AppResidentTermsRouteImport.update({
-  id: '/resident/terms',
-  path: '/resident/terms',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentSupportRoute = AppResidentSupportRouteImport.update({
-  id: '/resident/support',
-  path: '/resident/support',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentShopRoute = AppResidentShopRouteImport.update({
-  id: '/resident/shop',
-  path: '/resident/shop',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentSettingsRoute = AppResidentSettingsRouteImport.update({
-  id: '/resident/settings',
-  path: '/resident/settings',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentRequestsRoute = AppResidentRequestsRouteImport.update({
-  id: '/resident/requests',
-  path: '/resident/requests',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentProfileRoute = AppResidentProfileRouteImport.update({
-  id: '/resident/profile',
-  path: '/resident/profile',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentPrivacyRoute = AppResidentPrivacyRouteImport.update({
-  id: '/resident/privacy',
-  path: '/resident/privacy',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentPassRoute = AppResidentPassRouteImport.update({
-  id: '/resident/pass',
-  path: '/resident/pass',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentMoreRoute = AppResidentMoreRouteImport.update({
-  id: '/resident/more',
-  path: '/resident/more',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentIssuesRoute = AppResidentIssuesRouteImport.update({
-  id: '/resident/issues',
-  path: '/resident/issues',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentInviteRoute = AppResidentInviteRouteImport.update({
-  id: '/resident/invite',
-  path: '/resident/invite',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentInboxRoute = AppResidentInboxRouteImport.update({
-  id: '/resident/inbox',
-  path: '/resident/inbox',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentIdsRoute = AppResidentIdsRouteImport.update({
-  id: '/resident/ids',
-  path: '/resident/ids',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentGuestsRoute = AppResidentGuestsRouteImport.update({
-  id: '/resident/guests',
-  path: '/resident/guests',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentFeedbackRoute = AppResidentFeedbackRouteImport.update({
-  id: '/resident/feedback',
-  path: '/resident/feedback',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentFaqsRoute = AppResidentFaqsRouteImport.update({
-  id: '/resident/faqs',
-  path: '/resident/faqs',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentDependentsRoute = AppResidentDependentsRouteImport.update({
-  id: '/resident/dependents',
-  path: '/resident/dependents',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentContactsRoute = AppResidentContactsRouteImport.update({
-  id: '/resident/contacts',
-  path: '/resident/contacts',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentCommunityRoute = AppResidentCommunityRouteImport.update({
-  id: '/resident/community',
-  path: '/resident/community',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentChatRoute = AppResidentChatRouteImport.update({
-  id: '/resident/chat',
-  path: '/resident/chat',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentBillsRoute = AppResidentBillsRouteImport.update({
-  id: '/resident/bills',
-  path: '/resident/bills',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppResidentAccessRoute = AppResidentAccessRouteImport.update({
-  id: '/resident/access',
-  path: '/resident/access',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppGuardValidateRoute = AppGuardValidateRouteImport.update({
-  id: '/guard/validate',
-  path: '/guard/validate',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppGuardProfileRoute = AppGuardProfileRouteImport.update({
-  id: '/guard/profile',
-  path: '/guard/profile',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppGuardNoticesRoute = AppGuardNoticesRouteImport.update({
-  id: '/guard/notices',
-  path: '/guard/notices',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppGuardMoreRoute = AppGuardMoreRouteImport.update({
-  id: '/guard/more',
-  path: '/guard/more',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppGuardIncidentsRoute = AppGuardIncidentsRouteImport.update({
-  id: '/guard/incidents',
-  path: '/guard/incidents',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppGuardHistoryRoute = AppGuardHistoryRouteImport.update({
-  id: '/guard/history',
-  path: '/guard/history',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppGuardContactsRoute = AppGuardContactsRouteImport.update({
-  id: '/guard/contacts',
-  path: '/guard/contacts',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppGuardChatRoute = AppGuardChatRouteImport.update({
-  id: '/guard/chat',
-  path: '/guard/chat',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppGuardActiveRoute = AppGuardActiveRouteImport.update({
-  id: '/guard/active',
-  path: '/guard/active',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminVerificationsRoute = AppAdminVerificationsRouteImport.update({
-  id: '/admin/verifications',
-  path: '/admin/verifications',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminVehiclesRoute = AppAdminVehiclesRouteImport.update({
-  id: '/admin/vehicles',
-  path: '/admin/vehicles',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminTroubleshootRoute = AppAdminTroubleshootRouteImport.update({
-  id: '/admin/troubleshoot',
-  path: '/admin/troubleshoot',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminTicketsRoute = AppAdminTicketsRouteImport.update({
-  id: '/admin/tickets',
-  path: '/admin/tickets',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminStaffRoute = AppAdminStaffRouteImport.update({
-  id: '/admin/staff',
-  path: '/admin/staff',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminShopRoute = AppAdminShopRouteImport.update({
-  id: '/admin/shop',
-  path: '/admin/shop',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminSettingsRoute = AppAdminSettingsRouteImport.update({
-  id: '/admin/settings',
-  path: '/admin/settings',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminResidentsRoute = AppAdminResidentsRouteImport.update({
-  id: '/admin/residents',
-  path: '/admin/residents',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminRealtimeRoute = AppAdminRealtimeRouteImport.update({
-  id: '/admin/realtime',
-  path: '/admin/realtime',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminProfileRoute = AppAdminProfileRouteImport.update({
-  id: '/admin/profile',
-  path: '/admin/profile',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminPollsRoute = AppAdminPollsRouteImport.update({
-  id: '/admin/polls',
-  path: '/admin/polls',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminPaymentsRoute = AppAdminPaymentsRouteImport.update({
-  id: '/admin/payments',
-  path: '/admin/payments',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminPassesRoute = AppAdminPassesRouteImport.update({
-  id: '/admin/passes',
-  path: '/admin/passes',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminMessagesRoute = AppAdminMessagesRouteImport.update({
-  id: '/admin/messages',
-  path: '/admin/messages',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminIssuesRoute = AppAdminIssuesRouteImport.update({
-  id: '/admin/issues',
-  path: '/admin/issues',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminHouseholdsRoute = AppAdminHouseholdsRouteImport.update({
-  id: '/admin/households',
-  path: '/admin/households',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminGuestsRoute = AppAdminGuestsRouteImport.update({
-  id: '/admin/guests',
-  path: '/admin/guests',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminEventsRoute = AppAdminEventsRouteImport.update({
-  id: '/admin/events',
-  path: '/admin/events',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminEstateRoute = AppAdminEstateRouteImport.update({
-  id: '/admin/estate',
-  path: '/admin/estate',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminDiscountsRoute = AppAdminDiscountsRouteImport.update({
-  id: '/admin/discounts',
-  path: '/admin/discounts',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminDependentsRoute = AppAdminDependentsRouteImport.update({
-  id: '/admin/dependents',
-  path: '/admin/dependents',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminCommunityRoute = AppAdminCommunityRouteImport.update({
-  id: '/admin/community',
-  path: '/admin/community',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminCollectionsRoute = AppAdminCollectionsRouteImport.update({
-  id: '/admin/collections',
-  path: '/admin/collections',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminCardsRoute = AppAdminCardsRouteImport.update({
-  id: '/admin/cards',
-  path: '/admin/cards',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminBlogRoute = AppAdminBlogRouteImport.update({
-  id: '/admin/blog',
-  path: '/admin/blog',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminBillingRoute = AppAdminBillingRouteImport.update({
-  id: '/admin/billing',
-  path: '/admin/billing',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminAuditRoute = AppAdminAuditRouteImport.update({
-  id: '/admin/audit',
-  path: '/admin/audit',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAdminAnnouncementsRoute = AppAdminAnnouncementsRouteImport.update({
-  id: '/admin/announcements',
-  path: '/admin/announcements',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminAlertsRoute = AppAdminAlertsRouteImport.update({
@@ -510,34 +150,369 @@ const AppAdminAlertsRoute = AppAdminAlertsRouteImport.update({
   path: '/admin/alerts',
   getParentRoute: () => AppRoute,
 } as any)
-const AppResidentEventsIndexRoute = AppResidentEventsIndexRouteImport.update({
-  id: '/resident/events/',
-  path: '/resident/events/',
+const AppAdminAnnouncementsRoute = AppAdminAnnouncementsRouteImport.update({
+  id: '/admin/announcements',
+  path: '/admin/announcements',
   getParentRoute: () => AppRoute,
 } as any)
-const AppSuperEstatesEstateIdRoute = AppSuperEstatesEstateIdRouteImport.update({
-  id: '/super/estates/$estateId',
-  path: '/super/estates/$estateId',
+const AppAdminAuditRoute = AppAdminAuditRouteImport.update({
+  id: '/admin/audit',
+  path: '/admin/audit',
   getParentRoute: () => AppRoute,
 } as any)
-const AppResidentEventsNewRoute = AppResidentEventsNewRouteImport.update({
-  id: '/resident/events/new',
-  path: '/resident/events/new',
+const AppAdminBillingRoute = AppAdminBillingRouteImport.update({
+  id: '/admin/billing',
+  path: '/admin/billing',
   getParentRoute: () => AppRoute,
 } as any)
-const AppResidentEventsMineRoute = AppResidentEventsMineRouteImport.update({
-  id: '/resident/events/mine',
-  path: '/resident/events/mine',
+const AppAdminBlogRoute = AppAdminBlogRouteImport.update({
+  id: '/admin/blog',
+  path: '/admin/blog',
   getParentRoute: () => AppRoute,
 } as any)
-const AppResidentEventsIdRoute = AppResidentEventsIdRouteImport.update({
-  id: '/resident/events/$id',
-  path: '/resident/events/$id',
+const AppAdminCardsRoute = AppAdminCardsRouteImport.update({
+  id: '/admin/cards',
+  path: '/admin/cards',
   getParentRoute: () => AppRoute,
 } as any)
-const AppAdminResidentIdRoute = AppAdminResidentIdRouteImport.update({
-  id: '/admin/resident/$id',
-  path: '/admin/resident/$id',
+const AppAdminCollectionsRoute = AppAdminCollectionsRouteImport.update({
+  id: '/admin/collections',
+  path: '/admin/collections',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminCommunityRoute = AppAdminCommunityRouteImport.update({
+  id: '/admin/community',
+  path: '/admin/community',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminDependentsRoute = AppAdminDependentsRouteImport.update({
+  id: '/admin/dependents',
+  path: '/admin/dependents',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminDiscountsRoute = AppAdminDiscountsRouteImport.update({
+  id: '/admin/discounts',
+  path: '/admin/discounts',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminEstateRoute = AppAdminEstateRouteImport.update({
+  id: '/admin/estate',
+  path: '/admin/estate',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminEventsRoute = AppAdminEventsRouteImport.update({
+  id: '/admin/events',
+  path: '/admin/events',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminGuestsRoute = AppAdminGuestsRouteImport.update({
+  id: '/admin/guests',
+  path: '/admin/guests',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminHouseholdsRoute = AppAdminHouseholdsRouteImport.update({
+  id: '/admin/households',
+  path: '/admin/households',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminIssuesRoute = AppAdminIssuesRouteImport.update({
+  id: '/admin/issues',
+  path: '/admin/issues',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminMessagesRoute = AppAdminMessagesRouteImport.update({
+  id: '/admin/messages',
+  path: '/admin/messages',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminPassesRoute = AppAdminPassesRouteImport.update({
+  id: '/admin/passes',
+  path: '/admin/passes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminPaymentsRoute = AppAdminPaymentsRouteImport.update({
+  id: '/admin/payments',
+  path: '/admin/payments',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminPollsRoute = AppAdminPollsRouteImport.update({
+  id: '/admin/polls',
+  path: '/admin/polls',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminProfileRoute = AppAdminProfileRouteImport.update({
+  id: '/admin/profile',
+  path: '/admin/profile',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminRealtimeRoute = AppAdminRealtimeRouteImport.update({
+  id: '/admin/realtime',
+  path: '/admin/realtime',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminResidentsRoute = AppAdminResidentsRouteImport.update({
+  id: '/admin/residents',
+  path: '/admin/residents',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminSettingsRoute = AppAdminSettingsRouteImport.update({
+  id: '/admin/settings',
+  path: '/admin/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminShopRoute = AppAdminShopRouteImport.update({
+  id: '/admin/shop',
+  path: '/admin/shop',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminStaffRoute = AppAdminStaffRouteImport.update({
+  id: '/admin/staff',
+  path: '/admin/staff',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminTicketsRoute = AppAdminTicketsRouteImport.update({
+  id: '/admin/tickets',
+  path: '/admin/tickets',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminTroubleshootRoute = AppAdminTroubleshootRouteImport.update({
+  id: '/admin/troubleshoot',
+  path: '/admin/troubleshoot',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminVehiclesRoute = AppAdminVehiclesRouteImport.update({
+  id: '/admin/vehicles',
+  path: '/admin/vehicles',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminVerificationsRoute = AppAdminVerificationsRouteImport.update({
+  id: '/admin/verifications',
+  path: '/admin/verifications',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardIndexRoute = AppGuardIndexRouteImport.update({
+  id: '/guard/',
+  path: '/guard/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardActiveRoute = AppGuardActiveRouteImport.update({
+  id: '/guard/active',
+  path: '/guard/active',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardChatRoute = AppGuardChatRouteImport.update({
+  id: '/guard/chat',
+  path: '/guard/chat',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardContactsRoute = AppGuardContactsRouteImport.update({
+  id: '/guard/contacts',
+  path: '/guard/contacts',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardHistoryRoute = AppGuardHistoryRouteImport.update({
+  id: '/guard/history',
+  path: '/guard/history',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardIncidentsRoute = AppGuardIncidentsRouteImport.update({
+  id: '/guard/incidents',
+  path: '/guard/incidents',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardMoreRoute = AppGuardMoreRouteImport.update({
+  id: '/guard/more',
+  path: '/guard/more',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardNoticesRoute = AppGuardNoticesRouteImport.update({
+  id: '/guard/notices',
+  path: '/guard/notices',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardProfileRoute = AppGuardProfileRouteImport.update({
+  id: '/guard/profile',
+  path: '/guard/profile',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGuardValidateRoute = AppGuardValidateRouteImport.update({
+  id: '/guard/validate',
+  path: '/guard/validate',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentIndexRoute = AppResidentIndexRouteImport.update({
+  id: '/resident/',
+  path: '/resident/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentAccessRoute = AppResidentAccessRouteImport.update({
+  id: '/resident/access',
+  path: '/resident/access',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentBillsRoute = AppResidentBillsRouteImport.update({
+  id: '/resident/bills',
+  path: '/resident/bills',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentChatRoute = AppResidentChatRouteImport.update({
+  id: '/resident/chat',
+  path: '/resident/chat',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentCommunityRoute = AppResidentCommunityRouteImport.update({
+  id: '/resident/community',
+  path: '/resident/community',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentContactsRoute = AppResidentContactsRouteImport.update({
+  id: '/resident/contacts',
+  path: '/resident/contacts',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentDependentsRoute = AppResidentDependentsRouteImport.update({
+  id: '/resident/dependents',
+  path: '/resident/dependents',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentFaqsRoute = AppResidentFaqsRouteImport.update({
+  id: '/resident/faqs',
+  path: '/resident/faqs',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentFeedbackRoute = AppResidentFeedbackRouteImport.update({
+  id: '/resident/feedback',
+  path: '/resident/feedback',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentGuestsRoute = AppResidentGuestsRouteImport.update({
+  id: '/resident/guests',
+  path: '/resident/guests',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentIdsRoute = AppResidentIdsRouteImport.update({
+  id: '/resident/ids',
+  path: '/resident/ids',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentInboxRoute = AppResidentInboxRouteImport.update({
+  id: '/resident/inbox',
+  path: '/resident/inbox',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentInviteRoute = AppResidentInviteRouteImport.update({
+  id: '/resident/invite',
+  path: '/resident/invite',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentIssuesRoute = AppResidentIssuesRouteImport.update({
+  id: '/resident/issues',
+  path: '/resident/issues',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentMoreRoute = AppResidentMoreRouteImport.update({
+  id: '/resident/more',
+  path: '/resident/more',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentPassRoute = AppResidentPassRouteImport.update({
+  id: '/resident/pass',
+  path: '/resident/pass',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentPrivacyRoute = AppResidentPrivacyRouteImport.update({
+  id: '/resident/privacy',
+  path: '/resident/privacy',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentProfileRoute = AppResidentProfileRouteImport.update({
+  id: '/resident/profile',
+  path: '/resident/profile',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentRequestsRoute = AppResidentRequestsRouteImport.update({
+  id: '/resident/requests',
+  path: '/resident/requests',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentSettingsRoute = AppResidentSettingsRouteImport.update({
+  id: '/resident/settings',
+  path: '/resident/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentShopRoute = AppResidentShopRouteImport.update({
+  id: '/resident/shop',
+  path: '/resident/shop',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentSupportRoute = AppResidentSupportRouteImport.update({
+  id: '/resident/support',
+  path: '/resident/support',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentTermsRoute = AppResidentTermsRouteImport.update({
+  id: '/resident/terms',
+  path: '/resident/terms',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentVerificationRoute = AppResidentVerificationRouteImport.update({
+  id: '/resident/verification',
+  path: '/resident/verification',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperIndexRoute = AppSuperIndexRouteImport.update({
+  id: '/super/',
+  path: '/super/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperAuditRoute = AppSuperAuditRouteImport.update({
+  id: '/super/audit',
+  path: '/super/audit',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperDevicesRoute = AppSuperDevicesRouteImport.update({
+  id: '/super/devices',
+  path: '/super/devices',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperFeaturesRoute = AppSuperFeaturesRouteImport.update({
+  id: '/super/features',
+  path: '/super/features',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperInvitesRoute = AppSuperInvitesRouteImport.update({
+  id: '/super/invites',
+  path: '/super/invites',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperPlansRoute = AppSuperPlansRouteImport.update({
+  id: '/super/plans',
+  path: '/super/plans',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperProfileRoute = AppSuperProfileRouteImport.update({
+  id: '/super/profile',
+  path: '/super/profile',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperSettingsRoute = AppSuperSettingsRouteImport.update({
+  id: '/super/settings',
+  path: '/super/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperSupportRoute = AppSuperSupportRouteImport.update({
+  id: '/super/support',
+  path: '/super/support',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperUsersRoute = AppSuperUsersRouteImport.update({
+  id: '/super/users',
+  path: '/super/users',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminDependentIdRoute = AppAdminDependentIdRouteImport.update({
+  id: '/admin/dependent/$id',
+  path: '/admin/dependent/$id',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminHouseholdKeyRoute = AppAdminHouseholdKeyRouteImport.update({
@@ -545,9 +520,34 @@ const AppAdminHouseholdKeyRoute = AppAdminHouseholdKeyRouteImport.update({
   path: '/admin/household/$key',
   getParentRoute: () => AppRoute,
 } as any)
-const AppAdminDependentIdRoute = AppAdminDependentIdRouteImport.update({
-  id: '/admin/dependent/$id',
-  path: '/admin/dependent/$id',
+const AppAdminResidentIdRoute = AppAdminResidentIdRouteImport.update({
+  id: '/admin/resident/$id',
+  path: '/admin/resident/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentEventsIndexRoute = AppResidentEventsIndexRouteImport.update({
+  id: '/resident/events/',
+  path: '/resident/events/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentEventsIdRoute = AppResidentEventsIdRouteImport.update({
+  id: '/resident/events/$id',
+  path: '/resident/events/$id',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentEventsMineRoute = AppResidentEventsMineRouteImport.update({
+  id: '/resident/events/mine',
+  path: '/resident/events/mine',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppResidentEventsNewRoute = AppResidentEventsNewRouteImport.update({
+  id: '/resident/events/new',
+  path: '/resident/events/new',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuperEstatesEstateIdRoute = AppSuperEstatesEstateIdRouteImport.update({
+  id: '/super/estates/$estateId',
+  path: '/super/estates/$estateId',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -1115,11 +1115,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -1129,25 +1129,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/sign-up': {
-      id: '/auth/sign-up'
-      path: '/sign-up'
-      fullPath: '/auth/sign-up'
-      preLoaderRoute: typeof AuthSignUpRouteImport
-      parentRoute: typeof AuthRoute
+    '/app/denied': {
+      id: '/app/denied'
+      path: '/denied'
+      fullPath: '/app/denied'
+      preLoaderRoute: typeof AppDeniedRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/auth/sign-in': {
-      id: '/auth/sign-in'
-      path: '/sign-in'
-      fullPath: '/auth/sign-in'
-      preLoaderRoute: typeof AuthSignInRouteImport
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
     '/auth/reset-password': {
@@ -1157,529 +1157,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/auth/forgot-password': {
-      id: '/auth/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/auth/forgot-password'
-      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+    '/auth/sign-in': {
+      id: '/auth/sign-in'
+      path: '/sign-in'
+      fullPath: '/auth/sign-in'
+      preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/app/denied': {
-      id: '/app/denied'
-      path: '/denied'
-      fullPath: '/app/denied'
-      preLoaderRoute: typeof AppDeniedRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/super/': {
-      id: '/app/super/'
-      path: '/super'
-      fullPath: '/app/super/'
-      preLoaderRoute: typeof AppSuperIndexRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/': {
-      id: '/app/resident/'
-      path: '/resident'
-      fullPath: '/app/resident/'
-      preLoaderRoute: typeof AppResidentIndexRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/guard/': {
-      id: '/app/guard/'
-      path: '/guard'
-      fullPath: '/app/guard/'
-      preLoaderRoute: typeof AppGuardIndexRouteImport
-      parentRoute: typeof AppRoute
+    '/auth/sign-up': {
+      id: '/auth/sign-up'
+      path: '/sign-up'
+      fullPath: '/auth/sign-up'
+      preLoaderRoute: typeof AuthSignUpRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/app/admin/': {
       id: '/app/admin/'
       path: '/admin'
       fullPath: '/app/admin/'
       preLoaderRoute: typeof AppAdminIndexRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/super/users': {
-      id: '/app/super/users'
-      path: '/super/users'
-      fullPath: '/app/super/users'
-      preLoaderRoute: typeof AppSuperUsersRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/super/support': {
-      id: '/app/super/support'
-      path: '/super/support'
-      fullPath: '/app/super/support'
-      preLoaderRoute: typeof AppSuperSupportRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/super/settings': {
-      id: '/app/super/settings'
-      path: '/super/settings'
-      fullPath: '/app/super/settings'
-      preLoaderRoute: typeof AppSuperSettingsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/super/profile': {
-      id: '/app/super/profile'
-      path: '/super/profile'
-      fullPath: '/app/super/profile'
-      preLoaderRoute: typeof AppSuperProfileRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/super/plans': {
-      id: '/app/super/plans'
-      path: '/super/plans'
-      fullPath: '/app/super/plans'
-      preLoaderRoute: typeof AppSuperPlansRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/super/invites': {
-      id: '/app/super/invites'
-      path: '/super/invites'
-      fullPath: '/app/super/invites'
-      preLoaderRoute: typeof AppSuperInvitesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/super/features': {
-      id: '/app/super/features'
-      path: '/super/features'
-      fullPath: '/app/super/features'
-      preLoaderRoute: typeof AppSuperFeaturesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/super/devices': {
-      id: '/app/super/devices'
-      path: '/super/devices'
-      fullPath: '/app/super/devices'
-      preLoaderRoute: typeof AppSuperDevicesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/super/audit': {
-      id: '/app/super/audit'
-      path: '/super/audit'
-      fullPath: '/app/super/audit'
-      preLoaderRoute: typeof AppSuperAuditRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/verification': {
-      id: '/app/resident/verification'
-      path: '/resident/verification'
-      fullPath: '/app/resident/verification'
-      preLoaderRoute: typeof AppResidentVerificationRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/terms': {
-      id: '/app/resident/terms'
-      path: '/resident/terms'
-      fullPath: '/app/resident/terms'
-      preLoaderRoute: typeof AppResidentTermsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/support': {
-      id: '/app/resident/support'
-      path: '/resident/support'
-      fullPath: '/app/resident/support'
-      preLoaderRoute: typeof AppResidentSupportRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/shop': {
-      id: '/app/resident/shop'
-      path: '/resident/shop'
-      fullPath: '/app/resident/shop'
-      preLoaderRoute: typeof AppResidentShopRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/settings': {
-      id: '/app/resident/settings'
-      path: '/resident/settings'
-      fullPath: '/app/resident/settings'
-      preLoaderRoute: typeof AppResidentSettingsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/requests': {
-      id: '/app/resident/requests'
-      path: '/resident/requests'
-      fullPath: '/app/resident/requests'
-      preLoaderRoute: typeof AppResidentRequestsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/profile': {
-      id: '/app/resident/profile'
-      path: '/resident/profile'
-      fullPath: '/app/resident/profile'
-      preLoaderRoute: typeof AppResidentProfileRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/privacy': {
-      id: '/app/resident/privacy'
-      path: '/resident/privacy'
-      fullPath: '/app/resident/privacy'
-      preLoaderRoute: typeof AppResidentPrivacyRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/pass': {
-      id: '/app/resident/pass'
-      path: '/resident/pass'
-      fullPath: '/app/resident/pass'
-      preLoaderRoute: typeof AppResidentPassRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/more': {
-      id: '/app/resident/more'
-      path: '/resident/more'
-      fullPath: '/app/resident/more'
-      preLoaderRoute: typeof AppResidentMoreRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/issues': {
-      id: '/app/resident/issues'
-      path: '/resident/issues'
-      fullPath: '/app/resident/issues'
-      preLoaderRoute: typeof AppResidentIssuesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/invite': {
-      id: '/app/resident/invite'
-      path: '/resident/invite'
-      fullPath: '/app/resident/invite'
-      preLoaderRoute: typeof AppResidentInviteRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/inbox': {
-      id: '/app/resident/inbox'
-      path: '/resident/inbox'
-      fullPath: '/app/resident/inbox'
-      preLoaderRoute: typeof AppResidentInboxRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/ids': {
-      id: '/app/resident/ids'
-      path: '/resident/ids'
-      fullPath: '/app/resident/ids'
-      preLoaderRoute: typeof AppResidentIdsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/guests': {
-      id: '/app/resident/guests'
-      path: '/resident/guests'
-      fullPath: '/app/resident/guests'
-      preLoaderRoute: typeof AppResidentGuestsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/feedback': {
-      id: '/app/resident/feedback'
-      path: '/resident/feedback'
-      fullPath: '/app/resident/feedback'
-      preLoaderRoute: typeof AppResidentFeedbackRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/faqs': {
-      id: '/app/resident/faqs'
-      path: '/resident/faqs'
-      fullPath: '/app/resident/faqs'
-      preLoaderRoute: typeof AppResidentFaqsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/dependents': {
-      id: '/app/resident/dependents'
-      path: '/resident/dependents'
-      fullPath: '/app/resident/dependents'
-      preLoaderRoute: typeof AppResidentDependentsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/contacts': {
-      id: '/app/resident/contacts'
-      path: '/resident/contacts'
-      fullPath: '/app/resident/contacts'
-      preLoaderRoute: typeof AppResidentContactsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/community': {
-      id: '/app/resident/community'
-      path: '/resident/community'
-      fullPath: '/app/resident/community'
-      preLoaderRoute: typeof AppResidentCommunityRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/chat': {
-      id: '/app/resident/chat'
-      path: '/resident/chat'
-      fullPath: '/app/resident/chat'
-      preLoaderRoute: typeof AppResidentChatRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/bills': {
-      id: '/app/resident/bills'
-      path: '/resident/bills'
-      fullPath: '/app/resident/bills'
-      preLoaderRoute: typeof AppResidentBillsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/resident/access': {
-      id: '/app/resident/access'
-      path: '/resident/access'
-      fullPath: '/app/resident/access'
-      preLoaderRoute: typeof AppResidentAccessRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/guard/validate': {
-      id: '/app/guard/validate'
-      path: '/guard/validate'
-      fullPath: '/app/guard/validate'
-      preLoaderRoute: typeof AppGuardValidateRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/guard/profile': {
-      id: '/app/guard/profile'
-      path: '/guard/profile'
-      fullPath: '/app/guard/profile'
-      preLoaderRoute: typeof AppGuardProfileRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/guard/notices': {
-      id: '/app/guard/notices'
-      path: '/guard/notices'
-      fullPath: '/app/guard/notices'
-      preLoaderRoute: typeof AppGuardNoticesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/guard/more': {
-      id: '/app/guard/more'
-      path: '/guard/more'
-      fullPath: '/app/guard/more'
-      preLoaderRoute: typeof AppGuardMoreRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/guard/incidents': {
-      id: '/app/guard/incidents'
-      path: '/guard/incidents'
-      fullPath: '/app/guard/incidents'
-      preLoaderRoute: typeof AppGuardIncidentsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/guard/history': {
-      id: '/app/guard/history'
-      path: '/guard/history'
-      fullPath: '/app/guard/history'
-      preLoaderRoute: typeof AppGuardHistoryRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/guard/contacts': {
-      id: '/app/guard/contacts'
-      path: '/guard/contacts'
-      fullPath: '/app/guard/contacts'
-      preLoaderRoute: typeof AppGuardContactsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/guard/chat': {
-      id: '/app/guard/chat'
-      path: '/guard/chat'
-      fullPath: '/app/guard/chat'
-      preLoaderRoute: typeof AppGuardChatRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/guard/active': {
-      id: '/app/guard/active'
-      path: '/guard/active'
-      fullPath: '/app/guard/active'
-      preLoaderRoute: typeof AppGuardActiveRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/verifications': {
-      id: '/app/admin/verifications'
-      path: '/admin/verifications'
-      fullPath: '/app/admin/verifications'
-      preLoaderRoute: typeof AppAdminVerificationsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/vehicles': {
-      id: '/app/admin/vehicles'
-      path: '/admin/vehicles'
-      fullPath: '/app/admin/vehicles'
-      preLoaderRoute: typeof AppAdminVehiclesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/troubleshoot': {
-      id: '/app/admin/troubleshoot'
-      path: '/admin/troubleshoot'
-      fullPath: '/app/admin/troubleshoot'
-      preLoaderRoute: typeof AppAdminTroubleshootRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/tickets': {
-      id: '/app/admin/tickets'
-      path: '/admin/tickets'
-      fullPath: '/app/admin/tickets'
-      preLoaderRoute: typeof AppAdminTicketsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/staff': {
-      id: '/app/admin/staff'
-      path: '/admin/staff'
-      fullPath: '/app/admin/staff'
-      preLoaderRoute: typeof AppAdminStaffRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/shop': {
-      id: '/app/admin/shop'
-      path: '/admin/shop'
-      fullPath: '/app/admin/shop'
-      preLoaderRoute: typeof AppAdminShopRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/settings': {
-      id: '/app/admin/settings'
-      path: '/admin/settings'
-      fullPath: '/app/admin/settings'
-      preLoaderRoute: typeof AppAdminSettingsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/residents': {
-      id: '/app/admin/residents'
-      path: '/admin/residents'
-      fullPath: '/app/admin/residents'
-      preLoaderRoute: typeof AppAdminResidentsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/realtime': {
-      id: '/app/admin/realtime'
-      path: '/admin/realtime'
-      fullPath: '/app/admin/realtime'
-      preLoaderRoute: typeof AppAdminRealtimeRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/profile': {
-      id: '/app/admin/profile'
-      path: '/admin/profile'
-      fullPath: '/app/admin/profile'
-      preLoaderRoute: typeof AppAdminProfileRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/polls': {
-      id: '/app/admin/polls'
-      path: '/admin/polls'
-      fullPath: '/app/admin/polls'
-      preLoaderRoute: typeof AppAdminPollsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/payments': {
-      id: '/app/admin/payments'
-      path: '/admin/payments'
-      fullPath: '/app/admin/payments'
-      preLoaderRoute: typeof AppAdminPaymentsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/passes': {
-      id: '/app/admin/passes'
-      path: '/admin/passes'
-      fullPath: '/app/admin/passes'
-      preLoaderRoute: typeof AppAdminPassesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/messages': {
-      id: '/app/admin/messages'
-      path: '/admin/messages'
-      fullPath: '/app/admin/messages'
-      preLoaderRoute: typeof AppAdminMessagesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/issues': {
-      id: '/app/admin/issues'
-      path: '/admin/issues'
-      fullPath: '/app/admin/issues'
-      preLoaderRoute: typeof AppAdminIssuesRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/households': {
-      id: '/app/admin/households'
-      path: '/admin/households'
-      fullPath: '/app/admin/households'
-      preLoaderRoute: typeof AppAdminHouseholdsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/guests': {
-      id: '/app/admin/guests'
-      path: '/admin/guests'
-      fullPath: '/app/admin/guests'
-      preLoaderRoute: typeof AppAdminGuestsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/events': {
-      id: '/app/admin/events'
-      path: '/admin/events'
-      fullPath: '/app/admin/events'
-      preLoaderRoute: typeof AppAdminEventsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/estate': {
-      id: '/app/admin/estate'
-      path: '/admin/estate'
-      fullPath: '/app/admin/estate'
-      preLoaderRoute: typeof AppAdminEstateRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/discounts': {
-      id: '/app/admin/discounts'
-      path: '/admin/discounts'
-      fullPath: '/app/admin/discounts'
-      preLoaderRoute: typeof AppAdminDiscountsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/dependents': {
-      id: '/app/admin/dependents'
-      path: '/admin/dependents'
-      fullPath: '/app/admin/dependents'
-      preLoaderRoute: typeof AppAdminDependentsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/community': {
-      id: '/app/admin/community'
-      path: '/admin/community'
-      fullPath: '/app/admin/community'
-      preLoaderRoute: typeof AppAdminCommunityRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/collections': {
-      id: '/app/admin/collections'
-      path: '/admin/collections'
-      fullPath: '/app/admin/collections'
-      preLoaderRoute: typeof AppAdminCollectionsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/cards': {
-      id: '/app/admin/cards'
-      path: '/admin/cards'
-      fullPath: '/app/admin/cards'
-      preLoaderRoute: typeof AppAdminCardsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/blog': {
-      id: '/app/admin/blog'
-      path: '/admin/blog'
-      fullPath: '/app/admin/blog'
-      preLoaderRoute: typeof AppAdminBlogRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/billing': {
-      id: '/app/admin/billing'
-      path: '/admin/billing'
-      fullPath: '/app/admin/billing'
-      preLoaderRoute: typeof AppAdminBillingRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/audit': {
-      id: '/app/admin/audit'
-      path: '/admin/audit'
-      fullPath: '/app/admin/audit'
-      preLoaderRoute: typeof AppAdminAuditRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/app/admin/announcements': {
-      id: '/app/admin/announcements'
-      path: '/admin/announcements'
-      fullPath: '/app/admin/announcements'
-      preLoaderRoute: typeof AppAdminAnnouncementsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/admin/alerts': {
@@ -1689,46 +1185,515 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminAlertsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/resident/events/': {
-      id: '/app/resident/events/'
-      path: '/resident/events'
-      fullPath: '/app/resident/events/'
-      preLoaderRoute: typeof AppResidentEventsIndexRouteImport
+    '/app/admin/announcements': {
+      id: '/app/admin/announcements'
+      path: '/admin/announcements'
+      fullPath: '/app/admin/announcements'
+      preLoaderRoute: typeof AppAdminAnnouncementsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/super/estates/$estateId': {
-      id: '/app/super/estates/$estateId'
-      path: '/super/estates/$estateId'
-      fullPath: '/app/super/estates/$estateId'
-      preLoaderRoute: typeof AppSuperEstatesEstateIdRouteImport
+    '/app/admin/audit': {
+      id: '/app/admin/audit'
+      path: '/admin/audit'
+      fullPath: '/app/admin/audit'
+      preLoaderRoute: typeof AppAdminAuditRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/resident/events/new': {
-      id: '/app/resident/events/new'
-      path: '/resident/events/new'
-      fullPath: '/app/resident/events/new'
-      preLoaderRoute: typeof AppResidentEventsNewRouteImport
+    '/app/admin/billing': {
+      id: '/app/admin/billing'
+      path: '/admin/billing'
+      fullPath: '/app/admin/billing'
+      preLoaderRoute: typeof AppAdminBillingRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/resident/events/mine': {
-      id: '/app/resident/events/mine'
-      path: '/resident/events/mine'
-      fullPath: '/app/resident/events/mine'
-      preLoaderRoute: typeof AppResidentEventsMineRouteImport
+    '/app/admin/blog': {
+      id: '/app/admin/blog'
+      path: '/admin/blog'
+      fullPath: '/app/admin/blog'
+      preLoaderRoute: typeof AppAdminBlogRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/resident/events/$id': {
-      id: '/app/resident/events/$id'
-      path: '/resident/events/$id'
-      fullPath: '/app/resident/events/$id'
-      preLoaderRoute: typeof AppResidentEventsIdRouteImport
+    '/app/admin/cards': {
+      id: '/app/admin/cards'
+      path: '/admin/cards'
+      fullPath: '/app/admin/cards'
+      preLoaderRoute: typeof AppAdminCardsRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/admin/resident/$id': {
-      id: '/app/admin/resident/$id'
-      path: '/admin/resident/$id'
-      fullPath: '/app/admin/resident/$id'
-      preLoaderRoute: typeof AppAdminResidentIdRouteImport
+    '/app/admin/collections': {
+      id: '/app/admin/collections'
+      path: '/admin/collections'
+      fullPath: '/app/admin/collections'
+      preLoaderRoute: typeof AppAdminCollectionsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/community': {
+      id: '/app/admin/community'
+      path: '/admin/community'
+      fullPath: '/app/admin/community'
+      preLoaderRoute: typeof AppAdminCommunityRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/dependents': {
+      id: '/app/admin/dependents'
+      path: '/admin/dependents'
+      fullPath: '/app/admin/dependents'
+      preLoaderRoute: typeof AppAdminDependentsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/discounts': {
+      id: '/app/admin/discounts'
+      path: '/admin/discounts'
+      fullPath: '/app/admin/discounts'
+      preLoaderRoute: typeof AppAdminDiscountsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/estate': {
+      id: '/app/admin/estate'
+      path: '/admin/estate'
+      fullPath: '/app/admin/estate'
+      preLoaderRoute: typeof AppAdminEstateRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/events': {
+      id: '/app/admin/events'
+      path: '/admin/events'
+      fullPath: '/app/admin/events'
+      preLoaderRoute: typeof AppAdminEventsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/guests': {
+      id: '/app/admin/guests'
+      path: '/admin/guests'
+      fullPath: '/app/admin/guests'
+      preLoaderRoute: typeof AppAdminGuestsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/households': {
+      id: '/app/admin/households'
+      path: '/admin/households'
+      fullPath: '/app/admin/households'
+      preLoaderRoute: typeof AppAdminHouseholdsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/issues': {
+      id: '/app/admin/issues'
+      path: '/admin/issues'
+      fullPath: '/app/admin/issues'
+      preLoaderRoute: typeof AppAdminIssuesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/messages': {
+      id: '/app/admin/messages'
+      path: '/admin/messages'
+      fullPath: '/app/admin/messages'
+      preLoaderRoute: typeof AppAdminMessagesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/passes': {
+      id: '/app/admin/passes'
+      path: '/admin/passes'
+      fullPath: '/app/admin/passes'
+      preLoaderRoute: typeof AppAdminPassesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/payments': {
+      id: '/app/admin/payments'
+      path: '/admin/payments'
+      fullPath: '/app/admin/payments'
+      preLoaderRoute: typeof AppAdminPaymentsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/polls': {
+      id: '/app/admin/polls'
+      path: '/admin/polls'
+      fullPath: '/app/admin/polls'
+      preLoaderRoute: typeof AppAdminPollsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/profile': {
+      id: '/app/admin/profile'
+      path: '/admin/profile'
+      fullPath: '/app/admin/profile'
+      preLoaderRoute: typeof AppAdminProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/realtime': {
+      id: '/app/admin/realtime'
+      path: '/admin/realtime'
+      fullPath: '/app/admin/realtime'
+      preLoaderRoute: typeof AppAdminRealtimeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/residents': {
+      id: '/app/admin/residents'
+      path: '/admin/residents'
+      fullPath: '/app/admin/residents'
+      preLoaderRoute: typeof AppAdminResidentsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/settings': {
+      id: '/app/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/app/admin/settings'
+      preLoaderRoute: typeof AppAdminSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/shop': {
+      id: '/app/admin/shop'
+      path: '/admin/shop'
+      fullPath: '/app/admin/shop'
+      preLoaderRoute: typeof AppAdminShopRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/staff': {
+      id: '/app/admin/staff'
+      path: '/admin/staff'
+      fullPath: '/app/admin/staff'
+      preLoaderRoute: typeof AppAdminStaffRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/tickets': {
+      id: '/app/admin/tickets'
+      path: '/admin/tickets'
+      fullPath: '/app/admin/tickets'
+      preLoaderRoute: typeof AppAdminTicketsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/troubleshoot': {
+      id: '/app/admin/troubleshoot'
+      path: '/admin/troubleshoot'
+      fullPath: '/app/admin/troubleshoot'
+      preLoaderRoute: typeof AppAdminTroubleshootRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/vehicles': {
+      id: '/app/admin/vehicles'
+      path: '/admin/vehicles'
+      fullPath: '/app/admin/vehicles'
+      preLoaderRoute: typeof AppAdminVehiclesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/verifications': {
+      id: '/app/admin/verifications'
+      path: '/admin/verifications'
+      fullPath: '/app/admin/verifications'
+      preLoaderRoute: typeof AppAdminVerificationsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/': {
+      id: '/app/guard/'
+      path: '/guard'
+      fullPath: '/app/guard/'
+      preLoaderRoute: typeof AppGuardIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/active': {
+      id: '/app/guard/active'
+      path: '/guard/active'
+      fullPath: '/app/guard/active'
+      preLoaderRoute: typeof AppGuardActiveRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/chat': {
+      id: '/app/guard/chat'
+      path: '/guard/chat'
+      fullPath: '/app/guard/chat'
+      preLoaderRoute: typeof AppGuardChatRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/contacts': {
+      id: '/app/guard/contacts'
+      path: '/guard/contacts'
+      fullPath: '/app/guard/contacts'
+      preLoaderRoute: typeof AppGuardContactsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/history': {
+      id: '/app/guard/history'
+      path: '/guard/history'
+      fullPath: '/app/guard/history'
+      preLoaderRoute: typeof AppGuardHistoryRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/incidents': {
+      id: '/app/guard/incidents'
+      path: '/guard/incidents'
+      fullPath: '/app/guard/incidents'
+      preLoaderRoute: typeof AppGuardIncidentsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/more': {
+      id: '/app/guard/more'
+      path: '/guard/more'
+      fullPath: '/app/guard/more'
+      preLoaderRoute: typeof AppGuardMoreRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/notices': {
+      id: '/app/guard/notices'
+      path: '/guard/notices'
+      fullPath: '/app/guard/notices'
+      preLoaderRoute: typeof AppGuardNoticesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/profile': {
+      id: '/app/guard/profile'
+      path: '/guard/profile'
+      fullPath: '/app/guard/profile'
+      preLoaderRoute: typeof AppGuardProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/guard/validate': {
+      id: '/app/guard/validate'
+      path: '/guard/validate'
+      fullPath: '/app/guard/validate'
+      preLoaderRoute: typeof AppGuardValidateRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/': {
+      id: '/app/resident/'
+      path: '/resident'
+      fullPath: '/app/resident/'
+      preLoaderRoute: typeof AppResidentIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/access': {
+      id: '/app/resident/access'
+      path: '/resident/access'
+      fullPath: '/app/resident/access'
+      preLoaderRoute: typeof AppResidentAccessRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/bills': {
+      id: '/app/resident/bills'
+      path: '/resident/bills'
+      fullPath: '/app/resident/bills'
+      preLoaderRoute: typeof AppResidentBillsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/chat': {
+      id: '/app/resident/chat'
+      path: '/resident/chat'
+      fullPath: '/app/resident/chat'
+      preLoaderRoute: typeof AppResidentChatRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/community': {
+      id: '/app/resident/community'
+      path: '/resident/community'
+      fullPath: '/app/resident/community'
+      preLoaderRoute: typeof AppResidentCommunityRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/contacts': {
+      id: '/app/resident/contacts'
+      path: '/resident/contacts'
+      fullPath: '/app/resident/contacts'
+      preLoaderRoute: typeof AppResidentContactsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/dependents': {
+      id: '/app/resident/dependents'
+      path: '/resident/dependents'
+      fullPath: '/app/resident/dependents'
+      preLoaderRoute: typeof AppResidentDependentsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/faqs': {
+      id: '/app/resident/faqs'
+      path: '/resident/faqs'
+      fullPath: '/app/resident/faqs'
+      preLoaderRoute: typeof AppResidentFaqsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/feedback': {
+      id: '/app/resident/feedback'
+      path: '/resident/feedback'
+      fullPath: '/app/resident/feedback'
+      preLoaderRoute: typeof AppResidentFeedbackRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/guests': {
+      id: '/app/resident/guests'
+      path: '/resident/guests'
+      fullPath: '/app/resident/guests'
+      preLoaderRoute: typeof AppResidentGuestsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/ids': {
+      id: '/app/resident/ids'
+      path: '/resident/ids'
+      fullPath: '/app/resident/ids'
+      preLoaderRoute: typeof AppResidentIdsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/inbox': {
+      id: '/app/resident/inbox'
+      path: '/resident/inbox'
+      fullPath: '/app/resident/inbox'
+      preLoaderRoute: typeof AppResidentInboxRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/invite': {
+      id: '/app/resident/invite'
+      path: '/resident/invite'
+      fullPath: '/app/resident/invite'
+      preLoaderRoute: typeof AppResidentInviteRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/issues': {
+      id: '/app/resident/issues'
+      path: '/resident/issues'
+      fullPath: '/app/resident/issues'
+      preLoaderRoute: typeof AppResidentIssuesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/more': {
+      id: '/app/resident/more'
+      path: '/resident/more'
+      fullPath: '/app/resident/more'
+      preLoaderRoute: typeof AppResidentMoreRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/pass': {
+      id: '/app/resident/pass'
+      path: '/resident/pass'
+      fullPath: '/app/resident/pass'
+      preLoaderRoute: typeof AppResidentPassRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/privacy': {
+      id: '/app/resident/privacy'
+      path: '/resident/privacy'
+      fullPath: '/app/resident/privacy'
+      preLoaderRoute: typeof AppResidentPrivacyRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/profile': {
+      id: '/app/resident/profile'
+      path: '/resident/profile'
+      fullPath: '/app/resident/profile'
+      preLoaderRoute: typeof AppResidentProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/requests': {
+      id: '/app/resident/requests'
+      path: '/resident/requests'
+      fullPath: '/app/resident/requests'
+      preLoaderRoute: typeof AppResidentRequestsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/settings': {
+      id: '/app/resident/settings'
+      path: '/resident/settings'
+      fullPath: '/app/resident/settings'
+      preLoaderRoute: typeof AppResidentSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/shop': {
+      id: '/app/resident/shop'
+      path: '/resident/shop'
+      fullPath: '/app/resident/shop'
+      preLoaderRoute: typeof AppResidentShopRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/support': {
+      id: '/app/resident/support'
+      path: '/resident/support'
+      fullPath: '/app/resident/support'
+      preLoaderRoute: typeof AppResidentSupportRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/terms': {
+      id: '/app/resident/terms'
+      path: '/resident/terms'
+      fullPath: '/app/resident/terms'
+      preLoaderRoute: typeof AppResidentTermsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/verification': {
+      id: '/app/resident/verification'
+      path: '/resident/verification'
+      fullPath: '/app/resident/verification'
+      preLoaderRoute: typeof AppResidentVerificationRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/': {
+      id: '/app/super/'
+      path: '/super'
+      fullPath: '/app/super/'
+      preLoaderRoute: typeof AppSuperIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/audit': {
+      id: '/app/super/audit'
+      path: '/super/audit'
+      fullPath: '/app/super/audit'
+      preLoaderRoute: typeof AppSuperAuditRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/devices': {
+      id: '/app/super/devices'
+      path: '/super/devices'
+      fullPath: '/app/super/devices'
+      preLoaderRoute: typeof AppSuperDevicesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/features': {
+      id: '/app/super/features'
+      path: '/super/features'
+      fullPath: '/app/super/features'
+      preLoaderRoute: typeof AppSuperFeaturesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/invites': {
+      id: '/app/super/invites'
+      path: '/super/invites'
+      fullPath: '/app/super/invites'
+      preLoaderRoute: typeof AppSuperInvitesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/plans': {
+      id: '/app/super/plans'
+      path: '/super/plans'
+      fullPath: '/app/super/plans'
+      preLoaderRoute: typeof AppSuperPlansRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/profile': {
+      id: '/app/super/profile'
+      path: '/super/profile'
+      fullPath: '/app/super/profile'
+      preLoaderRoute: typeof AppSuperProfileRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/settings': {
+      id: '/app/super/settings'
+      path: '/super/settings'
+      fullPath: '/app/super/settings'
+      preLoaderRoute: typeof AppSuperSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/support': {
+      id: '/app/super/support'
+      path: '/super/support'
+      fullPath: '/app/super/support'
+      preLoaderRoute: typeof AppSuperSupportRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/users': {
+      id: '/app/super/users'
+      path: '/super/users'
+      fullPath: '/app/super/users'
+      preLoaderRoute: typeof AppSuperUsersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/dependent/$id': {
+      id: '/app/admin/dependent/$id'
+      path: '/admin/dependent/$id'
+      fullPath: '/app/admin/dependent/$id'
+      preLoaderRoute: typeof AppAdminDependentIdRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/admin/household/$key': {
@@ -1738,11 +1703,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminHouseholdKeyRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/admin/dependent/$id': {
-      id: '/app/admin/dependent/$id'
-      path: '/admin/dependent/$id'
-      fullPath: '/app/admin/dependent/$id'
-      preLoaderRoute: typeof AppAdminDependentIdRouteImport
+    '/app/admin/resident/$id': {
+      id: '/app/admin/resident/$id'
+      path: '/admin/resident/$id'
+      fullPath: '/app/admin/resident/$id'
+      preLoaderRoute: typeof AppAdminResidentIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/events/': {
+      id: '/app/resident/events/'
+      path: '/resident/events'
+      fullPath: '/app/resident/events/'
+      preLoaderRoute: typeof AppResidentEventsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/events/$id': {
+      id: '/app/resident/events/$id'
+      path: '/resident/events/$id'
+      fullPath: '/app/resident/events/$id'
+      preLoaderRoute: typeof AppResidentEventsIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/events/mine': {
+      id: '/app/resident/events/mine'
+      path: '/resident/events/mine'
+      fullPath: '/app/resident/events/mine'
+      preLoaderRoute: typeof AppResidentEventsMineRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/resident/events/new': {
+      id: '/app/resident/events/new'
+      path: '/resident/events/new'
+      fullPath: '/app/resident/events/new'
+      preLoaderRoute: typeof AppResidentEventsNewRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/super/estates/$estateId': {
+      id: '/app/super/estates/$estateId'
+      path: '/super/estates/$estateId'
+      fullPath: '/app/super/estates/$estateId'
+      preLoaderRoute: typeof AppSuperEstatesEstateIdRouteImport
       parentRoute: typeof AppRoute
     }
   }
