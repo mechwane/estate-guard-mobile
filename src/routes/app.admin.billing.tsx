@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Plus, Send, XCircle, Banknote, Undo2, BadgeCheck, Download, Link2, RotateCcw } from "lucide-react";
+import { Plus, Send, XCircle, Banknote, Undo2, BadgeCheck, Download, Link2, RotateCcw, Paperclip, Lock } from "lucide-react";
 
 function downloadCsv(name: string, rows: (string | number | null | undefined)[][]) {
   const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
@@ -78,7 +78,7 @@ function BillingAdmin() {
         supabase.from("bill_batches").select("*").eq("estate_id", estateId!).order("created_at", { ascending: false }),
         supabase
           .from("bills")
-          .select("id,title,amount,amount_paid,status,due_date,resident_id,batch_id,reference,bill_type")
+          .select("id,title,amount,amount_paid,status,due_date,resident_id,batch_id,reference,bill_type,invoice_path")
           .eq("estate_id", estateId!)
           .order("created_at", { ascending: false })
           .limit(500),
@@ -128,6 +128,41 @@ function BillingAdmin() {
       if (error) throw error;
     },
     onSuccess: () => (toast.success("Updated"), refresh()),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const attach = useMutation({
+    mutationFn: async (v: { bill: string; file: File }) => {
+      if (v.file.size > 10 * 1024 * 1024) throw new Error("File must be under 10MB");
+      const ext = (v.file.name.split(".").pop() ?? "pdf").toLowerCase().replace(/[^a-z0-9]/g, "");
+      const path = `${estateId}/${v.bill}-${Date.now()}.${ext}`;
+      const up = await supabase.storage.from("invoices").upload(path, v.file, { contentType: v.file.type });
+      if (up.error) throw up.error;
+      const { error } = await supabase.rpc("admin_set_bill_invoice", { _bill: v.bill, _path: path });
+      if (error) throw error;
+    },
+    onSuccess: () => (toast.success("Invoice attached"), refresh()),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const mode = useQuery({
+    queryKey: ["payment-only-mode", estateId],
+    enabled: !!estateId,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("estates").select("payment_only_mode").eq("id", estateId!).single();
+      if (error) throw error;
+      return data.payment_only_mode;
+    },
+  });
+  const toggleMode = useMutation({
+    mutationFn: async (on: boolean) => {
+      const { error } = await supabase.rpc("set_payment_only_mode", { _on: on });
+      if (error) throw error;
+    },
+    onSuccess: (_d, on) => {
+      toast.success(on ? "Payment-only mode on for residents with overdue bills" : "Payment-only mode off");
+      mode.refetch();
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -383,6 +418,22 @@ function BillingAdmin() {
                         </button>
                       </>
                     )}
+                    <label
+                      title={b.invoice_path ? "Replace invoice file" : "Attach invoice file"}
+                      className={`cursor-pointer rounded-md p-1.5 hover:bg-muted ${b.invoice_path ? "text-primary" : "text-muted-foreground"}`}
+                    >
+                      <Paperclip className="h-4 w-4" />
+                      <input
+                        type="file"
+                        accept="application/pdf,image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const f = e.target.files?.[0];
+                          if (f) attach.mutate({ bill: b.id, file: f });
+                          e.target.value = "";
+                        }}
+                      />
+                    </label>
                   </div>
                 </li>
               );
