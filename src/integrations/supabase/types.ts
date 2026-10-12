@@ -152,9 +152,92 @@ export type Database = {
           },
         ]
       }
+      bill_batches: {
+        Row: {
+          amount: number
+          bill_count: number
+          bill_type: string
+          billing_period: string | null
+          cancel_reason: string | null
+          cancelled_at: string | null
+          created_at: string
+          created_by: string | null
+          cycle: string
+          description: string | null
+          discount_percent: number
+          due_date: string
+          estate_id: string
+          id: string
+          instructions: string | null
+          late_fee_amount: number
+          published_at: string | null
+          status: string
+          sub_account: string | null
+          target_filter: Json
+          target_type: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          bill_count?: number
+          bill_type?: string
+          billing_period?: string | null
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          cycle?: string
+          description?: string | null
+          discount_percent?: number
+          due_date: string
+          estate_id: string
+          id?: string
+          instructions?: string | null
+          late_fee_amount?: number
+          published_at?: string | null
+          status?: string
+          sub_account?: string | null
+          target_filter?: Json
+          target_type?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          bill_count?: number
+          bill_type?: string
+          billing_period?: string | null
+          cancel_reason?: string | null
+          cancelled_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          cycle?: string
+          description?: string | null
+          discount_percent?: number
+          due_date?: string
+          estate_id?: string
+          id?: string
+          instructions?: string | null
+          late_fee_amount?: number
+          published_at?: string | null
+          status?: string
+          sub_account?: string | null
+          target_filter?: Json
+          target_type?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bills: {
         Row: {
           amount: number
+          amount_paid: number
+          batch_id: string | null
+          bill_type: string | null
+          billing_period: string | null
+          cancelled_at: string | null
           collection_id: string | null
           created_at: string
           created_by: string | null
@@ -162,6 +245,8 @@ export type Database = {
           due_date: string
           estate_id: string
           id: string
+          published_at: string | null
+          reference: string | null
           resident_id: string
           status: Database["public"]["Enums"]["bill_status"]
           title: string
@@ -169,6 +254,11 @@ export type Database = {
         }
         Insert: {
           amount: number
+          amount_paid?: number
+          batch_id?: string | null
+          bill_type?: string | null
+          billing_period?: string | null
+          cancelled_at?: string | null
           collection_id?: string | null
           created_at?: string
           created_by?: string | null
@@ -176,6 +266,8 @@ export type Database = {
           due_date: string
           estate_id: string
           id?: string
+          published_at?: string | null
+          reference?: string | null
           resident_id: string
           status?: Database["public"]["Enums"]["bill_status"]
           title: string
@@ -183,6 +275,11 @@ export type Database = {
         }
         Update: {
           amount?: number
+          amount_paid?: number
+          batch_id?: string | null
+          bill_type?: string | null
+          billing_period?: string | null
+          cancelled_at?: string | null
           collection_id?: string | null
           created_at?: string
           created_by?: string | null
@@ -190,12 +287,21 @@ export type Database = {
           due_date?: string
           estate_id?: string
           id?: string
+          published_at?: string | null
+          reference?: string | null
           resident_id?: string
           status?: Database["public"]["Enums"]["bill_status"]
           title?: string
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "bills_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "bill_batches"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "bills_collection_id_fkey"
             columns: ["collection_id"]
@@ -1237,6 +1343,160 @@ export type Database = {
           },
         ]
       }
+      payment_adjustments: {
+        Row: {
+          amount: number
+          bill_id: string | null
+          created_at: string
+          created_by: string | null
+          estate_id: string
+          id: string
+          kind: string
+          reason: string
+          transaction_id: string | null
+        }
+        Insert: {
+          amount?: number
+          bill_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          estate_id: string
+          id?: string
+          kind: string
+          reason: string
+          transaction_id?: string | null
+        }
+        Update: {
+          amount?: number
+          bill_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          estate_id?: string
+          id?: string
+          kind?: string
+          reason?: string
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_adjustments_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_adjustments_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "payment_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_receipts: {
+        Row: {
+          amount: number
+          bill_id: string | null
+          estate_id: string
+          id: string
+          issued_at: string
+          receipt_number: string
+          resident_id: string | null
+          transaction_id: string
+        }
+        Insert: {
+          amount: number
+          bill_id?: string | null
+          estate_id: string
+          id?: string
+          issued_at?: string
+          receipt_number: string
+          resident_id?: string | null
+          transaction_id: string
+        }
+        Update: {
+          amount?: number
+          bill_id?: string | null
+          estate_id?: string
+          id?: string
+          issued_at?: string
+          receipt_number?: string
+          resident_id?: string | null
+          transaction_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_receipts_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: true
+            referencedRelation: "payment_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_transactions: {
+        Row: {
+          amount: number
+          bill_id: string | null
+          channel: string | null
+          created_at: string
+          estate_id: string
+          id: string
+          idempotency_key: string | null
+          note: string | null
+          provider: string
+          provider_reference: string | null
+          recorded_by: string | null
+          resident_id: string | null
+          status: string
+          updated_at: string
+          verified_at: string | null
+        }
+        Insert: {
+          amount: number
+          bill_id?: string | null
+          channel?: string | null
+          created_at?: string
+          estate_id: string
+          id?: string
+          idempotency_key?: string | null
+          note?: string | null
+          provider?: string
+          provider_reference?: string | null
+          recorded_by?: string | null
+          resident_id?: string | null
+          status?: string
+          updated_at?: string
+          verified_at?: string | null
+        }
+        Update: {
+          amount?: number
+          bill_id?: string | null
+          channel?: string | null
+          created_at?: string
+          estate_id?: string
+          id?: string
+          idempotency_key?: string | null
+          note?: string | null
+          provider?: string
+          provider_reference?: string | null
+          recorded_by?: string | null
+          resident_id?: string | null
+          status?: string
+          updated_at?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_transactions_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -2267,7 +2527,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _assert_estate_admin: { Args: { _estate: string }; Returns: undefined }
       activate_estate: { Args: { _estate_id: string }; Returns: undefined }
+      admin_adjust_bill: {
+        Args: { _bill: string; _kind: string; _reason: string; _tx?: string }
+        Returns: undefined
+      }
       admin_generate_support_otp: {
         Args: { _email: string; _purpose?: string }
         Returns: Json
@@ -2290,6 +2555,16 @@ export type Database = {
       admin_record_bill_payment: {
         Args: { _bill_id: string; _method?: string; _reference?: string }
         Returns: undefined
+      }
+      admin_record_payment: {
+        Args: {
+          _amount: number
+          _bill: string
+          _channel: string
+          _note?: string
+          _reference: string
+        }
+        Returns: string
       }
       admin_register_device: {
         Args: { _device_type: string; _location: string; _name: string }
@@ -2328,6 +2603,10 @@ export type Database = {
         Args: { _body: string; _link?: string; _title: string }
         Returns: number
       }
+      cancel_bill_batch: {
+        Args: { _batch: string; _reason: string }
+        Returns: undefined
+      }
       claim_device_session: {
         Args: {
           _device_id: string
@@ -2336,6 +2615,25 @@ export type Database = {
           _user_agent?: string
         }
         Returns: Json
+      }
+      create_bill_batch: {
+        Args: {
+          _amount: number
+          _bill_type: string
+          _billing_period?: string
+          _cycle?: string
+          _description?: string
+          _discount?: number
+          _due_date: string
+          _instructions?: string
+          _late_fee?: number
+          _publish?: boolean
+          _sub_account?: string
+          _target_filter?: Json
+          _target_type?: string
+          _title: string
+        }
+        Returns: string
       }
       create_estate_admin_invite: {
         Args: { _email: string; _estate_id: string }
@@ -2471,6 +2769,7 @@ export type Database = {
           post_id: string
         }[]
       }
+      publish_bill_batch: { Args: { _batch: string }; Returns: undefined }
       reassign_estate_admin: {
         Args: { _estate_id: string; _new_admin_user_id: string }
         Returns: undefined
@@ -2542,7 +2841,14 @@ export type Database = {
         | "estate_admin"
         | "super_admin"
         | "event_organizer"
-      bill_status: "unpaid" | "paid" | "overdue" | "waived"
+      bill_status:
+        | "unpaid"
+        | "paid"
+        | "overdue"
+        | "waived"
+        | "draft"
+        | "partially_paid"
+        | "cancelled"
       estate_status: "active" | "suspended"
       invite_status: "active" | "used" | "expired" | "revoked"
       issue_severity: "low" | "medium" | "high" | "critical"
@@ -2689,7 +2995,15 @@ export const Constants = {
         "super_admin",
         "event_organizer",
       ],
-      bill_status: ["unpaid", "paid", "overdue", "waived"],
+      bill_status: [
+        "unpaid",
+        "paid",
+        "overdue",
+        "waived",
+        "draft",
+        "partially_paid",
+        "cancelled",
+      ],
       estate_status: ["active", "suspended"],
       invite_status: ["active", "used", "expired", "revoked"],
       issue_severity: ["low", "medium", "high", "critical"],
