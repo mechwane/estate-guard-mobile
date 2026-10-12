@@ -2542,7 +2542,14 @@ export type Database = {
         | "estate_admin"
         | "super_admin"
         | "event_organizer"
-      bill_status: "unpaid" | "paid" | "overdue" | "waived"
+      bill_status:
+        | "unpaid"
+        | "paid"
+        | "overdue"
+        | "waived"
+        | "draft"
+        | "partially_paid"
+        | "cancelled"
       estate_status: "active" | "suspended"
       invite_status: "active" | "used" | "expired" | "revoked"
       issue_severity: "low" | "medium" | "high" | "critical"
@@ -2689,7 +2696,15 @@ export const Constants = {
         "super_admin",
         "event_organizer",
       ],
-      bill_status: ["unpaid", "paid", "overdue", "waived"],
+      bill_status: [
+        "unpaid",
+        "paid",
+        "overdue",
+        "waived",
+        "draft",
+        "partially_paid",
+        "cancelled",
+      ],
       estate_status: ["active", "suspended"],
       invite_status: ["active", "used", "expired", "revoked"],
       issue_severity: ["low", "medium", "high", "critical"],
