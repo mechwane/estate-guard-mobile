@@ -283,6 +283,7 @@ export type Database = {
           due_date: string
           estate_id: string
           id: string
+          invoice_path: string | null
           published_at: string | null
           reference: string | null
           resident_id: string
@@ -304,6 +305,7 @@ export type Database = {
           due_date: string
           estate_id: string
           id?: string
+          invoice_path?: string | null
           published_at?: string | null
           reference?: string | null
           resident_id: string
@@ -325,6 +327,7 @@ export type Database = {
           due_date?: string
           estate_id?: string
           id?: string
+          invoice_path?: string | null
           published_at?: string | null
           reference?: string | null
           resident_id?: string
@@ -975,6 +978,7 @@ export type Database = {
           id: string
           logo_url: string | null
           name: string
+          payment_only_mode: boolean
           short_name: string | null
           state: string | null
           status: Database["public"]["Enums"]["estate_status"]
@@ -995,6 +999,7 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name: string
+          payment_only_mode?: boolean
           short_name?: string | null
           state?: string | null
           status?: Database["public"]["Enums"]["estate_status"]
@@ -1015,6 +1020,7 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name?: string
+          payment_only_mode?: boolean
           short_name?: string | null
           state?: string | null
           status?: Database["public"]["Enums"]["estate_status"]
@@ -2628,6 +2634,10 @@ export type Database = {
         Args: { _device_type: string; _location: string; _name: string }
         Returns: string
       }
+      admin_set_bill_invoice: {
+        Args: { _bill: string; _path: string }
+        Returns: undefined
+      }
       admin_set_device_status: {
         Args: { _device_id: string; _status: string }
         Returns: undefined
@@ -2647,6 +2657,10 @@ export type Database = {
       admin_waive_payments: {
         Args: { _email: string; _end_date: string; _start_date?: string }
         Returns: Json
+      }
+      apply_provider_payment: {
+        Args: { _amount: number; _channel: string; _reference: string }
+        Returns: string
       }
       assign_estate_admin: {
         Args: { _estate_id: string; _user_id: string }
@@ -2838,6 +2852,7 @@ export type Database = {
         Returns: undefined
       }
       remove_estate_admin: { Args: { _estate_id: string }; Returns: undefined }
+      resident_is_restricted: { Args: { _uid: string }; Returns: boolean }
       review_verification: {
         Args: { _approve: boolean; _notes: string; _user_id: string }
         Returns: undefined
@@ -2860,6 +2875,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      set_payment_only_mode: { Args: { _on: boolean }; Returns: undefined }
       submit_verification: {
         Args: {
           _block: string
