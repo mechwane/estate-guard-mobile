@@ -1,5 +1,7 @@
 import { Outlet, createFileRoute, useNavigate, useLocation, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { useSession, roleHome, type AppRole } from "@/lib/session";
 import { AppShell } from "@/components/app-shell";
 import { navByRole, sidebarGroupsByRole, desktopFirstRoles } from "@/components/nav-config";
@@ -15,6 +17,15 @@ function AppLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { data: session, isLoading } = useSession();
+  const restricted = useQuery({
+    queryKey: ["payment-only", session?.userId],
+    enabled: session?.role === "resident" && !!session?.userId,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("resident_is_restricted", { _uid: session!.userId! });
+      if (error) throw error;
+      return !!data;
+    },
+  });
 
   useEffect(() => {
     if (isLoading) return;
@@ -59,6 +70,16 @@ function AppLayout() {
     !!session.profile &&
     !session.profile.approved &&
     !allowedWhilePending.includes(location.pathname);
+  const allowedWhileRestricted = [
+    "/app/resident/bills",
+    "/app/resident/inbox",
+    "/app/resident/support",
+    "/app/resident/profile",
+    "/app/resident/settings",
+    "/app/resident/chat",
+  ];
+  const paymentOnly =
+    !locked && restricted.data === true && !allowedWhileRestricted.includes(location.pathname);
 
   return (
     <AppShell
@@ -76,6 +97,22 @@ function AppLayout() {
           notes={session.profile?.verification_notes ?? null}
           estateName={session.estate?.name ?? null}
         />
+      ) : paymentOnly ? (
+        <div className="mx-auto max-w-md space-y-4 py-6 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
+            <ShieldAlert className="h-7 w-7" />
+          </div>
+          <h2 className="text-base font-semibold">Payment-only mode</h2>
+          <p className="text-sm text-muted-foreground">
+            You have overdue bills. Guest invites, passes and the shop unlock as soon as they are settled.
+          </p>
+          <Link
+            to="/app/resident/bills"
+            className="inline-block rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground"
+          >
+            Pay my bills
+          </Link>
+        </div>
       ) : (
         <Outlet />
       )}
