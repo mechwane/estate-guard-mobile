@@ -87,6 +87,7 @@ import { Route as AppAdminCommunityRouteImport } from './routes/app.admin.commun
 import { Route as AppAdminCollectionsRouteImport } from './routes/app.admin.collections'
 import { Route as AppAdminCardsRouteImport } from './routes/app.admin.cards'
 import { Route as AppAdminBlogRouteImport } from './routes/app.admin.blog'
+import { Route as AppAdminBillingRouteImport } from './routes/app.admin.billing'
 import { Route as AppAdminAuditRouteImport } from './routes/app.admin.audit'
 import { Route as AppAdminAnnouncementsRouteImport } from './routes/app.admin.announcements'
 import { Route as AppAdminAlertsRouteImport } from './routes/app.admin.alerts'
@@ -489,6 +490,11 @@ const AppAdminBlogRoute = AppAdminBlogRouteImport.update({
   path: '/admin/blog',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminBillingRoute = AppAdminBillingRouteImport.update({
+  id: '/admin/billing',
+  path: '/admin/billing',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminAuditRoute = AppAdminAuditRouteImport.update({
   id: '/admin/audit',
   path: '/admin/audit',
@@ -557,6 +563,7 @@ export interface FileRoutesByFullPath {
   '/app/admin/alerts': typeof AppAdminAlertsRoute
   '/app/admin/announcements': typeof AppAdminAnnouncementsRoute
   '/app/admin/audit': typeof AppAdminAuditRoute
+  '/app/admin/billing': typeof AppAdminBillingRoute
   '/app/admin/blog': typeof AppAdminBlogRoute
   '/app/admin/cards': typeof AppAdminCardsRoute
   '/app/admin/collections': typeof AppAdminCollectionsRoute
@@ -648,6 +655,7 @@ export interface FileRoutesByTo {
   '/app/admin/alerts': typeof AppAdminAlertsRoute
   '/app/admin/announcements': typeof AppAdminAnnouncementsRoute
   '/app/admin/audit': typeof AppAdminAuditRoute
+  '/app/admin/billing': typeof AppAdminBillingRoute
   '/app/admin/blog': typeof AppAdminBlogRoute
   '/app/admin/cards': typeof AppAdminCardsRoute
   '/app/admin/collections': typeof AppAdminCollectionsRoute
@@ -740,6 +748,7 @@ export interface FileRoutesById {
   '/app/admin/alerts': typeof AppAdminAlertsRoute
   '/app/admin/announcements': typeof AppAdminAnnouncementsRoute
   '/app/admin/audit': typeof AppAdminAuditRoute
+  '/app/admin/billing': typeof AppAdminBillingRoute
   '/app/admin/blog': typeof AppAdminBlogRoute
   '/app/admin/cards': typeof AppAdminCardsRoute
   '/app/admin/collections': typeof AppAdminCollectionsRoute
@@ -833,6 +842,7 @@ export interface FileRouteTypes {
     | '/app/admin/alerts'
     | '/app/admin/announcements'
     | '/app/admin/audit'
+    | '/app/admin/billing'
     | '/app/admin/blog'
     | '/app/admin/cards'
     | '/app/admin/collections'
@@ -924,6 +934,7 @@ export interface FileRouteTypes {
     | '/app/admin/alerts'
     | '/app/admin/announcements'
     | '/app/admin/audit'
+    | '/app/admin/billing'
     | '/app/admin/blog'
     | '/app/admin/cards'
     | '/app/admin/collections'
@@ -1015,6 +1026,7 @@ export interface FileRouteTypes {
     | '/app/admin/alerts'
     | '/app/admin/announcements'
     | '/app/admin/audit'
+    | '/app/admin/billing'
     | '/app/admin/blog'
     | '/app/admin/cards'
     | '/app/admin/collections'
@@ -1649,6 +1661,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminBlogRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/admin/billing': {
+      id: '/app/admin/billing'
+      path: '/admin/billing'
+      fullPath: '/app/admin/billing'
+      preLoaderRoute: typeof AppAdminBillingRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/admin/audit': {
       id: '/app/admin/audit'
       path: '/admin/audit'
@@ -1734,6 +1753,7 @@ interface AppRouteChildren {
   AppAdminAlertsRoute: typeof AppAdminAlertsRoute
   AppAdminAnnouncementsRoute: typeof AppAdminAnnouncementsRoute
   AppAdminAuditRoute: typeof AppAdminAuditRoute
+  AppAdminBillingRoute: typeof AppAdminBillingRoute
   AppAdminBlogRoute: typeof AppAdminBlogRoute
   AppAdminCardsRoute: typeof AppAdminCardsRoute
   AppAdminCollectionsRoute: typeof AppAdminCollectionsRoute
@@ -1819,6 +1839,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminAlertsRoute: AppAdminAlertsRoute,
   AppAdminAnnouncementsRoute: AppAdminAnnouncementsRoute,
   AppAdminAuditRoute: AppAdminAuditRoute,
+  AppAdminBillingRoute: AppAdminBillingRoute,
   AppAdminBlogRoute: AppAdminBlogRoute,
   AppAdminCardsRoute: AppAdminCardsRoute,
   AppAdminCollectionsRoute: AppAdminCollectionsRoute,
