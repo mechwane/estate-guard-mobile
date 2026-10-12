@@ -2,7 +2,17 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Plus, Send, XCircle, Banknote, Undo2, BadgeCheck } from "lucide-react";
+import { Plus, Send, XCircle, Banknote, Undo2, BadgeCheck, Download, Link2, RotateCcw } from "lucide-react";
+
+function downloadCsv(name: string, rows: (string | number | null | undefined)[][]) {
+  const esc = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const blob = new Blob([rows.map((r) => r.map(esc).join(",")).join("\n")], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/session";
@@ -246,7 +256,17 @@ function BillingAdmin() {
 
       {tab === "bills" && (
         <Card>
-          <SearchInput value={q} onChange={setQ} placeholder="Search resident, title or reference" />
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <SearchInput value={q} onChange={setQ} placeholder="Search resident, title or reference" />
+            </div>
+            <button
+              onClick={() => exportBills()}
+              className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-xs font-medium"
+            >
+              <Download className="h-3.5 w-3.5" /> Export CSV
+            </button>
+          </div>
           <ul className="mt-3 divide-y divide-border/60">
             {filteredBills.length === 0 && <li className="py-6 text-center text-sm text-muted-foreground">No bills.</li>}
             {filteredBills.map((b) => {
@@ -296,6 +316,20 @@ function BillingAdmin() {
 
       {tab === "transactions" && (
         <Card>
+          <div className="mb-3 flex flex-wrap gap-2">
+            <button
+              onClick={() => unmatched.mutate()}
+              className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-xs font-medium"
+            >
+              <Plus className="h-3.5 w-3.5" /> Record unidentified payment
+            </button>
+            <button
+              onClick={() => exportTxs()}
+              className="inline-flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-xs font-medium"
+            >
+              <Download className="h-3.5 w-3.5" /> Export CSV
+            </button>
+          </div>
           {txs.length === 0 ? (
             <p className="text-sm text-muted-foreground">No transactions yet.</p>
           ) : (
@@ -304,16 +338,38 @@ function BillingAdmin() {
                 <li key={t.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5 text-sm">
                   <div className="min-w-0">
                     <div className="font-medium">
-                      {ngn(Number(t.amount))} · {names.get(t.resident_id ?? "") ?? "Resident"}
+                      {ngn(Number(t.amount))} ·{" "}
+                      {t.status === "unmatched" ? "Unidentified payer" : (names.get(t.resident_id ?? "") ?? "Resident")}
                     </div>
                     <div className="truncate text-xs text-muted-foreground">
                       {t.provider}/{t.channel ?? "—"} · ref {t.provider_reference ?? "—"} ·{" "}
                       {format(new Date(t.created_at), "MMM d, HH:mm")}
+                      {Number(t.refunded_amount) > 0 && ` · refunded ${ngn(Number(t.refunded_amount))}`}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <StatusBadge tone={statusTone(t.status)}>{label(t.status)}</StatusBadge>
-                    {t.status === "successful" && t.bill_id && (
+                    {t.status === "unmatched" && (
+                      <button
+                        title="Match to a bill"
+                        onClick={() => match.mutate(t.id)}
+                        className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                      >
+                        <Link2 className="h-4 w-4" />
+                      </button>
+                    )}
+                    {["successful", "partially_refunded"].includes(t.status) && (
+                      <button
+                        title="Refund"
+                        onClick={() =>
+                          refund.mutate({ id: t.id, max: Number(t.amount) - Number(t.refunded_amount ?? 0) })
+                        }
+                        className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                      </button>
+                    )}
+                    {t.status === "successful" && t.bill_id && Number(t.refunded_amount ?? 0) === 0 && (
                       <button
                         title="Reverse"
                         onClick={() => adjust.mutate({ bill: t.bill_id!, kind: "reversal", tx: t.id })}
