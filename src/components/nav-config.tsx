@@ -202,6 +202,7 @@ export const sidebarGroupsByRole: Record<AppRole, NavGroup[]> = {
         { to: "/app/super/devices", label: "Access devices", icon: <Cpu /> },
         { to: "/app/super/features", label: "Feature flags", icon: <Sparkles /> },
         { to: "/app/super/plans", label: "Plans", icon: <Wallet /> },
+        { to: "/app/super/payments", label: "Payments", icon: <CreditCard /> },
       ],
     },
     {
