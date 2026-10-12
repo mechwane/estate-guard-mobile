@@ -53,6 +53,7 @@ function statusTone(s: string) {
   if (s === "paid" || s === "successful" || s === "published") return "success" as const;
   if (s === "partially_paid" || s === "pending" || s === "draft") return "warning" as const;
   if (s === "overdue" || s === "failed" || s === "cancelled" || s === "reversed") return "error" as const;
+  if (s === "unmatched" || s === "refunded" || s === "partially_refunded") return "warning" as const;
   if (s === "waived") return "primary" as const;
   return "neutral" as const;
 }
@@ -140,6 +141,82 @@ function BillingAdmin() {
       toast.success(n ? `Reminders sent to ${n} bill${n === 1 ? "" : "s"}` : "Everyone is already reminded"),
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const refund = useMutation({
+    mutationFn: async (v: { id: string; max: number }) => {
+      const amt = Number(window.prompt(`Refund amount (max ${v.max})`, String(v.max)));
+      if (!amt) throw new Error("Amount required");
+      const reason = window.prompt("Reason for refund");
+      if (!reason) throw new Error("Reason required");
+      const { error } = await supabase.rpc("admin_refund_transaction", { _tx: v.id, _amount: amt, _reason: reason });
+      if (error) throw error;
+    },
+    onSuccess: () => (toast.success("Refund recorded"), refresh()),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const unmatched = useMutation({
+    mutationFn: async () => {
+      const amt = Number(window.prompt("Amount received"));
+      if (!amt) throw new Error("Amount required");
+      const ref = window.prompt("Bank / transfer reference");
+      if (!ref) throw new Error("Reference required");
+      const note = window.prompt("Note (sender name, bank, etc.)") ?? undefined;
+      const { error } = await supabase.rpc("admin_record_unmatched", {
+        _amount: amt,
+        _channel: "bank_transfer",
+        _reference: ref,
+        _note: note,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => (toast.success("Unidentified payment saved — match it to a bill when known"), refresh()),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const match = useMutation({
+    mutationFn: async (txId: string) => {
+      const ref = window.prompt("Enter the bill reference to match this payment to")?.trim();
+      if (!ref) throw new Error("Bill reference required");
+      const bill = data.data?.bills.find((b) => (b.reference ?? "").toLowerCase() === ref.toLowerCase());
+      if (!bill) throw new Error("No bill with that reference");
+      const { error } = await supabase.rpc("admin_match_transaction", { _tx: txId, _bill: bill.id });
+      if (error) throw error;
+    },
+    onSuccess: () => (toast.success("Payment matched and receipt issued"), refresh()),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const exportBills = () =>
+    downloadCsv(`bills-${format(new Date(), "yyyyMMdd")}.csv`, [
+      ["Reference", "Resident", "Title", "Type", "Amount", "Paid", "Balance", "Status", "Due date"],
+      ...(data.data?.bills ?? []).map((b) => [
+        b.reference,
+        names.get(b.resident_id) ?? "",
+        b.title,
+        b.bill_type,
+        b.amount,
+        b.amount_paid,
+        Number(b.amount) - Number(b.amount_paid ?? 0),
+        b.status,
+        b.due_date,
+      ]),
+    ]);
+  const exportTxs = () =>
+    downloadCsv(`transactions-${format(new Date(), "yyyyMMdd")}.csv`, [
+      ["Date", "Resident", "Amount", "Refunded", "Provider", "Channel", "Reference", "Status", "Note"],
+      ...(data.data?.txs ?? []).map((t) => [
+        t.created_at,
+        t.resident_id ? (names.get(t.resident_id) ?? "") : "Unidentified",
+        t.amount,
+        t.refunded_amount,
+        t.provider,
+        t.channel,
+        t.provider_reference,
+        t.status,
+        t.note,
+      ]),
+    ]);
 
   if (!estateId) return <EmptyState title="No estate assigned" />;
   if (data.isLoading) return <ListSkeleton rows={6} />;
