@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { startBillPayment, confirmBillPayment } from "@/lib/paystack.functions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,27 +63,48 @@ function Bills() {
     },
   });
 
+  // Payment is only ever confirmed by the server after Paystack verifies it.
   const pay = useMutation({
     mutationFn: async (billId: string) => {
       if (!session?.userId) throw new Error("Not signed in");
-      const { error } = await supabase.rpc("pay_bill", {
-        _bill_id: billId,
-        _method: "manual",
-      });
-      if (error) throw error;
+      const ret = `${window.location.origin}${window.location.pathname}${window.location.hash.split("?")[0]}`;
+      const { url } = await startBillPayment({ data: { bill_id: billId, return_url: ret } });
+      window.location.href = url;
     },
     onMutate: (id) => setPayingId(id),
-    onSettled: () => setPayingId(null),
-    onSuccess: () => {
-      toast.success("Payment recorded");
-      qc.invalidateQueries({ queryKey: ["bills"] });
-    },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => (setPayingId(null), toast.error(e.message)),
   });
 
+  useEffect(() => {
+    const src = window.location.search + "&" + (window.location.hash.split("?")[1] ?? "");
+    const ref = new URLSearchParams(src.replace(/^\?/, "")).get("ref") ?? new URLSearchParams(src).get("reference");
+    if (!ref) return;
+    const t = toast.loading("Confirming your payment…");
+    confirmBillPayment({ data: { reference: ref } })
+      .then((r) => {
+        if (r.result === "applied" || r.result === "already_applied") toast.success("Payment confirmed — receipt issued", { id: t });
+        else if (r.result === "needs_review" || r.result === "amount_mismatch")
+          toast.warning("Payment received; the estate will review it shortly", { id: t });
+        else toast.error(`Payment not completed (${r.result})`, { id: t });
+      })
+      .catch((e: Error) => toast.error(e.message, { id: t }))
+      .finally(() => {
+        qc.invalidateQueries({ queryKey: ["bills"] });
+        window.history.replaceState(null, "", window.location.pathname + window.location.hash.split("?")[0]);
+      });
+  }, [qc]);
+
+  async function openInvoice(path: string) {
+    const { data: s, error } = await supabase.storage.from("invoices").createSignedUrl(path, 300);
+    if (error || !s) return toast.error("Could not open invoice");
+    window.open(s.signedUrl, "_blank", "noopener");
+  }
+
+  const open = (s: string) => ["unpaid", "partially_paid", "overdue"].includes(s);
   const grouped = useMemo(() => {
     const q = search.trim().toLowerCase();
     const list = (data ?? []).filter((b) => {
+      if (b.status === "draft" || b.status === "cancelled") return false;
       const isUtility = /water|power|electric|utility|net|internet|waste/i.test(
         b.title + " " + (b.description ?? ""),
       );
@@ -92,9 +114,9 @@ function Bills() {
     });
     const now = new Date();
     return {
-      unpaid: list.filter((b) => b.status === "unpaid" && !isBefore(new Date(b.due_date), now)),
+      unpaid: list.filter((b) => open(b.status) && !isBefore(new Date(b.due_date), now)),
       paid: list.filter((b) => b.status === "paid" || b.status === "waived"),
-      overdue: list.filter((b) => b.status === "unpaid" && isBefore(new Date(b.due_date), now)),
+      overdue: list.filter((b) => open(b.status) && isBefore(new Date(b.due_date), now)),
     };
   }, [data, main, search]);
 
@@ -103,10 +125,10 @@ function Bills() {
   const totals = useMemo(() => {
     const now = new Date();
     const outstanding = (data ?? [])
-      .filter((b) => b.status === "unpaid")
-      .reduce((s, b) => s + Number(b.amount), 0);
+      .filter((b) => open(b.status))
+      .reduce((s, b) => s + Number(b.amount) - Number(b.amount_paid ?? 0), 0);
     const overdueCount = (data ?? []).filter(
-      (b) => b.status === "unpaid" && isBefore(new Date(b.due_date), now),
+      (b) => open(b.status) && isBefore(new Date(b.due_date), now),
     ).length;
     return { outstanding, overdueCount };
   }, [data]);
@@ -356,7 +378,21 @@ function Bills() {
                         </div>
                       </div>
                     </div>
-                    {b.status !== "paid" && (
+                    {Number(b.amount_paid) > 0 && open(b.status) && (
+                      <div className="mt-2 text-xs text-muted-foreground">
+                        Paid ₦{Number(b.amount_paid).toLocaleString()} · balance ₦
+                        {(Number(b.amount) - Number(b.amount_paid)).toLocaleString()}
+                      </div>
+                    )}
+                    {b.invoice_path && (
+                      <button
+                        onClick={() => openInvoice(b.invoice_path!)}
+                        className="mt-2 text-xs font-medium text-primary underline-offset-2 hover:underline"
+                      >
+                        View invoice
+                      </button>
+                    )}
+                    {open(b.status) && (
                       <motion.button
                         whileTap={{ scale: 0.97 }}
                         disabled={busy}
@@ -364,7 +400,7 @@ function Bills() {
                         className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground shadow-sm shadow-primary/25 hover:bg-primary-dark disabled:opacity-60"
                       >
                         {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                        {busy ? "Processing" : "Mark as paid"}
+                        {busy ? "Opening checkout" : "Pay now (card or transfer)"}
                       </motion.button>
                     )}
                   </Card>

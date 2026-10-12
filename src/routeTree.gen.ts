@@ -17,6 +17,7 @@ import { Route as AuthForgotPasswordRouteImport } from './routes/auth.forgot-pas
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as AuthSignInRouteImport } from './routes/auth.sign-in'
 import { Route as AuthSignUpRouteImport } from './routes/auth.sign-up'
+import { Route as ApiPublicPaystackWebhookRouteImport } from './routes/api/public/paystack-webhook'
 import { Route as AppAdminIndexRouteImport } from './routes/app.admin.index'
 import { Route as AppAdminAlertsRouteImport } from './routes/app.admin.alerts'
 import { Route as AppAdminAnnouncementsRouteImport } from './routes/app.admin.announcements'
@@ -141,6 +142,12 @@ const AuthSignUpRoute = AuthSignUpRouteImport.update({
   path: '/sign-up',
   getParentRoute: () => AuthRoute,
 } as any)
+const ApiPublicPaystackWebhookRoute =
+  ApiPublicPaystackWebhookRouteImport.update({
+    id: '/api/public/paystack-webhook',
+    path: '/api/public/paystack-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
@@ -566,6 +573,7 @@ export interface FileRoutesByFullPath {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/api/public/paystack-webhook': typeof ApiPublicPaystackWebhookRoute
   '/app/admin/alerts': typeof AppAdminAlertsRoute
   '/app/admin/announcements': typeof AppAdminAnnouncementsRoute
   '/app/admin/audit': typeof AppAdminAuditRoute
@@ -659,6 +667,7 @@ export interface FileRoutesByTo {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/api/public/paystack-webhook': typeof ApiPublicPaystackWebhookRoute
   '/app/admin/alerts': typeof AppAdminAlertsRoute
   '/app/admin/announcements': typeof AppAdminAnnouncementsRoute
   '/app/admin/audit': typeof AppAdminAuditRoute
@@ -753,6 +762,7 @@ export interface FileRoutesById {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/sign-in': typeof AuthSignInRoute
   '/auth/sign-up': typeof AuthSignUpRoute
+  '/api/public/paystack-webhook': typeof ApiPublicPaystackWebhookRoute
   '/app/admin/alerts': typeof AppAdminAlertsRoute
   '/app/admin/announcements': typeof AppAdminAnnouncementsRoute
   '/app/admin/audit': typeof AppAdminAuditRoute
@@ -848,6 +858,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/api/public/paystack-webhook'
     | '/app/admin/alerts'
     | '/app/admin/announcements'
     | '/app/admin/audit'
@@ -941,6 +952,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/api/public/paystack-webhook'
     | '/app/admin/alerts'
     | '/app/admin/announcements'
     | '/app/admin/audit'
@@ -1034,6 +1046,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/auth/sign-in'
     | '/auth/sign-up'
+    | '/api/public/paystack-webhook'
     | '/app/admin/alerts'
     | '/app/admin/announcements'
     | '/app/admin/audit'
@@ -1123,6 +1136,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
+  ApiPublicPaystackWebhookRoute: typeof ApiPublicPaystackWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1182,6 +1196,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/sign-up'
       preLoaderRoute: typeof AuthSignUpRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/api/public/paystack-webhook': {
+      id: '/api/public/paystack-webhook'
+      path: '/api/public/paystack-webhook'
+      fullPath: '/api/public/paystack-webhook'
+      preLoaderRoute: typeof ApiPublicPaystackWebhookRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/app/admin/': {
       id: '/app/admin/'
@@ -1963,6 +1984,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
+  ApiPublicPaystackWebhookRoute: ApiPublicPaystackWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
