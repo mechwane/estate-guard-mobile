@@ -230,6 +230,44 @@ export type Database = {
         }
         Relationships: []
       }
+      bill_reminders: {
+        Row: {
+          bill_id: string
+          created_at: string
+          estate_id: string
+          id: string
+          kind: string
+          resident_id: string
+          sent_on: string
+        }
+        Insert: {
+          bill_id: string
+          created_at?: string
+          estate_id: string
+          id?: string
+          kind: string
+          resident_id: string
+          sent_on?: string
+        }
+        Update: {
+          bill_id?: string
+          created_at?: string
+          estate_id?: string
+          id?: string
+          kind?: string
+          resident_id?: string
+          sent_on?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bill_reminders_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bills: {
         Row: {
           amount: number
@@ -2784,6 +2822,7 @@ export type Database = {
         Args: { _approve: boolean; _notes: string; _user_id: string }
         Returns: undefined
       }
+      send_bill_reminders: { Args: { _estate?: string }; Returns: number }
       set_estate_access: {
         Args: { _approved: boolean; _user_id: string }
         Returns: undefined

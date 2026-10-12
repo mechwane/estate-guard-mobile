@@ -120,6 +120,17 @@ function BillingAdmin() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const remind = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.rpc("send_bill_reminders", { _estate: estateId! });
+      if (error) throw error;
+      return data as number;
+    },
+    onSuccess: (n) =>
+      toast.success(n ? `Reminders sent to ${n} bill${n === 1 ? "" : "s"}` : "Everyone is already reminded"),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   if (!estateId) return <EmptyState title="No estate assigned" />;
   if (data.isLoading) return <ListSkeleton rows={6} />;
   if (data.isError || !data.data) return <ErrorState onRetry={() => data.refetch()} />;
@@ -144,12 +155,21 @@ function BillingAdmin() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
         <h1 className="text-lg font-semibold">Bills & ledger</h1>
-        <button
-          onClick={() => setCreating(true)}
-          className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground"
-        >
-          <Plus className="h-3.5 w-3.5" /> New bill
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => remind.mutate()}
+            disabled={remind.isPending}
+            className="inline-flex items-center gap-1 rounded-lg border border-border bg-card px-3 py-2 text-xs font-medium disabled:opacity-60"
+          >
+            <Send className="h-3.5 w-3.5" /> Send reminders
+          </button>
+          <button
+            onClick={() => setCreating(true)}
+            className="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-2 text-xs font-medium text-primary-foreground"
+          >
+            <Plus className="h-3.5 w-3.5" /> New bill
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">

@@ -22,6 +22,20 @@
       "when": 1791796794579,
       "tag": "0002_payments_foundation",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791804458549,
+      "tag": "0003_bill_reminders",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791804495046,
+      "tag": "0004_enable_pg_cron_reminders",
+      "breakpoints": true
     }
   ]
 }
