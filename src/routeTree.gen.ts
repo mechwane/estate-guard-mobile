@@ -86,6 +86,7 @@ import { Route as AppSuperAuditRouteImport } from './routes/app.super.audit'
 import { Route as AppSuperDevicesRouteImport } from './routes/app.super.devices'
 import { Route as AppSuperFeaturesRouteImport } from './routes/app.super.features'
 import { Route as AppSuperInvitesRouteImport } from './routes/app.super.invites'
+import { Route as AppSuperPaymentsRouteImport } from './routes/app.super.payments'
 import { Route as AppSuperPlansRouteImport } from './routes/app.super.plans'
 import { Route as AppSuperProfileRouteImport } from './routes/app.super.profile'
 import { Route as AppSuperSettingsRouteImport } from './routes/app.super.settings'
@@ -485,6 +486,11 @@ const AppSuperInvitesRoute = AppSuperInvitesRouteImport.update({
   path: '/super/invites',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSuperPaymentsRoute = AppSuperPaymentsRouteImport.update({
+  id: '/super/payments',
+  path: '/super/payments',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSuperPlansRoute = AppSuperPlansRouteImport.update({
   id: '/super/plans',
   path: '/super/plans',
@@ -625,6 +631,7 @@ export interface FileRoutesByFullPath {
   '/app/super/devices': typeof AppSuperDevicesRoute
   '/app/super/features': typeof AppSuperFeaturesRoute
   '/app/super/invites': typeof AppSuperInvitesRoute
+  '/app/super/payments': typeof AppSuperPaymentsRoute
   '/app/super/plans': typeof AppSuperPlansRoute
   '/app/super/profile': typeof AppSuperProfileRoute
   '/app/super/settings': typeof AppSuperSettingsRoute
@@ -717,6 +724,7 @@ export interface FileRoutesByTo {
   '/app/super/devices': typeof AppSuperDevicesRoute
   '/app/super/features': typeof AppSuperFeaturesRoute
   '/app/super/invites': typeof AppSuperInvitesRoute
+  '/app/super/payments': typeof AppSuperPaymentsRoute
   '/app/super/plans': typeof AppSuperPlansRoute
   '/app/super/profile': typeof AppSuperProfileRoute
   '/app/super/settings': typeof AppSuperSettingsRoute
@@ -810,6 +818,7 @@ export interface FileRoutesById {
   '/app/super/devices': typeof AppSuperDevicesRoute
   '/app/super/features': typeof AppSuperFeaturesRoute
   '/app/super/invites': typeof AppSuperInvitesRoute
+  '/app/super/payments': typeof AppSuperPaymentsRoute
   '/app/super/plans': typeof AppSuperPlansRoute
   '/app/super/profile': typeof AppSuperProfileRoute
   '/app/super/settings': typeof AppSuperSettingsRoute
@@ -904,6 +913,7 @@ export interface FileRouteTypes {
     | '/app/super/devices'
     | '/app/super/features'
     | '/app/super/invites'
+    | '/app/super/payments'
     | '/app/super/plans'
     | '/app/super/profile'
     | '/app/super/settings'
@@ -996,6 +1006,7 @@ export interface FileRouteTypes {
     | '/app/super/devices'
     | '/app/super/features'
     | '/app/super/invites'
+    | '/app/super/payments'
     | '/app/super/plans'
     | '/app/super/profile'
     | '/app/super/settings'
@@ -1088,6 +1099,7 @@ export interface FileRouteTypes {
     | '/app/super/devices'
     | '/app/super/features'
     | '/app/super/invites'
+    | '/app/super/payments'
     | '/app/super/plans'
     | '/app/super/profile'
     | '/app/super/settings'
@@ -1654,6 +1666,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSuperInvitesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/super/payments': {
+      id: '/app/super/payments'
+      path: '/super/payments'
+      fullPath: '/app/super/payments'
+      preLoaderRoute: typeof AppSuperPaymentsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/super/plans': {
       id: '/app/super/plans'
       path: '/super/plans'
@@ -1815,6 +1834,7 @@ interface AppRouteChildren {
   AppSuperDevicesRoute: typeof AppSuperDevicesRoute
   AppSuperFeaturesRoute: typeof AppSuperFeaturesRoute
   AppSuperInvitesRoute: typeof AppSuperInvitesRoute
+  AppSuperPaymentsRoute: typeof AppSuperPaymentsRoute
   AppSuperPlansRoute: typeof AppSuperPlansRoute
   AppSuperProfileRoute: typeof AppSuperProfileRoute
   AppSuperSettingsRoute: typeof AppSuperSettingsRoute
@@ -1901,6 +1921,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppSuperDevicesRoute: AppSuperDevicesRoute,
   AppSuperFeaturesRoute: AppSuperFeaturesRoute,
   AppSuperInvitesRoute: AppSuperInvitesRoute,
+  AppSuperPaymentsRoute: AppSuperPaymentsRoute,
   AppSuperPlansRoute: AppSuperPlansRoute,
   AppSuperProfileRoute: AppSuperProfileRoute,
   AppSuperSettingsRoute: AppSuperSettingsRoute,
