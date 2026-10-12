@@ -277,7 +277,15 @@ function BillingAdmin() {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
         <h1 className="text-lg font-semibold">Bills & ledger</h1>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => toggleMode.mutate(!mode.data)}
+            disabled={toggleMode.isPending || mode.isLoading}
+            title="Residents with overdue bills can only use Bills, Inbox and Support"
+            className={`inline-flex items-center gap-1 rounded-lg border px-3 py-2 text-xs font-medium disabled:opacity-60 ${mode.data ? "border-destructive text-destructive" : "border-border bg-card"}`}
+          >
+            <Lock className="h-3.5 w-3.5" /> Payment-only mode: {mode.data ? "On" : "Off"}
+          </button>
           <button
             onClick={() => remind.mutate()}
             disabled={remind.isPending}
@@ -536,6 +544,7 @@ type BillRow = {
   resident_id: string;
   batch_id: string | null;
   reference: string | null;
+  invoice_path: string | null;
   bill_type: string | null;
 };
 type Person = { id: string; full_name: string | null; street: string | null; house_number: string | null; block: string | null };
