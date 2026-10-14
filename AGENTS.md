@@ -1,0 +1,1 @@
+- Build uses @lovable.dev/vite-tanstack-config (worker output), never SPA/static mode — static publishing removes server functions and webhooks, breaking payments.
