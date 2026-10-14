@@ -19,7 +19,12 @@ import {
   Loader2,
   X,
 } from "lucide-react";
-import { format, isBefore, formatDistanceToNow } from "date-fns";
+import { format, isBefore, formatDistanceToNow, endOfDay } from "date-fns";
+
+/** A bill only becomes overdue after its due day has fully passed. */
+function isPastDue(due: string) {
+  return isBefore(endOfDay(new Date(due)), new Date());
+}
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/resident/bills")({
@@ -112,24 +117,22 @@ function Bills() {
       if (!q) return true;
       return b.title.toLowerCase().includes(q) || (b.description ?? "").toLowerCase().includes(q);
     });
-    const now = new Date();
+    // "Unpaid" lists every bill that still needs paying (overdue ones included),
+    // so a resident never lands on an empty tab while they still owe money.
     return {
-      unpaid: list.filter((b) => open(b.status) && !isBefore(new Date(b.due_date), now)),
+      unpaid: list.filter((b) => open(b.status)),
       paid: list.filter((b) => b.status === "paid" || b.status === "waived"),
-      overdue: list.filter((b) => open(b.status) && isBefore(new Date(b.due_date), now)),
+      overdue: list.filter((b) => open(b.status) && isPastDue(b.due_date)),
     };
   }, [data, main, search]);
 
   const current = grouped[tab];
 
   const totals = useMemo(() => {
-    const now = new Date();
     const outstanding = (data ?? [])
       .filter((b) => open(b.status))
       .reduce((s, b) => s + Number(b.amount) - Number(b.amount_paid ?? 0), 0);
-    const overdueCount = (data ?? []).filter(
-      (b) => open(b.status) && isBefore(new Date(b.due_date), now),
-    ).length;
+    const overdueCount = (data ?? []).filter((b) => open(b.status) && isPastDue(b.due_date)).length;
     return { outstanding, overdueCount };
   }, [data]);
 
@@ -329,7 +332,7 @@ function Bills() {
       ) : (
         <Stagger className="space-y-2">
           {current.map((b) => {
-            const overdue = tab === "overdue";
+            const overdue = open(b.status) && isPastDue(b.due_date);
             const dueDate = new Date(b.due_date);
             const busy = payingId === b.id;
             return (
