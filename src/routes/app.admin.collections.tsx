@@ -873,6 +873,11 @@ function EstateCollections() {
 
             {detailTab === "dues" ? (
               <div className="space-y-2">
+                <p className="rounded-lg bg-muted px-3 py-2 text-[11px] text-muted-foreground">
+                  Residents pay online with Paystack (card or bank transfer) from their own Bills page; those payments
+                  turn to "paid" here automatically. Use "Record offline payment" only for cash or transfers made
+                  outside the app.
+                </p>
                 {billsFor(detail.collection).map((bill) => (
                   <div
                     key={bill.id}
@@ -891,11 +896,19 @@ function EstateCollections() {
                       <StatusBadge tone="success">{bill.status}</StatusBadge>
                     ) : (
                       <button
-                        onClick={() => markPaid.mutate(bill.id)}
+                        onClick={() => {
+                          if (
+                            confirm(
+                              "Only use this if the resident paid you in cash or by direct bank transfer outside the app. Residents pay online with Paystack from their own Bills page. Record this offline payment?",
+                            )
+                          )
+                            markPaid.mutate(bill.id);
+                        }}
+                        title="For cash or offline transfers only. Residents pay online from their Bills page."
                         disabled={markPaid.isPending}
                         className="rounded-lg bg-primary px-3 py-1.5 text-[11px] font-medium text-primary-foreground hover:bg-primary-dark disabled:opacity-60"
                       >
-                        Set paid
+                        Record offline payment
                       </button>
                     )}
                   </div>
