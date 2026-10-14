@@ -19,7 +19,12 @@ import {
   Loader2,
   X,
 } from "lucide-react";
-import { format, isBefore, formatDistanceToNow } from "date-fns";
+import { format, isBefore, formatDistanceToNow, endOfDay } from "date-fns";
+
+/** A bill only becomes overdue after its due day has fully passed. */
+function isPastDue(due: string) {
+  return isBefore(endOfDay(new Date(due)), new Date());
+}
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/resident/bills")({
@@ -327,7 +332,7 @@ function Bills() {
       ) : (
         <Stagger className="space-y-2">
           {current.map((b) => {
-            const overdue = tab === "overdue";
+            const overdue = open(b.status) && isPastDue(b.due_date);
             const dueDate = new Date(b.due_date);
             const busy = payingId === b.id;
             return (
