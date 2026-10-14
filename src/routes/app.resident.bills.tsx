@@ -112,24 +112,22 @@ function Bills() {
       if (!q) return true;
       return b.title.toLowerCase().includes(q) || (b.description ?? "").toLowerCase().includes(q);
     });
-    const now = new Date();
+    // "Unpaid" lists every bill that still needs paying (overdue ones included),
+    // so a resident never lands on an empty tab while they still owe money.
     return {
-      unpaid: list.filter((b) => open(b.status) && !isBefore(new Date(b.due_date), now)),
+      unpaid: list.filter((b) => open(b.status)),
       paid: list.filter((b) => b.status === "paid" || b.status === "waived"),
-      overdue: list.filter((b) => open(b.status) && isBefore(new Date(b.due_date), now)),
+      overdue: list.filter((b) => open(b.status) && isPastDue(b.due_date)),
     };
   }, [data, main, search]);
 
   const current = grouped[tab];
 
   const totals = useMemo(() => {
-    const now = new Date();
     const outstanding = (data ?? [])
       .filter((b) => open(b.status))
       .reduce((s, b) => s + Number(b.amount) - Number(b.amount_paid ?? 0), 0);
-    const overdueCount = (data ?? []).filter(
-      (b) => open(b.status) && isBefore(new Date(b.due_date), now),
-    ).length;
+    const overdueCount = (data ?? []).filter((b) => open(b.status) && isPastDue(b.due_date)).length;
     return { outstanding, overdueCount };
   }, [data]);
 
