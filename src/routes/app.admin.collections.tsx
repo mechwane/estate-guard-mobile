@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { Copy, ImageIcon, Loader2, Plus, Receipt, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { SettlementAccountSelect } from "@/components/settlement-account-select";
 import { useSession } from "@/lib/session";
 import {
   Card,

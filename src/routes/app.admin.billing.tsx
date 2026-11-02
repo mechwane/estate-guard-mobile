@@ -15,6 +15,7 @@ function downloadCsv(name: string, rows: (string | number | null | undefined)[][
 }
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { SettlementAccountSelect } from "@/components/settlement-account-select";
 import { useSession } from "@/lib/session";
 import {
   Card,
