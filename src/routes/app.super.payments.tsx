@@ -4,7 +4,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, ErrorState, ListSkeleton, ScrollTabs, StatCard, StatusBadge } from "@/components/ui-kit";
+import { Card, ErrorState, ListSkeleton, ScrollTabs, SheetModal, StatCard, StatusBadge } from "@/components/ui-kit";
+import { SuperSettlementAccounts } from "@/components/super-settlement-accounts";
 import { ngn } from "@/lib/format";
 
 export const Route = createFileRoute("/app/super/payments")({
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/app/super/payments")({
   }),
 });
 
-type Tab = "estates" | "transactions" | "provider";
+type Tab = "estates" | "transactions" | "settlement" | "provider";
 type ProviderCfg = {
   provider: string;
   enabled: boolean;
@@ -48,7 +49,7 @@ function SuperPayments() {
         supabase.from("bills").select("estate_id,amount,amount_paid,status").limit(10000),
         supabase
           .from("payment_transactions")
-          .select("id,estate_id,amount,refunded_amount,provider,channel,provider_reference,status,created_at")
+          .select("id,estate_id,bill_id,resident_id,amount,fees,refunded_amount,provider,channel,provider_reference,status,note,created_at,paid_at,settlement:settlement_accounts(label,bank_name,account_number)")
           .order("created_at", { ascending: false })
           .limit(300),
         supabase.from("platform_settings").select("value").eq("key", "payment_provider").maybeSingle(),
@@ -80,6 +81,7 @@ function SuperPayments() {
   }, [data.data]);
 
   const [cfg, setCfg] = useState<ProviderCfg>(DEFAULT_CFG);
+  const [detailId, setDetailId] = useState<string | null>(null);
   useEffect(() => {
     if (data.data) setCfg(data.data.cfg);
   }, [data.data]);
@@ -128,6 +130,7 @@ function SuperPayments() {
           [
             { key: "estates", label: "By estate" },
             { key: "transactions", label: "Transactions" },
+            { key: "settlement", label: "Settlement accounts" },
             { key: "provider", label: "Payment provider" },
           ] as const
         }
@@ -180,14 +183,19 @@ function SuperPayments() {
           ) : (
             <ul className="divide-y divide-border/60">
               {data.data.txs.map((t) => (
-                <li key={t.id} className="flex flex-wrap items-center justify-between gap-2 py-2.5 text-sm">
+                <li
+                  key={t.id}
+                  onClick={() => setDetailId(t.id)}
+                  className="flex cursor-pointer flex-wrap items-center justify-between gap-2 py-2.5 text-sm hover:bg-muted/40"
+                >
                   <div className="min-w-0">
                     <div className="font-medium">
                       {ngn(Number(t.amount))} · {names.get(t.estate_id) ?? "Estate"}
                     </div>
                     <div className="truncate text-xs text-muted-foreground">
                       {t.provider}/{t.channel ?? "—"} · ref {t.provider_reference ?? "—"} ·{" "}
-                      {format(new Date(t.created_at), "MMM d, HH:mm")}
+                      {format(new Date(t.paid_at ?? t.created_at), "MMM d, HH:mm")}
+                      {t.settlement && ` · to ${t.settlement.label}`}
                     </div>
                   </div>
                   <StatusBadge
@@ -207,6 +215,14 @@ function SuperPayments() {
           )}
         </Card>
       )}
+
+      {tab === "settlement" && <SuperSettlementAccounts estates={data.data.estates} />}
+
+      <TxDetail
+        tx={data.data.txs.find((t) => t.id === detailId) ?? null}
+        estateName={(id) => names.get(id) ?? "Estate"}
+        onClose={() => setDetailId(null)}
+      />
 
       {tab === "provider" && (
         <Card>
@@ -278,5 +294,100 @@ function SuperPayments() {
         </Card>
       )}
     </div>
+  );
+}
+
+type Tx = {
+  id: string;
+  estate_id: string;
+  bill_id: string | null;
+  resident_id: string | null;
+  amount: number;
+  fees: number;
+  refunded_amount: number;
+  provider: string;
+  channel: string | null;
+  provider_reference: string | null;
+  status: string;
+  note: string | null;
+  created_at: string;
+  paid_at: string | null;
+  settlement: { label: string; bank_name: string; account_number: string } | null;
+};
+
+/** Full payment record for disputes — only the platform (super) admin can read provider details. */
+function TxDetail({ tx, estateName, onClose }: { tx: Tx | null; estateName: (id: string) => string; onClose: () => void }) {
+  const extra = useQuery({
+    queryKey: ["tx-detail", tx?.id],
+    enabled: !!tx,
+    queryFn: async () => {
+      const [ev, bill, who, rc] = await Promise.all([
+        supabase
+          .from("payment_provider_events")
+          .select("source,payload,created_at")
+          .eq("transaction_id", tx!.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle(),
+        tx!.bill_id ? supabase.from("bills").select("title,reference,amount,status").eq("id", tx!.bill_id).maybeSingle() : null,
+        tx!.resident_id
+          ? supabase.from("profiles").select("full_name,email,phone,street,house_number").eq("id", tx!.resident_id).maybeSingle()
+          : null,
+        supabase.from("payment_receipts").select("receipt_number").eq("transaction_id", tx!.id).maybeSingle(),
+      ]);
+      return { ev: ev.data, bill: bill?.data ?? null, who: who?.data ?? null, receipt: rc.data };
+    },
+  });
+  const p = (extra.data?.ev?.payload ?? {}) as {
+    gateway_response?: string;
+    ip_address?: string;
+    customer?: { email?: string };
+    authorization?: { last4?: string; bank?: string; card_type?: string; brand?: string; account_name?: string; sender_bank?: string };
+    amount?: number;
+    paid_at?: string;
+  };
+  const rows: [string, string][] = tx
+    ? [
+        ["Estate", estateName(tx.estate_id)],
+        ["Resident", extra.data?.who ? `${extra.data.who.full_name} · ${extra.data.who.email ?? ""} ${extra.data.who.phone ?? ""}` : "—"],
+        ["Address", extra.data?.who ? [extra.data.who.house_number, extra.data.who.street].filter(Boolean).join(" ") || "—" : "—"],
+        ["Bill", extra.data?.bill ? `${extra.data.bill.title} (${extra.data.bill.reference ?? "—"}) · ${extra.data.bill.status}` : "—"],
+        ["Amount applied", ngn(Number(tx.amount))],
+        ["Charged to customer", p.amount ? ngn(p.amount / 100) : "—"],
+        ["Paystack fees", ngn(Number(tx.fees ?? 0))],
+        ["Refunded", ngn(Number(tx.refunded_amount ?? 0))],
+        ["Status", tx.status.replace(/_/g, " ")],
+        ["Note", tx.note?.trim() || "—"],
+        ["Reference", tx.provider_reference ?? "—"],
+        ["Receipt", extra.data?.receipt?.receipt_number ?? "—"],
+        ["Channel", `${tx.provider}/${tx.channel ?? "—"}`],
+        [
+          "Card / bank",
+          p.authorization
+            ? [p.authorization.brand ?? p.authorization.card_type, p.authorization.bank ?? p.authorization.sender_bank, p.authorization.last4 && `•••• ${p.authorization.last4}`, p.authorization.account_name]
+                .filter(Boolean)
+                .join(" · ") || "—"
+            : "—",
+        ],
+        ["Payer email", p.customer?.email ?? "—"],
+        ["Gateway response", p.gateway_response ?? "—"],
+        ["Payer IP", p.ip_address ?? "—"],
+        ["Settled to", tx.settlement ? `${tx.settlement.label} · ${tx.settlement.bank_name} ${tx.settlement.account_number}` : "Platform main account"],
+        ["Started", format(new Date(tx.created_at), "MMM d yyyy, HH:mm:ss")],
+        ["Paid", tx.paid_at ? format(new Date(tx.paid_at), "MMM d yyyy, HH:mm:ss") : "—"],
+        ["Last checked with Paystack", extra.data?.ev ? `${format(new Date(extra.data.ev.created_at), "MMM d, HH:mm")} (${extra.data.ev.source})` : "—"],
+      ]
+    : [];
+  return (
+    <SheetModal open={!!tx} title="Payment details" onClose={onClose}>
+      <dl className="divide-y divide-border/60 text-sm">
+        {rows.map(([k, v]) => (
+          <div key={k} className="flex justify-between gap-4 py-2">
+            <dt className="text-muted-foreground">{k}</dt>
+            <dd className="text-right font-medium break-all">{v}</dd>
+          </div>
+        ))}
+      </dl>
+    </SheetModal>
   );
 }

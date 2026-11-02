@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { startBillPayment, confirmBillPayment } from "@/lib/paystack.functions";
+import { startBillPayment, confirmBillPayment, syncMyPayments } from "@/lib/paystack.functions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -83,7 +83,18 @@ function Bills() {
   useEffect(() => {
     const src = window.location.search + "&" + (window.location.hash.split("?")[1] ?? "");
     const ref = new URLSearchParams(src.replace(/^\?/, "")).get("ref") ?? new URLSearchParams(src).get("reference");
-    if (!ref) return;
+    if (!ref) {
+      // Catch up on payments finished at Paystack but not yet shown here (e.g. page closed early).
+      syncMyPayments()
+        .then((r) => {
+          if (r.applied > 0) {
+            toast.success("Your recent payment was confirmed — receipt issued");
+            qc.invalidateQueries({ queryKey: ["bills"] });
+          }
+        })
+        .catch(() => {});
+      return;
+    }
     const t = toast.loading("Confirming your payment…");
     confirmBillPayment({ data: { reference: ref } })
       .then((r) => {

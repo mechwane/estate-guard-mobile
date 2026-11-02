@@ -15,6 +15,7 @@ function downloadCsv(name: string, rows: (string | number | null | undefined)[][
 }
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { SettlementAccountSelect } from "@/components/settlement-account-select";
 import { useSession } from "@/lib/session";
 import {
   Card,
@@ -84,7 +85,7 @@ function BillingAdmin() {
           .limit(500),
         supabase
           .from("payment_transactions")
-          .select("*")
+          .select("*, settlement:settlement_accounts(label,bank_name,account_number)")
           .eq("estate_id", estateId!)
           .order("created_at", { ascending: false })
           .limit(200),
@@ -479,7 +480,8 @@ function BillingAdmin() {
                     </div>
                     <div className="truncate text-xs text-muted-foreground">
                       {t.provider}/{t.channel ?? "—"} · ref {t.provider_reference ?? "—"} ·{" "}
-                      {format(new Date(t.created_at), "MMM d, HH:mm")}
+                      {format(new Date(t.paid_at ?? t.created_at), "MMM d, HH:mm")}
+                      {t.settlement && ` · settled to ${t.settlement.label} (${t.settlement.bank_name} •••• ${t.settlement.account_number.slice(-4)})`}
                       {Number(t.refunded_amount) > 0 && ` · refunded ${ngn(Number(t.refunded_amount))}`}
                     </div>
                   </div>
@@ -677,8 +679,8 @@ function CreateBillSheet({
         <Field label="Billing period">
           <input className={inputCls} placeholder="e.g. Oct 2026" value={f.billing_period} onChange={(e) => set("billing_period", e.target.value)} />
         </Field>
-        <Field label="Sub-account">
-          <input className={inputCls} value={f.sub_account} onChange={(e) => set("sub_account", e.target.value)} />
+        <Field label="Select settlement account" full>
+          <SettlementAccountSelect className={inputCls} value={f.sub_account} onChange={(id) => set("sub_account", id)} />
         </Field>
         <Field label="Who pays" full>
           <select className={inputCls} value={f.target_type} onChange={(e) => set("target_type", e.target.value)}>

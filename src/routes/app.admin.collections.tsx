@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { Copy, ImageIcon, Loader2, Plus, Receipt, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { SettlementAccountSelect } from "@/components/settlement-account-select";
 import { useSession } from "@/lib/session";
 import {
   Card,
@@ -54,6 +55,7 @@ type CollectionRow = {
   payment_type: string;
   payment_cycle: string | null;
   sub_account: string | null;
+  settlement_account_id?: string | null;
   amount: number;
   due_date: string;
   scope: string;
@@ -86,6 +88,7 @@ type FormState = {
   payment_type: string;
   payment_cycle: string;
   sub_account: string;
+  settlement_account_id: string;
   amount: string;
   due_date: string;
   scope: "general" | "resident" | "address";
@@ -108,6 +111,7 @@ const emptyForm: FormState = {
   payment_type: "one_time",
   payment_cycle: "",
   sub_account: "",
+  settlement_account_id: "",
   amount: "",
   due_date: "",
   scope: "general",
@@ -342,6 +346,7 @@ function EstateCollections() {
         payment_type: form.payment_type,
         payment_cycle: form.payment_cycle || null,
         sub_account: form.sub_account.trim() || null,
+        settlement_account_id: form.settlement_account_id || null,
         amount,
         due_date: form.due_date,
         scope: form.scope,
@@ -618,6 +623,7 @@ function EstateCollections() {
                         payment_type: c.collection.payment_type,
                         payment_cycle: c.collection.payment_cycle ?? "",
                         sub_account: c.collection.sub_account ?? "",
+                        settlement_account_id: c.collection.settlement_account_id ?? "",
                         amount: String(c.collection.amount),
                         scope: c.collection.scope as FormState["scope"],
                         target_address: c.collection.target_address ?? "",
@@ -724,11 +730,10 @@ function EstateCollections() {
               onChange={(e) => setForm({ ...form, due_date: e.target.value })}
               className="rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none"
             />
-            <input
-              placeholder="Sub account (optional)"
-              value={form.sub_account}
-              onChange={(e) => setForm({ ...form, sub_account: e.target.value })}
-              className="rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none"
+            <SettlementAccountSelect
+              value={form.settlement_account_id}
+              onChange={(id, label) => setForm({ ...form, settlement_account_id: id, sub_account: label })}
+              className="w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm outline-none"
             />
             <select
               value={form.payment_cycle}
@@ -954,6 +959,7 @@ function EstateCollections() {
                     payment_type: detail.collection.payment_type,
                     payment_cycle: detail.collection.payment_cycle ?? "",
                     sub_account: detail.collection.sub_account ?? "",
+                    settlement_account_id: detail.collection.settlement_account_id ?? "",
                     amount: String(detail.collection.amount),
                     due_date: detail.collection.due_date,
                     scope: detail.collection.scope as FormState["scope"],
