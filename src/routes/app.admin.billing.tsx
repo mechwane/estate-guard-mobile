@@ -677,8 +677,8 @@ function CreateBillSheet({
         <Field label="Billing period">
           <input className={inputCls} placeholder="e.g. Oct 2026" value={f.billing_period} onChange={(e) => set("billing_period", e.target.value)} />
         </Field>
-        <Field label="Sub-account">
-          <input className={inputCls} value={f.sub_account} onChange={(e) => set("sub_account", e.target.value)} />
+        <Field label="Select settlement account" full>
+          <SettlementAccountSelect className={inputCls} value={f.sub_account} onChange={(id) => set("sub_account", id)} />
         </Field>
         <Field label="Who pays" full>
           <select className={inputCls} value={f.target_type} onChange={(e) => set("target_type", e.target.value)}>
