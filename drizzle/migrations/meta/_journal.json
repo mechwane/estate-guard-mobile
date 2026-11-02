@@ -57,6 +57,13 @@
       "when": 1791884339355,
       "tag": "0007_restrict_plans_categories_read",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793617161939,
+      "tag": "0008_settlement_accounts",
+      "breakpoints": true
     }
   ]
 }

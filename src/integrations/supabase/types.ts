@@ -171,6 +171,7 @@ export type Database = {
           instructions: string | null
           late_fee_amount: number
           published_at: string | null
+          settlement_account_id: string | null
           status: string
           sub_account: string | null
           target_filter: Json
@@ -196,6 +197,7 @@ export type Database = {
           instructions?: string | null
           late_fee_amount?: number
           published_at?: string | null
+          settlement_account_id?: string | null
           status?: string
           sub_account?: string | null
           target_filter?: Json
@@ -221,6 +223,7 @@ export type Database = {
           instructions?: string | null
           late_fee_amount?: number
           published_at?: string | null
+          settlement_account_id?: string | null
           status?: string
           sub_account?: string | null
           target_filter?: Json
@@ -228,7 +231,15 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bill_batches_settlement_account_id_fkey"
+            columns: ["settlement_account_id"]
+            isOneToOne: false
+            referencedRelation: "settlement_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       bill_reminders: {
         Row: {
@@ -589,6 +600,7 @@ export type Database = {
           payment_type: string
           priority: number
           scope: string
+          settlement_account_id: string | null
           status: string
           sub_account: string | null
           tag: string | null
@@ -614,6 +626,7 @@ export type Database = {
           payment_type?: string
           priority?: number
           scope?: string
+          settlement_account_id?: string | null
           status?: string
           sub_account?: string | null
           tag?: string | null
@@ -639,6 +652,7 @@ export type Database = {
           payment_type?: string
           priority?: number
           scope?: string
+          settlement_account_id?: string | null
           status?: string
           sub_account?: string | null
           tag?: string | null
@@ -653,6 +667,13 @@ export type Database = {
             columns: ["estate_id"]
             isOneToOne: false
             referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collections_settlement_account_id_fkey"
+            columns: ["settlement_account_id"]
+            isOneToOne: false
+            referencedRelation: "settlement_accounts"
             referencedColumns: ["id"]
           },
         ]
@@ -916,6 +937,45 @@ export type Database = {
             foreignKeyName: "estate_feature_flags_estate_id_fkey"
             columns: ["estate_id"]
             isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      estate_payment_config: {
+        Row: {
+          default_settlement_account_id: string | null
+          enabled: boolean
+          estate_id: string
+          provider: string
+          updated_at: string
+        }
+        Insert: {
+          default_settlement_account_id?: string | null
+          enabled?: boolean
+          estate_id: string
+          provider?: string
+          updated_at?: string
+        }
+        Update: {
+          default_settlement_account_id?: string | null
+          enabled?: boolean
+          estate_id?: string
+          provider?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "estate_payment_config_default_settlement_account_id_fkey"
+            columns: ["default_settlement_account_id"]
+            isOneToOne: false
+            referencedRelation: "settlement_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "estate_payment_config_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: true
             referencedRelation: "estates"
             referencedColumns: ["id"]
           },
@@ -1438,6 +1498,44 @@ export type Database = {
           },
         ]
       }
+      payment_provider_events: {
+        Row: {
+          created_at: string
+          estate_id: string | null
+          id: string
+          payload: Json
+          reference: string
+          source: string
+          transaction_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          estate_id?: string | null
+          id?: string
+          payload?: Json
+          reference: string
+          source: string
+          transaction_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          estate_id?: string | null
+          id?: string
+          payload?: Json
+          reference?: string
+          source?: string
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_provider_events_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "payment_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payment_receipts: {
         Row: {
           amount: number
@@ -1486,14 +1584,17 @@ export type Database = {
           channel: string | null
           created_at: string
           estate_id: string
+          fees: number
           id: string
           idempotency_key: string | null
           note: string | null
+          paid_at: string | null
           provider: string
           provider_reference: string | null
           recorded_by: string | null
           refunded_amount: number
           resident_id: string | null
+          settlement_account_id: string | null
           status: string
           updated_at: string
           verified_at: string | null
@@ -1504,14 +1605,17 @@ export type Database = {
           channel?: string | null
           created_at?: string
           estate_id: string
+          fees?: number
           id?: string
           idempotency_key?: string | null
           note?: string | null
+          paid_at?: string | null
           provider?: string
           provider_reference?: string | null
           recorded_by?: string | null
           refunded_amount?: number
           resident_id?: string | null
+          settlement_account_id?: string | null
           status?: string
           updated_at?: string
           verified_at?: string | null
@@ -1522,14 +1626,17 @@ export type Database = {
           channel?: string | null
           created_at?: string
           estate_id?: string
+          fees?: number
           id?: string
           idempotency_key?: string | null
           note?: string | null
+          paid_at?: string | null
           provider?: string
           provider_reference?: string | null
           recorded_by?: string | null
           refunded_amount?: number
           resident_id?: string | null
+          settlement_account_id?: string | null
           status?: string
           updated_at?: string
           verified_at?: string | null
@@ -1540,6 +1647,13 @@ export type Database = {
             columns: ["bill_id"]
             isOneToOne: false
             referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_settlement_account_id_fkey"
+            columns: ["settlement_account_id"]
+            isOneToOne: false
+            referencedRelation: "settlement_accounts"
             referencedColumns: ["id"]
           },
         ]
@@ -2127,6 +2241,68 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "resident_requests_estate_id_fkey"
+            columns: ["estate_id"]
+            isOneToOne: false
+            referencedRelation: "estates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      settlement_accounts: {
+        Row: {
+          account_name: string | null
+          account_number: string
+          active: boolean
+          bank_code: string
+          bank_name: string
+          created_at: string
+          created_by: string | null
+          estate_id: string
+          id: string
+          label: string
+          percentage_charge: number
+          provider: string
+          purpose: string | null
+          subaccount_code: string | null
+          updated_at: string
+        }
+        Insert: {
+          account_name?: string | null
+          account_number: string
+          active?: boolean
+          bank_code: string
+          bank_name: string
+          created_at?: string
+          created_by?: string | null
+          estate_id: string
+          id?: string
+          label: string
+          percentage_charge?: number
+          provider?: string
+          purpose?: string | null
+          subaccount_code?: string | null
+          updated_at?: string
+        }
+        Update: {
+          account_name?: string | null
+          account_number?: string
+          active?: boolean
+          bank_code?: string
+          bank_name?: string
+          created_at?: string
+          created_by?: string | null
+          estate_id?: string
+          id?: string
+          label?: string
+          percentage_charge?: number
+          provider?: string
+          purpose?: string | null
+          subaccount_code?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "settlement_accounts_estate_id_fkey"
             columns: ["estate_id"]
             isOneToOne: false
             referencedRelation: "estates"
